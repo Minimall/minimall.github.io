@@ -2,7 +2,7 @@
   width: 100%;
   margin: 0px auto;
   height: 48px;
-  background-color: hsla(0, 0%, 0%, 0.2);
+  background-color: #000;
 }
 
 #progressBar div {
