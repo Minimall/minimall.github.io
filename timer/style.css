@@ -2,12 +2,9 @@
 body {
   height: 100%;
   width: 100%;
-  text-align: center;
   overflow: hidden;
   background-color: #000;
 div {
-  margin-left: auto;
-  margin-right: auto;
   font-size: 64px;
   color: white;
   font-weight: 700;
