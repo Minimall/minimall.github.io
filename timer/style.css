@@ -2,6 +2,7 @@
 body {
   height: 100%;
   width: 100%;
+  text-align: center;
   overflow: hidden;
   background-color: #000;
 div {
