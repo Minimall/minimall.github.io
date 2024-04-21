@@ -6,7 +6,9 @@ body {
   overflow: hidden;
   background-color: #000;
 div {
-  font-size: 100px;
+  margin-left: auto;
+  margin-right: auto;
+  font-size: 64px;
   color: white;
   font-weight: 700;
   font-family: 'Sofia Sans Semi Condensed', sans-serif;
