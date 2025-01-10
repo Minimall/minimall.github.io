@@ -158,12 +158,16 @@ nav a:hover {
 
 .wave-text {
     display: inline-block;
+    text-align: left;
 }
 
 .wave-text span {
     display: inline-block;
     font-variation-settings: 'wght' 400;
     transition: font-variation-settings 0.3s ease;
+    transform-origin: left center;
+    text-align: left;
+    position: relative;
 }
 
 .wave-text span.wave-in {
