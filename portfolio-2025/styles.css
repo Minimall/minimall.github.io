@@ -163,7 +163,7 @@ nav a:hover {
 
 .wave-text span {
     display: inline-block;
-    font-variation-settings: 'wght' 400;
+    font-variation-settings: 'wght' 200;
     transition: font-variation-settings 0.3s ease;
 }
 
@@ -174,12 +174,12 @@ nav a:hover {
 }
 
 .wave-text span.wave-in {
-    font-variation-settings: 'wght' 700;
+    font-variation-settings: 'wght' 900;
     animation: colorWave 0.6s ease-in-out forwards;
 }
 
 .wave-text span.wave-out {
-    font-variation-settings: 'wght' 400;
+    font-variation-settings: 'wght' 200;
 }
 
 .hover-image {
