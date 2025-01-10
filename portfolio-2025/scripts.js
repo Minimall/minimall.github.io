@@ -4,9 +4,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const hoverImage = document.querySelector('.hover-image');
     const letters = document.querySelectorAll('.wave-text span');
     
-    letters.forEach((letter, index) => {
-        letter.style.animationDelay = `${index * 0.05}s`;
-    });
+    function updateAnimationDelays(isHovering) {
+        letters.forEach((letter, index) => {
+            const delay = isHovering ? index * 0.05 : (letters.length - 1 - index) * 0.05;
+            letter.style.animationDelay = `${delay}s`;
+        });
+    }
+    
+    hoverWord.addEventListener('mouseenter', () => updateAnimationDelays(true));
+    hoverWord.addEventListener('mouseleave', () => updateAnimationDelays(false));
     const images = ['kharkiv1.jpg', 'kharkiv2.jpg', 'kharkiv3.jpg'];
     let currentImageIndex = 0;
     let slideInterval;
