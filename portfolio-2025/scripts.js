@@ -32,10 +32,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         function showNextImage() {
+            console.log(`Switching from image ${currentIndex + 1}`);
             hoverImage.style.opacity = '0';
             setTimeout(() => {
                 currentIndex = (currentIndex + 1) % images.length;
                 hoverImage.src = `images/${images[currentIndex]}`;
+                console.log(`Switched to image ${currentIndex + 1}`);
                 hoverImage.style.opacity = '1';
             }, 150);
         }
@@ -46,6 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
             updateWaveAnimation(letters, true);
             if (images.length && hoverImage) {
                 currentIndex = 0;
+                console.log('Starting image sequence');
                 hoverImage.src = `images/${images[0]}`;
                 hoverImage.style.opacity = '1';
                 intervalId = setInterval(showNextImage, 800);
