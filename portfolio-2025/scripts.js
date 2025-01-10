@@ -29,42 +29,42 @@ document.addEventListener('DOMContentLoaded', () => {
 
     hoverWords.forEach(hoverWord => {
         const hoverImage = hoverWord.querySelector('.hover-image');
-        const images = hoverWord.dataset.images ? hoverWord.dataset.images.split(',') : [];
-        let currentImageIndex = 0;
-        let slideInterval;
+        const imageList = hoverWord.dataset.images ? hoverWord.dataset.images.split(',') : [];
+        let currentIndex = 0;
+        let timer = null;
 
-        if (images.length > 0 && hoverImage) {
-            hoverImage.src = `images/${images[0]}`;
+        if (imageList.length > 0 && hoverImage) {
+            hoverImage.src = `images/${imageList[0]}`;
         }
 
-        function startSlideshow() {
-            if (images.length <= 1) return;
-            
-            currentImageIndex = 0;
-            hoverImage.src = `images/${images[currentImageIndex]}`;
-            
-            slideInterval = setInterval(() => {
-                currentImageIndex = (currentImageIndex + 1) % images.length;
-                hoverImage.src = `images/${images[currentImageIndex]}`;
-            }, 800);
+        function showNextImage() {
+            currentIndex = (currentIndex + 1) % imageList.length;
+            hoverImage.src = `images/${imageList[currentIndex]}`;
         }
 
-        function stopSlideshow() {
-            clearInterval(slideInterval);
-            currentImageIndex = 0;
-            hoverImage.src = `images/${images[0]}`;
+        function handleHoverStart() {
+            if (imageList.length <= 1) return;
+            currentIndex = 0;
+            hoverImage.src = `images/${imageList[0]}`;
+            timer = setInterval(showNextImage, 800);
+        }
+
+        function handleHoverEnd() {
+            clearInterval(timer);
+            currentIndex = 0;
+            hoverImage.src = `images/${imageList[0]}`;
         }
 
         const letters = hoverWord.querySelectorAll('.wave-text span');
         
         hoverWord.addEventListener('mouseenter', () => {
             updateAnimationDelays(letters, true);
-            startSlideshow();
+            handleHoverStart();
         });
         
         hoverWord.addEventListener('mouseleave', () => {
             updateAnimationDelays(letters, false);
-            stopSlideshow();
+            handleHoverEnd();
         });
         
         hoverWord.addEventListener('mousemove', (e) => updateImagePosition(e, hoverImage));
