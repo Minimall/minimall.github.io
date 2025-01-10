@@ -64,6 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const letters = hoverWord.querySelectorAll('.wave-text span');
 
         hoverWord.addEventListener('mouseenter', () => {
+            hoveredSpans.add(hoverWord.querySelector('.wave-text'));
             updateWaveAnimation(letters, true);
             if (images.length && hoverImage) {
                 currentIndex = 0;
@@ -89,6 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Random wave animation feature
     let lastUsedParentIndex = -1;
+    const hoveredSpans = new Set();
     
     function triggerRandomWave() {
         const mainText = document.querySelector('.main-text');
@@ -102,7 +104,8 @@ document.addEventListener('DOMContentLoaded', () => {
             return acc;
         }, new Map());
 
-        const parents = Array.from(randomSpanSet.keys());
+        const parents = Array.from(randomSpanSet.keys()).filter(parent => !hoveredSpans.has(parent));
+        if (parents.length === 0) return; // Skip if all spans have been hovered
         let randomParentIndex;
         
         // Ensure we don't pick the same parent twice in a row
