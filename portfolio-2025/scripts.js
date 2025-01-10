@@ -55,8 +55,10 @@ document.addEventListener('DOMContentLoaded', () => {
         hoverWord.addEventListener('mouseleave', () => {
             updateWaveAnimation(letters, false);
             clearInterval(intervalId);
+            intervalId = null;
             if (hoverImage) {
                 hoverImage.style.opacity = '0';
+                currentIndex = 0;
             }
         });
 
