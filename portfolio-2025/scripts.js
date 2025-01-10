@@ -6,11 +6,10 @@ document.addEventListener('DOMContentLoaded', () => {
     
     function updateAnimationDelays(isHovering) {
         letters.forEach((letter, index) => {
-            letter.classList.remove(isHovering ? 'wave-out' : 'wave-in');
-            letter.style.animationDelay = `${isHovering ? index * 0.05 : (letters.length - 1 - index) * 0.05}s`;
-            // Force reflow
-            void letter.offsetWidth;
-            letter.classList.add(isHovering ? 'wave-in' : 'wave-out');
+            setTimeout(() => {
+                letter.classList.remove('wave-in', 'wave-out');
+                letter.classList.add(isHovering ? 'wave-in' : 'wave-out');
+            }, isHovering ? index * 50 : (letters.length - 1 - index) * 50);
         });
     }
     
