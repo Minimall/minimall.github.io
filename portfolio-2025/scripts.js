@@ -40,30 +40,19 @@ document.addEventListener('DOMContentLoaded', () => {
         function startSlideshow() {
             if (images.length <= 1) return;
             
-            // Set first image immediately on hover
-            if (hoverImage) {
-                hoverImage.src = `images/${images[currentImageIndex]}`;
-            }
+            currentImageIndex = 0;
+            hoverImage.src = `images/${images[currentImageIndex]}`;
             
             slideInterval = setInterval(() => {
                 currentImageIndex = (currentImageIndex + 1) % images.length;
-                if (hoverImage) {
-                    hoverImage.style.opacity = '0';
-                    setTimeout(() => {
-                        hoverImage.src = `images/${images[currentImageIndex]}`;
-                        hoverImage.style.opacity = '1';
-                    }, 150);
-                }
-            }, 900);
+                hoverImage.src = `images/${images[currentImageIndex]}`;
+            }, 800);
         }
 
         function stopSlideshow() {
             clearInterval(slideInterval);
             currentImageIndex = 0;
-            if (hoverImage && images.length > 0) {
-                hoverImage.src = `images/${images[0]}`;
-                hoverImage.style.opacity = '1';
-            }
+            hoverImage.src = `images/${images[0]}`;
         }
 
         const letters = hoverWord.querySelectorAll('.wave-text span');

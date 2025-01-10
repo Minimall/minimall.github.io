@@ -176,11 +176,9 @@ nav a:hover {
 
 .hover-image {
     opacity: 0;
-    visibility: hidden;
     position: fixed;
     z-index: 1000;
     pointer-events: none;
-    transition: opacity 0.15s ease-in-out, visibility 0.15s ease-in-out;
     height: 480px;
     width: auto;
     object-fit: contain;
@@ -188,7 +186,6 @@ nav a:hover {
 
 .hover-word:hover .hover-image {
     opacity: 1;
-    visibility: visible;
 }
 
 .marquee-container {
