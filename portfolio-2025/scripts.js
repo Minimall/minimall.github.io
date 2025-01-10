@@ -88,6 +88,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Random wave animation feature
+    let lastUsedParentIndex = -1;
+    
     function triggerRandomWave() {
         const mainText = document.querySelector('.main-text');
         const allWaveSpans = mainText.querySelectorAll('.wave-text span');
@@ -100,8 +102,16 @@ document.addEventListener('DOMContentLoaded', () => {
             return acc;
         }, new Map());
 
-        const randomParent = Array.from(randomSpanSet.keys())[Math.floor(Math.random() * randomSpanSet.size)];
-        const spans = randomSpanSet.get(randomParent);
+        const parents = Array.from(randomSpanSet.keys());
+        let randomParentIndex;
+        
+        // Ensure we don't pick the same parent twice in a row
+        do {
+            randomParentIndex = Math.floor(Math.random() * parents.length);
+        } while (randomParentIndex === lastUsedParentIndex && parents.length > 1);
+        
+        lastUsedParentIndex = randomParentIndex;
+        const spans = randomSpanSet.get(parents[randomParentIndex]);
 
         spans.forEach((span, index) => {
             // Wave in
@@ -122,8 +132,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }, spans.length * 50 + 300);
         });
 
-        // Schedule next random wave
-        setTimeout(triggerRandomWave, Math.random() * 15000 + 10000); // Random interval between 10-25 seconds
+        // Schedule next random wave with 5-8 second interval
+        setTimeout(triggerRandomWave, Math.random() * 3000 + 5000);
     }
 
     // Start the random wave effect after a delay
