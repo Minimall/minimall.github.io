@@ -153,16 +153,14 @@ nav a:hover {
 }
 
 .hover-word {
-    position: relative;
     cursor: pointer;
 }
 
 .hover-image {
     display: none;
-    position: absolute;
+    position: fixed;
     z-index: 1000;
-    top: 100%;
-    left: 0;
+    pointer-events: none;
 }
 
 .hover-word:hover .hover-image {
