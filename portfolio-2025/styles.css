@@ -163,13 +163,14 @@ nav a:hover {
 .wave-text span {
     display: inline-block;
     font-variation-settings: 'wght' 400;
+    animation: none;
 }
 
-.hover-word:hover .wave-text span {
+.wave-text span.wave-in {
     animation: wave 0.3s ease forwards;
 }
 
-.hover-word:not(:hover) .wave-text span {
+.wave-text span.wave-out {
     animation: waveReverse 0.3s ease forwards;
 }
 
