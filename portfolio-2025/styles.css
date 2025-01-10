@@ -183,11 +183,11 @@ nav a:hover {
     height: 480px;
     width: auto;
     object-fit: contain;
-    transition: none;
+    transition: opacity 0.1s ease-in-out;
 }
 
 .hover-word:hover .hover-image {
-    opacity: 1;
+    opacity: 1 !important;
 }
 
 .marquee-container {
