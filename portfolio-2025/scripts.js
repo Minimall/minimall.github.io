@@ -124,7 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
         spans.forEach((span, index) => {
             // Wave in
             setTimeout(() => {
-                span.style.color = '#8A2BE2';
+                
                 span.classList.add('wave-in');
             }, index * 50);
 
