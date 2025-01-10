@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
         slideInterval = setInterval(() => {
             currentImageIndex = (currentImageIndex + 1) % images.length;
             hoverImage.src = `images/${images[currentImageIndex]}`;
-        }, 1500);
+        }, 500);
     }
 
     function stopSlideshow() {
