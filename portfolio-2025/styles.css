@@ -165,7 +165,6 @@ nav a:hover {
     display: inline-block;
     font-variation-settings: 'wght' 400;
     transition: font-variation-settings 0.3s ease;
-    color: #4A148C;
 }
 
 @keyframes colorWave {
