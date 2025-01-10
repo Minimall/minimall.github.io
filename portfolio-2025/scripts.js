@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
             img.src = `images/${url}`;
         });
     }
-    
+
     const hoverWords = document.querySelectorAll('.hover-word');
     // Preload all hover word images
     hoverWords.forEach(word => {
@@ -48,14 +48,14 @@ document.addEventListener('DOMContentLoaded', () => {
             // Show image
             hoverImage.src = `images/${images[currentIndex]}`;
             hoverImage.style.opacity = '1';
-            
+
             // Set timeout to hide after 600ms
             setTimeout(() => {
                 hoverImage.style.opacity = '0';
-                
+
                 // Prepare next image
                 currentIndex = (currentIndex + 1) % images.length;
-                
+
                 // Schedule next cycle
                 setTimeout(cycleImage, 0);
             }, 600);
