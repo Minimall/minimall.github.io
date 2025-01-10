@@ -40,25 +40,30 @@ document.addEventListener('DOMContentLoaded', () => {
         function startSlideshow() {
             if (images.length <= 1) return;
             
+            // Show first image immediately
             if (hoverImage) {
+                currentImageIndex = 0;
                 hoverImage.style.opacity = '1';
                 hoverImage.src = `images/${images[currentImageIndex]}`;
             }
             
+            // Start cycling through images
             slideInterval = setInterval(() => {
-                currentImageIndex = (currentImageIndex + 1) % images.length;
                 if (hoverImage) {
+                    currentImageIndex = (currentImageIndex + 1) % images.length;
                     hoverImage.src = `images/${images[currentImageIndex]}`;
                 }
             }, 900);
         }
 
         function stopSlideshow() {
-            clearInterval(slideInterval);
+            if (slideInterval) {
+                clearInterval(slideInterval);
+                slideInterval = null;
+            }
             currentImageIndex = 0;
             if (hoverImage && images.length > 0) {
                 hoverImage.src = `images/${images[0]}`;
-                hoverImage.style.opacity = '1';
             }
         }
 
