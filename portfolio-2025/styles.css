@@ -152,6 +152,22 @@ nav a:hover {
     }
 }
 
+.hover-word {
+    position: relative;
+    cursor: pointer;
+}
+
+.hover-image {
+    display: none;
+    position: absolute;
+    z-index: 1000;
+    top: 100%;
+    left: 0;
+}
+
+.hover-word:hover .hover-image {
+    display: block;
+}
 
 .marquee-container {
     width: 100%;
