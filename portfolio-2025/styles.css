@@ -156,6 +156,36 @@ nav a:hover {
     cursor: pointer;
 }
 
+.wave-text {
+    display: inline-block;
+}
+
+.wave-text span {
+    display: inline-block;
+    font-variation-settings: 'wght' 400;
+    transition: font-variation-settings 0.3s ease;
+}
+
+.hover-word:hover .wave-text span {
+    animation: wave 0.3s ease forwards;
+}
+
+.hover-word:not(:hover) .wave-text span {
+    animation: waveReverse 0.3s ease forwards;
+}
+
+@keyframes wave {
+    to {
+        font-variation-settings: 'wght' 700;
+    }
+}
+
+@keyframes waveReverse {
+    to {
+        font-variation-settings: 'wght' 400;
+    }
+}
+
 .hover-image {
     opacity: 0;
     visibility: hidden;

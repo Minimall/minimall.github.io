@@ -2,6 +2,11 @@
 document.addEventListener('DOMContentLoaded', () => {
     const hoverWord = document.querySelector('.hover-word');
     const hoverImage = document.querySelector('.hover-image');
+    const letters = document.querySelectorAll('.wave-text span');
+    
+    letters.forEach((letter, index) => {
+        letter.style.animationDelay = `${index * 0.05}s`;
+    });
     const images = ['kharkiv1.jpg', 'kharkiv2.jpg', 'kharkiv3.jpg'];
     let currentImageIndex = 0;
     let slideInterval;
