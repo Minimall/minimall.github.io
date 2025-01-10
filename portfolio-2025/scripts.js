@@ -40,19 +40,15 @@ document.addEventListener('DOMContentLoaded', () => {
         function startSlideshow() {
             if (images.length <= 1) return;
             
-            // Set first image immediately on hover
             if (hoverImage) {
+                hoverImage.style.opacity = '1';
                 hoverImage.src = `images/${images[currentImageIndex]}`;
             }
             
             slideInterval = setInterval(() => {
                 currentImageIndex = (currentImageIndex + 1) % images.length;
                 if (hoverImage) {
-                    hoverImage.style.opacity = '0';
-                    setTimeout(() => {
-                        hoverImage.src = `images/${images[currentImageIndex]}`;
-                        hoverImage.style.opacity = '1';
-                    }, 150);
+                    hoverImage.src = `images/${images[currentImageIndex]}`;
                 }
             }, 900);
         }
