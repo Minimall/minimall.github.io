@@ -36,7 +36,8 @@ document.addEventListener('DOMContentLoaded', () => {
             hoverImage.style.opacity = '0';
             setTimeout(() => {
                 currentIndex = (currentIndex + 1) % images.length;
-                hoverImage.src = `images/${images[currentIndex]}`;
+                const timestamp = Date.now();
+                hoverImage.src = `images/${images[currentIndex]}?t=${timestamp}`;
                 console.log(`Switched to image ${currentIndex + 1}`);
                 hoverImage.style.opacity = '1';
             }, 150);
@@ -49,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (images.length && hoverImage) {
                 currentIndex = 0;
                 console.log('Starting image sequence');
-                hoverImage.src = `images/${images[0]}`;
+                hoverImage.src = `images/${images[0]}?t=${Date.now()}`;
                 hoverImage.style.opacity = '1';
                 intervalId = setInterval(showNextImage, 800);
             }
