@@ -38,14 +38,19 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         function showNextImage() {
-            currentIndex = (currentIndex + 1) % imageList.length;
-            hoverImage.src = `images/${imageList[currentIndex]}`;
+            hoverImage.style.opacity = '0';
+            setTimeout(() => {
+                currentIndex = (currentIndex + 1) % imageList.length;
+                hoverImage.src = `images/${imageList[currentIndex]}`;
+                hoverImage.style.opacity = '1';
+            }, 50);
         }
 
         function handleHoverStart() {
             if (imageList.length <= 1) return;
             currentIndex = 0;
             hoverImage.src = `images/${imageList[0]}`;
+            hoverImage.style.opacity = '1';
             timer = setInterval(showNextImage, 800);
         }
 
