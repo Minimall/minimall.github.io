@@ -183,6 +183,7 @@ nav a:hover {
     width: auto;
     object-fit: contain;
     transition: none;
+    will-change: opacity;
 }
 
 .marquee-container {

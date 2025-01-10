@@ -44,12 +44,21 @@ document.addEventListener('DOMContentLoaded', () => {
             hoverImage.style.top = `${e.pageY + 20}px`;
         }
 
-        function showNextImage() {
-            console.log(`Switching from image ${currentIndex + 1}`);
-            currentIndex = (currentIndex + 1) % images.length;
-            const timestamp = Date.now();
-            hoverImage.src = `images/${images[currentIndex]}?t=${timestamp}`;
-            console.log(`Switched to image ${currentIndex + 1}`);
+        function cycleImage() {
+            // Show image
+            hoverImage.src = `images/${images[currentIndex]}`;
+            hoverImage.style.opacity = '1';
+            
+            // Set timeout to hide after 600ms
+            setTimeout(() => {
+                hoverImage.style.opacity = '0';
+                
+                // Prepare next image
+                currentIndex = (currentIndex + 1) % images.length;
+                
+                // Schedule next cycle
+                setTimeout(cycleImage, 0);
+            }, 600);
         }
 
         const letters = hoverWord.querySelectorAll('.wave-text span');
@@ -57,22 +66,16 @@ document.addEventListener('DOMContentLoaded', () => {
         hoverWord.addEventListener('mouseenter', () => {
             updateWaveAnimation(letters, true);
             if (images.length && hoverImage) {
-                currentIndex = -1;
-                showNextImage();
-                hoverImage.style.opacity = '1';
-                intervalId = setInterval(showNextImage, 600);
+                currentIndex = 0;
+                cycleImage();
             }
         });
 
         hoverWord.addEventListener('mouseleave', () => {
             updateWaveAnimation(letters, false);
-            if (intervalId) {
-                clearInterval(intervalId);
-                intervalId = null;
-            }
             if (hoverImage) {
                 hoverImage.style.opacity = '0';
-                currentIndex = -1;
+                currentIndex = 0;
             }
         });
 
