@@ -157,14 +157,17 @@ nav a:hover {
 }
 
 .hover-image {
-    display: none;
+    opacity: 0;
+    visibility: hidden;
     position: fixed;
     z-index: 1000;
     pointer-events: none;
+    transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
 }
 
 .hover-word:hover .hover-image {
-    display: block;
+    opacity: 1;
+    visibility: visible;
 }
 
 .marquee-container {
