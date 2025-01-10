@@ -1,9 +1,17 @@
 
 document.addEventListener('DOMContentLoaded', () => {
     const hoverWords = document.querySelectorAll('.hover-word');
-    const letters = document.querySelectorAll('.wave-text span');
 
-    function updateAnimationDelays(isHovering) {
+    // Split text into letters for each hover word
+    hoverWords.forEach(word => {
+        const waveText = word.querySelector('.wave-text');
+        const text = word.dataset.text || waveText.textContent;
+        waveText.innerHTML = text.split('').map(letter => 
+            `<span>${letter}</span>`
+        ).join('');
+    });
+
+    function updateAnimationDelays(letters, isHovering) {
         letters.forEach((letter, index) => {
             setTimeout(() => {
                 letter.classList.remove('wave-in', 'wave-out');
@@ -48,13 +56,15 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
+        const letters = hoverWord.querySelectorAll('.wave-text span');
+        
         hoverWord.addEventListener('mouseenter', () => {
-            updateAnimationDelays(true);
+            updateAnimationDelays(letters, true);
             startSlideshow();
         });
         
         hoverWord.addEventListener('mouseleave', () => {
-            updateAnimationDelays(false);
+            updateAnimationDelays(letters, false);
             stopSlideshow();
         });
         
