@@ -1,78 +1,57 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener('DOMContentLoaded', () => {
     const hoverContainers = document.querySelectorAll('.hover-container');
-    
+
     hoverContainers.forEach(container => {
         const hoverImage = container.querySelector('.hover-image');
         if (!hoverImage) return;
-        
-        const type = hoverImage.getAttribute('data-type');
+
+        const type = hoverImage.dataset.type;
+        let imageElement = document.createElement('img');
+        hoverImage.appendChild(imageElement);
+
         if (type === 'images') {
-            const images = hoverImage.getAttribute('data-images').split(',');
+            const images = hoverImage.dataset.images.split(',');
             let currentIndex = 0;
-            const imgElement = document.createElement('img');
-            imgElement.src = images[0];
-            hoverImage.appendChild(imgElement);
+            let interval;
 
-            let intervalId;
-
-            container.addEventListener('mousemove', (e) => {
-                hoverImage.style.display = 'block';
-                hoverImage.style.left = e.pageX + 20 + 'px';
-                hoverImage.style.top = e.pageY + 20 + 'px';
-                hoverImage.style.opacity = 1;
-            });
+            imageElement.src = images[0];
 
             container.addEventListener('mouseenter', () => {
-                intervalId = setInterval(() => {
+                interval = setInterval(() => {
                     currentIndex = (currentIndex + 1) % images.length;
-                    imgElement.src = images[currentIndex];
+                    imageElement.src = images[currentIndex];
                 }, 2000);
             });
 
             container.addEventListener('mouseleave', () => {
-                hoverImage.style.display = 'none';
-                hoverImage.style.opacity = 0;
-                clearInterval(intervalId);
+                clearInterval(interval);
                 currentIndex = 0;
-                imgElement.src = images[0];
+                imageElement.src = images[0];
             });
         } else if (type === 'image') {
-            const imageUrl = hoverImage.getAttribute('data-image');
-            const imgElement = document.createElement('img');
-            imgElement.src = imageUrl;
-            hoverImage.appendChild(imgElement);
-
-            container.addEventListener('mousemove', (e) => {
-                hoverImage.style.display = 'block';
-                hoverImage.style.left = e.pageX + 20 + 'px';
-                hoverImage.style.top = e.pageY + 20 + 'px';
-                hoverImage.style.opacity = 1;
-            });
-
-            container.addEventListener('mouseleave', () => {
-                hoverImage.style.display = 'none';
-                hoverImage.style.opacity = 0;
-            });
+            imageElement.src = hoverImage.dataset.image;
         } else if (type === 'video') {
-            const videoUrl = hoverImage.getAttribute('data-video');
+            hoverImage.removeChild(imageElement);
             const videoElement = document.createElement('video');
-            videoElement.src = videoUrl;
+            videoElement.src = hoverImage.dataset.video;
             videoElement.autoplay = true;
             videoElement.loop = true;
             videoElement.muted = true;
             hoverImage.appendChild(videoElement);
-
-            container.addEventListener('mousemove', (e) => {
-                hoverImage.style.display = 'block';
-                hoverImage.style.left = e.pageX + 20 + 'px';
-                hoverImage.style.top = e.pageY + 20 + 'px';
-                hoverImage.style.opacity = 1;
-            });
-
-            container.addEventListener('mouseleave', () => {
-                hoverImage.style.display = 'none';
-                hoverImage.style.opacity = 0;
-            });
         }
+
+        container.addEventListener('mousemove', (e) => {
+            const rect = container.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            hoverImage.style.left = `${e.pageX + 20}px`;
+            hoverImage.style.top = `${e.pageY + 20}px`;
+            hoverImage.classList.add('visible');
+        });
+
+        container.addEventListener('mouseleave', () => {
+            hoverImage.classList.remove('visible');
+        });
     });
 });
