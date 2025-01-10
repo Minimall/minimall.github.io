@@ -1,11 +1,7 @@
 
 document.addEventListener('DOMContentLoaded', () => {
-    const hoverWord = document.querySelector('.hover-word');
-    const hoverImage = document.querySelector('.hover-image');
+    const hoverWords = document.querySelectorAll('.hover-word');
     const letters = document.querySelectorAll('.wave-text span');
-    const images = ['kharkiv1.jpg', 'kharkiv2.jpg', 'kharkiv3.jpg'];
-    let currentImageIndex = 0;
-    let slideInterval;
 
     function updateAnimationDelays(isHovering) {
         letters.forEach((letter, index) => {
@@ -16,39 +12,52 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function updateImagePosition(e) {
+    function updateImagePosition(e, hoverImage) {
         if (hoverImage) {
             hoverImage.style.left = e.pageX + 20 + 'px';
             hoverImage.style.top = e.pageY + 20 + 'px';
         }
     }
 
-    function startSlideshow() {
-        slideInterval = setInterval(() => {
-            currentImageIndex = (currentImageIndex + 1) % images.length;
-            if (hoverImage) {
-                hoverImage.src = `images/${images[currentImageIndex]}`;
-            }
-        }, 800);
-    }
+    hoverWords.forEach(hoverWord => {
+        const hoverImage = hoverWord.querySelector('.hover-image');
+        const images = hoverWord.dataset.images ? hoverWord.dataset.images.split(',') : [];
+        let currentImageIndex = 0;
+        let slideInterval;
 
-    function stopSlideshow() {
-        clearInterval(slideInterval);
-        currentImageIndex = 0;
-        if (hoverImage) {
-            hoverImage.src = `images/${images[currentImageIndex]}`;
+        if (images.length > 0 && hoverImage) {
+            hoverImage.src = `images/${images[0]}`;
         }
-    }
 
-    hoverWord.addEventListener('mouseenter', () => {
-        updateAnimationDelays(true);
-        startSlideshow();
+        function startSlideshow() {
+            if (images.length <= 1) return;
+            
+            slideInterval = setInterval(() => {
+                currentImageIndex = (currentImageIndex + 1) % images.length;
+                if (hoverImage) {
+                    hoverImage.src = `images/${images[currentImageIndex]}`;
+                }
+            }, 800);
+        }
+
+        function stopSlideshow() {
+            clearInterval(slideInterval);
+            currentImageIndex = 0;
+            if (hoverImage && images.length > 0) {
+                hoverImage.src = `images/${images[0]}`;
+            }
+        }
+
+        hoverWord.addEventListener('mouseenter', () => {
+            updateAnimationDelays(true);
+            startSlideshow();
+        });
+        
+        hoverWord.addEventListener('mouseleave', () => {
+            updateAnimationDelays(false);
+            stopSlideshow();
+        });
+        
+        hoverWord.addEventListener('mousemove', (e) => updateImagePosition(e, hoverImage));
     });
-    
-    hoverWord.addEventListener('mouseleave', () => {
-        updateAnimationDelays(false);
-        stopSlideshow();
-    });
-    
-    hoverWord.addEventListener('mousemove', updateImagePosition);
 });
