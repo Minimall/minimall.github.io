@@ -40,17 +40,19 @@ document.addEventListener('DOMContentLoaded', () => {
         function startSlideshow() {
             if (images.length <= 1) return;
             
-            // Show first image immediately
+            // Reset and show first image immediately
+            currentImageIndex = 0;
             if (hoverImage) {
-                currentImageIndex = 0;
-                hoverImage.style.opacity = '1';
+                console.log('Starting slideshow with image:', images[currentImageIndex]);
                 hoverImage.src = `images/${images[currentImageIndex]}`;
+                hoverImage.style.opacity = '1';
             }
             
             // Start cycling through images
             slideInterval = setInterval(() => {
+                currentImageIndex = (currentImageIndex + 1) % images.length;
                 if (hoverImage) {
-                    currentImageIndex = (currentImageIndex + 1) % images.length;
+                    console.log('Switching to image:', images[currentImageIndex]);
                     hoverImage.src = `images/${images[currentImageIndex]}`;
                 }
             }, 900);
@@ -62,8 +64,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 slideInterval = null;
             }
             currentImageIndex = 0;
-            if (hoverImage && images.length > 0) {
+            if (hoverImage) {
                 hoverImage.src = `images/${images[0]}`;
+                console.log('Slideshow stopped, reset to:', images[0]);
             }
         }
 
