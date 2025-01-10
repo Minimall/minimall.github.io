@@ -1,5 +1,18 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Preload images
+    function preloadImages(imageUrls) {
+        imageUrls.forEach(url => {
+            const img = new Image();
+            img.src = `images/${url}`;
+        });
+    }
+    
     const hoverWords = document.querySelectorAll('.hover-word');
+    // Preload all hover word images
+    hoverWords.forEach(word => {
+        const images = word.dataset.images?.split(',') || [];
+        preloadImages(images);
+    });
 
     // Split text into letters for wave animation
     hoverWords.forEach(word => {
@@ -54,13 +67,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         hoverWord.addEventListener('mouseleave', () => {
             updateWaveAnimation(letters, false);
-            if (intervalId) {
-                clearInterval(intervalId);
-                intervalId = null;
-            }
+            clearInterval(intervalId);
+            intervalId = null;
             if (hoverImage) {
                 hoverImage.style.opacity = '0';
                 currentIndex = -1;
+                hoverImage.src = '';
             }
         });
 
