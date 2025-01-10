@@ -64,7 +64,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const letters = hoverWord.querySelectorAll('.wave-text span');
 
         hoverWord.addEventListener('mouseenter', () => {
-            hoveredSpans.add(hoverWord.querySelector('.wave-text'));
+            const waveText = hoverWord.querySelector('.wave-text');
+            if (!hoveredSpans.has(waveText)) {
+                hoveredSpans.add(waveText);
+                intervalIncrease += 15; // Add 15% for each new hover
+            }
             updateWaveAnimation(letters, true);
             if (images.length && hoverImage) {
                 currentIndex = 0;
@@ -91,6 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Random wave animation feature
     let lastUsedParentIndex = -1;
     const hoveredSpans = new Set();
+    let intervalIncrease = 0; // Track total interval increase
     
     function triggerRandomWave() {
         const mainText = document.querySelector('.main-text');
@@ -135,8 +140,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }, spans.length * 50 + 300);
         });
 
-        // Schedule next random wave with 5-8 second interval
-        setTimeout(triggerRandomWave, Math.random() * 3000 + 5000);
+        // Schedule next random wave with increased interval based on hover count
+        const baseInterval = Math.random() * 3000 + 5000;
+        const adjustedInterval = baseInterval * (1 + intervalIncrease / 100);
+        setTimeout(triggerRandomWave, adjustedInterval);
     }
 
     // Start the random wave effect after a delay
