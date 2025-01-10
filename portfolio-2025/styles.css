@@ -21,6 +21,8 @@ body {
     padding: 5vh 5vw;
     max-width: var(--max-width);
     margin: 0 auto;
+    display: flex;
+    flex-direction: column;
 }
 
 nav {
@@ -58,6 +60,9 @@ nav a:hover {
     font-size: 1.1rem;
     margin-bottom: calc(var(--spacing) * 4);
     max-width: 32rem;
+    margin-right: calc(var(--spacing) * 2);
+    position: relative;
+    width: fit-content;
 }
 
 .main-text p {
