@@ -21,6 +21,8 @@ body {
     padding: 5vh 5vw;
     max-width: var(--max-width);
     margin: 0 auto;
+    display: flex;
+    flex-direction: column;
 }
 
 nav {
@@ -58,10 +60,27 @@ nav a:hover {
     font-size: 1.1rem;
     margin-bottom: calc(var(--spacing) * 4);
     max-width: 32rem;
+    margin-right: calc(var(--spacing) * 2);
+    position: relative;
+    width: fit-content;
 }
 
 .main-text p {
     margin-bottom: var(--spacing);
+    white-space: nowrap;
+    width: min-content;
+    max-width: 100%;
+}
+
+.main-text p::after {
+    content: '';
+    display: block;
+    width: 100%;
+    height: 0;
+}
+
+.main-text br {
+    display: none;
 }
 
 .section {
@@ -158,12 +177,16 @@ nav a:hover {
 
 .wave-text {
     display: inline-block;
+    text-align: left;
 }
 
 .wave-text span {
     display: inline-block;
     font-variation-settings: 'wght' 400;
     transition: font-variation-settings 0.3s ease;
+    transform-origin: left center;
+    text-align: left;
+    position: relative;
 }
 
 .wave-text span.wave-in {
@@ -175,19 +198,20 @@ nav a:hover {
 }
 
 .hover-image {
-    display: block;
+    opacity: 0;
+    visibility: hidden;
     position: fixed;
     z-index: 1000;
     pointer-events: none;
-    opacity: 0;
+    transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
     height: 480px;
     width: auto;
     object-fit: contain;
-    transition: none;
 }
 
 .hover-word:hover .hover-image {
     opacity: 1;
+    visibility: visible;
 }
 
 .marquee-container {
