@@ -168,14 +168,15 @@ nav a:hover {
     pointer-events: none;
     opacity: 0;
     transition: opacity 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: none;
+    width: 240px;
+    height: 160px;
     color: #666;
     font-family: "Inter", sans-serif;
     z-index: 1000;
     border-radius: 4px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
 }
 
 .hover-image img, .hover-image video {
@@ -183,6 +184,7 @@ nav a:hover {
     height: 100%;
     object-fit: cover;
     border-radius: 4px;
+    display: block;
 }
 
 .marquee-container {
