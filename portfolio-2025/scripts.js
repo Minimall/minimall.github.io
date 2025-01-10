@@ -48,17 +48,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.log('Starting image sequence');
                 hoverImage.src = `images/${images[0]}?t=${Date.now()}`;
                 hoverImage.style.opacity = '1';
-                intervalId = setInterval(showNextImage, 800);
+                intervalId = setInterval(showNextImage, 600);
             }
         });
 
         hoverWord.addEventListener('mouseleave', () => {
             updateWaveAnimation(letters, false);
-            clearInterval(intervalId);
-            intervalId = null;
+            if (intervalId) {
+                clearInterval(intervalId);
+                intervalId = null;
+            }
             if (hoverImage) {
                 hoverImage.style.opacity = '0';
-                currentIndex = 0;
+                currentIndex = -1;
             }
         });
 
