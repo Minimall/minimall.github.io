@@ -86,4 +86,46 @@ document.addEventListener('DOMContentLoaded', () => {
 
         hoverWord.addEventListener('mousemove', updateImagePosition);
     });
+
+    // Random wave animation feature
+    function triggerRandomWave() {
+        const mainText = document.querySelector('.main-text');
+        const allWaveSpans = mainText.querySelectorAll('.wave-text span');
+        const randomSpanSet = Array.from(allWaveSpans).reduce((acc, span) => {
+            const parent = span.closest('.wave-text');
+            if (!acc.has(parent)) {
+                acc.set(parent, []);
+            }
+            acc.get(parent).push(span);
+            return acc;
+        }, new Map());
+
+        const randomParent = Array.from(randomSpanSet.keys())[Math.floor(Math.random() * randomSpanSet.size)];
+        const spans = randomSpanSet.get(randomParent);
+
+        spans.forEach((span, index) => {
+            // Wave in
+            setTimeout(() => {
+                span.style.color = '#8A2BE2';
+                span.classList.add('wave-in');
+            }, index * 50);
+
+            // Hold
+            setTimeout(() => {
+                // Wave out
+                spans.forEach((s, i) => {
+                    setTimeout(() => {
+                        s.classList.remove('wave-in');
+                        s.style.color = '';
+                    }, i * 50);
+                });
+            }, spans.length * 50 + 300);
+        });
+
+        // Schedule next random wave
+        setTimeout(triggerRandomWave, Math.random() * 15000 + 10000); // Random interval between 10-25 seconds
+    }
+
+    // Start the random wave effect after a delay
+    setTimeout(triggerRandomWave, 5000);
 });
