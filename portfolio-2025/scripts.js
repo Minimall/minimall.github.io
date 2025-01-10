@@ -1,8 +1,7 @@
-
 document.addEventListener('DOMContentLoaded', () => {
     const hoverWords = document.querySelectorAll('.hover-word');
 
-    // Split text into letters for each hover word
+    // Split text into letters for wave animation
     hoverWords.forEach(word => {
         const waveText = word.querySelector('.wave-text');
         const text = word.dataset.text || waveText.textContent;
@@ -11,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ).join('');
     });
 
-    function updateAnimationDelays(letters, isHovering) {
+    function updateWaveAnimation(letters, isHovering) {
         letters.forEach((letter, index) => {
             setTimeout(() => {
                 letter.classList.remove('wave-in', 'wave-out');
@@ -20,58 +19,47 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function updateImagePosition(e, hoverImage) {
-        if (hoverImage) {
-            hoverImage.style.left = e.pageX + 20 + 'px';
-            hoverImage.style.top = e.pageY + 20 + 'px';
-        }
-    }
-
     hoverWords.forEach(hoverWord => {
         const hoverImage = hoverWord.querySelector('.hover-image');
-        const imageList = hoverWord.dataset.images ? hoverWord.dataset.images.split(',') : [];
+        const images = hoverWord.dataset.images?.split(',') || [];
         let currentIndex = 0;
-        let timer = null;
+        let intervalId = null;
 
-        if (imageList.length > 0 && hoverImage) {
-            hoverImage.src = `images/${imageList[0]}`;
+        function updateImagePosition(e) {
+            if (!hoverImage) return;
+            hoverImage.style.left = `${e.pageX + 20}px`;
+            hoverImage.style.top = `${e.pageY + 20}px`;
         }
 
         function showNextImage() {
             hoverImage.style.opacity = '0';
             setTimeout(() => {
-                currentIndex = (currentIndex + 1) % imageList.length;
-                hoverImage.src = `images/${imageList[currentIndex]}`;
+                currentIndex = (currentIndex + 1) % images.length;
+                hoverImage.src = `images/${images[currentIndex]}`;
                 hoverImage.style.opacity = '1';
-            }, 50);
-        }
-
-        function handleHoverStart() {
-            if (imageList.length <= 1) return;
-            currentIndex = 0;
-            hoverImage.src = `images/${imageList[0]}`;
-            hoverImage.style.opacity = '1';
-            timer = setInterval(showNextImage, 800);
-        }
-
-        function handleHoverEnd() {
-            clearInterval(timer);
-            currentIndex = 0;
-            hoverImage.src = `images/${imageList[0]}`;
+            }, 150);
         }
 
         const letters = hoverWord.querySelectorAll('.wave-text span');
-        
+
         hoverWord.addEventListener('mouseenter', () => {
-            updateAnimationDelays(letters, true);
-            handleHoverStart();
+            updateWaveAnimation(letters, true);
+            if (images.length && hoverImage) {
+                currentIndex = 0;
+                hoverImage.src = `images/${images[0]}`;
+                hoverImage.style.opacity = '1';
+                intervalId = setInterval(showNextImage, 800);
+            }
         });
-        
+
         hoverWord.addEventListener('mouseleave', () => {
-            updateAnimationDelays(letters, false);
-            handleHoverEnd();
+            updateWaveAnimation(letters, false);
+            clearInterval(intervalId);
+            if (hoverImage) {
+                hoverImage.style.opacity = '0';
+            }
         });
-        
-        hoverWord.addEventListener('mousemove', (e) => updateImagePosition(e, hoverImage));
+
+        hoverWord.addEventListener('mousemove', updateImagePosition);
     });
 });
