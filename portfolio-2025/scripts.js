@@ -57,9 +57,8 @@ document.addEventListener('DOMContentLoaded', () => {
         hoverWord.addEventListener('mouseenter', () => {
             updateWaveAnimation(letters, true);
             if (images.length && hoverImage) {
-                currentIndex = 0;
-                console.log('Starting image sequence');
-                hoverImage.src = `images/${images[0]}?t=${Date.now()}`;
+                currentIndex = -1;
+                showNextImage();
                 hoverImage.style.opacity = '1';
                 intervalId = setInterval(showNextImage, 600);
             }
@@ -67,12 +66,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         hoverWord.addEventListener('mouseleave', () => {
             updateWaveAnimation(letters, false);
-            clearInterval(intervalId);
-            intervalId = null;
+            if (intervalId) {
+                clearInterval(intervalId);
+                intervalId = null;
+            }
             if (hoverImage) {
                 hoverImage.style.opacity = '0';
                 currentIndex = -1;
-                hoverImage.src = '';
             }
         });
 
