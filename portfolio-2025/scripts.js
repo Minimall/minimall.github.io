@@ -50,14 +50,14 @@ document.addEventListener('DOMContentLoaded', () => {
             hoverImage.style.opacity = '1';
 
             // Set timeout to hide after 600ms
-            setTimeout(() => {
+            hideTimeout = setTimeout(() => {
                 hoverImage.style.opacity = '0';
 
                 // Prepare next image
                 currentIndex = (currentIndex + 1) % images.length;
 
                 // Schedule next cycle
-                setTimeout(cycleImage, 0);
+                cycleTimeout = setTimeout(cycleImage, 0);
             }, 600);
         }
 
@@ -71,9 +71,14 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
+        let cycleTimeout = null;
+        let hideTimeout = null;
+
         hoverWord.addEventListener('mouseleave', () => {
             updateWaveAnimation(letters, false);
             if (hoverImage) {
+                if (cycleTimeout) clearTimeout(cycleTimeout);
+                if (hideTimeout) clearTimeout(hideTimeout);
                 hoverImage.style.opacity = '0';
                 currentIndex = 0;
             }
