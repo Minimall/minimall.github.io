@@ -33,14 +33,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         function showNextImage() {
             console.log(`Switching from image ${currentIndex + 1}`);
-            hoverImage.style.opacity = '0';
-            setTimeout(() => {
-                currentIndex = (currentIndex + 1) % images.length;
-                const timestamp = Date.now();
-                hoverImage.src = `images/${images[currentIndex]}?t=${timestamp}`;
-                console.log(`Switched to image ${currentIndex + 1}`);
-                hoverImage.style.opacity = '1';
-            }, 150);
+            currentIndex = (currentIndex + 1) % images.length;
+            const timestamp = Date.now();
+            hoverImage.src = `images/${images[currentIndex]}?t=${timestamp}`;
+            console.log(`Switched to image ${currentIndex + 1}`);
         }
 
         const letters = hoverWord.querySelectorAll('.wave-text span');
