@@ -67,6 +67,20 @@ nav a:hover {
 
 .main-text p {
     margin-bottom: var(--spacing);
+    white-space: nowrap;
+    width: min-content;
+    max-width: 100%;
+}
+
+.main-text p::after {
+    content: '';
+    display: block;
+    width: 100%;
+    height: 0;
+}
+
+.main-text br {
+    display: none;
 }
 
 .section {
