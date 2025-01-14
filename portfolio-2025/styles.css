@@ -164,6 +164,7 @@ nav a:hover {
 
 .hover-word {
     cursor: pointer;
+    position: relative;
 }
 
 .wave-text {
@@ -194,7 +195,7 @@ nav a:hover {
 
 .hover-image {
     opacity: 0;
-    position: fixed;
+    position: absolute;
     z-index: 1000;
     pointer-events: none;
     height: 480px;

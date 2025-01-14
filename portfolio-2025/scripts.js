@@ -40,8 +40,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         function updateImagePosition(e) {
             if (!hoverImage) return;
-            hoverImage.style.left = `${e.clientX - hoverImage.offsetWidth/2}px`;
-            hoverImage.style.top = `${e.clientY}px`;
+            const rect = e.currentTarget.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            hoverImage.style.left = `${x - hoverImage.offsetWidth/2}px`;
+            hoverImage.style.top = `${y}px`;
         }
 
         function cycleImage() {
