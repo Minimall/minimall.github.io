@@ -209,10 +209,11 @@ nav a:hover {
     max-width: 400px;
     object-fit: contain;
     transition: opacity 0.2s ease;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -100%);
     will-change: transform;
     top: var(--mouse-y);
     left: var(--mouse-x);
+    margin-top: -20px;
 }
 
 .marquee-container {
