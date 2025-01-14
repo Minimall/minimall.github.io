@@ -195,15 +195,15 @@ nav a:hover {
 
 .hover-image {
     opacity: 0;
-    position: fixed;
+    position: absolute;
     z-index: 1000;
     pointer-events: none;
     height: 240px;
     width: auto;
+    max-width: 400px;
     object-fit: contain;
     transition: opacity 0.2s ease;
-    will-change: transform, opacity;
-    transform-origin: center;
+    will-change: left, top;
 }
 
 .hover-word {

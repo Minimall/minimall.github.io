@@ -62,9 +62,9 @@ class PortfolioApp {
         const hoverImage = hoverWord.querySelector('.hover-image');
         if (!hoverImage) return;
         
-        const x = e.clientX;
-        const y = e.clientY + 20;
-        hoverImage.style.transform = `translate(${x}px, ${y}px) translate(-50%, 0)`;
+        hoverImage.style.left = `${e.pageX}px`;
+        hoverImage.style.top = `${e.pageY + 20}px`;
+        hoverImage.style.transform = 'translateX(-50%)';
     }
 
     // Handle scroll events
