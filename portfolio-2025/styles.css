@@ -202,8 +202,7 @@ nav a:hover {
     width: auto;
     object-fit: contain;
     transition: none;
-    will-change: opacity, transform;
-    transform: translate(-50%, 20px);
+    will-change: opacity;
 }
 
 .marquee-container {
