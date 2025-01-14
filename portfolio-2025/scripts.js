@@ -55,8 +55,9 @@ class PortfolioApp {
     }
 
     updateMousePosition(e) {
-        const x = e.clientX;
-        const y = e.clientY;
+        const rect = e.target.closest('.hover-word').getBoundingClientRect();
+        const x = rect.left + rect.width / 2;
+        const y = rect.top;
         document.documentElement.style.setProperty('--mouse-x', `${x}px`);
         document.documentElement.style.setProperty('--mouse-y', `${y}px`);
     }
