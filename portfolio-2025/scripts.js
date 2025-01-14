@@ -55,8 +55,10 @@ class PortfolioApp {
     }
 
     updateMousePosition(e) {
-        document.documentElement.style.setProperty('--mouse-x', `${e.clientX}px`);
-        document.documentElement.style.setProperty('--mouse-y', `${e.clientY}px`);
+        const scrollX = window.scrollX || window.pageXOffset;
+        const scrollY = window.scrollY || window.pageYOffset;
+        document.documentElement.style.setProperty('--mouse-x', `${e.clientX + scrollX}px`);
+        document.documentElement.style.setProperty('--mouse-y', `${e.clientY + scrollY}px`);
     }
 
     setupImageCycle(hoverWord) {
