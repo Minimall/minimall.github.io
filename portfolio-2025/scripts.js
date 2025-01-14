@@ -45,8 +45,8 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Position image centered horizontally under cursor
             const left = e.clientX - (imageWidth / 2);
-            // Position image top edge at cursor with small offset
-            const top = e.clientY + 20;
+            // Position image top edge at cursor with small offset, accounting for scroll
+            const top = e.clientY + window.scrollY + 20;
             
             hoverImage.style.left = `${left}px`;
             hoverImage.style.top = `${top}px`;
