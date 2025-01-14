@@ -194,5 +194,8 @@ class PortfolioApp {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    if (performance.navigation.type === 1) {
+        window.location.reload(true);
+    }
     new PortfolioApp();
 });

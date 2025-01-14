@@ -1,3 +1,8 @@
+/* Cache control */
+/* pragma: no-cache */
+/* cache-control: no-cache */
+/* expires: 0 */
+
 :root {
     --spacing: 2rem;
     --max-width: 900px;
