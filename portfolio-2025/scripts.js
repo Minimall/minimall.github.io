@@ -71,15 +71,23 @@ class PortfolioApp {
         let hideTimeout = null;
 
         const cycleImage = () => {
-            if (!images.length) return;
+            if (!images.length) {
+                console.warn('No images specified for hover word:', hoverWord.dataset.text);
+                return;
+            }
 
-            const imagePath = `images/${images[currentIndex]}`;
+            const imagePath = `/portfolio-2025/images/${images[currentIndex]}`;
+            console.log('Loading image:', imagePath);
             const tempImage = new Image();
             tempImage.onload = () => {
+                console.log('Image loaded successfully:', imagePath);
                 hoverImage.src = imagePath;
                 hoverImage.style.opacity = '1';
             };
-            tempImage.onerror = () => console.error(`Failed to load image: ${imagePath}`);
+            tempImage.onerror = () => {
+                console.error(`Failed to load image: ${imagePath}`);
+                hoverImage.style.opacity = '0';
+            };
             tempImage.src = imagePath;
 
             hideTimeout = setTimeout(() => {
