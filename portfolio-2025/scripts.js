@@ -58,20 +58,10 @@ class PortfolioApp {
     }
 
     // Handle image position updates
-    handleImagePosition(hoverWord, e) {
+    handleImagePosition(hoverWord) {
         const hoverImage = hoverWord.querySelector('.hover-image');
         if (!hoverImage) return;
-
-        const rect = hoverWord.getBoundingClientRect();
-        const cursorToWordTop = e.clientY - rect.top;
-        const shouldShowBelow = cursorToWordTop < rect.height / 2;
-
-        requestAnimationFrame(() => {
-            const yOffset = shouldShowBelow ? 20 : -hoverImage.offsetHeight - 20;
-            const x = e.clientX;
-            const y = e.clientY + yOffset;
-            hoverImage.style.transform = `translate(${x}px, ${y}px) translateX(-50%)`;
-        });
+        // Image positioning is now handled by CSS
     }
 
     // Handle scroll events
