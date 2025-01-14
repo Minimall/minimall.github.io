@@ -38,14 +38,7 @@ class PortfolioApp {
     }
 
     preloadAllImages() {
-        this.hoverWords.forEach(word => {
-            const images = word.dataset.images?.split(',') || [];
-            images.forEach(url => {
-                const img = new Image();
-                img.onerror = () => console.error(`Failed to load image: ${url}`);
-                img.src = `images/${url}`;
-            });
-        });
+        // Removed image preloading
     }
 
     setupTextAnimations() {
@@ -71,49 +64,7 @@ class PortfolioApp {
     }
 
     setupImageCycle(hoverWord) {
-        const hoverImage = hoverWord.querySelector('.hover-image');
-        if (!hoverImage) return { start: () => {}, stop: () => {} };
-
-        const images = hoverWord.dataset.images?.split(',') || [];
-        let currentIndex = 0;
-        let cycleTimeout = null;
-        let hideTimeout = null;
-
-        const cycleImage = () => {
-            if (!images.length) {
-                console.warn('No images specified for hover word:', hoverWord.dataset.text);
-                return;
-            }
-
-            const imagePath = `images/${images[currentIndex]}`;
-            console.log('Loading image:', imagePath);
-            const tempImage = new Image();
-            tempImage.onload = () => {
-                console.log('Image loaded successfully:', imagePath);
-                hoverImage.src = imagePath;
-                hoverImage.style.opacity = '1';
-            };
-            tempImage.onerror = () => {
-                console.error(`Failed to load image: ${imagePath}`);
-                hoverImage.style.opacity = '0';
-            };
-            tempImage.src = imagePath;
-
-            hideTimeout = setTimeout(() => {
-                hoverImage.style.opacity = '0';
-                currentIndex = (currentIndex + 1) % images.length;
-                cycleTimeout = setTimeout(cycleImage, 0);
-            }, 600);
-        };
-
-        return {
-            start: () => cycleImage(),
-            stop: () => {
-                clearTimeout(cycleTimeout);
-                clearTimeout(hideTimeout);
-                hoverImage.style.opacity = '0';
-            }
-        };
+        return { start: () => {}, stop: () => {} };
     }
 
     updateWaveAnimation(letters, isHovering) {
