@@ -41,12 +41,27 @@ document.addEventListener('DOMContentLoaded', () => {
         function updateImagePosition(e) {
             if (!hoverImage) return;
             
-            const mouseX = e.clientX;
-            const mouseY = e.clientY;
+            const mouseX = e.clientX + window.scrollX;
+            const mouseY = e.clientY + window.scrollY;
             
+            hoverImage.style.position = 'absolute';
             hoverImage.style.left = `${mouseX}px`;
             hoverImage.style.top = `${mouseY}px`;
         }
+
+        // Update position on scroll
+        window.addEventListener('scroll', () => {
+            const lastEvent = hoverWord.lastMouseEvent;
+            if (lastEvent) {
+                updateImagePosition(lastEvent);
+            }
+        });
+
+        // Store the last mouse event
+        hoverWord.addEventListener('mousemove', (e) => {
+            hoverWord.lastMouseEvent = e;
+            updateImagePosition(e);
+        });
 
         function cycleImage() {
             // Show image
