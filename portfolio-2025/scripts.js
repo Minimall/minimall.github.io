@@ -58,10 +58,13 @@ class PortfolioApp {
     }
 
     // Handle image position updates
-    handleImagePosition(hoverWord) {
+    handleImagePosition(hoverWord, e) {
         const hoverImage = hoverWord.querySelector('.hover-image');
         if (!hoverImage) return;
-        // Image positioning is now handled by CSS
+        
+        const x = e.clientX;
+        const y = e.clientY + 20;
+        hoverImage.style.transform = `translate(${x}px, ${y}px) translate(-50%, 0)`;
     }
 
     // Handle scroll events
