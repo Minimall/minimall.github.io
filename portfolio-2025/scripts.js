@@ -55,7 +55,10 @@ class PortfolioApp {
     }
 
     updateMousePosition(e) {
-        const hoverWord = e.target.closest('.hover-word');
+        const target = e.target;
+        if (!target) return;
+        
+        const hoverWord = target.closest('.hover-word');
         if (!hoverWord) return;
         
         const rect = hoverWord.getBoundingClientRect();
