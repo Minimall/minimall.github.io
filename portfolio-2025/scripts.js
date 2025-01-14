@@ -63,7 +63,12 @@ class PortfolioApp {
         if (!hoverImage) return;
 
         requestAnimationFrame(() => {
-            hoverImage.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translateX(-50%)`;
+            const viewportHeight = window.innerHeight;
+            const cursorY = e.clientY;
+            const isInUpperHalf = cursorY < viewportHeight / 2;
+            const yOffset = isInUpperHalf ? 20 : -hoverImage.offsetHeight - 20; // 20px padding
+
+            hoverImage.style.transform = `translate(${e.clientX}px, ${e.clientY + yOffset}px) translateX(-50%)`;
         });
     }
 
