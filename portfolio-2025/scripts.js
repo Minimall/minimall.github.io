@@ -1,3 +1,4 @@
+
 class PortfolioApp {
     constructor() {
         this.hoverWords = document.querySelectorAll('.hover-word');
@@ -54,11 +55,10 @@ class PortfolioApp {
     }
 
     updateMousePosition(e) {
-        const images = document.querySelectorAll('.hover-image');
-        images.forEach(img => {
-            img.style.left = `${e.clientX}px`;
-            img.style.top = `${e.clientY}px`;
-        });
+        const scrollX = window.scrollX || window.pageXOffset;
+        const scrollY = window.scrollY || window.pageYOffset;
+        document.documentElement.style.setProperty('--mouse-x', `${e.clientX + scrollX}px`);
+        document.documentElement.style.setProperty('--mouse-y', `${e.clientY + scrollY}px`);
     }
 
     setupImageCycle(hoverWord) {
@@ -72,7 +72,7 @@ class PortfolioApp {
 
         const cycleImage = () => {
             if (!images.length) return;
-            
+
             const imagePath = `images/${images[currentIndex]}`;
             const tempImage = new Image();
             tempImage.onload = () => {
@@ -156,7 +156,7 @@ class PortfolioApp {
 
         const parents = Array.from(randomSpanSet.keys())
             .filter(parent => !this.hoveredSpans.has(parent));
-        
+
         if (!parents.length) return;
 
         let randomParentIndex;
