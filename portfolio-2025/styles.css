@@ -196,7 +196,7 @@ nav a:hover {
 
 .hover-image {
     opacity: 0;
-    position: absolute;
+    position: fixed;
     z-index: 1000;
     pointer-events: none;
     height: 240px;
@@ -204,10 +204,8 @@ nav a:hover {
     max-width: 400px;
     object-fit: contain;
     transition: opacity 0.2s ease;
-    left: var(--mouse-x);
-    top: var(--mouse-y);
-    transform: translate(-50%, 20px);
-    will-change: transform, left, top;
+    transform: translate3d(calc(var(--mouse-x) - 50%), calc(var(--mouse-y) + 20px), 0);
+    will-change: transform;
 }
 
 .marquee-container {
