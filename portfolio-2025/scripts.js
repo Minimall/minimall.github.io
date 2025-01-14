@@ -40,9 +40,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         function updateImagePosition(e) {
             if (!hoverImage) return;
-            const rect = e.currentTarget.getBoundingClientRect();
-            const mouseX = e.clientX;
-            const mouseY = e.clientY;
+            const mouseX = e.pageX;
+            const mouseY = e.pageY;
             
             hoverImage.style.left = `${mouseX}px`;
             hoverImage.style.top = `${mouseY + 20}px`;
