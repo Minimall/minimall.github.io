@@ -144,8 +144,8 @@ nav a:hover {
 }
 
 .current {
-    margin-top: calc(var(--spacing) * 2);
-    padding: calc(var(--spacing) * 2);
+
+    padding: calc(var(--spacing) * 1);
     background: #f8f8f8;
     border-radius: 4px;
 }
@@ -209,7 +209,7 @@ nav a:hover {
     max-width: 400px;
     object-fit: contain;
     transition: opacity 0.2s ease;
-    transform: translate(-50%, 8px);
+    transform: translate(8px);
     will-change: transform;
     top: var(--mouse-y);
     left: var(--mouse-x);
