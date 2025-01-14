@@ -1,4 +1,3 @@
-
 class PortfolioApp {
     constructor() {
         this.hoverWords = document.querySelectorAll('.hover-word');
@@ -6,7 +5,7 @@ class PortfolioApp {
         this.intervalIncrease = 0;
         this.lastUsedParentIndex = -1;
         this.observedElements = new Set();
-        
+
         this.init();
     }
 

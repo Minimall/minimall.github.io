@@ -44,6 +44,10 @@ nav a:hover {
     opacity: 1;
 }
 
+.header {
+    margin-bottom: calc(var(--spacing) * 8);
+}
+
 .headline {
     font-family: "EB Garamond", serif;
     font-weight: 400;
