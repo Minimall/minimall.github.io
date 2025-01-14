@@ -41,13 +41,11 @@ document.addEventListener('DOMContentLoaded', () => {
         function updateImagePosition(e) {
             if (!hoverImage) return;
             
-            const mouseX = e.pageX;
-            const mouseY = e.pageY;
+            const mouseX = e.clientX;
+            const mouseY = e.clientY;
             
-            hoverImage.style.position = 'absolute';
             hoverImage.style.left = `${mouseX}px`;
-            hoverImage.style.top = `${mouseY + 20}px`;
-            hoverImage.style.transform = 'translateX(-50%)';
+            hoverImage.style.top = `${mouseY}px`;
         }
 
         function cycleImage() {
