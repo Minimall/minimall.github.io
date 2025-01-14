@@ -42,18 +42,27 @@ nav a:hover {
     opacity: 1;
 }
 
-.header {
-    margin-bottom: calc(var(--spacing) * 8);
-}
+
 
 .headline {
     font-family: "EB Garamond", serif;
     font-weight: 400;
     font-size: 3.5rem;
     line-height: 1.2;
-    margin-bottom: calc(var(--spacing) * 4);
+    margin-bottom: calc(var(--spacing));
     max-width: 85%;
 }
+
+.subheadline {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 1.35rem;
+    line-height: 1.5;
+    color: #666;
+    max-width: 32rem;
+    margin-bottom: calc(var(--spacing) * 4);
+}
+
 
 .main-text {
     font-size: 1.1rem;
