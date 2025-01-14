@@ -180,8 +180,9 @@ nav a:hover {
 .wave-text span {
     display: inline-block;
     font-variation-settings: 'wght' 400;
-    transition: font-variation-settings 0.3s ease;
+    transition: all 0.3s ease;
     color: #914ce6;
+    will-change: font-variation-settings, color;
 }
 
 @keyframes colorWave {

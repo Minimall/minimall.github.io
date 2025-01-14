@@ -85,7 +85,7 @@ class PortfolioApp {
                 return;
             }
 
-            const imagePath = `/portfolio-2025/images/${images[currentIndex]}`;
+            const imagePath = `images/${images[currentIndex]}`;
             console.log('Loading image:', imagePath);
             const tempImage = new Image();
             tempImage.onload = () => {
