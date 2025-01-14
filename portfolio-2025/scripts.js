@@ -1,29 +1,114 @@
-document.addEventListener('DOMContentLoaded', () => {
-    // Preload images
-    function preloadImages(imageUrls) {
-        imageUrls.forEach(url => {
-            const img = new Image();
-            img.src = `images/${url}`;
+
+// Main application class to handle all functionality
+class PortfolioApp {
+    constructor() {
+        // Core state
+        this.hoverWords = document.querySelectorAll('.hover-word');
+        this.hoveredSpans = new Set();
+        this.intervalIncrease = 0;
+        this.lastUsedParentIndex = -1;
+
+        // Bind methods
+        this.handleScroll = this.throttle(this.handleScroll.bind(this), 16);
+        
+        // Initialize
+        this.init();
+    }
+
+    // Initialize all features
+    init() {
+        this.preloadAllImages();
+        this.setupTextAnimations();
+        this.setupEventListeners();
+        this.startRandomWaveEffect();
+    }
+
+    // Preload all images for hover effects
+    preloadAllImages() {
+        this.hoverWords.forEach(word => {
+            const images = word.dataset.images?.split(',') || [];
+            images.forEach(url => {
+                const img = new Image();
+                img.src = `images/${url}`;
+            });
         });
     }
 
-    const hoverWords = document.querySelectorAll('.hover-word');
-    // Preload all hover word images
-    hoverWords.forEach(word => {
-        const images = word.dataset.images?.split(',') || [];
-        preloadImages(images);
-    });
+    // Setup wave text animations
+    setupTextAnimations() {
+        this.hoverWords.forEach(word => {
+            const waveText = word.querySelector('.wave-text');
+            const text = word.dataset.text || waveText.textContent;
+            waveText.innerHTML = text.split('').map(letter => 
+                `<span>${letter}</span>`
+            ).join('');
+        });
+    }
 
-    // Split text into letters for wave animation
-    hoverWords.forEach(word => {
-        const waveText = word.querySelector('.wave-text');
-        const text = word.dataset.text || waveText.textContent;
-        waveText.innerHTML = text.split('').map(letter => 
-            `<span>${letter}</span>`
-        ).join('');
-    });
+    // Performance utility: Throttle function for scroll events
+    throttle(func, limit) {
+        let inThrottle;
+        return function(...args) {
+            if (!inThrottle) {
+                func.apply(this, args);
+                inThrottle = true;
+                setTimeout(() => inThrottle = false, limit);
+            }
+        };
+    }
 
-    function updateWaveAnimation(letters, isHovering) {
+    // Handle image position updates
+    handleImagePosition(hoverWord, e) {
+        const hoverImage = hoverWord.querySelector('.hover-image');
+        if (!hoverImage) return;
+
+        requestAnimationFrame(() => {
+            hoverImage.style.transform = `translate(${e.pageX}px, ${e.pageY}px) translateX(-50%)`;
+        });
+    }
+
+    // Handle scroll events
+    handleScroll() {
+        this.hoverWords.forEach(word => {
+            if (word.lastMouseEvent) {
+                this.handleImagePosition(word, word.lastMouseEvent);
+            }
+        });
+    }
+
+    // Setup image cycling for hover effects
+    setupImageCycle(hoverWord) {
+        const hoverImage = hoverWord.querySelector('.hover-image');
+        const images = hoverWord.dataset.images?.split(',') || [];
+        let currentIndex = 0;
+        let cycleTimeout = null;
+        let hideTimeout = null;
+
+        const cycleImage = () => {
+            if (!images.length) return;
+            
+            hoverImage.src = `images/${images[currentIndex]}`;
+            hoverImage.style.opacity = '1';
+
+            hideTimeout = setTimeout(() => {
+                hoverImage.style.opacity = '0';
+                currentIndex = (currentIndex + 1) % images.length;
+                cycleTimeout = setTimeout(cycleImage, 0);
+            }, 600);
+        };
+
+        return {
+            start: () => cycleImage(),
+            stop: () => {
+                clearTimeout(cycleTimeout);
+                clearTimeout(hideTimeout);
+                hoverImage.style.opacity = '0';
+            }
+        };
+    }
+
+    // Handle wave animation updates
+    updateWaveAnimation(letters, isHovering) {
         letters.forEach((letter, index) => {
             setTimeout(() => {
                 letter.classList.remove('wave-in', 'wave-out');
@@ -32,143 +117,85 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    hoverWords.forEach(hoverWord => {
-        const hoverImage = hoverWord.querySelector('.hover-image');
-        const images = hoverWord.dataset.images?.split(',') || [];
-        let currentIndex = 0;
-        let intervalId = null;
+    // Setup all event listeners
+    setupEventListeners() {
+        window.addEventListener('scroll', this.handleScroll);
 
-        function updateImagePosition(e) {
-            if (!hoverImage) return;
+        this.hoverWords.forEach(hoverWord => {
+            const letters = hoverWord.querySelectorAll('.wave-text span');
+            const imageCycle = this.setupImageCycle(hoverWord);
 
-            const x = e.pageX;
-            const y = e.pageY;
-
-            requestAnimationFrame(() => {
-                hoverImage.style.transform = `translate(${x}px, ${y}px) translateX(-50%)`;
+            hoverWord.addEventListener('mouseenter', () => {
+                const waveText = hoverWord.querySelector('.wave-text');
+                if (!this.hoveredSpans.has(waveText)) {
+                    this.hoveredSpans.add(waveText);
+                    this.intervalIncrease += 15;
+                }
+                this.updateWaveAnimation(letters, true);
+                imageCycle.start();
             });
-        }
 
-        // Update position on scroll with throttling
-        let ticking = false;
-        window.addEventListener('scroll', () => {
-            if (!ticking && hoverWord.lastMouseEvent) {
-                requestAnimationFrame(() => {
-                    updateImagePosition(hoverWord.lastMouseEvent);
-                    ticking = false;
-                });
-                ticking = true;
-            }
+            hoverWord.addEventListener('mouseleave', () => {
+                this.updateWaveAnimation(letters, false);
+                imageCycle.stop();
+            });
+
+            hoverWord.addEventListener('mousemove', (e) => {
+                hoverWord.lastMouseEvent = e;
+                this.handleImagePosition(hoverWord, e);
+            });
         });
+    }
 
-        // Store the last mouse event
-        hoverWord.addEventListener('mousemove', (e) => {
-            hoverWord.lastMouseEvent = e;
-            updateImagePosition(e);
-        });
-
-        function cycleImage() {
-            // Show image
-            hoverImage.src = `images/${images[currentIndex]}`;
-            hoverImage.style.opacity = '1';
-
-            // Set timeout to hide after 600ms
-            hideTimeout = setTimeout(() => {
-                hoverImage.style.opacity = '0';
-
-                // Prepare next image
-                currentIndex = (currentIndex + 1) % images.length;
-
-                // Schedule next cycle
-                cycleTimeout = setTimeout(cycleImage, 0);
-            }, 600);
-        }
-
-        const letters = hoverWord.querySelectorAll('.wave-text span');
-
-        hoverWord.addEventListener('mouseenter', () => {
-            const waveText = hoverWord.querySelector('.wave-text');
-            if (!hoveredSpans.has(waveText)) {
-                hoveredSpans.add(waveText);
-                intervalIncrease += 15; // Add 15% for each new hover
-            }
-            updateWaveAnimation(letters, true);
-            if (images.length && hoverImage) {
-                currentIndex = 0;
-                cycleImage();
-            }
-        });
-
-        let cycleTimeout = null;
-        let hideTimeout = null;
-
-        hoverWord.addEventListener('mouseleave', () => {
-            updateWaveAnimation(letters, false);
-            if (hoverImage) {
-                if (cycleTimeout) clearTimeout(cycleTimeout);
-                if (hideTimeout) clearTimeout(hideTimeout);
-                hoverImage.style.opacity = '0';
-                currentIndex = 0;
-            }
-        });
-
-        hoverWord.addEventListener('mousemove', updateImagePosition);
-    });
-
-    // Random wave animation feature
-    let lastUsedParentIndex = -1;
-    const hoveredSpans = new Set();
-    let intervalIncrease = 0; // Track total interval increase
-
-    function triggerRandomWave() {
+    // Random wave effect implementation
+    triggerRandomWave() {
         const mainText = document.querySelector('.main-text');
         const allWaveSpans = mainText.querySelectorAll('.wave-text span');
+        
+        // Group spans by their parent elements
         const randomSpanSet = Array.from(allWaveSpans).reduce((acc, span) => {
             const parent = span.closest('.wave-text');
-            if (!acc.has(parent)) {
-                acc.set(parent, []);
-            }
+            if (!acc.has(parent)) acc.set(parent, []);
             acc.get(parent).push(span);
             return acc;
         }, new Map());
 
-        const parents = Array.from(randomSpanSet.keys()).filter(parent => !hoveredSpans.has(parent));
-        if (parents.length === 0) return; // Skip if all spans have been hovered
-        let randomParentIndex;
+        const parents = Array.from(randomSpanSet.keys())
+            .filter(parent => !this.hoveredSpans.has(parent));
+        
+        if (!parents.length) return;
 
-        // Ensure we don't pick the same parent twice in a row
+        // Select random parent, avoiding consecutive repeats
+        let randomParentIndex;
         do {
             randomParentIndex = Math.floor(Math.random() * parents.length);
-        } while (randomParentIndex === lastUsedParentIndex && parents.length > 1);
+        } while (randomParentIndex === this.lastUsedParentIndex && parents.length > 1);
 
-        lastUsedParentIndex = randomParentIndex;
+        this.lastUsedParentIndex = randomParentIndex;
         const spans = randomSpanSet.get(parents[randomParentIndex]);
 
+        // Animate spans
         spans.forEach((span, index) => {
-            // Wave in
+            setTimeout(() => span.classList.add('wave-in'), index * 50);
             setTimeout(() => {
-
-                span.classList.add('wave-in');
-            }, index * 50);
-
-            // Hold
-            setTimeout(() => {
-                // Wave out
-                spans.forEach((s, i) => {
-                    setTimeout(() => {
-                        s.classList.remove('wave-in');
-                        s.style.color = '';
-                    }, i * 50);
-                });
+                span.classList.remove('wave-in');
+                span.style.color = '';
             }, spans.length * 50 + 300);
         });
 
-        // Schedule next random wave with increased interval based on hover count
+        // Schedule next wave
         const baseInterval = Math.random() * 3000 + 5000;
-        const adjustedInterval = baseInterval * (1 + intervalIncrease / 100);
-        setTimeout(triggerRandomWave, adjustedInterval);
+        const adjustedInterval = baseInterval * (1 + this.intervalIncrease / 100);
+        setTimeout(() => this.triggerRandomWave(), adjustedInterval);
     }
 
-    // Start the random wave effect after a delay
-    setTimeout(triggerRandomWave, 5000);
+    // Start the random wave effect
+    startRandomWaveEffect() {
+        setTimeout(() => this.triggerRandomWave(), 5000);
+    }
+}
+
+// Initialize when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+    new PortfolioApp();
 });
