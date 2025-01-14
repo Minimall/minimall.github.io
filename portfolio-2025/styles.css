@@ -211,9 +211,9 @@ nav a:hover {
     transition: opacity 0.2s ease;
     transform: translate(-50%, -100%);
     will-change: transform;
-    top: 0;
+    bottom: 100%;
     left: 50%;
-    margin-top: -20px;
+    margin-bottom: 10px;
 }
 
 .marquee-container {
