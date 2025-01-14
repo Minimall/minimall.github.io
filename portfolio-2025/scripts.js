@@ -62,13 +62,15 @@ class PortfolioApp {
         const hoverImage = hoverWord.querySelector('.hover-image');
         if (!hoverImage) return;
 
-        requestAnimationFrame(() => {
-            const viewportHeight = window.innerHeight;
-            const cursorY = e.clientY;
-            const isInUpperHalf = cursorY < viewportHeight / 2;
-            const yOffset = isInUpperHalf ? 20 : -hoverImage.offsetHeight - 20; // 20px padding
+        const rect = hoverWord.getBoundingClientRect();
+        const cursorToWordTop = e.clientY - rect.top;
+        const shouldShowBelow = cursorToWordTop < rect.height / 2;
 
-            hoverImage.style.transform = `translate(${e.clientX}px, ${e.clientY + yOffset}px) translateX(-50%)`;
+        requestAnimationFrame(() => {
+            const yOffset = shouldShowBelow ? 20 : -hoverImage.offsetHeight - 20;
+            const x = e.clientX;
+            const y = e.clientY + yOffset;
+            hoverImage.style.transform = `translate(${x}px, ${y}px) translateX(-50%)`;
         });
     }
 
