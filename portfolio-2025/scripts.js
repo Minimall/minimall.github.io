@@ -1,4 +1,3 @@
-
 class PortfolioApp {
     constructor() {
         this.hoverWords = document.querySelectorAll('.hover-word');
@@ -55,13 +54,7 @@ class PortfolioApp {
     }
 
     updateMousePosition(e) {
-        const target = e.target;
-        if (!target) return;
-        
-        const hoverWord = target.closest('.hover-word');
-        if (!hoverWord) return;
-        
-        const rect = hoverWord.getBoundingClientRect();
+        const rect = e.target.closest('.hover-word').getBoundingClientRect();
         const x = rect.left + rect.width / 2;
         const y = rect.top;
         document.documentElement.style.setProperty('--mouse-x', `${x}px`);
