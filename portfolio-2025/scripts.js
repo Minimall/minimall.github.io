@@ -40,16 +40,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         function updateImagePosition(e) {
             if (!hoverImage) return;
-            const imageWidth = hoverImage.offsetWidth;
-            const imageHeight = hoverImage.offsetHeight;
+            const rect = e.currentTarget.getBoundingClientRect();
+            const mouseX = e.clientX;
+            const mouseY = e.clientY;
             
-            // Position image centered horizontally under cursor
-            const left = e.clientX - (imageWidth / 2);
-            // Position image top edge at cursor with small offset, accounting for scroll
-            const top = e.clientY + window.scrollY + 20;
-            
-            hoverImage.style.left = `${left}px`;
-            hoverImage.style.top = `${top}px`;
+            hoverImage.style.left = `${mouseX}px`;
+            hoverImage.style.top = `${mouseY + 20}px`;
+            hoverImage.style.transform = 'translateX(-50%)';
         }
 
         function cycleImage() {
