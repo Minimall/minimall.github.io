@@ -34,10 +34,10 @@ nav {
 }
 
 nav a {
-    color: inherit;
+    color: #d199ff;
     text-decoration: none;
     margin-left: var(--spacing);
-    opacity: 0.7;
+    opacity: 1;
 }
 
 nav a:hover {
@@ -45,7 +45,7 @@ nav a:hover {
 }
 
 .header {
-    margin-bottom: calc(var(--spacing) * 8);
+    margin-bottom: calc(var(--spacing) * 2);
 }
 
 .headline {
@@ -53,17 +53,18 @@ nav a:hover {
     font-weight: 400;
     font-size: 3.5rem;
     line-height: 1.2;
-    margin-bottom: calc(var(--spacing));
+    margin-bottom: calc(var(--spacing) * 2);
     max-width: 85%;
 }
 
 .subheadline {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Geist Mono', sans-serif;
     font-weight: 400;
     font-size: 1.35rem;
     line-height: 1.5;
     color: #666;
     max-width: 32rem;
+    margin-top: calc(var(--spacing) * 4);
     margin-bottom: calc(var(--spacing) * 4);
 }
 
@@ -143,7 +144,7 @@ nav a:hover {
 }
 
 .current {
-    margin-top: calc(var(--spacing) * 6);
+    margin-top: calc(var(--spacing) * 2);
     padding: calc(var(--spacing) * 2);
     background: #f8f8f8;
     border-radius: 4px;
@@ -180,7 +181,7 @@ nav a:hover {
     display: inline-block;
     font-variation-settings: 'wght' 400;
     transition: font-variation-settings 0.3s ease;
-    color: #4A148C;
+    color: #914ce6;
 }
 
 @keyframes colorWave {
@@ -203,7 +204,7 @@ nav a:hover {
     position: fixed;
     z-index: 1000;
     pointer-events: none;
-    height: 240px;
+    height: 480px;
     width: auto;
     max-width: 400px;
     object-fit: contain;
