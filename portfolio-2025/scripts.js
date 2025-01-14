@@ -40,20 +40,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
         function updateImagePosition(e) {
             if (!hoverImage) return;
-            
-            const mouseX = e.clientX + window.scrollX;
-            const mouseY = e.clientY + window.scrollY;
-            
-            hoverImage.style.position = 'absolute';
-            hoverImage.style.left = `${mouseX}px`;
-            hoverImage.style.top = `${mouseY}px`;
+
+            const x = e.pageX;
+            const y = e.pageY;
+
+            requestAnimationFrame(() => {
+                hoverImage.style.transform = `translate(${x}px, ${y}px) translateX(-50%)`;
+            });
         }
 
-        // Update position on scroll
+        // Update position on scroll with throttling
+        let ticking = false;
         window.addEventListener('scroll', () => {
-            const lastEvent = hoverWord.lastMouseEvent;
-            if (lastEvent) {
-                updateImagePosition(lastEvent);
+            if (!ticking && hoverWord.lastMouseEvent) {
+                requestAnimationFrame(() => {
+                    updateImagePosition(hoverWord.lastMouseEvent);
+                    ticking = false;
+                });
+                ticking = true;
             }
         });
 
@@ -115,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let lastUsedParentIndex = -1;
     const hoveredSpans = new Set();
     let intervalIncrease = 0; // Track total interval increase
-    
+
     function triggerRandomWave() {
         const mainText = document.querySelector('.main-text');
         const allWaveSpans = mainText.querySelectorAll('.wave-text span');
@@ -131,19 +135,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const parents = Array.from(randomSpanSet.keys()).filter(parent => !hoveredSpans.has(parent));
         if (parents.length === 0) return; // Skip if all spans have been hovered
         let randomParentIndex;
-        
+
         // Ensure we don't pick the same parent twice in a row
         do {
             randomParentIndex = Math.floor(Math.random() * parents.length);
         } while (randomParentIndex === lastUsedParentIndex && parents.length > 1);
-        
+
         lastUsedParentIndex = randomParentIndex;
         const spans = randomSpanSet.get(parents[randomParentIndex]);
 
         spans.forEach((span, index) => {
             // Wave in
             setTimeout(() => {
-                
+
                 span.classList.add('wave-in');
             }, index * 50);
 
