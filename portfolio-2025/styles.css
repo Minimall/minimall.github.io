@@ -198,21 +198,22 @@ nav a:hover {
     position: absolute;
     z-index: 1000;
     pointer-events: none;
-    height: 320px;
+    height: 240px;
     width: auto;
     object-fit: contain;
     transition: opacity 0.2s ease;
     will-change: transform, opacity;
     transform-origin: center;
-    left: 50%;
-    top: calc(100% + 10px);
-    transform: translateX(-50%);
+    left: 0;
+    top: 100%;
+    transform: translateY(10px);
 }
 
 .hover-word {
     cursor: pointer;
     position: relative;
     display: inline-block;
+    z-index: 2;
 }
 
 .marquee-container {
