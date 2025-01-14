@@ -195,14 +195,15 @@ nav a:hover {
 
 .hover-image {
     opacity: 0;
-    position: fixed;
+    position: absolute;
     z-index: 1000;
     pointer-events: none;
     height: 480px;
     width: auto;
     object-fit: contain;
     transition: none;
-    will-change: opacity;
+    will-change: transform, opacity;
+    transform-origin: center;
 }
 
 .marquee-container {

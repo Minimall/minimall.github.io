@@ -41,12 +41,10 @@ document.addEventListener('DOMContentLoaded', () => {
         function updateImagePosition(e) {
             if (!hoverImage) return;
             
-            // Use clientX/Y for viewport-relative positioning
-            const mouseX = e.clientX;
-            const mouseY = e.clientY;
+            const mouseX = e.pageX;
+            const mouseY = e.pageY;
             
-            // Add scroll offset to position relative to document
-            hoverImage.style.position = 'fixed';
+            hoverImage.style.position = 'absolute';
             hoverImage.style.left = `${mouseX}px`;
             hoverImage.style.top = `${mouseY + 20}px`;
             hoverImage.style.transform = 'translateX(-50%)';
