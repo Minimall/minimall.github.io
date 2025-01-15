@@ -79,7 +79,7 @@ const handleHover = (word, isEnter) => {
 
 const triggerRandomWave = () => {
     const availableWords = Array.from(hoverWords).filter(
-        (word) => !hoveredWords.has(word)
+        (word) => !hoveredWords.has(word) && !word.classList.contains('read-more-link')
     );
     if (!availableWords.length) return;
 
