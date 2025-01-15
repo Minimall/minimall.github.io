@@ -58,6 +58,25 @@ class PortfolioApp {
         this.setupTextAnimations();
         this.setupEventListeners();
         this.setupImagePreviews();
+        this.setupTextTruncation();
+    }
+
+    setupTextTruncation() {
+        const mainText = document.querySelector('.main-text');
+        if (!mainText) return;
+
+        const readMoreLink = document.createElement('a');
+        readMoreLink.className = 'read-more';
+        readMoreLink.textContent = 'Read more';
+        mainText.after(readMoreLink);
+        mainText.classList.add('truncated');
+
+        readMoreLink.addEventListener('click', () => {
+            mainText.classList.toggle('truncated');
+            readMoreLink.textContent = mainText.classList.contains('truncated') ? 'Read more' : 'Show less';
+            mainText.style.transition = 'max-height 0.4s ease-in-out';
+            mainText.style.maxHeight = mainText.classList.contains('truncated') ? '200px' : mainText.scrollHeight + 'px';
+        });
     }
 
     setupImagePreviews() {

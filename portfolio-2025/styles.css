@@ -70,6 +70,28 @@ nav a:hover {
     font-size: 1.1rem;
     margin-bottom: calc(var(--spacing) * 4);
     max-width: 32rem;
+    position: relative;
+}
+
+.main-text.truncated {
+    mask-image: linear-gradient(to bottom, black calc(100% - 100px), transparent);
+    -webkit-mask-image: linear-gradient(to bottom, black calc(100% - 100px), transparent);
+    max-height: 200px;
+    overflow: hidden;
+}
+
+.read-more {
+    display: inline-block;
+    color: #914ce6;
+    text-decoration: none;
+    margin-top: 1rem;
+    cursor: pointer;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.read-more:hover {
+    color: #7938c3;
 }
 
 .main-text p {
