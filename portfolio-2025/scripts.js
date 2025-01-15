@@ -1,33 +1,12 @@
 class PortfolioApp {
     constructor() {
         this.hoverWords = document.querySelectorAll('.hover-word');
-        this.observedElements = new Set();
         this.init();
     }
 
     init() {
         this.setupTextAnimations();
         this.setupEventListeners();
-    }
-
-    setupIntersectionObserver() {
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                console.log(`Element ${entry.target.textContent} is ${entry.isIntersecting ? 'visible' : 'hidden'}`);
-                if (entry.isIntersecting) {
-                    this.observedElements.add(entry.target);
-                    console.log('Added to observed elements, total:', this.observedElements.size);
-                } else {
-                    this.observedElements.delete(entry.target);
-                    console.log('Removed from observed elements, total:', this.observedElements.size);
-                }
-            });
-        }, { threshold: 0.1 });
-
-        this.hoverWords.forEach(word => {
-            console.log('Observing word:', word.textContent);
-            observer.observe(word);
-        });
     }
 
     preloadAllImages() {
