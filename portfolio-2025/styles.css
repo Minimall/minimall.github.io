@@ -209,9 +209,9 @@ nav a:hover {
     position: fixed;
     z-index: 1000;
     pointer-events: none;
-    height: 240px;
+    height: 480px;
     width: auto;
-    max-width: 400px;
+    max-width: 640px;
     object-fit: contain;
     transition: opacity 0.2s ease;
     transform: translate(-50%, -100%);

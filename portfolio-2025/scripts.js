@@ -44,7 +44,7 @@ class PortfolioApp {
         images.forEach((img) => {
             img.style.left = `${e.clientX}px`;
             img.style.top = `${e.clientY}px`;
-            if (e.clientY < 240) {
+            if (e.clientY < 480) {
                 img.classList.add("move-down");
             } else {
                 img.classList.remove("move-down");
