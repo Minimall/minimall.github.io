@@ -1,113 +1,191 @@
 class PortfolioApp {
     constructor() {
-        this.hoverWords = document.querySelectorAll('.hover-word');
-        this.previewContainer = null;
-        this.currentInterval = null;
-        this.IMAGE_PATH_PREFIX = '/images/';
+        this.hoverWords = document.querySelectorAll(".hover-word");
+        this.hoveredSpans = new Set();
+        this.intervalIncrease = 0;
+        this.lastUsedParentIndex = -1;
+
         this.init();
     }
 
-    createPreviewContainer() {
-        const container = document.createElement('div');
-        container.className = 'image-preview';
-        document.body.appendChild(container);
-        return container;
-    }
-
-    handleImagePreview(event, images) {
-        if (!this.previewContainer) {
-            this.previewContainer = this.createPreviewContainer();
-        }
-
-        const imageArray = images.split(',');
-        let currentIndex = 0;
-
-        const updatePreviewPosition = (e) => {
-            const offset = 20;
-            const x = e.clientX + offset;
-            const y = e.clientY + offset;
-            this.previewContainer.style.transform = `translate(${x}px, ${y}px)`;
-        };
-
-        const showImage = (imagePath) => {
-            this.previewContainer.style.opacity = '1';
-            this.previewContainer.style.backgroundImage = `url(${this.IMAGE_PATH_PREFIX}${imagePath.trim()})`;
-        };
-
-        if (imageArray.length > 1) {
-            this.currentInterval = setInterval(() => {
-                currentIndex = (currentIndex + 1) % imageArray.length;
-                showImage(imageArray[currentIndex]);
-            }, 1000);
-        }
-
-        showImage(imageArray[0]);
-        document.addEventListener('mousemove', updatePreviewPosition);
-
-        return () => {
-            document.removeEventListener('mousemove', updatePreviewPosition);
-            if (this.currentInterval) {
-                clearInterval(this.currentInterval);
-                this.currentInterval = null;
-            }
-            this.previewContainer.style.opacity = '0';
-        };
-    }
-
     init() {
+        this.preloadAllImages();
         this.setupTextAnimations();
         this.setupEventListeners();
-        this.setupImagePreviews();
+        this.startRandomWaveEffect();
     }
 
-    setupImagePreviews() {
-        const previewElements = document.querySelectorAll('[data-preview]');
-        previewElements.forEach(element => {
-            let cleanup = null;
-            element.addEventListener('mouseenter', (e) => {
-                cleanup = this.handleImagePreview(e, element.dataset.preview);
-            });
-            element.addEventListener('mouseleave', () => {
-                if (cleanup) cleanup();
+    preloadAllImages() {
+        this.hoverWords.forEach((word) => {
+            const images = word.dataset.images?.split(",") || [];
+            images.forEach((url) => {
+                const img = new Image();
+                img.onerror = () =>
+                    console.error(`Failed to load image: ${url}`);
+                img.src = `./images/${url}`;
             });
         });
     }
 
     setupTextAnimations() {
-        this.hoverWords.forEach(word => {
-            const waveText = word.querySelector('.wave-text');
+        this.hoverWords.forEach((word) => {
+            const waveText = word.querySelector(".wave-text");
             if (!waveText) return;
             const text = word.dataset.text || waveText.textContent;
-            waveText.innerHTML = text.split('').map(letter => 
-                `<span>${letter}</span>`
-            ).join('');
+            waveText.innerHTML = text
+                .split("")
+                .map((letter) => `<span>${letter}</span>`)
+                .join("");
         });
+    }
+
+    updateMousePosition(e) {
+        const images = document.querySelectorAll(".hover-image");
+        images.forEach((img) => {
+            img.style.left = `${e.clientX}px`;
+            img.style.top = `${e.clientY}px`;
+            if (e.clientY < 240) {
+                img.classList.add("move-down");
+            } else {
+                img.classList.remove("move-down");
+            }
+        });
+    }
+
+    setupImageCycle(hoverWord) {
+        const hoverImage = hoverWord.querySelector(".hover-image");
+        if (!hoverImage) {
+            console.error("No hover-image element found");
+            return { start: () => {}, stop: () => {} };
+        }
+
+        const images = hoverWord.dataset.images?.split(",") || [];
+        let currentIndex = 0;
+        let cycleTimeout = null;
+        let hideTimeout = null;
+
+        const cycleImage = () => {
+            if (!images.length) {
+                console.error("No images found in dataset");
+                return;
+            }
+
+            const imagePath = `./images/${images[currentIndex]}`;
+            const tempImage = new Image();
+            tempImage.onload = () => {
+                hoverImage.src = imagePath;
+                hoverImage.style.opacity = "1";
+            };
+            tempImage.onerror = () =>
+                console.error(`Failed to load image: ${imagePath}`);
+            tempImage.src = imagePath;
+
+            if (images.length === 1) return;
+            hideTimeout = setTimeout(() => {
+                hoverImage.style.opacity = "0";
+                currentIndex = (currentIndex + 1) % images.length;
+                cycleTimeout = setTimeout(cycleImage, 0);
+            }, 600);
+        };
+
+        return {
+            start: () => cycleImage(),
+            stop: () => {
+                clearTimeout(cycleTimeout);
+                clearTimeout(hideTimeout);
+                hoverImage.style.opacity = "0";
+            },
+        };
     }
 
     updateWaveAnimation(letters, isHovering) {
         letters.forEach((letter, index) => {
-            setTimeout(() => {
-                letter.classList.remove('wave-in', 'wave-out');
-                letter.classList.add(isHovering ? 'wave-in' : 'wave-out');
-            }, isHovering ? index * 50 : (letters.length - 1 - index) * 50);
+            setTimeout(
+                () => {
+                    letter.classList.remove("wave-in", "wave-out");
+                    letter.classList.add(isHovering ? "wave-in" : "wave-out");
+                },
+                isHovering ? index * 50 : (letters.length - 1 - index) * 50
+            );
         });
     }
 
     setupEventListeners() {
-        this.hoverWords.forEach(hoverWord => {
-            const letters = hoverWord.querySelectorAll('.wave-text span');
+        window.addEventListener(
+            "mousemove",
+            this.updateMousePosition.bind(this),
+            { passive: true }
+        );
 
-            hoverWord.addEventListener('mouseenter', () => {
+        this.hoverWords.forEach((hoverWord) => {
+            const letters = hoverWord.querySelectorAll(".wave-text span");
+            const imageCycle = this.setupImageCycle(hoverWord);
+
+            hoverWord.addEventListener("mouseenter", () => {
+                const waveText = hoverWord.querySelector(".wave-text");
+                if (!this.hoveredSpans.has(waveText)) {
+                    this.hoveredSpans.add(waveText);
+                    this.intervalIncrease += 15;
+                }
                 this.updateWaveAnimation(letters, true);
+                imageCycle.start();
             });
 
-            hoverWord.addEventListener('mouseleave', () => {
+            hoverWord.addEventListener("mouseleave", () => {
                 this.updateWaveAnimation(letters, false);
+                imageCycle.stop();
             });
         });
     }
+
+    triggerRandomWave() {
+        const mainText = document.querySelector(".main-text");
+        if (!mainText) return;
+
+        const allWaveSpans = mainText.querySelectorAll(".wave-text span");
+        const randomSpanSet = Array.from(allWaveSpans).reduce((acc, span) => {
+            const parent = span.closest(".wave-text");
+            if (!acc.has(parent)) acc.set(parent, []);
+            acc.get(parent).push(span);
+            return acc;
+        }, new Map());
+
+        const parents = Array.from(randomSpanSet.keys()).filter(
+            (parent) => !this.hoveredSpans.has(parent)
+        );
+
+        if (!parents.length) return;
+
+        let randomParentIndex;
+        do {
+            randomParentIndex = Math.floor(Math.random() * parents.length);
+        } while (
+            randomParentIndex === this.lastUsedParentIndex &&
+            parents.length > 1
+        );
+
+        this.lastUsedParentIndex = randomParentIndex;
+        const spans = randomSpanSet.get(parents[randomParentIndex]);
+
+        spans.forEach((span, index) => {
+            setTimeout(() => span.classList.add("wave-in"), index * 50);
+            setTimeout(
+                () => span.classList.remove("wave-in"),
+                spans.length * 50 + 300
+            );
+        });
+
+        const baseInterval = Math.random() * 3000 + 5000;
+        const adjustedInterval =
+            baseInterval * (1 + this.intervalIncrease / 100);
+        setTimeout(() => this.triggerRandomWave(), adjustedInterval);
+    }
+
+    startRandomWaveEffect() {
+        setTimeout(() => this.triggerRandomWave(), 5000);
+    }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener("DOMContentLoaded", () => {
     new PortfolioApp();
 });
