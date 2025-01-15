@@ -3,6 +3,7 @@ class PortfolioApp {
         this.hoverWords = document.querySelectorAll('.hover-word');
         this.previewContainer = null;
         this.currentInterval = null;
+        this.IMAGE_PATH_PREFIX = '/portfolio-2025/images/';
         this.init();
     }
 
@@ -30,7 +31,7 @@ class PortfolioApp {
 
         const showImage = (imagePath) => {
             this.previewContainer.style.opacity = '1';
-            this.previewContainer.style.backgroundImage = `url(${imagePath.trim()})`;
+            this.previewContainer.style.backgroundImage = `url(${this.IMAGE_PATH_PREFIX}${imagePath.trim()})`;
         };
 
         if (imageArray.length > 1) {
