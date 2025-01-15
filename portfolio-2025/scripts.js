@@ -32,14 +32,16 @@ const cycleImages = (word, img) => {
         img.src = `./images/${images[currentIndex]}`;
         img.style.opacity = "1";
 
-        fadeTimeout = setTimeout(() => {
-            img.style.opacity = "0";
-            currentIndex = (currentIndex + 1) % images.length;
-            cycleTimeout = setTimeout(showNextImage, 0);
-        }, 600);
+        if (images.length > 1) {
+            fadeTimeout = setTimeout(() => {
+                img.style.opacity = "0";
+                currentIndex = (currentIndex + 1) % images.length;
+                cycleTimeout = setTimeout(showNextImage, 0);
+            }, 600);
+        }
     };
 
-    if (images.length > 1) showNextImage();
+    showNextImage();
     return () => {
         clearTimeout(cycleTimeout);
         clearTimeout(fadeTimeout);
