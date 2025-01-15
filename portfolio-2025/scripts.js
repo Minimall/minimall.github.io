@@ -16,7 +16,7 @@ const updateMousePosition = (e) => {
     document.querySelectorAll(".hover-image").forEach((img) => {
         img.style.left = `${e.clientX}px`;
         img.style.top = `${e.clientY}px`;
-        img.classList.toggle("move-down", e.clientY < 240);
+        img.classList.toggle("move-down", e.clientY < 480);
     });
 };
 
