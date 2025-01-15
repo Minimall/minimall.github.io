@@ -99,8 +99,29 @@ const triggerRandomWave = () => {
     setTimeout(triggerRandomWave, nextWaveDelay);
 };
 
+const setupTruncation = () => {
+    const mainText = document.querySelector('.main-text');
+    const truncationPoint = mainText.innerHTML.indexOf('skeuomorphic buttons');
+    if (truncationPoint === -1) return;
+
+    mainText.classList.add('truncated');
+    
+    const readMoreLink = document.createElement('div');
+    readMoreLink.className = 'read-more-link';
+    readMoreLink.textContent = 'Read More';
+    mainText.appendChild(readMoreLink);
+
+    readMoreLink.addEventListener('click', () => {
+        mainText.classList.add('expanding');
+        mainText.style.maxHeight = mainText.scrollHeight + 'px';
+        mainText.classList.remove('truncated');
+        readMoreLink.style.display = 'none';
+    });
+};
+
 document.addEventListener("DOMContentLoaded", () => {
     setupText();
+    setupTruncation();
     window.addEventListener("mousemove", updateMousePosition, {
         passive: true,
     });
