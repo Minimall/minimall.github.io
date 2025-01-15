@@ -99,58 +99,8 @@ const triggerRandomWave = () => {
     setTimeout(triggerRandomWave, nextWaveDelay);
 };
 
-const setupTruncation = () => {
-    const mainText = document.querySelector('.main-text');
-    const truncationPoint = mainText.innerHTML.indexOf('skeuomorphic buttons');
-    if (truncationPoint === -1) return;
-
-    mainText.classList.add('truncated');
-    
-    const readMoreGradient = document.createElement('div');
-    readMoreGradient.className = 'read-more-gradient';
-    mainText.appendChild(readMoreGradient);
-
-    const readMoreLink = document.createElement('div');
-    readMoreLink.className = 'read-more-link';
-    const readMoreText = document.createElement('div');
-    readMoreText.className = 'read-more-text';
-    readMoreText.innerHTML = 'Read More'.split('').map(letter => 
-        `<span>${letter}</span>`).join('');
-    readMoreLink.appendChild(readMoreText);
-    mainText.appendChild(readMoreLink);
-
-    // Add hover effect for read more text
-    readMoreText.addEventListener('mouseenter', () => {
-        const letters = readMoreText.querySelectorAll('span');
-        letters.forEach((letter, i) => {
-            setTimeout(() => {
-                letter.classList.remove('wave-in', 'wave-out');
-                letter.classList.add('wave-in');
-            }, i * 50);
-        });
-    });
-
-    readMoreText.addEventListener('mouseleave', () => {
-        const letters = readMoreText.querySelectorAll('span');
-        letters.forEach((letter, i) => {
-            setTimeout(() => {
-                letter.classList.remove('wave-in', 'wave-out');
-                letter.classList.add('wave-out');
-            }, (letters.length - 1 - i) * 50);
-        });
-    });
-
-    readMoreLink.addEventListener('click', () => {
-        mainText.classList.add('expanding');
-        mainText.style.maxHeight = mainText.scrollHeight + 'px';
-        mainText.classList.remove('truncated');
-        readMoreLink.style.display = 'none';
-    });
-};
-
 document.addEventListener("DOMContentLoaded", () => {
     setupText();
-    setupTruncation();
     window.addEventListener("mousemove", updateMousePosition, {
         passive: true,
     });
