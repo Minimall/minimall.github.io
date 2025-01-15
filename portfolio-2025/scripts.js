@@ -3,7 +3,7 @@ class PortfolioApp {
         this.hoverWords = document.querySelectorAll('.hover-word');
         this.previewContainer = null;
         this.currentInterval = null;
-        this.IMAGE_PATH_PREFIX = '/portfolio-2025/images/';
+        this.IMAGE_PATH_PREFIX = '/images/';
         this.init();
     }
 
