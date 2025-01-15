@@ -1,126 +1,113 @@
-const hoverWords = document.querySelectorAll(".hover-word");
-const hoveredWords = new Set();
-
-const setupText = () => {
-    hoverWords.forEach((word) => {
-        const waveText = word.querySelector(".wave-text");
-        if (!waveText) return;
-        waveText.innerHTML = (word.dataset.text || waveText.textContent)
-            .split("")
-            .map((letter) => letter === " " ? "<span>&nbsp;</span>" : `<span>${letter}</span>`)
-            .join("");
-    });
-};
-
-const updateMousePosition = (e) => {
-    document.querySelectorAll(".hover-image").forEach((img) => {
-        img.style.left = `${e.clientX}px`;
-        img.style.top = `${e.clientY}px`;
-        img.classList.toggle("move-down", e.clientY < 480);
-    });
-};
-
-const cycleImages = (word, img) => {
-    const images = word.dataset.images?.split(",") || [];
-    if (!images.length) return null;
-
-    let currentIndex = 0;
-    let cycleTimeout;
-    let fadeTimeout;
-
-    const showNextImage = () => {
-        img.src = `./images/${images[currentIndex]}`;
-        img.style.opacity = "1";
-
-        if (images.length > 1) {
-            fadeTimeout = setTimeout(() => {
-                img.style.opacity = "0";
-                currentIndex = (currentIndex + 1) % images.length;
-                cycleTimeout = setTimeout(showNextImage, 0);
-            }, 600);
-        }
-    };
-
-    showNextImage();
-    return () => {
-        clearTimeout(cycleTimeout);
-        clearTimeout(fadeTimeout);
-        img.style.opacity = "0";
-    };
-};
-
-const handleHover = (word, isEnter) => {
-    const letters = word.querySelectorAll(".wave-text span");
-    const img = word.querySelector(".hover-image");
-
-    if (isEnter) {
-        hoveredWords.add(word);
-    } else {
-        hoveredWords.delete(word);
+class PortfolioApp {
+    constructor() {
+        this.hoverWords = document.querySelectorAll('.hover-word');
+        this.previewContainer = null;
+        this.currentInterval = null;
+        this.IMAGE_PATH_PREFIX = '/images/';
+        this.init();
     }
 
-    letters.forEach((letter, i) => {
-        setTimeout(
-            () => {
-                letter.classList.remove("wave-in", "wave-out");
-                letter.classList.add(isEnter ? "wave-in" : "wave-out");
-            },
-            isEnter ? i * 50 : (letters.length - 1 - i) * 50
-        );
-    });
-
-    if (img) {
-        if (isEnter) {
-            word.stopImageCycle = cycleImages(word, img);
-        } else if (word.stopImageCycle) {
-            word.stopImageCycle();
-            word.stopImageCycle = null;
-        }
+    createPreviewContainer() {
+        const container = document.createElement('div');
+        container.className = 'image-preview';
+        document.body.appendChild(container);
+        return container;
     }
-};
 
-const triggerRandomWave = () => {
-    const availableWords = Array.from(hoverWords).filter(
-        (word) => !hoveredWords.has(word) && !word.classList.contains('read-more-link')
-    );
-    if (!availableWords.length) return;
+    handleImagePreview(event, images) {
+        if (!this.previewContainer) {
+            this.previewContainer = this.createPreviewContainer();
+        }
 
-    const randomWord =
-        availableWords[Math.floor(Math.random() * availableWords.length)];
-    const letters = randomWord.querySelectorAll(".wave-text span");
+        const imageArray = images.split(',');
+        let currentIndex = 0;
 
-    letters.forEach((letter, i) => {
-        setTimeout(() => letter.classList.add("wave-in"), i * 50);
-        setTimeout(
-            () => letter.classList.remove("wave-in"),
-            letters.length * 50 + 300
-        );
-    });
+        const updatePreviewPosition = (e) => {
+            const offset = 20;
+            const x = e.clientX + offset;
+            const y = e.clientY + offset;
+            this.previewContainer.style.transform = `translate(${x}px, ${y}px)`;
+        };
 
-    const nextWaveDelay = Math.random() * 3000 + 5000;
-    setTimeout(triggerRandomWave, nextWaveDelay);
-};
+        const showImage = (imagePath) => {
+            this.previewContainer.style.opacity = '1';
+            this.previewContainer.style.backgroundImage = `url(${this.IMAGE_PATH_PREFIX}${imagePath.trim()})`;
+        };
 
-document.addEventListener("DOMContentLoaded", () => {
-    setupText();
-    
-    const mainText = document.querySelector('.main-text');
-    const readMoreLink = document.querySelector('.read-more-link');
-    
-    readMoreLink.addEventListener('click', () => {
-        mainText.classList.toggle('expanded');
-        const waveText = readMoreLink.querySelector('.wave-text');
-        waveText.textContent = mainText.classList.contains('expanded') ? 'Show less' : 'Read more';
-        setupText(); // Reinitialize the wave effect
-    });
-    window.addEventListener("mousemove", updateMousePosition, {
-        passive: true,
-    });
+        if (imageArray.length > 1) {
+            this.currentInterval = setInterval(() => {
+                currentIndex = (currentIndex + 1) % imageArray.length;
+                showImage(imageArray[currentIndex]);
+            }, 1000);
+        }
 
-    hoverWords.forEach((word) => {
-        word.addEventListener("mouseenter", () => handleHover(word, true));
-        word.addEventListener("mouseleave", () => handleHover(word, false));
-    });
+        showImage(imageArray[0]);
+        document.addEventListener('mousemove', updatePreviewPosition);
 
-    setTimeout(triggerRandomWave, 5000);
+        return () => {
+            document.removeEventListener('mousemove', updatePreviewPosition);
+            if (this.currentInterval) {
+                clearInterval(this.currentInterval);
+                this.currentInterval = null;
+            }
+            this.previewContainer.style.opacity = '0';
+        };
+    }
+
+    init() {
+        this.setupTextAnimations();
+        this.setupEventListeners();
+        this.setupImagePreviews();
+    }
+
+    setupImagePreviews() {
+        const previewElements = document.querySelectorAll('[data-preview]');
+        previewElements.forEach(element => {
+            let cleanup = null;
+            element.addEventListener('mouseenter', (e) => {
+                cleanup = this.handleImagePreview(e, element.dataset.preview);
+            });
+            element.addEventListener('mouseleave', () => {
+                if (cleanup) cleanup();
+            });
+        });
+    }
+
+    setupTextAnimations() {
+        this.hoverWords.forEach(word => {
+            const waveText = word.querySelector('.wave-text');
+            if (!waveText) return;
+            const text = word.dataset.text || waveText.textContent;
+            waveText.innerHTML = text.split('').map(letter => 
+                `<span>${letter}</span>`
+            ).join('');
+        });
+    }
+
+    updateWaveAnimation(letters, isHovering) {
+        letters.forEach((letter, index) => {
+            setTimeout(() => {
+                letter.classList.remove('wave-in', 'wave-out');
+                letter.classList.add(isHovering ? 'wave-in' : 'wave-out');
+            }, isHovering ? index * 50 : (letters.length - 1 - index) * 50);
+        });
+    }
+
+    setupEventListeners() {
+        this.hoverWords.forEach(hoverWord => {
+            const letters = hoverWord.querySelectorAll('.wave-text span');
+
+            hoverWord.addEventListener('mouseenter', () => {
+                this.updateWaveAnimation(letters, true);
+            });
+
+            hoverWord.addEventListener('mouseleave', () => {
+                this.updateWaveAnimation(letters, false);
+            });
+        });
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    new PortfolioApp();
 });
