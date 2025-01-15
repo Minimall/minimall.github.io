@@ -107,7 +107,9 @@ document.addEventListener("DOMContentLoaded", () => {
     
     readMoreLink.addEventListener('click', () => {
         mainText.classList.toggle('expanded');
-        readMoreLink.textContent = mainText.classList.contains('expanded') ? 'Show less' : 'Read more';
+        const waveText = readMoreLink.querySelector('.wave-text');
+        waveText.textContent = mainText.classList.contains('expanded') ? 'Show less' : 'Read more';
+        setupText(); // Reinitialize the wave effect
     });
     window.addEventListener("mousemove", updateMousePosition, {
         passive: true,
