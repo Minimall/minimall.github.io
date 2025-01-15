@@ -45,6 +45,14 @@ nav a:hover {
     opacity: 1;
 }
 
+.profile-image {
+    width: 120px;
+    height: 120px;
+    border-radius: 8px;
+    margin-bottom: var(--spacing);
+    object-fit: cover;
+}
+
 .header {
     margin-bottom: calc(var(--spacing) * 8);
 }
