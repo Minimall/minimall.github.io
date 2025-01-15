@@ -93,7 +93,7 @@ nav a:hover {
     padding: 2rem 0 1rem;
     cursor: pointer;
     font-weight: 500;
-    z-index: 2;
+    z-index: 3;
 }
 
 .read-more-gradient {
@@ -103,7 +103,7 @@ nav a:hover {
     width: 100%;
     height: 75px;
     background: linear-gradient(to top, rgba(255,255,255,1) 20%, rgba(255,255,255,0) 100%);
-    z-index: 1;
+    z-index: 2;
 }
 
 .read-more-text {
@@ -254,7 +254,7 @@ nav a:hover {
 .hover-image {
     opacity: 0;
     position: fixed;
-    z-index: 1000;
+    z-index: 9999;
     pointer-events: none;
     height: 480px;
     width: auto;
