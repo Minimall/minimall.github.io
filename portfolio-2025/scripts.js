@@ -39,7 +39,7 @@ const cycleImages = (word, img) => {
         }, 600);
     };
 
-    if (images.length > 1) showNextImage();
+    if (images.length >= 1) showNextImage();
     return () => {
         clearTimeout(cycleTimeout);
         clearTimeout(fadeTimeout);
