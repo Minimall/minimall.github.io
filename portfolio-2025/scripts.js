@@ -9,10 +9,6 @@ class PortfolioApp {
         this.setupEventListeners();
     }
 
-    preloadAllImages() {
-        // Removed image preloading
-    }
-
     setupTextAnimations() {
         this.hoverWords.forEach(word => {
             const waveText = word.querySelector('.wave-text');
@@ -22,21 +18,6 @@ class PortfolioApp {
                 `<span>${letter}</span>`
             ).join('');
         });
-    }
-
-    updateMousePosition(e) {
-        const hoverWord = e.target.closest('.hover-word');
-        if (!hoverWord) return;
-        
-        const rect = hoverWord.getBoundingClientRect();
-        const x = rect.left + rect.width / 2;
-        const y = rect.top;
-        document.documentElement.style.setProperty('--mouse-x', `${x}px`);
-        document.documentElement.style.setProperty('--mouse-y', `${y}px`);
-    }
-
-    setupImageCycle(hoverWord) {
-        return { start: () => {}, stop: () => {} };
     }
 
     updateWaveAnimation(letters, isHovering) {
@@ -51,7 +32,7 @@ class PortfolioApp {
     setupEventListeners() {
         this.hoverWords.forEach(hoverWord => {
             const letters = hoverWord.querySelectorAll('.wave-text span');
-            
+
             hoverWord.addEventListener('mouseenter', () => {
                 this.updateWaveAnimation(letters, true);
             });
