@@ -231,3 +231,19 @@ nav a:hover {
         ); /* Move twice the width to ensure smooth looping */
     }
 }
+
+.image-preview {
+    position: fixed;
+    width: 200px;
+    height: 200px;
+    pointer-events: none;
+    background-size: cover;
+    background-position: center;
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 1000;
+    transform-origin: 0 0;
+    will-change: transform;
+}
