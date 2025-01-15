@@ -1,20 +1,13 @@
 class PortfolioApp {
     constructor() {
         this.hoverWords = document.querySelectorAll('.hover-word');
-        this.hoveredSpans = new Set();
-        this.intervalIncrease = 0;
-        this.lastUsedParentIndex = -1;
         this.observedElements = new Set();
-
         this.init();
     }
 
     init() {
-        this.setupIntersectionObserver();
-        this.preloadAllImages();
         this.setupTextAnimations();
         this.setupEventListeners();
-        this.startRandomWaveEffect();
     }
 
     setupIntersectionObserver() {
@@ -77,79 +70,17 @@ class PortfolioApp {
     }
 
     setupEventListeners() {
-        window.addEventListener('mousemove', this.updateMousePosition.bind(this), { passive: true });
-        window.addEventListener('resize', () => {
-            this.observedElements.clear();
-            this.hoverWords.forEach(word => {
-                if (word.getBoundingClientRect().top < window.innerHeight) {
-                    this.observedElements.add(word);
-                }
-            });
-        }, { passive: true });
-
         this.hoverWords.forEach(hoverWord => {
-            if (!this.observedElements.has(hoverWord)) return;
-
             const letters = hoverWord.querySelectorAll('.wave-text span');
-            const imageCycle = this.setupImageCycle(hoverWord);
-
+            
             hoverWord.addEventListener('mouseenter', () => {
-                const waveText = hoverWord.querySelector('.wave-text');
-                if (!this.hoveredSpans.has(waveText)) {
-                    this.hoveredSpans.add(waveText);
-                    this.intervalIncrease += 15;
-                }
                 this.updateWaveAnimation(letters, true);
-                imageCycle.start();
             });
 
             hoverWord.addEventListener('mouseleave', () => {
                 this.updateWaveAnimation(letters, false);
-                imageCycle.stop();
             });
         });
-    }
-
-    triggerRandomWave() {
-        const mainText = document.querySelector('.main-text');
-        if (!mainText) return;
-
-        const allWaveSpans = mainText.querySelectorAll('.wave-text span');
-        const randomSpanSet = Array.from(allWaveSpans).reduce((acc, span) => {
-            const parent = span.closest('.wave-text');
-            if (!acc.has(parent)) acc.set(parent, []);
-            acc.get(parent).push(span);
-            return acc;
-        }, new Map());
-
-        const parents = Array.from(randomSpanSet.keys())
-            .filter(parent => !this.hoveredSpans.has(parent));
-
-        if (!parents.length) return;
-
-        let randomParentIndex;
-        do {
-            randomParentIndex = Math.floor(Math.random() * parents.length);
-        } while (randomParentIndex === this.lastUsedParentIndex && parents.length > 1);
-
-        this.lastUsedParentIndex = randomParentIndex;
-        const spans = randomSpanSet.get(parents[randomParentIndex]);
-
-        spans.forEach((span, index) => {
-            setTimeout(() => span.classList.add('wave-in'), index * 50);
-            setTimeout(() => {
-                span.classList.remove('wave-in');
-                span.style.color = '';
-            }, spans.length * 50 + 300);
-        });
-
-        const baseInterval = Math.random() * 3000 + 5000;
-        const adjustedInterval = baseInterval * (1 + this.intervalIncrease / 100);
-        setTimeout(() => this.triggerRandomWave(), adjustedInterval);
-    }
-
-    startRandomWaveEffect() {
-        setTimeout(() => this.triggerRandomWave(), 5000);
     }
 }
 
