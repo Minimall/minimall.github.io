@@ -101,6 +101,14 @@ const triggerRandomWave = () => {
 
 document.addEventListener("DOMContentLoaded", () => {
     setupText();
+    
+    const mainText = document.querySelector('.main-text');
+    const readMoreLink = document.querySelector('.read-more-link');
+    
+    readMoreLink.addEventListener('click', () => {
+        mainText.classList.toggle('expanded');
+        readMoreLink.textContent = mainText.classList.contains('expanded') ? 'Show less' : 'Read more';
+    });
     window.addEventListener("mousemove", updateMousePosition, {
         passive: true,
     });
