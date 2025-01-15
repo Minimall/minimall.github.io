@@ -7,7 +7,7 @@ const setupText = () => {
         if (!waveText) return;
         waveText.innerHTML = (word.dataset.text || waveText.textContent)
             .split("")
-            .map((letter) => `<span>${letter}</span>`)
+            .map((letter) => letter === " " ? "<span>&nbsp;</span>" : `<span>${letter}</span>`)
             .join("");
     });
 };
