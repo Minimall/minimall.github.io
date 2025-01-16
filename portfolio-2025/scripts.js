@@ -1,9 +1,9 @@
-const hoverWords = document.querySelectorAll(".shiny");
+const hoverWords = document.querySelectorAll(".hover-word");
 const hoveredWords = new Set();
 
 const setupText = () => {
     hoverWords.forEach((word) => {
-        const waveText = word.querySelector(".collapsible");
+        const waveText = word.querySelector(".wave-text");
         if (!waveText) return;
         waveText.innerHTML = (word.dataset.text || waveText.textContent)
             .split("")
@@ -102,7 +102,7 @@ const triggerRandomWave = () => {
 };
 
 const setupCollapsibleLink = () => {
-    const link = document.querySelector('.collapsible');
+    const link = document.querySelector('.collapsible-link');
     if (!link) return;
 
     link.innerHTML = link.textContent
@@ -119,7 +119,7 @@ const setupCollapsibleLink = () => {
 
 const toggleCollapsible = () => {
     const content = document.querySelector('.collapsible-content');
-    const links = document.querySelectorAll('.collapsible');
+    const links = document.querySelectorAll('.collapsible-link');
     if (content && content.classList.contains('active')) {
         content.classList.remove('active');
         links.forEach(link => link.classList.remove('hidden'));
