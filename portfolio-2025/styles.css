@@ -192,7 +192,13 @@ nav a:hover {
     font-variation-settings: "wght" 400;
     transition: font-variation-settings 0.3s ease;
     color: #4a148c;
+    white-space: pre;
+}
 
+.wave-text {
+    white-space: normal;
+    display: inline-flex;
+    flex-wrap: wrap;
 }
 
 @keyframes colorWave {
