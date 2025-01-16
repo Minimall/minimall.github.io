@@ -362,24 +362,4 @@ a:hover span:nth-child(5n) { animation-delay: 0.25s; }
 /* Wave effect styles */
 [wave-effect-hint="true"] {
     position: relative;
-    overflow: hidden;
-}
-
-[wave-effect-hint="true"]::before {
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 0;
-    height: 0;
-    border-radius: 50%;
-    background-color: rgba(0, 0, 255, 0.3);
-    transition: all 0.5s ease;
-    z-index: -1;
-}
-
-[wave-effect-hint="true"]:hover::before {
-    width: 200px;
-    height: 200px;
 }
