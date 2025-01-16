@@ -99,12 +99,31 @@ const triggerRandomWave = () => {
     setTimeout(triggerRandomWave, nextWaveDelay);
 };
 
+const setupCollapsibleLink = () => {
+    const link = document.querySelector('.collapsible-link');
+    if (!link) return;
+
+    link.innerHTML = link.textContent
+        .split("")
+        .map((letter) => `<span>${letter}</span>`)
+        .join("");
+    
+    const letters = link.querySelectorAll('span');
+    letters.forEach((letter, i) => {
+        setTimeout(() => letter.classList.add("wave-in"), i * 50);
+        setTimeout(() => letter.classList.remove("wave-in"), letters.length * 50 + 300);
+    });
+};
+
 const toggleCollapsible = () => {
     const content = document.querySelector('.collapsible-content');
-    content.classList.toggle('active');
+    const link = document.querySelector('.collapsible-link');
+    content.classList.add('active');
+    link.classList.add('hidden');
 };
 
 document.addEventListener("DOMContentLoaded", () => {
+    setupCollapsibleLink();
     const collapsibleLink = document.querySelector('.collapsible-link');
     if (collapsibleLink) {
         collapsibleLink.addEventListener('click', (e) => {
