@@ -277,6 +277,46 @@ nav a:hover {
     transition: transform 0.3s ease-in-out;
 }
 
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    margin: 2rem 0;
+}
+
+.service {
+    padding: 1rem;
+}
+
+.service h2 {
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+}
+
+.service ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.service li {
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 100px;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+@media (max-width: 768px) {
+    .services-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
 /* When container is hovered, play animation */
 .marquee-container:hover .marquee {
     animation-play-state: running;
