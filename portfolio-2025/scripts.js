@@ -48,7 +48,7 @@ const cycleImages = (word, img) => {
 };
 
 const handleHover = (word, isEnter) => {
-    if (!word.hasAttribute('data-wave-effect')) return;
+    if (!word.hasAttribute('wave-effect-hint')) return;
     
     const letters = word.querySelectorAll(".wave-text span");
     const img = word.querySelector(".hover-image");
