@@ -363,25 +363,6 @@ a:hover {
 }
 
 a:hover {
-    position: relative;
-    overflow: hidden;
-}
-
-a:hover::before {
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 0;
-    height: 0;
-    border-radius: 50%;
-    background-color: rgba(0, 0, 255, 0.3);
-    transition: all 0.5s ease;
-    z-index: -1;
-}
-
-a:hover::before {
-    width: 100px;
-    height: 100px;
+    font-variation-settings: "wght" 900;
+    animation: colorWave 0.6s ease-in-out forwards;
 }
