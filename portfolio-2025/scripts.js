@@ -107,7 +107,7 @@ const setupCollapsibleLink = () => {
         .split("")
         .map((letter) => `<span>${letter}</span>`)
         .join("");
-    
+
     const letters = link.querySelectorAll('span');
     letters.forEach((letter, i) => {
         setTimeout(() => letter.classList.add("wave-in"), i * 50);
@@ -146,4 +146,10 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     setTimeout(triggerRandomWave, 5000);
+    // Load header
+    fetch('header.html')
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('header-placeholder').innerHTML = data;
+        });
 });
