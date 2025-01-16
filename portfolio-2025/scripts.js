@@ -148,8 +148,32 @@ document.addEventListener("DOMContentLoaded", () => {
     setTimeout(triggerRandomWave, 5000);
     // Load header
     fetch('header.html')
-        .then(response => response.text())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to load header');
+            }
+            return response.text();
+        })
         .then(data => {
-            document.getElementById('header-placeholder').innerHTML = data;
+            const headerPlaceholder = document.getElementById('header-placeholder');
+            if (headerPlaceholder) {
+                headerPlaceholder.innerHTML = data;
+            }
+        })
+        .catch(error => {
+            console.error('Error loading header:', error);
+            // Fallback header if loading fails
+            const headerPlaceholder = document.getElementById('header-placeholder');
+            if (headerPlaceholder) {
+                headerPlaceholder.innerHTML = `
+                    <nav>
+                        <a href="index.html">Dmytro Dvornichenko</a>
+                        <div>
+                            <a href="mailto:email@example.com">Email</a>
+                            <a href="https://linkedin.com/in/username">LinkedIn</a>
+                            <a href="https://twitter.com/username">Twitter</a>
+                        </div>
+                    </nav>`;
+            }
         });
 });
