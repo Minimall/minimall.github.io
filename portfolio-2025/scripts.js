@@ -129,7 +129,19 @@ const toggleCollapsible = () => {
     }
 };
 
+const setupLinks = () => {
+    document.querySelectorAll('a').forEach(link => {
+        if (!link.querySelector('.wave-text')) {
+            link.innerHTML = link.textContent
+                .split("")
+                .map((letter) => `<span>${letter}</span>`)
+                .join("");
+        }
+    });
+};
+
 document.addEventListener("DOMContentLoaded", () => {
+    setupLinks();
     setupCollapsibleLink();
     document.querySelectorAll('.collapsible-link').forEach(link => {
         link.addEventListener('click', (e) => {
