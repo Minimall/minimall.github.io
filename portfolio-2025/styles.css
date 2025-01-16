@@ -46,10 +46,12 @@ nav a:hover {
 }
 
 .profile-image {
-    width: 120px;
-    height: 120px;
+    width: 100%;
+    height: auto;
     border-radius: 8px;
     margin-bottom: var(--spacing);
+    border-style: solid;
+    border-color: #d4d4d4;
     object-fit: cover;
 }
 
@@ -67,7 +69,7 @@ nav a:hover {
 }
 
 .subheadline {
-    font-family: "Inter", sans-serif;
+    font-family: "Host Grotesk", sans-serif;
     font-weight: 400;
     font-size: 1.35rem;
     line-height: 1.5;
