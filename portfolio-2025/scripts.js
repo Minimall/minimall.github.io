@@ -1,4 +1,4 @@
-const hoverWords = document.querySelectorAll(".hover-word");
+const hoverWords = document.querySelectorAll(".shiny");
 const hoveredWords = new Set();
 
 const setupText = () => {
@@ -102,7 +102,7 @@ const triggerRandomWave = () => {
 };
 
 const setupCollapsibleLink = () => {
-    const link = document.querySelector('.collapsible-link');
+    const link = document.querySelector('.collapsible');
     if (!link) return;
 
     link.innerHTML = link.textContent
@@ -119,7 +119,7 @@ const setupCollapsibleLink = () => {
 
 const toggleCollapsible = () => {
     const content = document.querySelector('.collapsible-content');
-    const links = document.querySelectorAll('.collapsible-link');
+    const links = document.querySelectorAll('.collapsible');
     if (content && content.classList.contains('active')) {
         content.classList.remove('active');
         links.forEach(link => link.classList.remove('hidden'));
