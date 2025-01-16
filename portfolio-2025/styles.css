@@ -90,13 +90,14 @@ nav a:hover {
 }
 
 /* Wave text container */
-.wave-text {
+.collapsible {
     white-space: normal;
     display: inline-flex;
     flex-wrap: wrap;
+    color: inherit;
 }
 
-.wave-text span {
+.collapsible span {
     display: inline-block;
     font-variation-settings: "wght" 400;
     transition: font-variation-settings 0.3s ease;
@@ -106,11 +107,6 @@ nav a:hover {
 /* Wave effect hint styles */
 [wave-effect-hint] span {
     color: #4a148c;
-}
-
-/* Collapsible link styles (formerly collapsible-link) */
-.collapsible {
-    color: inherit;
 }
 
 .collapsible.hidden {

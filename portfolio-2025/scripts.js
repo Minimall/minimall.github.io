@@ -3,7 +3,7 @@ const hoveredWords = new Set();
 
 const setupText = () => {
     hoverWords.forEach((word) => {
-        const waveText = word.querySelector(".wave-text");
+        const waveText = word.querySelector(".collapsible");
         if (!waveText) return;
         waveText.innerHTML = (word.dataset.text || waveText.textContent)
             .split("")
