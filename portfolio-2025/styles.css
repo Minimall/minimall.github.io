@@ -110,49 +110,7 @@ a:hover span:nth-child(5n) { animation-delay: 0.25s; }
     margin-bottom: var(--spacing);
 }
 
-.section {
-    margin-bottom: calc(var(--spacing) * 6);
-}
 
-.section-title {
-    font-size: 0.85rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: #666;
-    margin-bottom: calc(var(--spacing) * 2);
-    font-weight: 500;
-}
-
-.experience-list {
-    list-style: none;
-    margin-bottom: calc(var(--spacing) * 4);
-}
-
-.experience-list li {
-    margin-bottom: calc(var(--spacing));
-    display: flex;
-    align-items: flex-start;
-}
-
-.icon {
-    width: 1.5rem;
-    margin-right: 1rem;
-    color: #666;
-}
-
-.experience-content {
-    flex: 1;
-}
-
-.experience-title {
-    font-weight: 500;
-    margin-bottom: 0.25rem;
-}
-
-.experience-desc {
-    color: #666;
-    font-size: 0.95rem;
-}
 
 
 
