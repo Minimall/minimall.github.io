@@ -154,33 +154,7 @@ a:hover span:nth-child(5n) { animation-delay: 0.25s; }
     font-size: 0.95rem;
 }
 
-.focus-areas {
-    max-width: 32rem;
-}
 
-.focus-areas ul {
-    list-style: none;
-}
-
-.focus-areas li {
-    margin-bottom: 0.75rem;
-    padding-left: 1.5rem;
-    position: relative;
-}
-
-.focus-areas li:before {
-    content: "—";
-    position: absolute;
-    left: 0;
-    color: #666;
-}
-
-.current {
-    margin-top: calc(var(--spacing) * 6);
-    padding: calc(var(--spacing) * 2);
-    background: #f8f8f8;
-    border-radius: 4px;
-}
 
 @media (max-width: 768px) {
     .headline {
