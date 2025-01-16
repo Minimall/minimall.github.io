@@ -117,20 +117,24 @@ const setupCollapsibleLink = () => {
 
 const toggleCollapsible = () => {
     const content = document.querySelector('.collapsible-content');
-    const link = document.querySelector('.collapsible-link');
-    content.classList.add('active');
-    link.classList.add('hidden');
+    const links = document.querySelectorAll('.collapsible-link');
+    if (content && content.classList.contains('active')) {
+        content.classList.remove('active');
+        links.forEach(link => link.classList.remove('hidden'));
+    } else if (content) {
+        content.classList.add('active');
+        links.forEach(link => link.classList.add('hidden'));
+    }
 };
 
 document.addEventListener("DOMContentLoaded", () => {
     setupCollapsibleLink();
-    const collapsibleLink = document.querySelector('.collapsible-link');
-    if (collapsibleLink) {
-        collapsibleLink.addEventListener('click', (e) => {
+    document.querySelectorAll('.collapsible-link').forEach(link => {
+        link.addEventListener('click', (e) => {
             e.preventDefault();
             toggleCollapsible();
         });
-    }
+    });
     setupText();
     window.addEventListener("mousemove", updateMousePosition, {
         passive: true,
