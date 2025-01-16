@@ -99,7 +99,19 @@ const triggerRandomWave = () => {
     setTimeout(triggerRandomWave, nextWaveDelay);
 };
 
+const toggleCollapsible = () => {
+    const content = document.querySelector('.collapsible-content');
+    content.classList.toggle('active');
+};
+
 document.addEventListener("DOMContentLoaded", () => {
+    const collapsibleLink = document.querySelector('.collapsible-link');
+    if (collapsibleLink) {
+        collapsibleLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            toggleCollapsible();
+        });
+    }
     setupText();
     window.addEventListener("mousemove", updateMousePosition, {
         passive: true,
