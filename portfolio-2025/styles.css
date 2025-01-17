@@ -174,18 +174,20 @@ a span, .shiny span, .collapsible span {
     flex-wrap: wrap;
 }
 
-.hover-word {
+.wave-text {
     position: relative;
     cursor: pointer;
+    display: inline-flex;
+    flex-wrap: wrap;
 }
 
-.hover-word span {
-    color: #4a148c;
+.wave-text span {
+    display: inline-block;
+    transition: all 0.3s ease;
 }
 
-.hover-word[data-text]::after {
-    content: attr(data-text);
-    display: none;
+[data-text].wave-text {
+    position: relative;
 }
 
 @keyframes colorWave {
