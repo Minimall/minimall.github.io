@@ -301,6 +301,6 @@ a span, .shiny span, .collapsible span {
 }
 
 /* Wave effect styles */
-[data-h] {
+[data-hover="true"] {
     position: relative;
 }
