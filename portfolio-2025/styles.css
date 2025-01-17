@@ -76,6 +76,12 @@ a:hover span:nth-child(3n) { animation-delay: 0.15s; }
 a:hover span:nth-child(4n) { animation-delay: 0.2s; }
 a:hover span:nth-child(5n) { animation-delay: 0.25s; }
 
+.menu {
+display: flex;
+flex-direction: row;
+gap: calc(var(--spacing));
+    
+}
 
 .profile-image {
     width: 100%;
@@ -304,8 +310,4 @@ a span, .shiny span, .collapsible span {
 /* Wave effect styles */
 [data-hover="true"] {
     position: relative;
-}
-
-.no-margin {
-    margin: 0 !important;
 }
