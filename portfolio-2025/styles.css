@@ -174,20 +174,10 @@ a span, .shiny span, .collapsible span {
     flex-wrap: wrap;
 }
 
-.wave-text {
+.hover-word {
     position: relative;
     cursor: pointer;
     display: inline-flex;
-    flex-wrap: wrap;
-}
-
-.wave-text span {
-    display: inline-block;
-    transition: all 0.3s ease;
-}
-
-[data-text].wave-text {
-    position: relative;
 }
 
 @keyframes colorWave {
