@@ -12,11 +12,11 @@
 }
 
 body {
-	font-family: "Schibsted Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+	font-family: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 	font-size: 1.3rem;
 	line-height: 1.6;
 	font-variation-settings: "wght" 430;
-	letter-spacing: 0.005em;
+	letter-spacing: 0.05em;
 	color: #111;
 	background: #ffffff;
 	-webkit-font-smoothing: antialiased;
@@ -131,7 +131,7 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
 }
 
 .headline {
-	font-family: "EB Garamond", serif;
+	font-family: "EB Garamond", "Palatino", "Book Antiqua", "Georgia", serif;
 	font-weight: 500;
 	font-size: 4rem;
 	line-height: 1.2;
@@ -141,7 +141,7 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
 }
 
 .subheadline {
-	font-family: "Schibsted Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+	font-family: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 	font-variation-settings: "wght" 500;
 
 	line-height: 1.6;
