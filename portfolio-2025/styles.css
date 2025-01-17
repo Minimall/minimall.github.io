@@ -226,8 +226,7 @@ a span, .collapsible span {
     width: auto;
     max-width: 640px;
     object-fit: contain;
-    border-radius: 16px !important;
-    overflow: hidden;
+    border-radius: 16px;
     transform: translate(-50%, -100%) scale(0) rotate(0deg);
     will-change: transform, opacity;
     padding: 24px 0 12px;

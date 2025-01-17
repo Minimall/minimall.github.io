@@ -105,7 +105,6 @@ const cycleImages = (element, img) => {
     const showNextImage = () => {
         img.src = `./images/${images[currentIndex]}`;
         img.style.opacity = "1";
-        img.style.borderRadius = "16px";
 
         fadeTimeout = setTimeout(() => {
             img.style.opacity = "0";
