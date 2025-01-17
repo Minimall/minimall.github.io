@@ -139,7 +139,14 @@ a:hover span:nth-child(5n) { animation-delay: 0.25s; }
     }
 }
 
-a, span {
+a span, .shiny span, .collapsible span {
+    display: inline-block;
+    font-variation-settings: "wght" 400;
+    transition: font-variation-settings 0.3s ease;
+    white-space: pre;
+}
+
+.shiny, .collapsible {
     cursor: pointer;
     position: relative;
     display: inline-block;
@@ -149,15 +156,9 @@ a, span {
     font-variation-settings: "wght" 400;
 }
 
-a span, span span {
-    display: inline-block;
-    font-variation-settings: "wght" 400;
-    transition: font-variation-settings 0.3s ease;
-    white-space: pre;
-}
-
-a:hover, span:hover {
+.shiny:hover, .collapsible:hover {
     font-variation-settings: "wght" 900;
+    animation: colorWave 0.6s ease-in-out forwards;
 }
 
 .wave-text {
@@ -198,10 +199,6 @@ a:hover, span:hover {
     transform: translate(-50%, -100%);
     will-change: transform;
     padding: 24px 0 12px;
-}
-
-[wave-effect-hint="true"]:hover .hover-image {
-    opacity: 1;
 }
 
 .hover-image.move-down {
