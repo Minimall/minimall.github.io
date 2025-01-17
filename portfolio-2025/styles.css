@@ -237,10 +237,12 @@ a span, .collapsible span {
 
 .hover-image.move-down {
     transform: translate(-50%, 0) scale(1) rotate(var(--rotation));
+    border-radius: 16px;
 }
 
 .hover-image.move-down.active {
     transform: translate(-50%, 0) scale(1) rotate(var(--rotation));
+    border-radius: 16px;
 }
 
 .collapsible-content {
