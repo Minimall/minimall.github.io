@@ -305,3 +305,7 @@ a span, .shiny span, .collapsible span {
 [data-hover="true"] {
     position: relative;
 }
+
+.no-margin {
+    margin: 0 !important;
+}
