@@ -202,6 +202,10 @@ a span, .collapsible span {
     font-variation-settings: "wght" 500;
 }
 
+.name [data-hover="true"] span {
+    color: #111;
+}
+
 @keyframes colorWave {
     0% { color: #4169e1; }
     50% { color: #ff69b4; }
