@@ -29,8 +29,8 @@ body {
 
 .name {
     display: flex;
-    flex-direction: vertical;
-    gap: calc(var(--spacing) / 2);
+    flex-direction: column;
+    gap: calc(var(--spacing) /);
 }
 
 
@@ -229,7 +229,7 @@ a span, .collapsible span {
     transform: translate(-50%, -100%) scale(0) rotate(0deg);
     will-change: transform, opacity;
     padding: 24px 0 12px;
-    transition: opacity 0.5s ease, transform 0.5s ease;
+    transition: opacity 0.4s ease, transform 0.4s ease;
 }
 
 .hover-image.active {
@@ -239,7 +239,7 @@ a span, .collapsible span {
 
 .hover-image:not(.active) {
     transform: translate(-50%, -100%) scale(0) rotate(0deg);
-    transition: opacity 0.25s ease, transform 0.25s ease;
+    transition: opacity 0.4s ease, transform 0.5s ease;
 }
 
 .hover-image.move-down {
