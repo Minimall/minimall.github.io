@@ -36,7 +36,6 @@ nav {
 }
 
 nav a {
-    margin-left: var(--spacing);
     opacity: 0.7;
     font-variation-settings: "wght" 400;
     transition: all 0.3s ease, font-variation-settings 0.3s ease;
