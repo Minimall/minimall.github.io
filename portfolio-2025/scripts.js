@@ -80,8 +80,12 @@ const handleWaveEffect = (element, isEnter) => {
 // Handle image hover effects
 const handleImageHover = (element, img, isEnter) => {
     if (isEnter) {
+        const rotation = Math.random() * 30 - 15; // Random rotation between -15 and +15 degrees
+        img.style.setProperty('--rotation', `${rotation}deg`);
+        img.classList.add('active');
         element.stopImageCycle = cycleImages(element, img);
     } else if (element.stopImageCycle) {
+        img.classList.remove('active');
         element.stopImageCycle();
         element.stopImageCycle = null;
     }

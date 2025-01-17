@@ -219,14 +219,23 @@ a span, .collapsible span {
     width: auto;
     max-width: 640px;
     object-fit: contain;
-    transition: opacity 0.2s ease;
-    transform: translate(-50%, -100%);
-    will-change: transform;
+    transform: translate(-50%, -100%) scale(0);
+    will-change: transform, opacity;
     padding: 24px 0 12px;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.hover-image.active {
+    opacity: 1;
+    transform: translate(-50%, -100%) scale(1) rotate(var(--rotation));
 }
 
 .hover-image.move-down {
-    transform: translate(-50%, 0);
+    transform: translate(-50%, 0) scale(1) rotate(var(--rotation));
+}
+
+.hover-image.move-down.active {
+    transform: translate(-50%, 0) scale(1) rotate(var(--rotation));
 }
 
 .collapsible-content {
