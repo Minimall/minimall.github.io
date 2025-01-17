@@ -368,8 +368,17 @@ a span, .collapsible span {
 
 /* Case Study Styles */
 .case-study-container {
-  margin: 8rem 0;
-  max-width: 100%;
+  margin: 8rem calc(-50vw + 50%);
+  width: 100vw;
+  background: #fafafa;
+  padding: 8rem calc(50vw - 50% + 5vw);
+}
+
+@media (max-width: 768px) {
+  .case-study-container {
+    margin: 4rem calc(-50vw + 50%);
+    padding: 4rem 5vw;
+  }
 }
 
 .case-logo {
