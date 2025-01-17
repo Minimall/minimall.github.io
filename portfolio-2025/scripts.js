@@ -127,7 +127,7 @@ const updateMousePosition = (e) => {
 // Random wave effect
 const triggerRandomWave = () => {
     const availableElements = Array.from(document.querySelectorAll('[data-hover="true"]'))
-        .filter(element => !hoveredElements.has(element));
+        .filter(element => !hoveredElements.has(element) && element.tagName.toLowerCase() !== 'a');
 
     if (!availableElements.length) return;
 
