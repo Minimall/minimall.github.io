@@ -45,9 +45,24 @@ h2 {
 
 
 .container {
-	padding: 5vh 5vw;
+	padding: 5vh calc(50vw - 50%);
+	width: 100vw;
+	margin-left: calc(-50vw + 50%);
+	margin-right: calc(-50vw + 50%);
+}
+
+.container > * {
 	max-width: var(--max-width);
-	margin: 0 auto;
+	margin-left: auto;
+	margin-right: auto;
+	padding-left: 5vw;
+	padding-right: 5vw;
+}
+
+.container > .case-study-container {
+	max-width: none;
+	padding-left: 0;
+	padding-right: 0;
 }
 
 nav {
