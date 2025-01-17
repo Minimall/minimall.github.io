@@ -18,7 +18,6 @@ const setupHoverEffects = () => {
             const img = document.createElement('img');
             img.className = 'hover-image';
             img.alt = element.textContent;
-            img.style.borderRadius = '16px';
             document.body.appendChild(img);
 
             // Split text for wave effect
