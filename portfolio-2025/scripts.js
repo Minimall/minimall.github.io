@@ -58,15 +58,22 @@ const handleWaveEffect = (element, isEnter) => {
     const letters = element.querySelectorAll('.wave-text span');
     const enterDelay = 30;  // Delay for mouse enter animation
     const leaveDelay = 10;  // Delay for mouse leave animation
+    
+    // Clear previous animation timeouts
+    if (element.waveTimeouts) {
+        element.waveTimeouts.forEach(timeout => clearTimeout(timeout));
+    }
+    element.waveTimeouts = [];
 
     letters.forEach((letter, i) => {
-        setTimeout(
+        const timeout = setTimeout(
             () => {
                 letter.classList.remove('wave-in', 'wave-out');
                 letter.classList.add(isEnter ? 'wave-in' : 'wave-out');
             },
             isEnter ? i * enterDelay : (letters.length - 1 - i) * leaveDelay
         );
+        element.waveTimeouts.push(timeout);
     });
 };
 
