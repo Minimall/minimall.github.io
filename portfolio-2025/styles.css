@@ -415,7 +415,7 @@ a span, .collapsible span {
 
 .case-content {
   display: grid;
-  grid-template-columns: minmax(300px, 480px) 1fr;
+  grid-template-columns: min(300px) 1fr;
   gap: 8rem;
   width: 100%;
 }
