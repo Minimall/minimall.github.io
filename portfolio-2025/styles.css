@@ -263,19 +263,32 @@ a span, .collapsible span {
   color: #111;
 }
 
-/* Mouse enter color wave */
-a:hover span:nth-child(1n) { animation-delay: 0.05s; }
-a:hover span:nth-child(2n) { animation-delay: 0.1s; }
-a:hover span:nth-child(3n) { animation-delay: 0.15s; }
-a:hover span:nth-child(4n) { animation-delay: 0.2s; }
-a:hover span:nth-child(5n) { animation-delay: 0.25s; }
+/* Wave Animation */
+@keyframes wave-in {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0); }
+}
 
-/* Mouse leave color wave - faster transition */
-a:not(:hover) span:nth-child(1n) { animation-delay: 0.02s; }
-a:not(:hover) span:nth-child(2n) { animation-delay: 0.04s; }
-a:not(:hover) span:nth-child(3n) { animation-delay: 0.06s; }
-a:not(:hover) span:nth-child(4n) { animation-delay: 0.08s; }
-a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
+@keyframes wave-out {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(10px); }
+  100% { transform: translateY(0); }
+}
+
+/* Mouse enter wave effect */
+a:hover span:nth-child(1n) { animation: wave-in 0.3s ease-in-out forwards, colorWave 0.6s ease-in-out forwards; animation-delay: 0.05s; }
+a:hover span:nth-child(2n) { animation: wave-in 0.3s ease-in-out forwards, colorWave 0.6s ease-in-out forwards; animation-delay: 0.1s; }
+a:hover span:nth-child(3n) { animation: wave-in 0.3s ease-in-out forwards, colorWave 0.6s ease-in-out forwards; animation-delay: 0.15s; }
+a:hover span:nth-child(4n) { animation: wave-in 0.3s ease-in-out forwards, colorWave 0.6s ease-in-out forwards; animation-delay: 0.2s; }
+a:hover span:nth-child(5n) { animation: wave-in 0.3s ease-in-out forwards, colorWave 0.6s ease-in-out forwards; animation-delay: 0.25s; }
+
+/* Mouse leave wave effect */
+a:not(:hover) span:nth-child(1n) { animation: wave-out 0.3s ease-in-out forwards; animation-delay: 0.02s; }
+a:not(:hover) span:nth-child(2n) { animation: wave-out 0.3s ease-in-out forwards; animation-delay: 0.04s; }
+a:not(:hover) span:nth-child(3n) { animation: wave-out 0.3s ease-in-out forwards; animation-delay: 0.06s; }
+a:not(:hover) span:nth-child(4n) { animation: wave-out 0.3s ease-in-out forwards; animation-delay: 0.08s; }
+a:not(:hover) span:nth-child(5n) { animation: wave-out 0.3s ease-in-out forwards; animation-delay: 0.1s; }
 
 .hover-image.active {
   opacity: 1;
