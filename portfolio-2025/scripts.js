@@ -13,18 +13,21 @@ const setupHoverEffects = () => {
         const hasDirectImageHover = element.dataset.images && !element.querySelector('.wave-text');
         
         if (hasDirectImageHover) {
-            // Handle direct image hover
-            const img = element.querySelector('.hover-image');
-            if (img) {
-                element.addEventListener('mouseenter', () => {
-                    handleImageHover(element, img, true);
-                    hoveredElements.add(element);
-                });
-                element.addEventListener('mouseleave', () => {
-                    handleImageHover(element, img, false);
-                    hoveredElements.delete(element);
-                });
-            }
+            // Create and handle hover image
+            const img = document.createElement('img');
+            img.className = 'hover-image';
+            img.alt = element.textContent;
+            document.body.appendChild(img);
+            
+            element.addEventListener('mouseenter', () => {
+                handleImageHover(element, img, true);
+                hoveredElements.add(element);
+            });
+            element.addEventListener('mouseleave', () => {
+                handleImageHover(element, img, false);
+                hoveredElements.delete(element);
+                img.remove();
+            });
         } else {
             // Handle regular wave text effect
             if (!element.querySelector('.wave-text')) {
