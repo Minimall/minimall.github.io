@@ -132,7 +132,7 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
 
 .headline {
 	font-family: "EB Garamond", "Palatino", "Book Antiqua", "Georgia", serif;
-	font-weight: 600;
+	font-variation-settings: "wght" 525;
 	font-size: 4rem;
 	line-height: 1.2;
 	margin-top: calc(var(--spacing) * 3 );
