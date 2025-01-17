@@ -414,14 +414,14 @@ a span, .collapsible span {
 }
 
 .case-content {
-  max-width: 64rem;
+	width: 100%
 }
 
 .case-text {
   font-size: 1.3rem;
   line-height: 1.6;
   margin-bottom: 2rem;
-  max-width: 40rem;
+
 }
 
 .case-tags {
@@ -441,6 +441,7 @@ a span, .collapsible span {
 
 .case-gallery {
   display: grid;
+	width: 100%;
   grid-template-columns: repeat(3, 1fr);
   gap: 1.5rem;
   margin-top: 4rem;
