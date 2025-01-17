@@ -1,0 +1,127 @@
+
+:root {
+    --text-color: #111;
+    --text-secondary: #707070;
+    --link-color: #003c8a;
+    --spacing: 2rem;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    font-size: 18px;
+    line-height: 1.7;
+    color: var(--text-color);
+    background: #ffffff;
+    -webkit-font-smoothing: antialiased;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 5vh 5vw;
+}
+
+nav {
+    margin-bottom: 3rem;
+}
+
+.name {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.name a {
+    font-weight: 500;
+    color: var(--text-color);
+    text-decoration: none;
+}
+
+.name p {
+    color: var(--text-secondary);
+}
+
+.profile-image {
+    width: 100%;
+    height: auto;
+    border-radius: 6px;
+    margin-bottom: var(--spacing);
+    border: 1px solid #dbdbdb;
+    box-shadow: 0 10px 34px -2.5px rgba(0,0,0,0.1);
+}
+
+.content {
+    max-width: 32rem;
+}
+
+.content p {
+    margin-bottom: var(--spacing);
+}
+
+.content a {
+    color: var(--link-color);
+    text-decoration: underline;
+    transition: opacity 0.2s;
+}
+
+.content a:hover {
+    opacity: 0.8;
+}
+
+.cta {
+    display: flex;
+    gap: var(--spacing);
+    margin-top: calc(var(--spacing) * 2);
+}
+
+.cta a {
+    color: var(--link-color);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+footer {
+    margin-top: calc(var(--spacing) * 4);
+    padding-top: calc(var(--spacing) * 2);
+    border-top: 1px solid rgba(0,0,0,0.1);
+}
+
+.support h2 {
+    font-size: 2rem;
+    font-weight: 500;
+    margin-bottom: var(--spacing);
+}
+
+.donate-options {
+    display: flex;
+    gap: calc(var(--spacing) * 2);
+}
+
+.option p {
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+}
+
+.option a {
+    font-size: 1.5rem;
+    color: var(--text-color);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+@media (max-width: 768px) {
+    .donate-options {
+        flex-direction: column;
+        gap: var(--spacing);
+    }
+    
+    .support h2 {
+        font-size: 1.5rem;
+    }
+}
