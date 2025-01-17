@@ -1,27 +1,71 @@
-const hoverWords = document.querySelectorAll(".shiny");
-const hoveredWords = new Set();
+// Track hovered elements
+const hoveredElements = new Set();
 
-const setupText = () => {
-    hoverWords.forEach((word) => {
-        const waveText = word.querySelector(".wave-text");
-        if (!waveText) return;
-        waveText.innerHTML = (word.dataset.text || waveText.textContent)
-            .split("")
-            .map((letter) => `<span>${letter}</span>`)
-            .join("");
+// Unified setup function for hover effects
+const setupHoverEffects = () => {
+    const hoverableElements = document.querySelectorAll('a, [data-hover="true"]');
+
+    hoverableElements.forEach(element => {
+        // Skip if already processed
+        if (element.hasAttribute('data-processed')) return;
+
+        // Split text into spans if not already done
+        if (!element.querySelector('.wave-text')) {
+            const text = element.textContent;
+            element.innerHTML = `<span class="wave-text">${
+                text.split('').map(char => `<span>${char}</span>`).join('')
+            }</span>`;
+        }
+
+        // Handle images if present
+        const img = element.querySelector('.hover-image');
+        if (img) {
+            element.addEventListener('mouseenter', () => {
+                handleImageHover(element, img, true);
+                hoveredElements.add(element);
+            });
+            element.addEventListener('mouseleave', () => {
+                handleImageHover(element, img, false);
+                hoveredElements.delete(element);
+            });
+        }
+
+        // Add wave effect listeners
+        element.addEventListener('mouseenter', () => handleWaveEffect(element, true));
+        element.addEventListener('mouseleave', () => handleWaveEffect(element, false));
+
+        element.setAttribute('data-processed', 'true');
     });
 };
 
-const updateMousePosition = (e) => {
-    document.querySelectorAll(".hover-image").forEach((img) => {
-        img.style.left = `${e.clientX}px`;
-        img.style.top = `${e.clientY}px`;
-        img.classList.toggle("move-down", e.clientY < 480);
+// Handle wave animation effect
+const handleWaveEffect = (element, isEnter) => {
+    const letters = element.querySelectorAll('.wave-text span');
+
+    letters.forEach((letter, i) => {
+        setTimeout(
+            () => {
+                letter.classList.remove('wave-in', 'wave-out');
+                letter.classList.add(isEnter ? 'wave-in' : 'wave-out');
+            },
+            isEnter ? i * 50 : (letters.length - 1 - i) * 50
+        );
     });
 };
 
-const cycleImages = (word, img) => {
-    const images = word.dataset.images?.split(",") || [];
+// Handle image hover effects
+const handleImageHover = (element, img, isEnter) => {
+    if (isEnter) {
+        element.stopImageCycle = cycleImages(element, img);
+    } else if (element.stopImageCycle) {
+        element.stopImageCycle();
+        element.stopImageCycle = null;
+    }
+};
+
+// Image cycling functionality (preserved from original)
+const cycleImages = (element, img) => {
+    const images = element.dataset.images?.split(",") || [];
     if (!images.length) return null;
 
     let currentIndex = 0;
@@ -47,136 +91,65 @@ const cycleImages = (word, img) => {
     };
 };
 
-const handleHover = (word, isEnter) => {
-    if (!word.hasAttribute('wave-effect-hint')) return;
-
-    const letters = word.querySelectorAll(".wave-text span");
-    const img = word.querySelector(".hover-image");
-
-    if (isEnter) {
-        hoveredWords.add(word);
-    } else {
-        hoveredWords.delete(word);
-    }
-
-    letters.forEach((letter, i) => {
-        setTimeout(
-            () => {
-                letter.classList.remove("wave-in", "wave-out");
-                letter.classList.add(isEnter ? "wave-in" : "wave-out");
-            },
-            isEnter ? i * 50 : (letters.length - 1 - i) * 50
-        );
+// Mouse position tracking for images
+const updateMousePosition = (e) => {
+    document.querySelectorAll('.hover-image').forEach((img) => {
+        img.style.left = `${e.clientX}px`;
+        img.style.top = `${e.clientY}px`;
+        img.classList.toggle('move-down', e.clientY < 480);
     });
-
-    if (img) {
-        if (isEnter) {
-            word.stopImageCycle = cycleImages(word, img);
-        } else if (word.stopImageCycle) {
-            word.stopImageCycle();
-            word.stopImageCycle = null;
-        }
-    }
 };
 
+// Random wave effect
 const triggerRandomWave = () => {
-    const availableWords = Array.from(hoverWords).filter(
-        (word) => !hoveredWords.has(word)
-    );
-    if (!availableWords.length) return;
+    const availableElements = Array.from(document.querySelectorAll('[data-hover="true"]'))
+        .filter(element => !hoveredElements.has(element));
 
-    const randomWord =
-        availableWords[Math.floor(Math.random() * availableWords.length)];
-    const letters = randomWord.querySelectorAll(".wave-text span");
+    if (!availableElements.length) return;
 
-    letters.forEach((letter, i) => {
-        setTimeout(() => letter.classList.add("wave-in"), i * 50);
-        setTimeout(
-            () => letter.classList.remove("wave-in"),
-            letters.length * 50 + 300
-        );
-    });
+    const randomElement = availableElements[Math.floor(Math.random() * availableElements.length)];
+    handleWaveEffect(randomElement, true);
 
-    const nextWaveDelay = Math.random() * 3000 + 5000;
-    setTimeout(triggerRandomWave, nextWaveDelay);
+    setTimeout(() => handleWaveEffect(randomElement, false), 600);
+    setTimeout(triggerRandomWave, Math.random() * 3000 + 5000);
 };
 
-const setupCollapsibleLink = () => {
-    const link = document.querySelector('.collapsible');
-    if (!link) return;
-
-    link.innerHTML = link.textContent
-        .split("")
-        .map((letter) => `<span>${letter}</span>`)
-        .join("");
-
-    const letters = link.querySelectorAll('span');
-    letters.forEach((letter, i) => {
-        setTimeout(() => letter.classList.add("wave-in"), i * 50);
-        setTimeout(() => letter.classList.remove("wave-in"), letters.length * 50 + 300);
-    });
-};
-
-const toggleCollapsible = () => {
-    const content = document.querySelector('.collapsible-content');
-    const links = document.querySelectorAll('.collapsible');
-    if (content && content.classList.contains('active')) {
-        content.classList.remove('active');
-        links.forEach(link => link.classList.remove('hidden'));
-    } else if (content) {
-        content.classList.add('active');
-        links.forEach(link => link.classList.add('hidden'));
-    }
-};
-
-const setupLinks = () => {
-    document.querySelectorAll('a').forEach(link => {
-        if (!link.querySelector('.wave-text')) {
-            link.innerHTML = link.textContent
-                .split("")
-                .map((letter) => `<span>${letter}</span>`)
-                .join("");
-        }
-    });
-};
-
+// Initialize everything
 document.addEventListener("DOMContentLoaded", () => {
-    setupLinks();
-    setupCollapsibleLink();
+    setupHoverEffects();
+    window.addEventListener("mousemove", updateMousePosition, { passive: true });
+    setTimeout(triggerRandomWave, 5000);
+
+    // Collapsible content handling
     document.querySelectorAll('.collapsible-link').forEach(link => {
+        link.setAttribute('data-hover', 'true');
         link.addEventListener('click', (e) => {
             e.preventDefault();
-            toggleCollapsible();
+            const content = document.querySelector('.collapsible-content');
+            const links = document.querySelectorAll('.collapsible-link');
+
+            if (content) {
+                content.classList.toggle('active');
+                links.forEach(l => l.classList.toggle('hidden'));
+            }
         });
     });
-    setupText();
-    window.addEventListener("mousemove", updateMousePosition, {
-        passive: true,
-    });
 
-    hoverWords.forEach((word) => {
-        word.addEventListener("mouseenter", () => handleHover(word, true));
-        word.addEventListener("mouseleave", () => handleHover(word, false));
-    });
-
-    setTimeout(triggerRandomWave, 5000);
-    // Load header
+    // Header loading (preserved from original)
     fetch('header.html')
         .then(response => {
-            if (!response.ok) {
-                throw new Error('Failed to load header');
-            }
+            if (!response.ok) throw new Error('Failed to load header');
             return response.text();
         })
         .then(data => {
             const headerPlaceholder = document.getElementById('header-placeholder');
             if (headerPlaceholder) {
                 headerPlaceholder.innerHTML = data;
+                setupHoverEffects(); // Setup hover effects for newly loaded content
             }
         })
         .catch(error => {
             console.error('Error loading header:', error);
-            // Fallback header if loading fails
             const headerPlaceholder = document.getElementById('header-placeholder');
             if (headerPlaceholder) {
                 headerPlaceholder.innerHTML = `
@@ -188,6 +161,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             <a href="https://twitter.com/username">Twitter</a>
                         </div>
                     </nav>`;
+                setupHoverEffects(); // Setup hover effects for fallback content
             }
         });
 });
