@@ -31,6 +31,8 @@ nav {
     justify-content: space-between;
     margin-bottom: calc(var(--spacing) * 6);
     font-size: 0.9rem;
+    padding: 0;
+    width: 100%;
 }
 
 nav a {
