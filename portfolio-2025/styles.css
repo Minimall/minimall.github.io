@@ -414,20 +414,34 @@ a span, .collapsible span {
 }
 
 .case-content {
-	width: 100%
+  display: grid;
+  grid-template-columns: minmax(300px, 480px) 1fr;
+  gap: 8rem;
+  width: 100%;
 }
 
 .case-text {
   font-size: 1.3rem;
   line-height: 1.6;
   margin-bottom: 2rem;
+  color: #666;
+}
 
+.case-text strong {
+  color: #111;
 }
 
 .case-tags {
   display: flex;
   gap: 1rem;
   margin: 3rem 0;
+}
+
+@media (max-width: 768px) {
+  .case-content {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
 }
 
 .tag {
