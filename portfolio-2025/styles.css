@@ -76,12 +76,6 @@ a:hover span:nth-child(3n) { animation-delay: 0.15s; }
 a:hover span:nth-child(4n) { animation-delay: 0.2s; }
 a:hover span:nth-child(5n) { animation-delay: 0.25s; }
 
-.menu {
-display: flex;
-flex-direction: row;
-gap: calc(var(--spacing));
-    
-}
 
 .profile-image {
     width: 100%;
@@ -174,18 +168,8 @@ a span, .shiny span, .collapsible span {
     flex-wrap: wrap;
 }
 
-.hover-word {
-    position: relative;
-    cursor: pointer;
-}
-
-.hover-word span {
+[data-hover="true"] span {
     color: #4a148c;
-}
-
-.hover-word[data-text]::after {
-    content: attr(data-text);
-    display: none;
 }
 
 @keyframes colorWave {
@@ -320,4 +304,8 @@ a span, .shiny span, .collapsible span {
 /* Wave effect styles */
 [data-hover="true"] {
     position: relative;
+}
+
+.no-margin {
+    margin: 0 !important;
 }
