@@ -157,7 +157,7 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
 
 .main-text p {
 	margin-bottom: var(--spacing);
-	max-width: 32rem;
+	max-width: 40rem;
 }
 
 
