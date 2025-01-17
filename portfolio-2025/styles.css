@@ -51,7 +51,7 @@ h2 {
 	margin-right: calc(-50vw + 50%);
 }
 
-.container > * {
+.container > *:not(#header-placeholder) {
 	max-width: var(--max-width);
 	margin-left: auto;
 	margin-right: auto;
