@@ -27,6 +27,13 @@ body {
     gap: calc(var(--spacing));
 }
 
+.name {
+    display: flex;
+    flex-direction: vertical;
+    gap: calc(var(--spacing) / 2);
+}
+
+
 .container {
     padding: 5vh 5vw;
     max-width: var(--max-width);
