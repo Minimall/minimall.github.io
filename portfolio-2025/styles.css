@@ -118,7 +118,7 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
 
 .subheadline {
     font-family: "Funnel Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    font-weight: 400;
+    font-weight: 500;
     font-size: 1.35rem;
     line-height: 1.5;
     color: #666;
@@ -186,6 +186,7 @@ a span, .collapsible span {
 
 [data-hover="true"] span {
     color: #4a148c;
+    font-variation-settings: "wght" 500;
 }
 
 @keyframes colorWave {
