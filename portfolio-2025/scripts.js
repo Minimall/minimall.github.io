@@ -8,31 +8,36 @@ const setupHoverEffects = () => {
     hoverableElements.forEach(element => {
         // Skip if already processed
         if (element.hasAttribute('data-processed')) return;
-
-        // Split text into spans if not already done
-        if (!element.querySelector('.wave-text')) {
-            const text = element.textContent;
-            element.innerHTML = `<span class="wave-text">${
-                text.split('').map(char => char === ' ' ? '<span>&nbsp;</span>' : `<span>${char}</span>`).join('')
-            }</span>`;
+        
+        // Check if it's a direct image hover element
+        const hasDirectImageHover = element.dataset.images && !element.querySelector('.wave-text');
+        
+        if (hasDirectImageHover) {
+            // Handle direct image hover
+            const img = element.querySelector('.hover-image');
+            if (img) {
+                element.addEventListener('mouseenter', () => {
+                    handleImageHover(element, img, true);
+                    hoveredElements.add(element);
+                });
+                element.addEventListener('mouseleave', () => {
+                    handleImageHover(element, img, false);
+                    hoveredElements.delete(element);
+                });
+            }
+        } else {
+            // Handle regular wave text effect
+            if (!element.querySelector('.wave-text')) {
+                const text = element.textContent;
+                element.innerHTML = `<span class="wave-text">${
+                    text.split('').map(char => char === ' ' ? '<span>&nbsp;</span>' : `<span>${char}</span>`).join('')
+                }</span>`;
+            }
+            
+            // Add wave effect listeners
+            element.addEventListener('mouseenter', () => handleWaveEffect(element, true));
+            element.addEventListener('mouseleave', () => handleWaveEffect(element, false));
         }
-
-        // Handle images if present
-        const img = element.querySelector('.hover-image');
-        if (img) {
-            element.addEventListener('mouseenter', () => {
-                handleImageHover(element, img, true);
-                hoveredElements.add(element);
-            });
-            element.addEventListener('mouseleave', () => {
-                handleImageHover(element, img, false);
-                hoveredElements.delete(element);
-            });
-        }
-
-        // Add wave effect listeners
-        element.addEventListener('mouseenter', () => handleWaveEffect(element, true));
-        element.addEventListener('mouseleave', () => handleWaveEffect(element, false));
 
         element.setAttribute('data-processed', 'true');
     });
