@@ -56,7 +56,7 @@ const setupHoverEffects = () => {
 // Handle wave animation effect
 const handleWaveEffect = (element, isEnter) => {
     const letters = element.querySelectorAll('.wave-text span');
-    const enterDelay = 50;  // Delay for mouse enter animation
+    const enterDelay = 30;  // Delay for mouse enter animation
     const leaveDelay = 10;  // Delay for mouse leave animation
 
     letters.forEach((letter, i) => {
