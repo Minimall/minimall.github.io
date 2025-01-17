@@ -415,15 +415,15 @@ a span, .collapsible span {
 
 .case-content {
   display: grid;
-  grid-template-columns: min(300px) 1fr;
-  gap: 8rem;
+  grid-template-rows: 1fr;
+  gap: 1rem;
   width: 100%;
 }
 
 .case-text {
   font-size: 1.3rem;
   line-height: 1.6;
-  margin-bottom: 2rem;
+
   color: #666;
 }
 
@@ -435,6 +435,7 @@ a span, .collapsible span {
   display: flex;
   gap: 1rem;
   margin: 3rem 0;
+	margin-top: 1rem;
 }
 
 @media (max-width: 768px) {
