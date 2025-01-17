@@ -26,7 +26,6 @@ const setupHoverEffects = () => {
             element.addEventListener('mouseleave', () => {
                 handleImageHover(element, img, false);
                 hoveredElements.delete(element);
-                img.remove();
             });
         } else {
             // Handle regular wave text effect
