@@ -1,6 +1,6 @@
 :root {
     --spacing: 2rem;
-    --max-width: 900px;
+    --max-width: 1152px;
     --mouse-x: 0;
     --mouse-y: 0;
 }
@@ -97,11 +97,16 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
 .profile-image {
     width: 100%;
     height: auto;
-    border-radius: 8px;
+    border-radius: 6px;
     margin-bottom: var(--spacing);
     border-style: solid;
-    border-color: #d4d4d4;
+    border-width: 1px;
+    border-color: #dbdbdb;
+    box-sizing: border-box;
+    object-position: center;
     object-fit: cover;
+    image-rendering: auto;
+    box-shadow: 0 .6021873017743928px 2.0474368260329356px -.8333333333333333px #0000001a, 0 2.288533303243457px 7.781013231027754px -1.6666666666666665px #0000001a, 0 10px 34px -2.5px #0000001a;
 }
 
 .header {
@@ -110,8 +115,8 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
 
 .headline {
     font-family: "EB Garamond", serif;
-    font-weight: 400;
-    font-size: 3.5rem;
+    font-weight: 500;
+    font-size: 4rem;
     line-height: 1.2;
     margin-bottom: calc(var(--spacing));
     max-width: 85%;
