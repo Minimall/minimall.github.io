@@ -455,13 +455,14 @@ a span, .collapsible span {
 
 .case-gallery {
   display: grid;
-	width: 100%;
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  margin-right: calc(-50vw + 50%);
   grid-template-columns: repeat(3, 1fr);
   gap: 1.5rem;
   margin-top: 4rem;
   background: #fafafa;
-  padding: 2rem;
-  border-radius: 12px;
+  padding: 4rem 5vw;
 }
 
 .case-image {
