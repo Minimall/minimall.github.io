@@ -200,6 +200,10 @@ a:hover, span:hover {
     padding: 24px 0 12px;
 }
 
+[wave-effect-hint="true"]:hover .hover-image {
+    opacity: 1;
+}
+
 .hover-image.move-down {
     transform: translate(-50%, 0);
 }
