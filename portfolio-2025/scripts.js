@@ -81,7 +81,7 @@ const handleWaveEffect = (element, isEnter) => {
 // Handle image hover effects
 const handleImageHover = (element, img, isEnter) => {
     if (isEnter) {
-        const rotation = (rotationCounter % 2 === 0) ? 6 : -6;
+        const rotation = (rotationCounter % 2 === 0) ? 3 : -3;
         rotationCounter++;
         img.style.setProperty('--rotation', `${rotation}deg`);
         img.classList.add('active');
