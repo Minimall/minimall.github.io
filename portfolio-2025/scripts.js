@@ -3,7 +3,7 @@ const hoveredElements = new Set();
 
 // Unified setup function for hover effects
 const setupHoverEffects = () => {
-    const hoverableElements = document.querySelectorAll('a, [data-hover="true"]');
+    const hoverableElements = document.querySelectorAll('a, .hover-word');
 
     hoverableElements.forEach(element => {
         // Skip if already processed
