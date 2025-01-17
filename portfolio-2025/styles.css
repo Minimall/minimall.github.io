@@ -222,7 +222,7 @@ a span, .collapsible span {
     transform: translate(-50%, -100%) scale(0) rotate(0deg);
     will-change: transform, opacity;
     padding: 24px 0 12px;
-    transition: all 1s ease;
+    transition: opacity 0.5s ease, transform 0.5s ease;
 }
 
 .hover-image.active {
@@ -231,7 +231,7 @@ a span, .collapsible span {
 }
 
 .hover-image:not(.active) {
-    transition: opacity 0.3s ease, transform 0.3s ease;
+    transition: opacity 0.25s ease, transform 0.25s ease;
 }
 
 .hover-image.move-down {
