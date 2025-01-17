@@ -8,22 +8,23 @@ const setupHoverEffects = () => {
     hoverableElements.forEach(element => {
         // Skip if already processed
         if (element.hasAttribute('data-processed')) return;
-        
+
         // Check if it's a direct image hover element
         const hasDirectImageHover = element.dataset.images && !element.querySelector('.wave-text');
-        
+
         if (hasDirectImageHover) {
             // Create and handle hover image
             const img = document.createElement('img');
             img.className = 'hover-image';
             img.alt = element.textContent;
             document.body.appendChild(img);
-            
+
             // Split text for wave effect
             const text = element.textContent;
             element.innerHTML = `<span class="wave-text">${
-            text.split('').map(char => char === ' ' ? '<span>&nbsp;</span>' : `<span>${char}</span>`).join('')
-            
+                text.split('').map(char => char === ' ' ? '<span>&nbsp;</span>' : `<span>${char}</span>`).join('')
+            }</span>`;
+
             element.addEventListener('mouseenter', () => {
                 handleImageHover(element, img, true);
                 handleWaveEffect(element, true);
@@ -42,7 +43,7 @@ const setupHoverEffects = () => {
                     text.split('').map(char => char === ' ' ? '<span>&nbsp;</span>' : `<span>${char}</span>`).join('')
                 }</span>`;
             }
-            
+
             // Add wave effect listeners
             element.addEventListener('mouseenter', () => handleWaveEffect(element, true));
             element.addEventListener('mouseleave', () => handleWaveEffect(element, false));
@@ -57,7 +58,7 @@ const handleWaveEffect = (element, isEnter) => {
     const letters = element.querySelectorAll('.wave-text span');
     const enterDelay = 30;  // Delay for mouse enter animation
     const leaveDelay = 10;  // Delay for mouse leave animation
-    
+
     // Clear previous animation timeouts
     if (element.waveTimeouts) {
         element.waveTimeouts.forEach(timeout => clearTimeout(timeout));
