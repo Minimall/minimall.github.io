@@ -165,7 +165,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    // Header loading (preserved from original)
+    // Load header and case study
     fetch('header.html')
         .then(response => {
             if (!response.ok) throw new Error('Failed to load header');
@@ -180,6 +180,23 @@ document.addEventListener("DOMContentLoaded", () => {
         })
         .catch(error => {
             console.error('Error loading header:', error);
+        });
+
+    // Load case study
+    fetch('case1.html')
+        .then(response => {
+            if (!response.ok) throw new Error('Failed to load case study');
+            return response.text();
+        })
+        .then(data => {
+            const casePlaceholder = document.getElementById('case1-placeholder');
+            if (casePlaceholder) {
+                casePlaceholder.innerHTML = data;
+                setupHoverEffects();
+            }
+        })
+        .catch(error => {
+            console.error('Error loading case study:', error);
             const headerPlaceholder = document.getElementById('header-placeholder');
             if (headerPlaceholder) {
                 headerPlaceholder.innerHTML = `

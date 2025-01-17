@@ -365,3 +365,90 @@ a span, .collapsible span {
 .no-margin {
 	margin: 0 !important;
 }
+
+/* Case Study Styles */
+.case-study-container {
+  margin: 6rem 0;
+  max-width: 100%;
+}
+
+.case-title {
+  font-size: 2.5rem;
+  line-height: 1.3;
+  margin-bottom: 3rem;
+  color: #111;
+  max-width: 85%;
+}
+
+.case-content {
+  max-width: 64rem;
+}
+
+.case-text {
+  font-size: 1.3rem;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+  max-width: 40rem;
+}
+
+.case-tags {
+  display: flex;
+  gap: 1rem;
+  margin: 3rem 0;
+}
+
+.tag {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 100px;
+  padding: 0.5rem 1.5rem;
+  font-size: 1rem;
+  color: #666;
+}
+
+.case-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin-top: 3rem;
+}
+
+.case-item {
+  background: #fafafa;
+  border-radius: 8px;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.case-item img {
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  border: 1px solid #eee;
+}
+
+.case-item h3 {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.case-item p {
+  color: #666;
+  font-size: 1rem;
+}
+
+@media (max-width: 768px) {
+  .case-title {
+    font-size: 2rem;
+    max-width: 100%;
+  }
+  
+  .case-text {
+    font-size: 1.1rem;
+  }
+  
+  .case-gallery {
+    grid-template-columns: 1fr;
+  }
+}
