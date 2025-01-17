@@ -162,10 +162,15 @@ a span, .shiny span, .collapsible span {
     animation: colorWave 0.6s ease-in-out forwards;
 }
 
-.wave-text {
+.wave-text, .hover-text {
     white-space: normal;
     display: inline-flex;
     flex-wrap: wrap;
+}
+
+.hover-text {
+    position: relative;
+    cursor: pointer;
 }
 
 [data-hover="true"] span {
