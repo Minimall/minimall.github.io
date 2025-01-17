@@ -19,12 +19,20 @@ const setupHoverEffects = () => {
             img.alt = element.textContent;
             document.body.appendChild(img);
             
+            // Split text for wave effect
+            const text = element.textContent;
+            element.innerHTML = `<span class="wave-text">${
+                text.split('').map(char => char === ' ' ? '<span>&nbsp;</span>' : `<span>${char}</span>`).join('')
+            }</span>`;
+            
             element.addEventListener('mouseenter', () => {
                 handleImageHover(element, img, true);
+                handleWaveEffect(element, true);
                 hoveredElements.add(element);
             });
             element.addEventListener('mouseleave', () => {
                 handleImageHover(element, img, false);
+                handleWaveEffect(element, false);
                 hoveredElements.delete(element);
             });
         } else {
