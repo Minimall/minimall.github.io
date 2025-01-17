@@ -22,7 +22,7 @@ const setupHoverEffects = () => {
             // Split text for wave effect
             const text = element.textContent;
             element.innerHTML = `<span class="wave-text">${
-                text.split('').map(char => char === ' ' ? '<span>&nbsp;</span>' : `<span>${char}</span>`).join('')
+                text.split(' ').map(word => `<span>${word}</span>`).join(' ')
             }</span>`;
             
             element.addEventListener('mouseenter', () => {
