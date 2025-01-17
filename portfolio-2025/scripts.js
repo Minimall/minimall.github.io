@@ -1,5 +1,6 @@
-// Track hovered elements
+// Track hovered elements and rotation counter
 const hoveredElements = new Set();
+let rotationCounter = 0;
 
 // Unified setup function for hover effects
 const setupHoverEffects = () => {
@@ -80,7 +81,8 @@ const handleWaveEffect = (element, isEnter) => {
 // Handle image hover effects
 const handleImageHover = (element, img, isEnter) => {
     if (isEnter) {
-        const rotation = Math.random() * 16 - 8; // Random rotation between -8 and +8 degrees
+        const rotation = (rotationCounter % 2 === 0) ? 6 : -6;
+        rotationCounter++;
         img.style.setProperty('--rotation', `${rotation}deg`);
         img.classList.add('active');
         element.stopImageCycle = cycleImages(element, img);
