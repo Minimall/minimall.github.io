@@ -55,10 +55,10 @@ const setupHoverEffects = () => {
 };
 
 // Handle wave animation effect
-const handleWaveEffect = (element, isEnter) => {
+const handleWaveEffect = (element, isEnter, isRandom = false) => {
     const letters = element.querySelectorAll('.wave-text span');
-    const enterDelay = 30;  // Delay for mouse enter animation
-    const leaveDelay = 10;  // Delay for mouse leave animation
+    const enterDelay = isRandom ? 20 : 30;  // Faster for random waves
+    const leaveDelay = isRandom ? 5 : 10;   // Faster exit for random waves
 
     // Clear previous animation timeouts
     if (element.waveTimeouts) {
@@ -138,9 +138,16 @@ const triggerRandomWave = () => {
     if (!availableElements.length) return;
 
     const randomElement = availableElements[Math.floor(Math.random() * availableElements.length)];
-    handleWaveEffect(randomElement, true);
+    const letters = randomElement.querySelectorAll('.wave-text span');
+    letters.forEach(letter => letter.classList.add('random-wave'));
+    handleWaveEffect(randomElement, true, true);
 
-    setTimeout(() => handleWaveEffect(randomElement, false), 600);
+    setTimeout(() => {
+        handleWaveEffect(randomElement, false, true);
+        setTimeout(() => {
+            letters.forEach(letter => letter.classList.remove('random-wave'));
+        }, 400);
+    }, 400);
     setTimeout(triggerRandomWave, Math.random() * 3000 + 5000);
 };
 
