@@ -1,6 +1,6 @@
 :root {
 	--spacing: 2rem;
-	--max-width: 1152px;
+	--max-width: 64rem;
 	--mouse-x: 0;
 	--mouse-y: 0;
 }
@@ -142,6 +142,7 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
 }
 
 .header {
+	max-width: var(--max-width);
 	margin-bottom: calc(var(--spacing) * 3);
 }
 
@@ -152,7 +153,7 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
 	line-height: 1.2;
 	margin-top: calc(var(--spacing) * 3 );
 	margin-bottom: calc(var(--spacing));
-	max-width: 85%;
+
 }
 
 .subheadline {
@@ -167,12 +168,12 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
 
 .main-text {
 	margin-bottom: calc(var(--spacing) * 4);
-	max-width: 64rem;
+	max-width: var(--max-width);
 }
 
 .main-text p {
 	margin-bottom: var(--spacing);
-	max-width: 40rem;
+	max-width: var(--max-width);
 }
 
 
@@ -317,7 +318,7 @@ a span, .collapsible span {
 
 .services-grid {
     width: 100%;
-    max-width: 64rem;
+	max-width: var(--max-width);
 		display: grid;
 		grid-template-columns: repeat(2, 1fr);
 		column-gap: 3rem;
