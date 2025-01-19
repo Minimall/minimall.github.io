@@ -44,10 +44,10 @@ h2 {
 }
 .container {
 	width: 100vw;
-	margin-top: calc(var(--spacing) * 3 );
+
 	margin-left: calc(-50vw + 50%);
 	margin-right: calc(-50vw + 50%);
-	margin-bottom: 2vw;
+
 }
 
 .container > * {
@@ -60,8 +60,9 @@ h2 {
 
 .container > .case-study-container {
 	max-width: none;
-	padding-left: 0;
-	padding-right: 0;
+	padding-top: 1rem;
+	margin-top: calc(var(--spacing) * 3 );
+	padding-bottom: 1rem;
 }
 
 nav {
