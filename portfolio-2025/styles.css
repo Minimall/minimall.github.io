@@ -271,7 +271,7 @@ li, .tag {
   justify-content: center;
   gap: 5vw;
   padding: 1vw 10vw 5vw;
-  background: #fafafa;
+  background: var(--case-background);
   margin: 0;
   flex-wrap: nowrap;
 }
