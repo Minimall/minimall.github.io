@@ -418,8 +418,9 @@ a span, .collapsible span {
 }
 
 .case-title {
-  font-size: 2.5rem;
+  font-size: 2.25rem;
   line-height: 1.3;
+	font-variation-settings: "wght" 350;
   color: #111;
 	max-width: var(--max-width);
 }
