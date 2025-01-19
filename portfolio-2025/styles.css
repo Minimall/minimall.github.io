@@ -259,18 +259,7 @@ li, .tag {
   background: #fafafa;
 }
 
-.case-study-content {
-  max-width: var(--max-width);
-  margin: 0 auto;
-	padding-top: 3rem
-  padding-left: 5vw;
-	padding-right: 5vw;
-}
-
-.case-content {
-  width: 100%
-	;
-}
+/* These styles are now handled by the .container class */
 
 .case-gallery {
   width: 100vw;
