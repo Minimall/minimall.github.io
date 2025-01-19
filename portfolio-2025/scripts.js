@@ -1,3 +1,4 @@
+
 // Track hovered elements and rotation counter
 const hoveredElements = new Set();
 let rotationCounter = 0;
@@ -93,7 +94,7 @@ const handleImageHover = (element, img, isEnter) => {
     }
 };
 
-// Image cycling functionality (preserved from original)
+// Image cycling functionality
 const cycleImages = (element, img) => {
     const images = element.dataset.images?.split(",") || [];
     if (!images.length) return null;
@@ -173,26 +174,37 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // Load header
-    const loadHeader = () => {
-        fetch('header.html')
-            .then(response => {
-                if (!response.ok) throw new Error('Failed to load header');
-                return response.text();
-            })
-            .then(data => {
-                const headerPlaceholder = document.getElementById('header-placeholder');
-                if (headerPlaceholder) {
-                    headerPlaceholder.innerHTML = data;
-                    setupHoverEffects();
-                }
-            })
-            .catch(error => {
-                console.error('Error loading header:', error);
-            });
-    };
+    fetch('header.html')
+        .then(response => {
+            if (!response.ok) throw new Error('Failed to load header');
+            return response.text();
+        })
+        .then(data => {
+            const headerPlaceholder = document.getElementById('header-placeholder');
+            if (headerPlaceholder) {
+                headerPlaceholder.innerHTML = data;
+                setupHoverEffects();
+            }
+        })
+        .catch(error => {
+            console.error('Error loading header:', error);
+            const headerPlaceholder = document.getElementById('header-placeholder');
+            if (headerPlaceholder) {
+                headerPlaceholder.innerHTML = `
+                    <nav>
+                        <a href="index.html">Dmytro Dvornichenko</a>
+                        <div>
+                            <a href="mailto:email@example.com">Email</a>
+                            <a href="https://linkedin.com/in/username">LinkedIn</a>
+                            <a href="https://twitter.com/username">Twitter</a>
+                        </div>
+                    </nav>`;
+                setupHoverEffects();
+            }
+        });
 
-    // Load case studies
-    const loadCaseStudy = (placeholder) => {
+    // Load all case studies
+    document.querySelectorAll('[data-case-file]').forEach(placeholder => {
         const caseFile = placeholder.dataset.caseFile;
         if (!caseFile) return;
 
@@ -209,12 +221,5 @@ document.addEventListener("DOMContentLoaded", () => {
                 console.error(error);
                 placeholder.innerHTML = `<div class="case-study-error">Failed to load case study</div>`;
             });
-    };
-
-    // Initialize content loading
-    loadHeader();
-    
-    // Load all case studies
-    document.querySelectorAll('[data-case-file]').forEach(loadCaseStudy);
-});
+    });
 });
