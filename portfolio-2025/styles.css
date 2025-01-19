@@ -180,6 +180,24 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
   transition: opacity 0.4s ease, transform 0.4s ease;
 }
 
+.hover-image.active {
+	opacity: 1;
+	transform: translate(-50%, -100%) scale(1) rotate(var(--rotation));
+}
+
+.hover-image:not(.active) {
+	transform: translate(-50%, -100%) scale(0) rotate(0deg);
+	transition: opacity 0.4s ease, transform 0.5s ease;
+}
+
+.hover-image.move-down {
+	transform: translate(-50%, 0) scale(0) rotate(var(--rotation));
+}
+
+.hover-image.move-down.active {
+	transform: translate(-50%, 0) scale(1) rotate(var(--rotation));
+}
+
 /* Content sections */
 .header {
   max-width: var(--max-width);
