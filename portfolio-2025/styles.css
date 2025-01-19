@@ -252,16 +252,22 @@ li, .tag {
 
 
 /* Case study components */
-.case-study-container {
-  width: 100vw;
-  margin-left: calc(-50vw + 50%);
-  margin-right: calc(-50vw + 50%);
+.case-study {
   background: #fafafa;
+  padding: 5vw 0;
 }
 
-/* These styles are now handled by the .container class */
+.case-content {
+  width: 100%;
+}
 
 .case-gallery {
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
   width: 100vw;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
