@@ -270,7 +270,7 @@ li, .tag {
   display: flex;
   justify-content: center;
   gap: 5vw;
-  padding: 1vw 5vw 5vw;
+  padding: 1vw 10vw 5vw;
   background: #fafafa;
   margin: 0;
   flex-wrap: nowrap;
