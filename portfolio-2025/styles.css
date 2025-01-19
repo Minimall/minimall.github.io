@@ -42,13 +42,12 @@ h2 {
 	flex-direction: column;
 
 }
-
-
 .container {
-	padding: 5vh calc(50vw - 50%);
 	width: 100vw;
+	margin-top: calc(var(--spacing) * 3 );
 	margin-left: calc(-50vw + 50%);
 	margin-right: calc(-50vw + 50%);
+	margin-bottom: 2vw;
 }
 
 .container > * {
@@ -351,7 +350,8 @@ a span, .collapsible span {
 }
 
 .service {
-	padding: 0 0 0 0;
+	margin-top: var(--spacing));
+	margin-bottom: var(--spacing) * 2);
 }
 
 .service p {
@@ -368,7 +368,6 @@ a span, .collapsible span {
 	flex-wrap: wrap;
 	gap: 0.5rem;
 
-	margin-bottom: 1rem;
 }
 
 .service li {
@@ -437,7 +436,6 @@ a span, .collapsible span {
 .case-title {
   font-size: 2.5rem;
   line-height: 1.3;
-  margin-bottom: 3rem;
   color: #111;
 	max-width: var(--max-width);
 }
@@ -513,9 +511,14 @@ a span, .collapsible span {
   margin-bottom: 0.5rem;
 }
 
-.case-item p {
-  color: #888;
-  font-size: 1rem;
+.case-text {
+	margin-top: var(--spacing));
+	margin-bottom: var(--spacing));
+}
+
+.case-text p {
+	padding-top: 1rem;
+	padding-bottom: 1rem;
 }
 
 @media (max-width: 788px) {
