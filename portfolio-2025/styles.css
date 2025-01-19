@@ -436,7 +436,6 @@ a span, .collapsible span {
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   width: calc((100vw - 20vw) / 4); /* Base width for 4 images */
   height: auto;
-  max-height: 910px;
   flex: 1;
 }
 
