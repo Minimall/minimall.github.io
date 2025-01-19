@@ -44,7 +44,7 @@ h2 {
 }
 .container {
 	width: 100vw;
-
+	padding-top: 5vw;
 	margin-left: calc(-50vw + 50%);
 	margin-right: calc(-50vw + 50%);
 
@@ -56,13 +56,6 @@ h2 {
 	margin-right: auto;
 	padding-left: 5vw;
 	padding-right: 5vw;
-}
-
-.container > .case-study-container {
-	max-width: none;
-	padding-top: 1rem;
-	margin-top: calc(var(--spacing) * 3 );
-	padding-bottom: 1rem;
 }
 
 nav {
@@ -351,15 +344,12 @@ a span, .collapsible span {
 }
 
 .service {
-	margin-top: var(--spacing));
-	margin-bottom: var(--spacing) * 2);
+
+	margin-bottom: calc(var(--spacing));
 }
 
 .service p {
-	font-weight: 900
-	margin-top: 0.5rem;
-	margin-bottom: 1rem;
-
+	font-weight: 900;
 }
 
 .service ul {
@@ -410,12 +400,25 @@ a span, .collapsible span {
 
 /* Case Study Styles */
 .case-study-container {
-  margin: 8rem calc(-50vw + 50%);
-  width: 100vw;
+	margin-left: calc(-50vw + 50%);
+	margin-right: calc(-50vw + 50%);
+	width: 100vw;
   background: #fafafa;
 	padding-left: 5vw;
 	padding-right: 5vw;
+	padding-top: 5vw;
+	padding-bottom: 5vw;
+	align-content: center;
 }
+
+display: grid;
+width: 100vw;
+margin-left: calc(-50vw + 50%);
+margin-right: calc(-50vw + 50%);
+grid-template-columns: repeat(3, 1fr);
+gap: 5vw;
+background: #fafafa;
+padding: 0 4rem 5vw 5vw;
 
 @media (max-width: 788px) {
   .case-study-container {
@@ -442,14 +445,11 @@ a span, .collapsible span {
 }
 
 .case-content {
-  display: grid;
-  grid-template-rows: 1fr;
-  gap: 1rem;
-  width: 100%;
+	max-width: var(--max-width);
 }
 
 .main-text {
-	margin-bottom: calc(var(--spacing));
+	margin-bottom: calc(var(--spacing) * 4);
 	max-width: var(--max-width);
 }
 
@@ -494,7 +494,7 @@ a span, .collapsible span {
 
 .case-image {
   position: relative;
-  aspect-ratio: 9/18;
+  aspect-ratio: 9/16;
   overflow: hidden;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
@@ -513,6 +513,8 @@ a span, .collapsible span {
 }
 
 .case-text {
+	padding-top: 1rem;
+	padding-bottom: 1rem;
 	margin-top: var(--spacing));
 	margin-bottom: var(--spacing));
 }
@@ -520,6 +522,25 @@ a span, .collapsible span {
 .case-text p {
 	padding-top: 1rem;
 	padding-bottom: 1rem;
+}
+
+.case-text ul {
+	list-style: none;
+	padding: 0;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+
+	padding-bottom: 1rem;
+}
+
+.case-text li {
+	background: white;
+	border: 1px solid #e0e0e0;
+	border-radius: 100px;
+	padding: 0.25rem 0.75rem;
+	font-size: 0.9rem;
+	color: #292e3d;
 }
 
 @media (max-width: 788px) {
