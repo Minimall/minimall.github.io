@@ -26,7 +26,7 @@ h2 {
 	font-size: 1.5rem;
 	line-height: 1.3;
 	font-variation-settings: "wght" 800;
-	letter-spacing: 0.03em;
+	letter-spacing: 0.02em;
 	color: #111;
 	margin-bottom: 1rem;
 }
@@ -237,13 +237,13 @@ a span, .collapsible span {
 
 [data-hover="true"] span.wave-in {
 	font-variation-settings: "wght" 700;
-	letter-spacing: -0.018em;
+	letter-spacing: -0.021em;
 	animation: colorWave 0.8s ease-in-out forwards;
 }
 
 [data-hover="true"] span.wave-in.random-wave {
 	font-variation-settings: "wght" 700;
-	letter-spacing: -0.018em;
+	letter-spacing: -0.021em;
 	animation: randomColorWave 2s ease-in-out forwards;
 }
 
