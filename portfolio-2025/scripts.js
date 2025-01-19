@@ -190,7 +190,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
     // Load case study
-    fetch('case1.html')
+    fetch('cases/case1-teaser.html')
         .then(response => {
             if (!response.ok) throw new Error('Failed to load case study');
             return response.text();
