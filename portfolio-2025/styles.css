@@ -5,6 +5,8 @@
   --mouse-x: 0;
   --mouse-y: 0;
   --case-background: #fafafa;
+  --case-title-color: #111;
+  --company-name-color: #003c8a;
 }
 
 * {
