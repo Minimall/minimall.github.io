@@ -236,12 +236,12 @@ ul {
 }
 
 li, .tag {
-  background: white;
+
   border: 1px solid #e0e0e0;
   border-radius: 100px;
   padding: 0.25rem 0.75rem;
-  font-size: 0.9rem;
-  color: #292e3d;
+	font-size: 0.9rem;
+	color: #292e3d;
 }
 
 
@@ -399,8 +399,6 @@ a span, .collapsible span {
 }
 
 .case-logo {
-
-	margin-bottom: 2rem;
 }
 
 .case-logo img {
@@ -414,6 +412,8 @@ a span, .collapsible span {
 	font-variation-settings: "wght" 350;
   color: #111;
 	max-width: var(--max-width);
+	padding-top: 1rem;
+	padding-bottom: 1rem;
 }
 
 .case-tags {
@@ -451,7 +451,7 @@ a span, .collapsible span {
 }
 
 p {
-  padding: 1rem 0;
+
   margin: 0 0 var(--spacing) 0;
   max-width: var(--max-width);
 }
