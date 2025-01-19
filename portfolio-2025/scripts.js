@@ -189,27 +189,19 @@ document.addEventListener("DOMContentLoaded", () => {
             console.error('Error loading header:', error);
         });
 
-    // Load case studies
-    const loadCaseStudy = (elementId) => {
-        const placeholder = document.getElementById(elementId);
-        const caseFile = placeholder?.dataset.caseFile;
-        
-        if (placeholder && caseFile) {
-            fetch(caseFile)
-                .then(response => {
-                    if (!response.ok) throw new Error('Failed to load case study');
-                    return response.text();
-                })
-                .then(data => {
-                    placeholder.innerHTML = data;
-                    setupHoverEffects();
-                })
-                .catch(error => console.error(`Error loading case study ${elementId}:`, error));
-        }
-    };
-
-    loadCaseStudy('case1-placeholder');
-    loadCaseStudy('case2-placeholder');
+    // Load case study
+    fetch('cases/case1-teaser.html')
+        .then(response => {
+            if (!response.ok) throw new Error('Failed to load case study');
+            return response.text();
+        })
+        .then(data => {
+            const casePlaceholder = document.getElementById('case1-placeholder');
+            if (casePlaceholder) {
+                casePlaceholder.innerHTML = data;
+                setupHoverEffects();
+            }
+        })
         .catch(error => {
             console.error('Error loading case study:', error);
             const headerPlaceholder = document.getElementById('header-placeholder');
