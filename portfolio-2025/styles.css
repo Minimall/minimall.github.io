@@ -415,10 +415,14 @@ a span, .collapsible span {
   font-size: 2.25rem;
   line-height: 1.3;
 	font-variation-settings: "wght" 350;
-  color: #111;
+  color: var(--case-title-color);
 	max-width: var(--max-width);
 	padding-top: 1rem;
 	padding-bottom: 1rem;
+}
+
+.company-name {
+  color: var(--company-name-color);
 }
 
 .case-tags {
