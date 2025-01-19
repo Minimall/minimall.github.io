@@ -267,20 +267,15 @@ li, .tag {
 
 .case-gallery {
   width: 100vw;
-  display: flex;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 5vw;
-  padding: 1vw 5vw 5vw;
+	padding-top: 1vw;
+	padding-right: 5vw;
+	padding-left: 5vw;
+	padding-bottom: 5vw;
   background: #fafafa;
   margin: 0;
-  flex-wrap: nowrap;
-}
-
-@media (max-width: 788px) {
-  .case-gallery {
-    flex-direction: column;
-    flex-wrap: wrap;
-  }
 }
 
 /* Animations */
@@ -428,51 +423,19 @@ a span, .collapsible span {
 	margin-top: 1rem;
 }
 
-.case-image-portrait {
+.case-image {
   position: relative;
   aspect-ratio: 9/16;
   overflow: hidden;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  flex: 1;
-  max-width: calc(25% - 3.75vw);
-  min-width: 0;
 }
 
-.case-image-landscape {
-  position: relative;
-  aspect-ratio: 16/10;
-  overflow: hidden;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  flex: 1;
-  max-width: calc(25% - 3.75vw);
-  min-width: 0;
-}
-
-.case-gallery:has(.case-image-portrait:only-child) .case-image-portrait,
-.case-gallery:has(.case-image-landscape:only-child) .case-image-landscape {
-  max-width: calc(50% - 2.5vw);
-}
-
-.case-gallery:has(.case-image-portrait:nth-last-child(2)),
-.case-gallery:has(.case-image-landscape:nth-last-child(2)) {
-  max-width: calc(33.333% - 3.33vw);
-}
-
-.case-image-portrait img,
-.case-image-landscape img {
+.case-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   border-radius: 12px;
-}
-
-@media (max-width: 788px) {
-  .case-image-portrait,
-  .case-image-landscape {
-    max-width: 100%;
-  }
 }
 
 .case-item h3 {
