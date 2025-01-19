@@ -276,6 +276,13 @@ li, .tag {
   flex-wrap: nowrap;
 }
 
+@media (max-width: 64rem) {
+  .case-image-portrait {
+    max-height: none;
+    max-width: none;
+  }
+}
+
 @media (max-width: 788px) {
   .case-gallery {
     flex-direction: column;
