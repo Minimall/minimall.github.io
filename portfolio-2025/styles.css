@@ -434,8 +434,8 @@ a span, .collapsible span {
   overflow: hidden;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  height: calc((100vw - 20vw) / 4 * 1.778); /* Base height on viewport width */
-  width: auto;
+  width: calc((100vw - 20vw) / 4); /* Base width for 4 images */
+  height: auto;
   flex: 1;
 }
 
