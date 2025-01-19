@@ -54,7 +54,7 @@ h2 {
 /* Container layouts */
 .container {
   width: 100vw;
-  padding-top: 3rem;
+  padding-top: 3vw;
   margin-left: calc(-50vw + 50%);
   margin-right: calc(-50vw + 50%);
 }
@@ -252,9 +252,17 @@ li, .tag {
 
 
 /* Case study components */
-.case-study {
+.case-study-container {
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  margin-right: calc(-50vw + 50%);
   background: #fafafa;
-  padding: 5vw 0;
+}
+
+.case-study-content {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 5vw;
 }
 
 .case-content {
@@ -263,19 +271,10 @@ li, .tag {
 
 .case-gallery {
   width: 100vw;
-  position: relative;
-  left: 50%;
-  right: 50%;
-  margin-left: -50vw;
-  margin-right: -50vw;
-  width: 100vw;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 5vw;
-	padding-top: 3rem;
-	padding-left: 5vw;
-	padding-right: 5vw;
-	padding-bottom: 5vw;
+  padding: 5vw;
   background: #fafafa;
   margin: 0;
 }
