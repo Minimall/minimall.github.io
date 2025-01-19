@@ -48,7 +48,7 @@ h2 {
   font-variation-settings: "wght" 500;
   line-height: 1.5;
   color: #888;
-  max-width: 32rem;
+
 }
 
 /* Container layouts */
@@ -172,7 +172,7 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
   pointer-events: none;
   height: 480px;
   width: auto;
-  max-width: 840px;
+	max-width: 640px;
   object-fit: contain;
   transform: translate(-50%, -100%) scale(0) rotate(0deg);
   will-change: transform, opacity;
@@ -238,6 +238,7 @@ ul {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
+	padding-bottom: 2rem;
 }
 
 li, .tag {
@@ -247,10 +248,6 @@ li, .tag {
   padding: 0.25rem 0.75rem;
   font-size: 0.9rem;
   color: #292e3d;
-}
-
-.service ul {
-  padding-bottom: 0;
 }
 
 
@@ -459,9 +456,6 @@ a span, .collapsible span {
 	padding-bottom: 1rem;
 }
 
-.case-text ul {
-  padding-bottom: 1rem;
-}
 
 .no-margin {
 	margin: 0 !important;
