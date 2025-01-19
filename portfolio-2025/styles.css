@@ -212,11 +212,6 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
   max-width: var(--max-width);
 }
 
-.main-text p {
-  margin-bottom: var(--spacing);
-  max-width: var(--max-width);
-}
-
 /* Services grid */
 .services-grid {
   width: 100%;
@@ -228,10 +223,6 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
 
 .service {
   margin-bottom: calc(var(--spacing));
-}
-
-.service p {
-  font-weight: 900;
 }
 
 /* Lists & Tags */
@@ -459,11 +450,15 @@ a span, .collapsible span {
 	margin-bottom: var(--spacing);
 }
 
-.case-text p {
-	padding-top: 1rem;
-	padding-bottom: 1rem;
+p {
+  padding: 1rem 0;
+  margin: 0 0 var(--spacing) 0;
+  max-width: var(--max-width);
 }
 
+.service p {
+  font-weight: 900;
+}
 
 .no-margin {
 	margin: 0 !important;
