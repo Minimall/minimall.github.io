@@ -489,7 +489,11 @@ padding: 0 4rem 5vw 5vw;
   grid-template-columns: repeat(3, 1fr);
   gap: 5vw;
   background: #fafafa;
-  padding: 0 4rem 5vw 5vw;
+  padding: 5vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  transform: translateX(-50%);
 }
 
 .case-image {
