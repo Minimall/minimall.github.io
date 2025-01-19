@@ -470,12 +470,6 @@ a span, .collapsible span {
   border-radius: 12px;
 }
 
-@media (max-width: 64rem) {
-  .case-image-portrait {
-    max-height: none;
-  }
-}
-
 @media (max-width: 788px) {
   .case-image-portrait,
   .case-image-landscape {
