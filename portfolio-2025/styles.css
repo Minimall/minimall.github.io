@@ -253,33 +253,30 @@ li, .tag {
 
 /* Case study components */
 .case-study-container {
+  width: 100vw;
   margin-left: calc(-50vw + 50%);
   margin-right: calc(-50vw + 50%);
-  width: 100vw;
   background: #fafafa;
+}
 
-  padding-right: 5vw;
-  padding-bottom: 5vw;
-  padding-left: 5vw;
-  align-content: center;
+.case-study-content {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 5vw;
 }
 
 .case-content {
-  max-width: var(--max-width);
+  width: 100%;
 }
 
 .case-gallery {
-  display: grid;
   width: 100vw;
+  display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 5vw;
-  background: #fafafa;
   padding: 5vw;
+  background: #fafafa;
   margin: 0;
-  position: relative;
-  left: 50%;
-  transform: translateX(-50%);
-  box-sizing: border-box;
 }
 
 /* Animations */
