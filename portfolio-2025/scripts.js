@@ -190,10 +190,14 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
     // Load case study
-    fetch('cases/case1-teaser.html')
-        .then(response => {
-            if (!response.ok) throw new Error('Failed to load case study');
-            return response.text();
+    const casePlaceholder = document.getElementById('case1-placeholder');
+    const caseFile = casePlaceholder?.dataset.caseFile;
+    
+    if (casePlaceholder && caseFile) {
+        fetch(caseFile)
+            .then(response => {
+                if (!response.ok) throw new Error('Failed to load case study');
+                return response.text();
         })
         .then(data => {
             const casePlaceholder = document.getElementById('case1-placeholder');
