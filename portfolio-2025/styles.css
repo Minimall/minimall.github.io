@@ -231,7 +231,8 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
   font-weight: 900;
 }
 
-.service ul {
+/* Lists & Tags */
+ul {
   list-style: none;
   padding: 0;
   display: flex;
@@ -239,14 +240,19 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
   gap: 0.5rem;
 }
 
-.service li {
+li, .tag {
   background: white;
   border: 1px solid #e0e0e0;
   border-radius: 100px;
   padding: 0.25rem 0.75rem;
   font-size: 0.9rem;
-  color: #888;
+  color: #292e3d;
 }
+
+.service ul {
+  padding-bottom: 0;
+}
+
 
 /* Case study components */
 .case-study-container {
@@ -421,15 +427,6 @@ a span, .collapsible span {
 	margin-top: 1rem;
 }
 
-.tag {
-  background: white;
-  border: 1px solid #e0e0e0;
-  border-radius: 100px;
-  padding: 0.5rem 1.5rem;
-  font-size: 1rem;
-  color: #888;
-}
-
 .case-image {
   position: relative;
   aspect-ratio: 9/16;
@@ -463,21 +460,7 @@ a span, .collapsible span {
 }
 
 .case-text ul {
-	list-style: none;
-	padding: 0;
-	display: flex;
-	flex-wrap: wrap;
-	gap: 0.5rem;
-	padding-bottom: 1rem;
-}
-
-.case-text li {
-	background: white;
-	border: 1px solid #e0e0e0;
-	border-radius: 100px;
-	padding: 0.25rem 0.75rem;
-	font-size: 0.9rem;
-	color: #292e3d;
+  padding-bottom: 1rem;
 }
 
 .no-margin {
