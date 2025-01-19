@@ -262,7 +262,9 @@ li, .tag {
 .case-study-content {
   max-width: var(--max-width);
   margin: 0 auto;
-  padding: 5vw;
+  padding-top: 5vw;
+	padding-right: 5vw;
+	padding-left: 5vw;
 }
 
 .case-content {
@@ -274,7 +276,10 @@ li, .tag {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 5vw;
-  padding: 5vw;
+	padding-top: 1vw;
+	padding-right: 5vw;
+	padding-left: 5vw;
+	padding-bottom: 5vw;
   background: #fafafa;
   margin: 0;
 }
@@ -446,7 +451,7 @@ a span, .collapsible span {
 .case-text {
 	padding-top: 1rem;
 	padding-bottom: 1rem;
-	margin-top: var(--spacing);
+
 	margin-bottom: var(--spacing);
 }
 
