@@ -54,7 +54,7 @@ h2 {
 /* Container layouts */
 .container {
   width: 100vw;
-  padding-top: 5vw;
+  padding-top: 3vw;
   margin-left: calc(-50vw + 50%);
   margin-right: calc(-50vw + 50%);
 }
@@ -257,7 +257,10 @@ li, .tag {
   margin-right: calc(-50vw + 50%);
   width: 100vw;
   background: #fafafa;
-  padding: 5vw;
+
+  padding-right: 5vw;
+  padding-bottom: 5vw;
+  padding-left: 5vw;
   align-content: center;
 }
 
@@ -400,7 +403,7 @@ a span, .collapsible span {
 }
 
 .case-logo {
-	margin-top: 2rem;
+
 	margin-bottom: 2rem;
 }
 
