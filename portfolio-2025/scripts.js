@@ -172,39 +172,50 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    // Load header and case study
-    fetch('header.html')
-        .then(response => {
-            if (!response.ok) throw new Error('Failed to load header');
-            return response.text();
-        })
-        .then(data => {
-            const headerPlaceholder = document.getElementById('header-placeholder');
-            if (headerPlaceholder) {
-                headerPlaceholder.innerHTML = data;
-                setupHoverEffects(); // Setup hover effects for newly loaded content
-            }
-        })
-        .catch(error => {
-            console.error('Error loading header:', error);
-        });
+    // Load header
+    const loadHeader = () => {
+        fetch('header.html')
+            .then(response => {
+                if (!response.ok) throw new Error('Failed to load header');
+                return response.text();
+            })
+            .then(data => {
+                const headerPlaceholder = document.getElementById('header-placeholder');
+                if (headerPlaceholder) {
+                    headerPlaceholder.innerHTML = data;
+                    setupHoverEffects();
+                }
+            })
+            .catch(error => {
+                console.error('Error loading header:', error);
+            });
+    };
 
-    // Load case study
-    fetch('cases/case1-teaser.html')
-        .then(response => {
-            if (!response.ok) throw new Error('Failed to load case study');
-            return response.text();
-        })
-        .then(data => {
-            const casePlaceholder = document.getElementById('case1-placeholder');
-            if (casePlaceholder) {
-                casePlaceholder.innerHTML = data;
+    // Load case studies
+    const loadCaseStudy = (placeholder) => {
+        const caseFile = placeholder.dataset.caseFile;
+        if (!caseFile) return;
+
+        fetch(caseFile)
+            .then(response => {
+                if (!response.ok) throw new Error(`Failed to load case study: ${caseFile}`);
+                return response.text();
+            })
+            .then(data => {
+                placeholder.innerHTML = data;
                 setupHoverEffects();
-            }
-        })
-        .catch(error => {
-            console.error('Error loading case study:', error);
-            const headerPlaceholder = document.getElementById('header-placeholder');
+            })
+            .catch(error => {
+                console.error(error);
+                placeholder.innerHTML = `<div class="case-study-error">Failed to load case study</div>`;
+            });
+    };
+
+    // Initialize content loading
+    loadHeader();
+    
+    // Load all case studies
+    document.querySelectorAll('[data-case-file]').forEach(loadCaseStudy);
             if (headerPlaceholder) {
                 headerPlaceholder.innerHTML = `
                     <nav>
