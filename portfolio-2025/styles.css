@@ -54,7 +54,7 @@ h2 {
 /* Container layouts */
 .container {
   width: 100vw;
-  padding-top: 3vw;
+  padding-top: 3rem;
   margin-left: calc(-50vw + 50%);
   margin-right: calc(-50vw + 50%);
 }
@@ -262,11 +262,14 @@ li, .tag {
 .case-study-content {
   max-width: var(--max-width);
   margin: 0 auto;
-  padding: 5vw;
+	padding-top: 3rem
+  padding-left: 5vw;
+	padding-right: 5vw;
 }
 
 .case-content {
-  width: 100%;
+  width: 100%
+	;
 }
 
 .case-gallery {
@@ -274,7 +277,10 @@ li, .tag {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 5vw;
-  padding: 5vw;
+	padding-top: 3rem;
+	padding-left: 5vw;
+	padding-right: 5vw;
+	padding-bottom: 5vw;
   background: #fafafa;
   margin: 0;
 }
