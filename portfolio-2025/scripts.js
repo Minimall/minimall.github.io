@@ -216,17 +216,5 @@ document.addEventListener("DOMContentLoaded", () => {
     
     // Load all case studies
     document.querySelectorAll('[data-case-file]').forEach(loadCaseStudy);
-            if (headerPlaceholder) {
-                headerPlaceholder.innerHTML = `
-                    <nav>
-                        <a href="index.html">Dmytro Dvornichenko</a>
-                        <div>
-                            <a href="mailto:email@example.com">Email</a>
-                            <a href="https://linkedin.com/in/username">LinkedIn</a>
-                            <a href="https://twitter.com/username">Twitter</a>
-                        </div>
-                    </nav>`;
-                setupHoverEffects(); // Setup hover effects for fallback content
-            }
-        });
+});
 });
