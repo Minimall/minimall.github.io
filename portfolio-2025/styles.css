@@ -38,7 +38,7 @@ h2 {
 }
 
 .headline {
-  font-family: "EB Garamond", "Palatino", "Book Antiqua", "Georgia", serif;
+  font-family: "Faculty Glyphic", "Palatino", "Book Antiqua", "Georgia", serif;
   font-variation-settings: "wght" 525;
   font-size: 4rem;
   line-height: 1.2;
@@ -47,7 +47,7 @@ h2 {
 }
 
 .subheadline {
-  font-family: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   font-variation-settings: "wght" 500;
   line-height: 1.5;
   color: #888;
@@ -210,6 +210,7 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
 .main-text {
   margin-bottom: calc(var(--spacing) * 4);
   max-width: var(--max-width);
+  padding-bottom: 2vw;
 }
 
 /* Services grid */
@@ -270,7 +271,7 @@ li, .tag {
   display: flex;
   justify-content: center;
   gap: 5vw;
-  padding: 1vw 10vw 5vw;
+  padding: 1vw 10vw 10vw;
   background: var(--case-background);
   margin: 0;
   flex-wrap: nowrap;
@@ -372,10 +373,17 @@ a span, .collapsible span {
 	transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 	opacity: 0;
 	transform: translateY(-10px);
+  background: #f7f7f3;
+  border-radius: 8px;
+
 }
 
 .collapsible-content.active {
 	max-height: 2000px;
+  padding-top: 2vw;
+  padding-right: 2vw;
+  padding-left: 2vw;
+  margin-bottom: 2vw;
 	opacity: 1;
 	transform: translateY(0);
 }
