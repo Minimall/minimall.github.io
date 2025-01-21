@@ -91,8 +91,9 @@ nav {
 
 .name {
   display: flex;
-  font-variation-settings: "wght" 400;l
   flex-direction: column;
+  font-variation-settings: "wght" 400;
+  gap: 0.5rem;
 }
 
 /* Link and hover effects */
