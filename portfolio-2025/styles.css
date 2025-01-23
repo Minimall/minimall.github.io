@@ -123,20 +123,19 @@ nav a:hover {
 }
 
 /* Wave text animation effects */
+.original-text {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  user-select: text;
+}
+
 .wave-text {
   white-space: normal;
   display: inline-flex;
   flex-wrap: wrap;
   position: relative;
-}
-
-.wave-text::before {
-  content: attr(aria-label);
-  position: absolute;
-  opacity: 0;
-  pointer-events: none;
-  user-select: text;
-  white-space: pre;
+  user-select: none;
 }
 
 .wave-text span {
