@@ -295,7 +295,7 @@ li, .tag {
   display: flex;
   justify-content: center;
   gap: 5vw;
-  padding: 1vw 2vw 2vw;
+  padding: 1vw 10vw 10vw;
   background: var(--case-background);
   margin: 0;
   flex-wrap: nowrap;
@@ -304,6 +304,11 @@ li, .tag {
 .case-gallery:has(.case-image-portrait) {
   padding: 1vw 10vw 10vw;
 }
+
+.case-gallery:has(.case-image-landscape) {
+  padding: 2vw;
+}
+
 
 @media (max-width: 788px) {
   .case-gallery {
