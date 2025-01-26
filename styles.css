@@ -295,7 +295,7 @@ li, .tag {
   display: flex;
   justify-content: center;
   gap: 5vw;
-  padding: 1vw 10vw 10vw;
+  padding: 3vw 8vw 8vw 8vw;
   background: var(--case-background);
   margin: 0;
   flex-wrap: nowrap;
@@ -303,12 +303,12 @@ li, .tag {
 
 .case-gallery:has(.case-image-portrait) {
   flex-direction: row;
-  padding: 1vw 10vw 10vw;
 }
 
 .case-gallery:has(.case-image-landscape) {
   flex-direction: column;
-  padding: 2vw;
+  gap: 6vw;
+  padding: 3vw 8vw 8vw 8vw;
   align-items: center;
 }
 
@@ -497,7 +497,7 @@ a span, .collapsible span {
   overflow: hidden;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  width: 66.666%;
+  width: 100%;
   margin: 0 auto;
 }
 
@@ -536,8 +536,6 @@ a span, .collapsible span {
 
 .case-text {
 	padding-top: 1rem;
-	padding-bottom: 1rem;
-
 	margin-bottom: var(--spacing);
 }
 
