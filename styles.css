@@ -302,11 +302,14 @@ li, .tag {
 }
 
 .case-gallery:has(.case-image-portrait) {
+  flex-direction: row;
   padding: 1vw 10vw 10vw;
 }
 
 .case-gallery:has(.case-image-landscape) {
+  flex-direction: column;
   padding: 2vw;
+  align-items: center;
 }
 
 
