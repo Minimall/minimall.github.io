@@ -107,7 +107,7 @@ const cycleImages = (element, img) => {
     let fadeTimeout;
 
     const showNextImage = () => {
-        img.src = `./images/${images[currentIndex]}`;
+        img.src = `/images/${images[currentIndex]}`;
         img.style.opacity = "1";
 
         fadeTimeout = setTimeout(() => {
@@ -177,7 +177,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // Load header
-    fetch('header.html')
+    fetch('/header.html')
         .then(response => {
             if (!response.ok) throw new Error('Failed to load header');
             return response.text();
