@@ -521,11 +521,26 @@ a span, .collapsible span {
 }
 
 @media (max-width: 788px) {
+  .case-gallery {
+    flex-direction: column;
+    padding: 3vw 5vw 8vw 5vw;
+  }
+  
   .case-image-portrait,
   .case-image-landscape {
-    width: 100% !important;
+    width: var(--max-width) !important;
+    max-width: 100% !important;
     height: auto !important;
     margin: 0 !important;
+  }
+  
+  .case-gallery:has(.case-image-portrait) {
+    flex-direction: column;
+  }
+  
+  .case-gallery:has(.case-image-portrait:only-child) .case-image-portrait,
+  .case-gallery:has(.case-image-portrait:nth-last-child(2)) .case-image-portrait {
+    width: 100% !important;
   }
 }
 
