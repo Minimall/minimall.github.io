@@ -449,12 +449,12 @@ a span, .collapsible span {
 }
 
 .marquee:after {
-	content: attr(data-content);
+	content: "imagine, text moving across the screen just like those LED displays! ";
 	padding-right: 4em;
 }
 
 .marquee:before {
-	content: attr(data-content);
+	content: "imagine, text moving across the screen just like those LED displays! ";
 	padding-right: 4em;
 }
 
