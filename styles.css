@@ -336,8 +336,8 @@ li, .tag {
 }
 
 @keyframes marquee {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-50%, 0, 0); }
 }
 
 /* Media queries */
@@ -442,8 +442,9 @@ a span, .collapsible span {
 
 .marquee {
 	display: inline-block;
-	animation: marquee 8s linear infinite;
-	transition: transform 0.3s ease-in-out;
+	animation: marquee 15s linear infinite;
+	will-change: transform;
+	transform: translate3d(0, 0, 0);
 	white-space: nowrap;
 	padding-right: 2em;
 }
