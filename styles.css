@@ -445,9 +445,15 @@ a span, .collapsible span {
 	padding-right: 2em;
 	animation: marquee 20s linear infinite;
 	transition: transform 0.3s ease-in-out;
+	white-space: nowrap;
 }
 
 .marquee:after {
+	content: attr(data-content);
+	padding-right: 2em;
+}
+
+.marquee:before {
 	content: attr(data-content);
 	padding-right: 2em;
 }
