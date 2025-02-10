@@ -36,7 +36,7 @@ function createGrid() {
       --abs-y: calc(max(var(--offset-y), -1 * var(--offset-y)));
       --l: calc(85% - sin(var(--abs-x) / sin(var(--abs-y) * 3.6) * 3 - var(--t) / 400) * 35%);
       --h: calc(200deg + var(--abs-x) * 160deg);
-      --color-calc: hsl(var(--h) 90% min(var(--l), 95%));
+      --color-calc: hsl(var(--h) 70% min(var(--l), 95%));
     `;
     
     fragment.appendChild(div);
