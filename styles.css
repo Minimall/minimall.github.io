@@ -442,9 +442,10 @@ a span, .collapsible span {
 
 .marquee {
 	display: inline-block;
-	animation: marquee 20s linear infinite;
+	animation: marquee 8s linear infinite;
 	transition: transform 0.3s ease-in-out;
 	white-space: nowrap;
+	padding-right: 2em;
 }
 
 .case-logo {
