@@ -446,7 +446,12 @@ a span, .collapsible span {
 	will-change: transform;
 	transform: translate3d(0, 0, 0);
 	white-space: nowrap;
-	padding-right: 2em;
+	padding-right: 4em;
+}
+
+.marquee::before {
+	content: attr(data-content);
+	margin-right: 4em;
 }
 
 .case-logo {
