@@ -226,3 +226,12 @@ document.addEventListener("DOMContentLoaded", () => {
             });
     });
 });
+// Text repeater functionality
+document.addEventListener('DOMContentLoaded', () => {
+    const repeaters = document.querySelectorAll('.text-repeater');
+    repeaters.forEach(repeater => {
+        const text = repeater.textContent.trim();
+        repeater.setAttribute('data-content', text + ' ');
+        repeater.style.setProperty('--content-width', text.length + 'ch');
+    });
+});

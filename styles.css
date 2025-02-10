@@ -568,3 +568,18 @@ p {
 .no-margin {
 	margin: 0 !important;
 }
+
+.text-repeater {
+    white-space: nowrap;
+    overflow: hidden;
+    position: relative;
+    padding: 1rem 0;
+}
+
+.text-repeater:before {
+    content: attr(data-content);
+}
+
+.text-repeater:after {
+    content: attr(data-content);
+}
