@@ -442,20 +442,9 @@ a span, .collapsible span {
 
 .marquee {
 	display: inline-block;
-	padding-right: 2em;
 	animation: marquee 20s linear infinite;
 	transition: transform 0.3s ease-in-out;
 	white-space: nowrap;
-}
-
-.marquee:after {
-	content: "imagine, text moving across the screen just like those LED displays!      ";
-	padding-right: 4em;
-}
-
-.marquee:before {
-	content: "imagine, text moving across the screen just like those LED displays!      ";
-	padding-right: 4em;
 }
 
 .case-logo {
