@@ -34,6 +34,10 @@
   color: #000;
 }
 
+.footer-animation:hover .animation-cell:nth-child(n + 161):nth-child(-n + 176) {
+  color: #fff;
+}
+
 .footer-animation:hover .animation-cell {
   color: var(--color-calc);
 }
