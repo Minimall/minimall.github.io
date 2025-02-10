@@ -434,10 +434,10 @@ a span, .collapsible span {
 }
 
 .marquee-container {
-	display: inline-block;
+	display: inline;
 	overflow: hidden;
 	white-space: nowrap;
-	width: calc(100% - 300px);
+	width: auto;
 }
 
 .marquee {
