@@ -150,8 +150,8 @@ const triggerRandomWave = () => {
         handleWaveEffect(randomElement, false, true);
         setTimeout(() => {
             letters.forEach(letter => letter.classList.remove('random-wave'));
-        }, 400);
-    }, 400);
+        }, 700);
+    }, 700);
     setTimeout(triggerRandomWave, Math.random() * 3000 + 5000);
 };
 
