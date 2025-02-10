@@ -434,10 +434,10 @@ a span, .collapsible span {
 }
 
 .marquee-container {
-	display: inline;
+	width: 100%;
 	overflow: hidden;
 	white-space: nowrap;
-	width: auto;
+	margin: 1rem 0;
 }
 
 .marquee {
@@ -446,12 +446,7 @@ a span, .collapsible span {
 	will-change: transform;
 	transform: translate3d(0, 0, 0);
 	white-space: nowrap;
-	padding-right: 4em;
-}
-
-.marquee::before {
-	content: attr(data-content);
-	margin-right: 4em;
+	padding-right: 2em;
 }
 
 .case-logo {
