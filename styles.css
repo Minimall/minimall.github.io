@@ -336,8 +336,8 @@ li, .tag {
 }
 
 @keyframes marquee {
-	0% { transform: translateX(0); }
-	100% { transform: translateX(-50%); }
+  from { transform: translateX(0); }
+  to { transform: translateX(-200%); }
 }
 
 /* Media queries */
@@ -442,14 +442,9 @@ a span, .collapsible span {
 
 .marquee {
 	display: inline-block;
-	padding-right: 2em;
+	padding-left: 100%; /* Start from right side */
 	animation: marquee 20s linear infinite;
 	transition: transform 0.3s ease-in-out;
-}
-
-.marquee:after {
-	content: attr(data-content);
-	padding-right: 2em;
 }
 
 .case-logo {
@@ -531,7 +526,7 @@ a span, .collapsible span {
     flex-direction: column;
     padding: 3vw 5vw 8vw 5vw;
   }
-
+  
   .case-image-portrait,
   .case-image-landscape {
     width: var(--max-width) !important;
@@ -539,11 +534,11 @@ a span, .collapsible span {
     height: auto !important;
     margin: 0 !important;
   }
-
+  
   .case-gallery:has(.case-image-portrait) {
     flex-direction: column;
   }
-
+  
   .case-gallery:has(.case-image-portrait:only-child) .case-image-portrait,
   .case-gallery:has(.case-image-portrait:nth-last-child(2)) .case-image-portrait {
     width: 100% !important;
