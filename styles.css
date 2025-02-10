@@ -450,12 +450,12 @@ a span, .collapsible span {
 
 .marquee:after {
 	content: attr(data-content);
-	padding-right: 2em;
+	padding-right: 4em;
 }
 
 .marquee:before {
 	content: attr(data-content);
-	padding-right: 2em;
+	padding-right: 4em;
 }
 
 .case-logo {
