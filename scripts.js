@@ -1,4 +1,3 @@
-
 // Track hovered elements and rotation counter
 const hoveredElements = new Set();
 let rotationCounter = 0;
