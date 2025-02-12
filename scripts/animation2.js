@@ -120,19 +120,21 @@ const createGridAnimation = (gridElement) => {
         const movementTime = ACCELERATION_TIME + DECELERATION_TIME;
 
         if (elapsedTime < movementTime) {
-            // Single smooth movement phase
+            // Movement phase
             const t = elapsedTime / movementTime;
             const easedT = t < 0.5 
                 ? easeInQuad(t * 2) * 0.5 
                 : 0.5 + easeOutQuad((t - 0.5) * 2) * 0.5;
             return lerpPoint(currentFocalPoint, targetFocalPoint, easedT);
-        } else if (elapsedTime >= TOTAL_CYCLE_TIME - 16) {
-            // End of cycle - setup next movement
-            currentFocalPoint = {...targetFocalPoint};
+        } else if (elapsedTime >= TOTAL_CYCLE_TIME) {
+            // Prepare next cycle maintaining continuity
+            currentFocalPoint = targetFocalPoint;
             targetFocalPoint = getRandomPoint();
             cycleStartTime = currentTime;
+            return currentFocalPoint;
         }
         
+        // During pause phase, stay at target point
         return targetFocalPoint;
     }
 
