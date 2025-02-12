@@ -501,13 +501,11 @@ a span, .collapsible span {
 }
 
 .collapsible-content.active {
-
-  padding-top: 2vw;
-  padding-right: 2vw;
-  padding-left: 2vw;
+  max-height: fit-content;
+  padding: 2vw;
   margin-bottom: 2vw;
-	opacity: 1;
-	transform: translateY(0);
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .collapsible-link {
