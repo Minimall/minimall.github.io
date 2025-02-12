@@ -173,8 +173,11 @@ const createGridAnimation = (gridElement) => {
     function updateDebugPoint(point) {
         if (!debugPoint) return;
         const rect = gridElement.getBoundingClientRect();
-        debugPoint.style.left = `${rect.left + point.x - 4}px`;
-        debugPoint.style.top = `${rect.top + point.y - 4}px`;
+        const absoluteX = rect.left + point.x;
+        const absoluteY = rect.top + point.y;
+        debugPoint.style.left = `${absoluteX}px`;
+        debugPoint.style.top = `${absoluteY}px`;
+        debugPoint.style.transform = 'translate(-50%, -50%)';
     }
 
     function shortestRotation(current, target) {
