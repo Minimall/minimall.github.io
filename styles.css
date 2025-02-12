@@ -602,6 +602,7 @@ a span, .collapsible span {
   color: #003c8a;
   font-variation-settings: "wght" 500;
   transition: color 0.3s ease, font-variation-settings 0.3s ease;
+  letter-spacing: -0.005em;
   width: auto;
   display: inline;
 }
@@ -611,7 +612,8 @@ a span, .collapsible span {
 }
 
 [data-hover="true"] span.wave-in {
-  font-variation-settings: "wght" 700;
+  font-variation-settings: "wght" 640;
+  letter-spacing: -0.03em;
   animation: colorWave 0.8s ease-in-out forwards;
 }
 
@@ -625,10 +627,10 @@ a:hover span:nth-child(3n) { animation-delay: 0.15s; }
 a:hover span:nth-child(4n) { animation-delay: 0.2s; }
 a:hover span:nth-child(5n) { animation-delay: 0.25s; }
 
-a:not(:hover) span:nth-child(1n) { animation-delay: 0.02s; }
-a:not(:hover) span:nth-child(2n) { animation-delay: 0.04s; }
-a:not(:hover) span:nth-child(3n) { animation-delay: 0.08s; }
-a:not(:hover) span:nth-child(4n) { animation-delay: 0.08s; }
+a:not(:hover) span:nth-child(1n) { animation-delay: 0.015s; }
+a:not(:hover) span:nth-child(2n) { animation-delay: 0.030s; }
+a:not(:hover) span:nth-child(3n) { animation-delay: 0.045s; }
+a:not(:hover) span:nth-child(4n) { animation-delay: 0.06s; }
 a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
 
 .case-logo {
