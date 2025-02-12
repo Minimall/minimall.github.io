@@ -19,6 +19,7 @@ const createGridAnimation = (gridElement) => {
     let cycleStartTime = 0;
     let isMouseInside = false;
     let transitionStartTime = 0;
+    let currentCycle = 0;
 
     // Calculate responsive grid size
     const calculateGridSize = () => {
@@ -105,39 +106,75 @@ const createGridAnimation = (gridElement) => {
         };
     }
 
+    let debugMode = false;
+    const DEBUG_SPEED_MULTIPLIER = 6;
+    let debugPoint = null;
+
+    // Create debug button
+    const debugButton = document.createElement('button');
+    debugButton.style.cssText = 'position:fixed;top:0;left:0;width:56px;height:56px;opacity:0;cursor:pointer;z-index:9999;';
+    document.body.appendChild(debugButton);
+    debugButton.addEventListener('click', () => {
+        debugMode = !debugMode;
+        if (debugMode && !debugPoint) {
+            debugPoint = document.createElement('div');
+            debugPoint.style.cssText = 'position:absolute;width:8px;height:8px;background:red;border-radius:50%;pointer-events:none;z-index:9998;';
+            document.body.appendChild(debugPoint);
+        }
+        debugPoint.style.display = debugMode ? 'block' : 'none';
+    });
+
     function updateFocalPoint(currentTime) {
         if (isMouseInside) {
             const elapsedTransitionTime = currentTime - transitionStartTime;
             if (elapsedTransitionTime < TRANSITION_DURATION) {
                 const t = elapsedTransitionTime / TRANSITION_DURATION;
-                return lerpPoint(currentFocalPoint, mousePosition, easeInOutCubic(t));
+                const newPoint = lerpPoint(currentFocalPoint, mousePosition, easeInOutCubic(t));
+                if (debugPoint) updateDebugPoint(newPoint);
+                return newPoint;
             }
+            if (debugPoint) updateDebugPoint(mousePosition);
             return mousePosition;
         }
 
-        const elapsedTime = (currentTime - cycleStartTime) % TOTAL_CYCLE_TIME;
-        const movementTime = ACCELERATION_TIME + DECELERATION_TIME;
+        const speedMultiplier = debugMode ? DEBUG_SPEED_MULTIPLIER : 1;
+        const adjustedTime = currentTime * speedMultiplier;
+        const cycleDuration = ACCELERATION_TIME + DECELERATION_TIME + PAUSE_TIME;
+        const cycle = Math.floor(adjustedTime / cycleDuration);
+        const phaseTime = adjustedTime % cycleDuration;
 
-        if (elapsedTime < movementTime) {
-            // Movement phase
-            const t = elapsedTime / movementTime;
-            const easedT = t < 0.5 
-                ? easeInQuad(t * 2) * 0.5 
-                : 0.5 + easeOutQuad((t - 0.5) * 2) * 0.5;
-            const currentPos = lerpPoint(currentFocalPoint, targetFocalPoint, easedT);
-            if (t >= 1) {
-                currentFocalPoint = targetFocalPoint;
-                return targetFocalPoint; // Stay at B when movement completes
-            }
-            return currentPos;
-        } else if (elapsedTime >= TOTAL_CYCLE_TIME - 100) {
-            // Near the end of pause, prepare for next cycle
+        // Seamless transition between cycles
+        if (cycle !== currentCycle) {
+            currentCycle = cycle;
             currentFocalPoint = targetFocalPoint;
-            targetFocalPoint = getRandomPoint();
-            cycleStartTime = currentTime;
+            const angle = (cycle * Math.PI / 2) % (2 * Math.PI);
+            const radius = Math.min(window.innerWidth, window.innerHeight) * 0.3;
+            targetFocalPoint = {
+                x: window.innerWidth / 2 + Math.cos(angle) * radius,
+                y: window.innerHeight / 2 + Math.sin(angle) * radius
+            };
         }
 
-        return targetFocalPoint; // Stay at B during pause
+        let result;
+        if (phaseTime < ACCELERATION_TIME) {
+            const t = phaseTime / ACCELERATION_TIME;
+            result = lerpPoint(currentFocalPoint, targetFocalPoint, easeInQuad(t));
+        } else if (phaseTime < ACCELERATION_TIME + DECELERATION_TIME) {
+            const t = (phaseTime - ACCELERATION_TIME) / DECELERATION_TIME;
+            result = lerpPoint(currentFocalPoint, targetFocalPoint, 1 - easeOutQuad(1 - t));
+        } else {
+            result = targetFocalPoint;
+        }
+
+        if (debugPoint) updateDebugPoint(result);
+        return result;
+    }
+
+    function updateDebugPoint(point) {
+        if (!debugPoint) return;
+        const rect = gridElement.getBoundingClientRect();
+        debugPoint.style.left = `${rect.left + point.x - 4}px`;
+        debugPoint.style.top = `${rect.top + point.y - 4}px`;
     }
 
     function shortestRotation(current, target) {
