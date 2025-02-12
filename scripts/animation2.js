@@ -1,177 +1,223 @@
-const CYCLE = {
-  ACCELERATION: 6000,
-  DECELERATION: 6000,
-  PAUSE: 4500
-};
+const createGridAnimation = (gridElement) => {
+    const lines = [];
+    const colors = [
+        "#FF6B6B", "#4ECDC4", "#45B7D1", "#FFA07A", "#98D8C8", 
+        "#F7FFF7", "#FFE66D", "#6B5B95", "#88D8B0", "#FF8C94"
+    ];
 
-const DEBUG = {
-  enabled: false,
-  speedMultiplier: 6,
-  dotSize: 8
-};
+    const OPACITY_TRANSITION_TIME = 4500;
+    const ACCELERATION_TIME = 6000;
+    const DECELERATION_TIME = 6000;
+    const PAUSE_TIME = 4500;
+    const TOTAL_CYCLE_TIME = ACCELERATION_TIME + DECELERATION_TIME + PAUSE_TIME;
+    const TRANSITION_DURATION = 750;
 
-class GridAnimation {
-  constructor(element) {
-    this.element = element;
-    this.canvas = document.createElement('canvas');
-    this.ctx = this.canvas.getContext('2d');
-    this.element.appendChild(this.canvas);
+    let mousePosition = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+    let lastKnownPosition = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+    let currentFocalPoint = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+    let targetFocalPoint = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+    let cycleStartTime = 0;
+    let isMouseInside = false;
+    let transitionStartTime = 0;
 
-    // Create debug button
-    this.debugButton = document.createElement('button');
-    this.debugButton.style.cssText = `
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 56px;
-      height: 56px;
-      opacity: 0;
-      cursor: pointer;
-      z-index: 1000;
-    `;
-    this.element.appendChild(this.debugButton);
+    // Calculate responsive grid size
+    const calculateGridSize = () => {
+        const width = window.innerWidth;
+        const baseColumns = 12;
+        const baseRows = 12;
 
-    this.setupCanvas();
-    this.setupEvents();
-    this.initAnimation();
-  }
+        let columns = Math.min(Math.floor(width / 60), 24);
+        let rows = Math.floor(columns * (window.innerHeight / window.innerWidth));
 
-  setupCanvas() {
-    this.resize = () => {
-      this.width = this.element.clientWidth;
-      this.height = this.element.clientHeight;
-      this.canvas.width = this.width;
-      this.canvas.height = this.height;
-      this.centerX = this.width / 2;
-      this.centerY = this.height / 2;
+        return {
+            columns: Math.max(columns, baseColumns),
+            rows: Math.max(rows, baseRows)
+        };
     };
-    window.addEventListener('resize', this.resize);
-    this.resize();
-  }
 
-  setupEvents() {
-    this.element.addEventListener('mousemove', this.handleMouseMove.bind(this));
-    this.element.addEventListener('mouseleave', this.handleMouseLeave.bind(this));
-    this.debugButton.addEventListener('click', () => {
-      DEBUG.enabled = !DEBUG.enabled;
-      if (!DEBUG.enabled) this.ctx.clearRect(0, 0, this.width, this.height);
+    const { columns, rows } = calculateGridSize();
+    const totalLines = columns * rows;
+
+    // Create grid lines with staggered initialization
+    const initializeLines = () => {
+        const batchSize = 20;
+        let currentBatch = 0;
+
+        const createBatch = () => {
+            const start = currentBatch * batchSize;
+            const end = Math.min(start + batchSize, totalLines);
+
+            for (let i = start; i < end; i++) {
+                const line = document.createElement('div');
+                line.className = 'line';
+                gridElement.appendChild(line);
+                lines.push({
+                    element: line,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    targetColor: colors[Math.floor(Math.random() * colors.length)],
+                    colorTransitionProgress: 0,
+                    currentRotation: 0,
+                    opacity: 0,
+                    targetOpacity: 1,
+                    opacityTransitionProgress: 0,
+                    opacityPauseTime: Math.random() * 1000
+                });
+            }
+
+            currentBatch++;
+            if (currentBatch * batchSize < totalLines) {
+                requestAnimationFrame(createBatch);
+            }
+        };
+
+        createBatch();
+    };
+
+    // Initialize grid layout
+    gridElement.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
+    gridElement.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
+
+    initializeLines();
+
+    function getRandomPoint() {
+        return {
+            x: Math.random() * window.innerWidth,
+            y: Math.random() * window.innerHeight
+        };
+    }
+
+    function easeInOutCubic(t) {
+        return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    }
+
+    function easeInQuad(t) {
+        return t * t * t;  // Cubic easing for slower start
+    }
+
+    function easeOutQuad(t) {
+        return 1 - Math.pow(1 - t, 3);  // Cubic easing for smoother end
+    }
+
+    function lerpPoint(a, b, t) {
+        return {
+            x: a.x + (b.x - a.x) * t,
+            y: a.y + (b.y - a.y) * t
+        };
+    }
+
+    function updateFocalPoint(currentTime) {
+        if (isMouseInside) {
+            const elapsedTransitionTime = currentTime - transitionStartTime;
+            if (elapsedTransitionTime < TRANSITION_DURATION) {
+                const t = elapsedTransitionTime / TRANSITION_DURATION;
+                return lerpPoint(currentFocalPoint, mousePosition, easeInOutCubic(t));
+            }
+            return mousePosition;
+        }
+
+        const elapsedTime = (currentTime - cycleStartTime) % TOTAL_CYCLE_TIME;
+        const movementTime = ACCELERATION_TIME + DECELERATION_TIME;
+
+        if (elapsedTime < movementTime) {
+            // Movement phase
+            const t = elapsedTime / movementTime;
+            const easedT = t < 0.5 
+                ? easeInQuad(t * 2) * 0.5 
+                : 0.5 + easeOutQuad((t - 0.5) * 2) * 0.5;
+            const currentPos = lerpPoint(currentFocalPoint, targetFocalPoint, easedT);
+            if (t >= 1) {
+                currentFocalPoint = targetFocalPoint;
+                return targetFocalPoint; // Stay at B when movement completes
+            }
+            return currentPos;
+        } else if (elapsedTime >= TOTAL_CYCLE_TIME - 100) {
+            // Near the end of pause, prepare for next cycle
+            currentFocalPoint = targetFocalPoint;
+            targetFocalPoint = getRandomPoint();
+            cycleStartTime = currentTime;
+        }
+
+        return targetFocalPoint; // Stay at B during pause
+    }
+
+    function shortestRotation(current, target) {
+        let delta = (target - current) % 360;
+        if (delta > 180) delta -= 360;
+        if (delta < -180) delta += 360;
+        return delta;
+    }
+
+    function updateLineOpacity(line, deltaTime) {
+        if (line.opacityTransitionProgress < 1) {
+            line.opacityTransitionProgress += deltaTime / OPACITY_TRANSITION_TIME;
+            if (line.opacityTransitionProgress > 1) line.opacityTransitionProgress = 1;
+            line.opacity = easeInOutCubic(line.opacityTransitionProgress);
+        }
+    }
+
+    function animateLines(currentTime) {
+        const deltaTime = currentTime - (animateLines.lastTime || currentTime);
+        animateLines.lastTime = currentTime;
+
+        const focalPoint = updateFocalPoint(currentTime);
+        const rect = gridElement.getBoundingClientRect();
+
+        lines.forEach((line, index) => {
+            const x = (index % columns + 0.5) * rect.width / columns - focalPoint.x;
+            const y = (Math.floor(index / columns) + 0.5) * rect.height / rows - focalPoint.y;
+
+            const angleToFocalPoint = Math.atan2(y, x);
+            const targetRotation = (angleToFocalPoint * 180 / Math.PI) + 90;
+
+            const rotationDelta = shortestRotation(line.currentRotation, targetRotation);
+            line.currentRotation += rotationDelta * 0.05;
+            line.currentRotation %= 360;
+
+            line.element.style.transform = `rotate(${line.currentRotation}deg)`;
+            updateLineOpacity(line, deltaTime);
+            line.element.style.opacity = line.opacity;
+
+            if (Math.random() < 0.001) {
+                line.targetColor = colors[Math.floor(Math.random() * colors.length)];
+            }
+            line.element.style.backgroundColor = line.targetColor;
+        });
+
+        requestAnimationFrame(animateLines);
+    }
+
+    // Event Listeners
+    const resizeObserver = new ResizeObserver(() => {
+        const { columns: newColumns, rows: newRows } = calculateGridSize();
+        gridElement.style.gridTemplateColumns = `repeat(${newColumns}, 1fr)`;
+        gridElement.style.gridTemplateRows = `repeat(${newRows}, 1fr)`;
     });
-  }
 
-  easeInQuad(t) { return t * t; }
-  easeOutQuad(t) { return t * (2 - t); }
-  easeInOutCubic(t) {
-    return t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
-  }
+    resizeObserver.observe(gridElement);
 
-  initAnimation() {
-    this.focalPoint = { x: this.centerX, y: this.centerY };
-    this.targetPoint = { x: this.centerX, y: this.centerY };
-    this.isMouseControlled = false;
-    this.cycleStartTime = performance.now();
-    this.animate();
-  }
+    gridElement.addEventListener('mousemove', (event) => {
+        const rect = gridElement.getBoundingClientRect();
+        mousePosition.x = event.clientX - rect.left;
+        mousePosition.y = event.clientY - rect.top;
+        lastKnownPosition = { ...mousePosition };
+    });
 
-  updateAutomaticMovement(currentTime) {
-    const cycleTime = DEBUG.enabled ? 
-      (CYCLE.ACCELERATION + CYCLE.DECELERATION + CYCLE.PAUSE) / DEBUG.speedMultiplier :
-      CYCLE.ACCELERATION + CYCLE.DECELERATION + CYCLE.PAUSE;
+    gridElement.addEventListener('mouseenter', () => {
+        isMouseInside = true;
+        transitionStartTime = performance.now();
+        currentFocalPoint = updateFocalPoint(transitionStartTime);
+    });
 
-    const localTime = (currentTime - this.cycleStartTime) % cycleTime;
+    gridElement.addEventListener('mouseleave', () => {
+        isMouseInside = false;
+        cycleStartTime = performance.now();
+        currentFocalPoint = lastKnownPosition;
+        targetFocalPoint = getRandomPoint();
+    });
 
-    if (localTime < CYCLE.ACCELERATION) {
-      // Acceleration phase
-      const t = this.easeInQuad(localTime / CYCLE.ACCELERATION);
-      this.focalPoint.x = this.centerX + Math.sin(currentTime * 0.001) * 100 * t;
-      this.focalPoint.y = this.centerY + Math.cos(currentTime * 0.001) * 100 * t;
-    } else if (localTime < CYCLE.ACCELERATION + CYCLE.DECELERATION) {
-      // Deceleration phase
-      const t = this.easeOutQuad((localTime - CYCLE.ACCELERATION) / CYCLE.DECELERATION);
-      this.focalPoint.x = this.centerX + Math.sin(currentTime * 0.001) * 100 * (1 - t);
-      this.focalPoint.y = this.centerY + Math.cos(currentTime * 0.001) * 100 * (1 - t);
-    } else {
-      // Pause phase - point stays at center
-      this.focalPoint.x = this.centerX;
-      this.focalPoint.y = this.centerY;
-    }
-  }
+    cycleStartTime = performance.now();
+    targetFocalPoint = getRandomPoint();
+    requestAnimationFrame(animateLines);
+};
 
-  handleMouseMove(e) {
-    const rect = this.canvas.getBoundingClientRect();
-    this.isMouseControlled = true;
-    this.targetPoint = {
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top
-    };
-  }
-
-  handleMouseLeave() {
-    this.isMouseControlled = false;
-    this.cycleStartTime = performance.now();
-  }
-
-  drawGrid() {
-    const gridSize = 20;
-    const cellWidth = this.width / gridSize;
-    const cellHeight = this.height / gridSize;
-
-    this.ctx.strokeStyle = '#eee';
-    this.ctx.lineWidth = 1;
-
-    // Calculate angle based on focal point
-    for (let i = 0; i <= gridSize; i++) {
-      for (let j = 0; j <= gridSize; j++) {
-        const x = j * cellWidth;
-        const y = i * cellHeight;
-        
-        // Calculate angle between line center and focal point
-        const dx = this.focalPoint.x - x;
-        const dy = this.focalPoint.y - y;
-        const angle = Math.atan2(dy, dx);
-        
-        // Draw rotated line
-        this.ctx.save();
-        this.ctx.translate(x, y);
-        this.ctx.rotate(angle);
-        
-        this.ctx.beginPath();
-        this.ctx.moveTo(-10, 0);
-        this.ctx.lineTo(10, 0);
-        this.ctx.stroke();
-        
-        this.ctx.restore();
-      }
-    }
-  }
-
-  animate() {
-    const currentTime = performance.now();
-
-    if (!this.isMouseControlled) {
-      this.updateAutomaticMovement(currentTime);
-    } else {
-      const t = this.easeInOutCubic(0.1);
-      this.focalPoint.x += (this.targetPoint.x - this.focalPoint.x) * t;
-      this.focalPoint.y += (this.targetPoint.y - this.focalPoint.y) * t;
-    }
-
-    this.ctx.clearRect(0, 0, this.width, this.height);
-    this.drawGrid();
-
-    if (DEBUG.enabled) {
-      this.ctx.fillStyle = 'red';
-      this.ctx.fillRect(
-        this.focalPoint.x - DEBUG.dotSize/2,
-        this.focalPoint.y - DEBUG.dotSize/2,
-        DEBUG.dotSize,
-        DEBUG.dotSize
-      );
-    }
-
-    requestAnimationFrame(this.animate.bind(this));
-  }
-}
-
-function createGridAnimation(element) {
-  return new GridAnimation(element);
-}
+window.createGridAnimation = createGridAnimation;
