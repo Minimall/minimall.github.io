@@ -111,7 +111,37 @@ class GridAnimation {
   }
 
   drawGrid() {
-    // Grid drawing logic here
+    const gridSize = 20;
+    const cellWidth = this.width / gridSize;
+    const cellHeight = this.height / gridSize;
+
+    this.ctx.strokeStyle = '#eee';
+    this.ctx.lineWidth = 1;
+
+    // Calculate angle based on focal point
+    for (let i = 0; i <= gridSize; i++) {
+      for (let j = 0; j <= gridSize; j++) {
+        const x = j * cellWidth;
+        const y = i * cellHeight;
+        
+        // Calculate angle between line center and focal point
+        const dx = this.focalPoint.x - x;
+        const dy = this.focalPoint.y - y;
+        const angle = Math.atan2(dy, dx);
+        
+        // Draw rotated line
+        this.ctx.save();
+        this.ctx.translate(x, y);
+        this.ctx.rotate(angle);
+        
+        this.ctx.beginPath();
+        this.ctx.moveTo(-10, 0);
+        this.ctx.lineTo(10, 0);
+        this.ctx.stroke();
+        
+        this.ctx.restore();
+      }
+    }
   }
 
   animate() {
