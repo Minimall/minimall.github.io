@@ -337,7 +337,7 @@ li, .tag {
   }
   
   .collapsible-content.active {
-    padding: 0;
+    padding: 5vw;
   }
   
   .menu {
