@@ -105,97 +105,39 @@ const createGridAnimation = (gridElement) => {
         };
     }
 
-    let debugMode = false;
-    let debugDot = null;
-
-    function createDebugButton(gridElement) {
-        const button = document.createElement('button');
-        button.style.cssText = `
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 56px;
-            height: 56px;
-            opacity: 0;
-            z-index: 1000;
-            cursor: pointer;
-        `;
-        button.onclick = () => {
-            debugMode = !debugMode;
-            if (debugMode) {
-                if (!debugDot) {
-                    debugDot = document.createElement('div');
-                    debugDot.style.cssText = `
-                        position: absolute;
-                        width: 8px;
-                        height: 8px;
-                        background: red;
-                        border-radius: 50%;
-                        pointer-events: none;
-                        z-index: 999;
-                    `;
-                    gridElement.appendChild(debugDot);
-                }
-                debugDot.style.display = 'block';
-            } else if (debugDot) {
-                debugDot.style.display = 'none';
-            }
-        };
-        gridElement.appendChild(button);
-    }
-
     function updateFocalPoint(currentTime) {
-        const timeScale = debugMode ? 6 : 1;
-
         if (isMouseInside) {
             const elapsedTransitionTime = currentTime - transitionStartTime;
             if (elapsedTransitionTime < TRANSITION_DURATION) {
                 const t = elapsedTransitionTime / TRANSITION_DURATION;
-                const point = lerpPoint(currentFocalPoint, mousePosition, easeInOutCubic(t));
-                if (debugDot) {
-                    debugDot.style.transform = `translate(${point.x - 4}px, ${point.y - 4}px)`;
-                }
-                return point;
-            }
-            if (debugDot) {
-                debugDot.style.transform = `translate(${mousePosition.x - 4}px, ${mousePosition.y - 4}px)`;
+                return lerpPoint(currentFocalPoint, mousePosition, easeInOutCubic(t));
             }
             return mousePosition;
         }
 
-        const scaledTime = currentTime * timeScale;
-        const elapsedTime = (scaledTime - cycleStartTime) % TOTAL_CYCLE_TIME;
+        const elapsedTime = (currentTime - cycleStartTime) % TOTAL_CYCLE_TIME;
         const movementTime = ACCELERATION_TIME + DECELERATION_TIME;
 
-        if (elapsedTime < ACCELERATION_TIME) {
-            const t = elapsedTime / ACCELERATION_TIME;
-            const point = lerpPoint(currentFocalPoint, targetFocalPoint, easeInQuad(t));
-            if (debugDot) {
-                debugDot.style.transform = `translate(${point.x - 4}px, ${point.y - 4}px)`;
+        if (elapsedTime < movementTime) {
+            // Movement phase
+            const t = elapsedTime / movementTime;
+            const easedT = t < 0.5 
+                ? easeInQuad(t * 2) * 0.5 
+                : 0.5 + easeOutQuad((t - 0.5) * 2) * 0.5;
+            const currentPos = lerpPoint(currentFocalPoint, targetFocalPoint, easedT);
+            if (t >= 1) {
+                currentFocalPoint = targetFocalPoint;
+                return targetFocalPoint; // Stay at B when movement completes
             }
-            return point;
-        } else if (elapsedTime < movementTime) {
-            const t = (elapsedTime - ACCELERATION_TIME) / DECELERATION_TIME;
-            const point = lerpPoint(currentFocalPoint, targetFocalPoint, 1 - easeOutQuad(1 - t));
-            if (debugDot) {
-                debugDot.style.transform = `translate(${point.x - 4}px, ${point.y - 4}px)`;
-            }
-            return point;
+            return currentPos;
         } else if (elapsedTime >= TOTAL_CYCLE_TIME - 100) {
+            // Near the end of pause, prepare for next cycle
             currentFocalPoint = targetFocalPoint;
-            const nextPoint = getRandomPoint();
-            // Ensure minimum distance between points
-            while (Math.hypot(nextPoint.x - targetFocalPoint.x, nextPoint.y - targetFocalPoint.y) < 100) {
-                Object.assign(nextPoint, getRandomPoint());
-            }
-            targetFocalPoint = nextPoint;
-            cycleStartTime = scaledTime;
+            targetFocalPoint = getRandomPoint();
+            cycleStartTime = currentTime;
         }
 
-        if (debugDot) {
-            debugDot.style.transform = `translate(${targetFocalPoint.x - 4}px, ${targetFocalPoint.y - 4}px)`;
-        }
-        return targetFocalPoint;
+        return targetFocalPoint; // Stay at B during pause
     }
 
     function shortestRotation(current, target) {
@@ -273,7 +215,6 @@ const createGridAnimation = (gridElement) => {
         targetFocalPoint = getRandomPoint();
     });
 
-    createDebugButton(gridElement); // Added debug button creation
     cycleStartTime = performance.now();
     targetFocalPoint = getRandomPoint();
     requestAnimationFrame(animateLines);
