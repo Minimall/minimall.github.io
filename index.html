@@ -10,9 +10,34 @@
 		<link href="https://fonts.googleapis.com/css2?family=Faculty+Glyphic&display=swap" rel="stylesheet">
 		<link rel="stylesheet" href="styles.css" />
 		<link rel="stylesheet" href="styles/animation.css" />
+		<style>
+			.container:first-of-type {
+				position: relative; /* Needed for absolute positioning of background */
+			}
+			.container:first-of-type::before {
+				content: "";
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				background: linear-gradient(to bottom, rgba(255,255,255,0.8) 0%, rgba(255,255,255,1) 100%); /* Semi-transparent gradient */
+				z-index: -1; /* Place behind the content */
+			}
+			.grid-animation-bg {
+				position: absolute; /* Needed for absolute positioning of background */
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				z-index: -2; /* Behind gradient */
+			}
+
+		</style>
 	</head>
 	<body>
 		<div class="container">
+			<div class="grid-animation-bg"></div>  <!-- Added animation container -->
 			<div id="header-placeholder"></div>
 			<header class="header">
 				<h1 class="headline">
@@ -55,8 +80,10 @@
 		<script src="scripts/animation2.js"></script>
 		<script>
 			document.addEventListener('DOMContentLoaded', () => {
-				const gridElement = document.querySelector('.grid-animation');
+				const gridElement = document.querySelector('.grid-animation-bg');
 				if (gridElement) createGridAnimation(gridElement);
+				const gridElement2 = document.querySelector('.grid-animation');
+				if (gridElement2) createGridAnimation(gridElement2);
 			});
 		</script>
 	</body>
