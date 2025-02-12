@@ -175,14 +175,13 @@ const createGridAnimation = (gridElement) => {
         const movementTime = ACCELERATION_TIME + DECELERATION_TIME;
         
         if (elapsedTime < movementTime) {
-            const progress = elapsedTime / movementTime;
             return {
                 type: 'move',
-                progress
+                progress: elapsedTime / movementTime
             };
         }
         
-        if (elapsedTime >= TOTAL_CYCLE_TIME - 100) {
+        if (elapsedTime > TOTAL_CYCLE_TIME - 50) {
             return { type: 'prepare' };
         }
         
@@ -192,23 +191,28 @@ const createGridAnimation = (gridElement) => {
     function calculatePointForPhase(phase) {
         if (phase.type === 'move') {
             const t = phase.progress;
-            const easedT = t < 0.5 
-                ? easeInQuad(t * 2) * 0.5 
-                : 0.5 + easeOutQuad((t - 0.5) * 2) * 0.5;
+            const easedT = easeInOutCubic(t);
             return lerpPoint(currentFocalPoint, targetFocalPoint, easedT);
         }
         return targetFocalPoint;
     }
 
+    let nextTargetPoint = null;
+    
     function prepareNextCycle(currentTime) {
+        if (!nextTargetPoint) {
+            nextTargetPoint = getRandomPoint();
+            while (
+                Math.hypot(nextTargetPoint.x - targetFocalPoint.x, nextTargetPoint.y - targetFocalPoint.y) < 100 ||
+                Math.hypot(nextTargetPoint.x - targetFocalPoint.x, nextTargetPoint.y - targetFocalPoint.y) > window.innerWidth / 2
+            ) {
+                nextTargetPoint = getRandomPoint();
+            }
+        }
+        
         currentFocalPoint = targetFocalPoint;
-        const oldTarget = targetFocalPoint;
-        do {
-            targetFocalPoint = getRandomPoint();
-        } while (
-            Math.hypot(targetFocalPoint.x - oldTarget.x, targetFocalPoint.y - oldTarget.y) < 100 ||
-            Math.hypot(targetFocalPoint.x - oldTarget.x, targetFocalPoint.y - oldTarget.y) > window.innerWidth / 2
-        );
+        targetFocalPoint = nextTargetPoint;
+        nextTargetPoint = null;
         cycleStartTime = currentTime;
     }
 
