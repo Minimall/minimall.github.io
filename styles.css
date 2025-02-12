@@ -619,6 +619,7 @@ a span, .collapsible span {
 
 [data-hover="true"] span.wave-out {
   font-variation-settings: "wght" 500;
+  transition: letter-spacing 0.3s ease 0.3s;
 }
 
 a:hover span:nth-child(1n) { animation-delay: 0.05s; }
