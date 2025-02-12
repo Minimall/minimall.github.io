@@ -126,17 +126,17 @@ const createGridAnimation = (gridElement) => {
                 : 0.5 + easeOutQuad((t - 0.5) * 2) * 0.5;
             const currentPos = lerpPoint(currentFocalPoint, targetFocalPoint, easedT);
             if (t >= 1) {
-                currentFocalPoint = targetFocalPoint; // Update current when reaching target
+                currentFocalPoint = targetFocalPoint;
             }
             return currentPos;
         } else if (elapsedTime >= TOTAL_CYCLE_TIME - 100) {
             // Near the end of pause, prepare for next cycle
-            currentFocalPoint = targetFocalPoint; // Set current to last target
-            targetFocalPoint = getRandomPoint(); // Generate new target
+            currentFocalPoint = targetFocalPoint;
+            targetFocalPoint = getRandomPoint();
             cycleStartTime = currentTime;
         }
 
-        return targetFocalPoint;
+        return currentFocalPoint; // Return current position during pause
     }
 
     function shortestRotation(current, target) {
