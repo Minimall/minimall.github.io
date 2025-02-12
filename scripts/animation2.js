@@ -5,12 +5,12 @@ const createGridAnimation = (gridElement) => {
         "#F7FFF7", "#FFE66D", "#6B5B95", "#88D8B0", "#FF8C94"
     ];
 
-    const OPACITY_TRANSITION_TIME = 750;
-    const ACCELERATION_TIME = 1000;
-    const DECELERATION_TIME = 1000;
-    const PAUSE_TIME = 750;
+    const OPACITY_TRANSITION_TIME = 4500;
+    const ACCELERATION_TIME = 6000;
+    const DECELERATION_TIME = 6000;
+    const PAUSE_TIME = 4500;
     const TOTAL_CYCLE_TIME = ACCELERATION_TIME + DECELERATION_TIME + PAUSE_TIME;
-    const TRANSITION_DURATION = 125;
+    const TRANSITION_DURATION = 750;
 
     let mousePosition = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
     let lastKnownPosition = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
@@ -155,30 +155,12 @@ const createGridAnimation = (gridElement) => {
         }
     }
 
-    // Create debug dot
-    const debugDot = document.createElement('div');
-    debugDot.style.cssText = `
-        position: absolute;
-        width: 8px;
-        height: 8px;
-        background: red;
-        border-radius: 50%;
-        pointer-events: none;
-        z-index: 1000;
-        transform: translate(-50%, -50%);
-    `;
-    gridElement.appendChild(debugDot);
-
     function animateLines(currentTime) {
         const deltaTime = currentTime - (animateLines.lastTime || currentTime);
         animateLines.lastTime = currentTime;
 
         const focalPoint = updateFocalPoint(currentTime);
         const rect = gridElement.getBoundingClientRect();
-
-        // Update debug dot position
-        debugDot.style.left = `${focalPoint.x}px`;
-        debugDot.style.top = `${focalPoint.y}px`;
 
         lines.forEach((line, index) => {
             const x = (index % columns + 0.5) * rect.width / columns - focalPoint.x;
