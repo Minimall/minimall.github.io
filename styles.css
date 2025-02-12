@@ -323,8 +323,17 @@ li, .tag {
    Responsive Design
    ========================================================================== */
 @media (max-width: 788px) {
+  
   .container {
     padding-top: 6vw;
+  }
+  
+  .case-study-content {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding-top: 10vw;
+    padding-right: 5vw;
+    padding-left: 5vw;
   }
   
   .menu {
@@ -382,6 +391,7 @@ li, .tag {
   .case-gallery:has(.case-image-portrait:nth-last-child(2)) .case-image-portrait {
     width: 100% !important;
   }
+  
 }
 
 .case-image-portrait {
@@ -503,7 +513,6 @@ a span, .collapsible span {
 .collapsible-content.active {
   max-height: fit-content;
   padding: 2vw;
-  margin-bottom: 2vw;
   opacity: 1;
   transform: translateY(0);
 }
