@@ -173,6 +173,7 @@ const createGridAnimation = (gridElement) => {
 
     function calculateMovementPhase(elapsedTime) {
         const movementTime = ACCELERATION_TIME + DECELERATION_TIME;
+        const pauseStart = movementTime + PAUSE_TIME;
         
         if (elapsedTime < movementTime) {
             return {
@@ -181,7 +182,7 @@ const createGridAnimation = (gridElement) => {
             };
         }
         
-        if (elapsedTime > TOTAL_CYCLE_TIME - 50) {
+        if (elapsedTime >= pauseStart && !nextTargetPoint) {
             return { type: 'prepare' };
         }
         
@@ -196,24 +197,28 @@ const createGridAnimation = (gridElement) => {
         }
         return targetFocalPoint;
     }
-
+    
     let nextTargetPoint = null;
+    let isTransitioning = false;
     
     function prepareNextCycle(currentTime) {
-        if (!nextTargetPoint) {
-            nextTargetPoint = getRandomPoint();
-            while (
-                Math.hypot(nextTargetPoint.x - targetFocalPoint.x, nextTargetPoint.y - targetFocalPoint.y) < 100 ||
-                Math.hypot(nextTargetPoint.x - targetFocalPoint.x, nextTargetPoint.y - targetFocalPoint.y) > window.innerWidth / 2
-            ) {
-                nextTargetPoint = getRandomPoint();
-            }
+        if (isTransitioning) return;
+        isTransitioning = true;
+        
+        const newTarget = getRandomPoint();
+        const dx = newTarget.x - targetFocalPoint.x;
+        const dy = newTarget.y - targetFocalPoint.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        
+        if (distance < 100 || distance > window.innerWidth / 2) {
+            isTransitioning = false;
+            return;
         }
         
         currentFocalPoint = targetFocalPoint;
-        targetFocalPoint = nextTargetPoint;
-        nextTargetPoint = null;
+        targetFocalPoint = newTarget;
         cycleStartTime = currentTime;
+        isTransitioning = false;
     }
 
     function updateDebugDot(point) {
