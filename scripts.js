@@ -1,4 +1,3 @@
-
 // Track hovered elements and rotation counter
 const hoveredElements = new Set();
 let rotationCounter = 0;
@@ -156,6 +155,62 @@ const triggerRandomWave = () => {
     setTimeout(triggerRandomWave, Math.random() * 3000 + 5000);
 };
 
+//Added for background animation
+
+function createBackgroundAnimation(container) {
+    const width = container.offsetWidth;
+    const height = container.offsetHeight;
+    const numParticles = 200; // Adjust number of particles as needed
+    const particleSize = 5;  // Adjust particle size as needed
+
+    const particles = [];
+    for (let i = 0; i < numParticles; i++) {
+        particles.push({
+            x: Math.random() * width,
+            y: Math.random() * height,
+            vx: (Math.random() - 0.5) * 2, // Random horizontal velocity
+            vy: (Math.random() - 0.5) * 2, // Random vertical velocity
+            size: particleSize
+        });
+    }
+
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    container.appendChild(canvas);
+    const ctx = canvas.getContext('2d');
+
+    function animate() {
+        ctx.clearRect(0, 0, width, height);
+        particles.forEach(particle => {
+            particle.x += particle.vx;
+            particle.y += particle.vy;
+
+            // Bounce off walls
+            if (particle.x + particle.size > width || particle.x - particle.size < 0) {
+                particle.vx *= -1;
+            }
+            if (particle.y + particle.size > height || particle.y - particle.size < 0) {
+                particle.vy *= -1;
+            }
+
+            ctx.fillStyle = 'rgba(255,255,255,0.1)'; // White semi-transparent particles
+            ctx.beginPath();
+            ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+            ctx.fill();
+        });
+        requestAnimationFrame(animate);
+    }
+
+    animate();
+}
+
+function addGradientOverlay(container) {
+  const gradient = container.style.background = "linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,1))";
+  container.style.backgroundSize = "100% 100%";
+}
+
+
 // Initialize everything
 document.addEventListener("DOMContentLoaded", () => {
     setupHoverEffects();
@@ -226,6 +281,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 placeholder.innerHTML = `<div class="case-study-error">Failed to load case study</div>`;
             });
     });
+
+    //Added to initialize the background animation
+    const firstContainer = document.querySelectorAll('.container')[0];
+    if (firstContainer) {
+        createBackgroundAnimation(firstContainer);
+        addGradientOverlay(firstContainer);
+    }
 });
 // Text repeater functionality
 document.addEventListener('DOMContentLoaded', () => {
