@@ -592,6 +592,8 @@ a span, .collapsible span {
   flex-wrap: wrap;
   position: relative;
   user-select: none;
+  width: fit-content;
+  min-width: max-content;
 }
 
 .wave-text span {
