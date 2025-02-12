@@ -127,6 +127,7 @@ const createGridAnimation = (gridElement) => {
             const currentPos = lerpPoint(currentFocalPoint, targetFocalPoint, easedT);
             if (t >= 1) {
                 currentFocalPoint = targetFocalPoint;
+                return targetFocalPoint; // Stay at B when movement completes
             }
             return currentPos;
         } else if (elapsedTime >= TOTAL_CYCLE_TIME - 100) {
@@ -136,7 +137,7 @@ const createGridAnimation = (gridElement) => {
             cycleStartTime = currentTime;
         }
 
-        return currentFocalPoint; // Return current position during pause
+        return targetFocalPoint; // Stay at B during pause
     }
 
     function shortestRotation(current, target) {
