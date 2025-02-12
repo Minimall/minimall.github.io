@@ -112,7 +112,7 @@ const createGridAnimation = (gridElement) => {
 
     // Create debug button
     const debugButton = document.createElement('button');
-    debugButton.style.cssText = 'position:fixed;top:0;left:0;width:56px;height:56px;opacity:0;cursor:pointer;z-index:9999;';
+    debugButton.style.cssText = 'position:fixed;top:0;left:0;width:56px;height:56px;background:rgba(128,128,128,0.3);border:none;cursor:pointer;z-index:9999;border-radius:4px;';
     document.body.appendChild(debugButton);
     debugButton.addEventListener('click', () => {
         debugMode = !debugMode;
