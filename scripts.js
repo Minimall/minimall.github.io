@@ -107,7 +107,8 @@ const cycleImages = (element, img) => {
     let fadeTimeout;
 
     const showNextImage = () => {
-        img.src = `/images/${images[currentIndex]}`;
+        img.src = `/images/1x/${images[currentIndex]}`;
+        img.srcset = `/images/1x/${images[currentIndex]} 1x, /images/2x/${images[currentIndex]} 2x`;
         img.style.opacity = "1";
 
         fadeTimeout = setTimeout(() => {
