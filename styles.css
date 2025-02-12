@@ -643,10 +643,10 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
 
 .grid-animation .line,
 .grid-animation-bg .line {
-    width: 2px;
-    height: 80%;
+    width: 1px;
+    height: 60%;
     margin: auto;
     transform-origin: center;
     transition: background-color 0.5s ease;
-    opacity: 0.6;
+    opacity: 0.3;
 }
