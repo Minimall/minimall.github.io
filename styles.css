@@ -601,3 +601,22 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
 
 .case-logo {
 }
+/* Grid Animation */
+.grid-animation {
+    position: relative;
+    width: 100%;
+    height: 320px;
+    display: grid;
+    grid-template-columns: repeat(20, 1fr);
+    grid-template-rows: repeat(20, 1fr);
+    background: #09111a;
+    overflow: hidden;
+}
+
+.grid-animation .line {
+    width: 1px;
+    height: 80%;
+    margin: auto;
+    transform-origin: center;
+    transition: background-color 0.5s ease;
+}
