@@ -348,7 +348,8 @@ li, .tag {
   }
 
   .collapsible-content.active {
-    padding: 5vw;
+    max-height: fit-content !important;
+    padding: 5vw !important;
     opacity: 1;
     transform: translateY(0);
   }
