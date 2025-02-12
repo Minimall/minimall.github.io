@@ -46,7 +46,7 @@ const setupHoverEffects = () => {
                 const needsWave = !element.querySelector('.wave-text');
                 if (needsWave) {
                     element.innerHTML = `<span class="wave-text">${
-                        text.split('').map(char => `<span>${char}</span>`).join('')
+                        text.split('').map(char => char === ' ' ? `<span>&nbsp;</span>` : `<span>${char}</span>`).join('')
                     }</span>`;
                 }
             }
