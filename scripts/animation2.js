@@ -6,12 +6,12 @@ const createGridAnimation = (gridElement) => {
         "#F7FFF7", "#FFE66D", "#6B5B95", "#88D8B0", "#FF8C94"
     ];
     
-    const OPACITY_TRANSITION_TIME = 750;
-    const ACCELERATION_TIME = 1000;
-    const DECELERATION_TIME = 1000;
-    const PAUSE_TIME = 750;
+    const OPACITY_TRANSITION_TIME = 6000;
+    const ACCELERATION_TIME = 8000;
+    const DECELERATION_TIME = 8000;
+    const PAUSE_TIME = 6000;
     const TOTAL_CYCLE_TIME = ACCELERATION_TIME + DECELERATION_TIME + PAUSE_TIME;
-    const TRANSITION_DURATION = 125;
+    const TRANSITION_DURATION = 1000;
 
     let mousePosition = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
     let lastKnownPosition = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
@@ -126,13 +126,13 @@ const createGridAnimation = (gridElement) => {
                 ? easeInQuad(t * 2) * 0.5 
                 : 0.5 + easeOutQuad((t - 0.5) * 2) * 0.5;
             return lerpPoint(currentFocalPoint, targetFocalPoint, easedT);
-        } else if (elapsedTime >= TOTAL_CYCLE_TIME) {
-            // Setup next cycle while maintaining position
-            const lastPosition = targetFocalPoint;
-            currentFocalPoint = lastPosition;
-            targetFocalPoint = getRandomPoint();
+        } else if (elapsedTime >= TOTAL_CYCLE_TIME - 16) {
+            // Near the end of pause, prepare for next cycle
+            const nextTarget = getRandomPoint();
+            const prevTarget = targetFocalPoint;
+            currentFocalPoint = prevTarget;
+            targetFocalPoint = nextTarget;
             cycleStartTime = currentTime;
-            return lastPosition;
         }
         
         return targetFocalPoint;
