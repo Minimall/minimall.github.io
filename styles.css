@@ -587,9 +587,8 @@ a span, .collapsible span {
 }
 
 .wave-text {
-  white-space: normal;
-  display: inline-flex;
-  flex-wrap: wrap;
+  white-space: nowrap;
+  display: inline;
   position: relative;
   user-select: none;
 }
