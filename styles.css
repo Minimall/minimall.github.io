@@ -526,7 +526,7 @@ a span, .collapsible span {
 @media (max-width: 788px) {
   .case-gallery {
     flex-direction: column;
-    padding: 3vw 5vw 8vw 5vw;
+    padding: 3vw 5vw 0vw 5vw;
   }
   
   .case-image-portrait,
