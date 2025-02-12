@@ -190,8 +190,9 @@ const createGridAnimation = (gridElement) => {
     resizeObserver.observe(gridElement);
 
     gridElement.addEventListener('mousemove', (event) => {
-        mousePosition.x = event.clientX;
-        mousePosition.y = event.clientY;
+        const rect = gridElement.getBoundingClientRect();
+        mousePosition.x = event.clientX - rect.left;
+        mousePosition.y = event.clientY - rect.top;
         lastKnownPosition = { ...mousePosition };
     });
 
