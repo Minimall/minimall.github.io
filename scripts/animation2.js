@@ -6,12 +6,12 @@ const createGridAnimation = (gridElement) => {
         "#F7FFF7", "#FFE66D", "#6B5B95", "#88D8B0", "#FF8C94"
     ];
     
-    const OPACITY_TRANSITION_TIME = 6000;
-    const ACCELERATION_TIME = 8000;
-    const DECELERATION_TIME = 8000;
-    const PAUSE_TIME = 6000;
+    const OPACITY_TRANSITION_TIME = 750;
+    const ACCELERATION_TIME = 1000;
+    const DECELERATION_TIME = 1000;
+    const PAUSE_TIME = 750;
     const TOTAL_CYCLE_TIME = ACCELERATION_TIME + DECELERATION_TIME + PAUSE_TIME;
-    const TRANSITION_DURATION = 1000;
+    const TRANSITION_DURATION = 125;
 
     let mousePosition = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
     let lastKnownPosition = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
