@@ -123,13 +123,13 @@ const createGridAnimation = (gridElement) => {
             return lerpPoint(currentFocalPoint, targetFocalPoint, easeInQuad(t));
         } else if (elapsedTime < ACCELERATION_TIME + DECELERATION_TIME) {
             const t = (elapsedTime - ACCELERATION_TIME) / DECELERATION_TIME;
-            return lerpPoint(currentFocalPoint, targetFocalPoint, 0.5 + easeOutQuad(t) / 2);
+            return lerpPoint(currentFocalPoint, targetFocalPoint, easeOutQuad(t));
+        } else if (elapsedTime >= TOTAL_CYCLE_TIME - 16) {
+            currentFocalPoint = {...targetFocalPoint};
+            targetFocalPoint = getRandomPoint();
+            cycleStartTime = currentTime;
+            return currentFocalPoint;
         } else {
-            if (Math.abs(elapsedTime - (ACCELERATION_TIME + DECELERATION_TIME)) < 16) {
-                currentFocalPoint = {...targetFocalPoint};
-                targetFocalPoint = getRandomPoint();
-                cycleStartTime = currentTime;
-            }
             return targetFocalPoint;
         }
     }
