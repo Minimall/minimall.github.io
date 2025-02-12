@@ -513,7 +513,7 @@ a span, .collapsible span {
 }
 
 .collapsible-content.active {
-	max-height: 2000px;
+	max-height: none;
   padding-top: 2vw;
   padding-right: 2vw;
   padding-left: 2vw;
