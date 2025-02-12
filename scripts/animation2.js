@@ -5,12 +5,12 @@ const createGridAnimation = (gridElement) => {
         "#F7FFF7", "#FFE66D", "#6B5B95", "#88D8B0", "#FF8C94"
     ];
 
-    const OPACITY_TRANSITION_TIME = 4500;
-    const ACCELERATION_TIME = 6000;
-    const DECELERATION_TIME = 6000;
-    const PAUSE_TIME = 4500;
+    const OPACITY_TRANSITION_TIME = 750;
+    const ACCELERATION_TIME = 1000;
+    const DECELERATION_TIME = 1000;
+    const PAUSE_TIME = 750;
     const TOTAL_CYCLE_TIME = ACCELERATION_TIME + DECELERATION_TIME + PAUSE_TIME;
-    const TRANSITION_DURATION = 750;
+    const TRANSITION_DURATION = 125;
 
     let mousePosition = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
     let lastKnownPosition = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
@@ -105,126 +105,38 @@ const createGridAnimation = (gridElement) => {
         };
     }
 
-    let debugMode = false;
-    let debugDot = null;
-
-    function createDebugButton(gridElement) {
-        const button = document.createElement('button');
-        button.style.cssText = `
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 56px;
-            height: 56px;
-            opacity: 0;
-            cursor: pointer;
-            z-index: 1000;
-        `;
-        button.onclick = () => {
-            debugMode = !debugMode;
-            if (debugMode && !debugDot) {
-                debugDot = document.createElement('div');
-                debugDot.style.cssText = `
-                    position: absolute;
-                    width: 8px;
-                    height: 8px;
-                    background: red;
-                    border-radius: 50%;
-                    pointer-events: none;
-                    transition: transform 0.05s linear;
-                    z-index: 999;
-                `;
-                gridElement.appendChild(debugDot);
-            }
-            if (debugDot) debugDot.style.display = debugMode ? 'block' : 'none';
-        };
-        gridElement.appendChild(button);
-    }
-
     function updateFocalPoint(currentTime) {
-        const timeScale = debugMode ? 6 : 1;
-        const scaledTime = currentTime * timeScale;
-
         if (isMouseInside) {
             const elapsedTransitionTime = currentTime - transitionStartTime;
             if (elapsedTransitionTime < TRANSITION_DURATION) {
                 const t = elapsedTransitionTime / TRANSITION_DURATION;
-                const point = lerpPoint(currentFocalPoint, mousePosition, easeInOutCubic(t));
-                updateDebugDot(point);
-                return point;
+                return lerpPoint(currentFocalPoint, mousePosition, easeInOutCubic(t));
             }
-            updateDebugDot(mousePosition);
             return mousePosition;
         }
 
-        const elapsedTime = (scaledTime - cycleStartTime) % TOTAL_CYCLE_TIME;
-        const phase = calculateMovementPhase(elapsedTime);
-        
-        if (phase.type === 'prepare') {
-            prepareNextCycle(scaledTime);
-            updateDebugDot(targetFocalPoint);
-            return targetFocalPoint;
-        }
-        
-        const point = calculatePointForPhase(phase);
-        updateDebugDot(point);
-        return point;
-    }
-
-    function calculateMovementPhase(elapsedTime) {
+        const elapsedTime = (currentTime - cycleStartTime) % TOTAL_CYCLE_TIME;
         const movementTime = ACCELERATION_TIME + DECELERATION_TIME;
-        const pauseStart = movementTime + PAUSE_TIME;
-        
+
         if (elapsedTime < movementTime) {
-            return {
-                type: 'move',
-                progress: elapsedTime / movementTime
-            };
+            // Movement phase
+            const t = elapsedTime / movementTime;
+            const easedT = t < 0.5 
+                ? easeInQuad(t * 2) * 0.5 
+                : 0.5 + easeOutQuad((t - 0.5) * 2) * 0.5;
+            const currentPos = lerpPoint(currentFocalPoint, targetFocalPoint, easedT);
+            if (t >= 1) {
+                currentFocalPoint = targetFocalPoint; // Update current when reaching target
+            }
+            return currentPos;
+        } else if (elapsedTime >= TOTAL_CYCLE_TIME - 100) {
+            // Near the end of pause, prepare for next cycle
+            currentFocalPoint = targetFocalPoint; // Set current to last target
+            targetFocalPoint = getRandomPoint(); // Generate new target
+            cycleStartTime = currentTime;
         }
-        
-        if (elapsedTime >= pauseStart && !nextTargetPoint) {
-            return { type: 'prepare' };
-        }
-        
-        return { type: 'pause' };
-    }
 
-    function calculatePointForPhase(phase) {
-        if (phase.type === 'move') {
-            const t = phase.progress;
-            const easedT = easeInOutCubic(t);
-            return lerpPoint(currentFocalPoint, targetFocalPoint, easedT);
-        }
         return targetFocalPoint;
-    }
-    
-    let nextTargetPoint = null;
-    let isTransitioning = false;
-    
-    function prepareNextCycle(currentTime) {
-        if (isTransitioning) return;
-        isTransitioning = true;
-        
-        const newTarget = getRandomPoint();
-        const dx = newTarget.x - targetFocalPoint.x;
-        const dy = newTarget.y - targetFocalPoint.y;
-        const distance = Math.sqrt(dx * dx + dy * dy);
-        
-        if (distance < 100 || distance > window.innerWidth / 2) {
-            isTransitioning = false;
-            return;
-        }
-        
-        currentFocalPoint = targetFocalPoint;
-        targetFocalPoint = newTarget;
-        cycleStartTime = currentTime;
-        isTransitioning = false;
-    }
-
-    function updateDebugDot(point) {
-        if (debugDot && debugMode) {
-            debugDot.style.transform = `translate(${point.x - 4}px, ${point.y - 4}px)`;
-        }
     }
 
     function shortestRotation(current, target) {
@@ -242,12 +154,30 @@ const createGridAnimation = (gridElement) => {
         }
     }
 
+    // Create debug dot
+    const debugDot = document.createElement('div');
+    debugDot.style.cssText = `
+        position: absolute;
+        width: 8px;
+        height: 8px;
+        background: red;
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 1000;
+        transform: translate(-50%, -50%);
+    `;
+    gridElement.appendChild(debugDot);
+
     function animateLines(currentTime) {
         const deltaTime = currentTime - (animateLines.lastTime || currentTime);
         animateLines.lastTime = currentTime;
 
         const focalPoint = updateFocalPoint(currentTime);
         const rect = gridElement.getBoundingClientRect();
+
+        // Update debug dot position
+        debugDot.style.left = `${focalPoint.x}px`;
+        debugDot.style.top = `${focalPoint.y}px`;
 
         lines.forEach((line, index) => {
             const x = (index % columns + 0.5) * rect.width / columns - focalPoint.x;
@@ -302,7 +232,6 @@ const createGridAnimation = (gridElement) => {
         targetFocalPoint = getRandomPoint();
     });
 
-    createDebugButton(gridElement);
     cycleStartTime = performance.now();
     targetFocalPoint = getRandomPoint();
     requestAnimationFrame(animateLines);
