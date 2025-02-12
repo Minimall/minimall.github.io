@@ -350,6 +350,7 @@ li, .tag {
   .collapsible-content.active {
     max-height: fit-content !important;
     padding: 5vw !important;
+    margin-bottom: 2vw
     opacity: 1;
     transform: translateY(0);
   }
