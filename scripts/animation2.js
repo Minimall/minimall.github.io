@@ -172,41 +172,43 @@ const createGridAnimation = (gridElement) => {
     }
 
     function calculateMovementPhase(elapsedTime) {
-        if (elapsedTime < ACCELERATION_TIME) {
+        const movementTime = ACCELERATION_TIME + DECELERATION_TIME;
+        
+        if (elapsedTime < movementTime) {
+            const progress = elapsedTime / movementTime;
             return {
-                type: 'accelerate',
-                progress: elapsedTime / ACCELERATION_TIME
+                type: 'move',
+                progress
             };
         }
-        if (elapsedTime < ACCELERATION_TIME + DECELERATION_TIME) {
-            return {
-                type: 'decelerate',
-                progress: (elapsedTime - ACCELERATION_TIME) / DECELERATION_TIME
-            };
-        }
+        
         if (elapsedTime >= TOTAL_CYCLE_TIME - 100) {
             return { type: 'prepare' };
         }
+        
         return { type: 'pause' };
     }
 
     function calculatePointForPhase(phase) {
-        switch (phase.type) {
-            case 'accelerate':
-                return lerpPoint(currentFocalPoint, targetFocalPoint, easeInQuad(phase.progress));
-            case 'decelerate':
-                return lerpPoint(currentFocalPoint, targetFocalPoint, 1 - easeOutQuad(1 - phase.progress));
-            default:
-                return targetFocalPoint;
+        if (phase.type === 'move') {
+            const t = phase.progress;
+            const easedT = t < 0.5 
+                ? easeInQuad(t * 2) * 0.5 
+                : 0.5 + easeOutQuad((t - 0.5) * 2) * 0.5;
+            return lerpPoint(currentFocalPoint, targetFocalPoint, easedT);
         }
+        return targetFocalPoint;
     }
 
     function prepareNextCycle(currentTime) {
         currentFocalPoint = targetFocalPoint;
+        const oldTarget = targetFocalPoint;
         do {
             targetFocalPoint = getRandomPoint();
-        } while (Math.hypot(targetFocalPoint.x - currentFocalPoint.x, 
-                          targetFocalPoint.y - currentFocalPoint.y) < 100);
+        } while (
+            Math.hypot(targetFocalPoint.x - oldTarget.x, targetFocalPoint.y - oldTarget.y) < 100 ||
+            Math.hypot(targetFocalPoint.x - oldTarget.x, targetFocalPoint.y - oldTarget.y) > window.innerWidth / 2
+        );
         cycleStartTime = currentTime;
     }
 
