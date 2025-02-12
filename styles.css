@@ -336,8 +336,19 @@ li, .tag {
     padding-left: 5vw;
   }
   
-  .collapsible-content.active {
+  .collapsible-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0;
+    transform: translateY(-10px);
+    background: #f7f7f3;
     padding: 5vw;
+    border-radius: 6px;
+  }
+
+  .collapsible-content.active {
+
   }
   
   .menu {
