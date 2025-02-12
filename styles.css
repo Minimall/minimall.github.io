@@ -594,6 +594,7 @@ a span, .collapsible span {
   user-select: none;
   width: fit-content;
   min-width: max-content;
+  gap: 0.1em;
 }
 
 .wave-text span {
