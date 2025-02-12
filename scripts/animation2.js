@@ -3,9 +3,9 @@ const createGridAnimation = (gridElement) => {
     const lines = [];
     const colors = [
         "#FF6B6B", "#4ECDC4", "#45B7D1", "#FFA07A", "#98D8C8", 
-        "#F7FFF7", "#FFE66D", "#6B5B95", "#88D8B0", "#FF8C94",
-        "#FFDAB9", "#B5EAD7", "#C7CEEA", "#FF9AA2", "#E6E6FA"
+        "#F7FFF7", "#FFE66D", "#6B5B95", "#88D8B0", "#FF8C94"
     ];
+    
     const OPACITY_TRANSITION_TIME = 6000;
     const ACCELERATION_TIME = 8000;
     const DECELERATION_TIME = 8000;
@@ -21,23 +21,64 @@ const createGridAnimation = (gridElement) => {
     let isMouseInside = false;
     let transitionStartTime = 0;
 
-    // Create grid lines
-    for (let i = 0; i < 400; i++) {
-        const line = document.createElement('div');
-        line.className = 'line';
-        gridElement.appendChild(line);
-        lines.push({
-            element: line,
-            color: colors[Math.floor(Math.random() * colors.length)],
-            targetColor: colors[Math.floor(Math.random() * colors.length)],
-            colorTransitionProgress: 0,
-            currentRotation: 0,
-            opacity: 1,
-            targetOpacity: 1,
-            opacityTransitionProgress: 1,
-            opacityPauseTime: 0
-        });
-    }
+    // Calculate responsive grid size
+    const calculateGridSize = () => {
+        const width = window.innerWidth;
+        const baseColumns = 12;
+        const baseRows = 12;
+        
+        let columns = Math.min(Math.floor(width / 60), 24);
+        let rows = Math.floor(columns * (window.innerHeight / window.innerWidth));
+        
+        return {
+            columns: Math.max(columns, baseColumns),
+            rows: Math.max(rows, baseRows)
+        };
+    };
+
+    const { columns, rows } = calculateGridSize();
+    const totalLines = columns * rows;
+
+    // Create grid lines with staggered initialization
+    const initializeLines = () => {
+        const batchSize = 20;
+        let currentBatch = 0;
+
+        const createBatch = () => {
+            const start = currentBatch * batchSize;
+            const end = Math.min(start + batchSize, totalLines);
+
+            for (let i = start; i < end; i++) {
+                const line = document.createElement('div');
+                line.className = 'line';
+                gridElement.appendChild(line);
+                lines.push({
+                    element: line,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    targetColor: colors[Math.floor(Math.random() * colors.length)],
+                    colorTransitionProgress: 0,
+                    currentRotation: 0,
+                    opacity: 0,
+                    targetOpacity: 1,
+                    opacityTransitionProgress: 0,
+                    opacityPauseTime: Math.random() * 1000
+                });
+            }
+
+            currentBatch++;
+            if (currentBatch * batchSize < totalLines) {
+                requestAnimationFrame(createBatch);
+            }
+        };
+
+        createBatch();
+    };
+
+    // Initialize grid layout
+    gridElement.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
+    gridElement.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
+    
+    initializeLines();
 
     function getRandomPoint() {
         return {
@@ -71,21 +112,18 @@ const createGridAnimation = (gridElement) => {
             if (elapsedTransitionTime < TRANSITION_DURATION) {
                 const t = elapsedTransitionTime / TRANSITION_DURATION;
                 return lerpPoint(currentFocalPoint, mousePosition, easeInOutCubic(t));
-            } else {
-                return mousePosition;
             }
+            return mousePosition;
         }
 
         const elapsedTime = (currentTime - cycleStartTime) % TOTAL_CYCLE_TIME;
 
         if (elapsedTime < ACCELERATION_TIME) {
             const t = elapsedTime / ACCELERATION_TIME;
-            const easedT = easeInQuad(t) / 2;
-            return lerpPoint(currentFocalPoint, targetFocalPoint, easedT);
+            return lerpPoint(currentFocalPoint, targetFocalPoint, easeInQuad(t));
         } else if (elapsedTime < ACCELERATION_TIME + DECELERATION_TIME) {
             const t = (elapsedTime - ACCELERATION_TIME) / DECELERATION_TIME;
-            const easedT = 0.5 + easeOutQuad(t) / 2;
-            return lerpPoint(currentFocalPoint, targetFocalPoint, easedT);
+            return lerpPoint(currentFocalPoint, targetFocalPoint, 0.5 + easeOutQuad(t) / 2);
         } else {
             if (Math.abs(elapsedTime - (ACCELERATION_TIME + DECELERATION_TIME)) < 16) {
                 currentFocalPoint = targetFocalPoint;
@@ -107,18 +145,7 @@ const createGridAnimation = (gridElement) => {
         if (line.opacityTransitionProgress < 1) {
             line.opacityTransitionProgress += deltaTime / OPACITY_TRANSITION_TIME;
             if (line.opacityTransitionProgress > 1) line.opacityTransitionProgress = 1;
-            const t = easeInOutCubic(line.opacityTransitionProgress);
-            line.opacity = line.opacity + (line.targetOpacity - line.opacity) * t;
-        } else if (line.opacityPauseTime > 0) {
-            line.opacityPauseTime -= deltaTime;
-            if (line.opacityPauseTime <= 0) {
-                line.targetOpacity = line.targetOpacity === 0 ? 1 : 0;
-                line.opacityTransitionProgress = 0;
-            }
-        } else if (Math.random() < 0.0005) {
-            line.targetOpacity = line.targetOpacity === 0 ? 1 : 0;
-            line.opacityTransitionProgress = 0;
-            line.opacityPauseTime = Math.random() * 3000 + 1000;
+            line.opacity = easeInOutCubic(line.opacityTransitionProgress);
         }
     }
 
@@ -127,11 +154,11 @@ const createGridAnimation = (gridElement) => {
         animateLines.lastTime = currentTime;
 
         const focalPoint = updateFocalPoint(currentTime);
+        const rect = gridElement.getBoundingClientRect();
 
         lines.forEach((line, index) => {
-            const rect = gridElement.getBoundingClientRect();
-            const x = (index % 20 + 0.5) * rect.width / 20 - focalPoint.x;
-            const y = (Math.floor(index / 20) + 0.5) * rect.height / 20 - focalPoint.y;
+            const x = (index % columns + 0.5) * rect.width / columns - focalPoint.x;
+            const y = (Math.floor(index / columns) + 0.5) * rect.height / rows - focalPoint.y;
 
             const angleToFocalPoint = Math.atan2(y, x);
             const targetRotation = (angleToFocalPoint * 180 / Math.PI) + 90;
@@ -141,21 +168,26 @@ const createGridAnimation = (gridElement) => {
             line.currentRotation %= 360;
 
             line.element.style.transform = `rotate(${line.currentRotation}deg)`;
-
-            line.colorTransitionProgress += 0.01;
-            if (line.colorTransitionProgress >= 1 || Math.random() < 0.001) {
-                line.color = line.targetColor;
-                line.targetColor = colors[Math.floor(Math.random() * colors.length)];
-                line.colorTransitionProgress = 0;
-            }
-            
-            line.element.style.backgroundColor = line.targetColor;
             updateLineOpacity(line, deltaTime);
             line.element.style.opacity = line.opacity;
+            
+            if (Math.random() < 0.001) {
+                line.targetColor = colors[Math.floor(Math.random() * colors.length)];
+            }
+            line.element.style.backgroundColor = line.targetColor;
         });
 
         requestAnimationFrame(animateLines);
     }
+
+    // Event Listeners
+    const resizeObserver = new ResizeObserver(() => {
+        const { columns: newColumns, rows: newRows } = calculateGridSize();
+        gridElement.style.gridTemplateColumns = `repeat(${newColumns}, 1fr)`;
+        gridElement.style.gridTemplateRows = `repeat(${newRows}, 1fr)`;
+    });
+    
+    resizeObserver.observe(gridElement);
 
     gridElement.addEventListener('mousemove', (event) => {
         mousePosition.x = event.clientX;
