@@ -92,11 +92,11 @@ const createGridAnimation = (gridElement) => {
     }
 
     function easeInQuad(t) {
-        return t * t;
+        return t * t * t;  // Cubic easing for slower start
     }
 
     function easeOutQuad(t) {
-        return t * (2 - t);
+        return 1 - Math.pow(1 - t, 3);  // Cubic easing for smoother end
     }
 
     function lerpPoint(a, b, t) {
@@ -126,11 +126,11 @@ const createGridAnimation = (gridElement) => {
             return lerpPoint(currentFocalPoint, targetFocalPoint, 0.5 + easeOutQuad(t) / 2);
         } else {
             if (Math.abs(elapsedTime - (ACCELERATION_TIME + DECELERATION_TIME)) < 16) {
-                currentFocalPoint = targetFocalPoint;
+                currentFocalPoint = {...targetFocalPoint};
                 targetFocalPoint = getRandomPoint();
                 cycleStartTime = currentTime;
             }
-            return currentFocalPoint;
+            return targetFocalPoint;
         }
     }
 
