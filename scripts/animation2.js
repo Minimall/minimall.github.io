@@ -126,13 +126,13 @@ const createGridAnimation = (gridElement) => {
                 ? easeInQuad(t * 2) * 0.5 
                 : 0.5 + easeOutQuad((t - 0.5) * 2) * 0.5;
             return lerpPoint(currentFocalPoint, targetFocalPoint, easedT);
-        } else if (elapsedTime >= TOTAL_CYCLE_TIME - 16) {
-            // Near the end of pause, prepare for next cycle
-            const nextTarget = getRandomPoint();
-            const prevTarget = targetFocalPoint;
-            currentFocalPoint = prevTarget;
-            targetFocalPoint = nextTarget;
+        } else if (elapsedTime >= TOTAL_CYCLE_TIME) {
+            // Setup next cycle while maintaining position
+            const lastPosition = targetFocalPoint;
+            currentFocalPoint = lastPosition;
+            targetFocalPoint = getRandomPoint();
             cycleStartTime = currentTime;
+            return lastPosition;
         }
         
         return targetFocalPoint;
