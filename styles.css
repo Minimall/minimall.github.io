@@ -601,8 +601,9 @@ a span, .collapsible span {
 [data-hover="true"] span {
   color: #003c8a;
   font-variation-settings: "wght" 500;
-  transition: all 0.3s ease;
-  letter-spacing: -0.015em;
+  transition: color 0.3s ease, font-variation-settings 0.3s ease;
+  width: auto;
+  display: inline;
 }
 
 .name [data-hover="true"] span {
@@ -611,7 +612,6 @@ a span, .collapsible span {
 
 [data-hover="true"] span.wave-in {
   font-variation-settings: "wght" 700;
-  letter-spacing: -0.025em;
   animation: colorWave 0.8s ease-in-out forwards;
 }
 
