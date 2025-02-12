@@ -641,10 +641,12 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
     overflow: hidden;
 }
 
-.grid-animation .line {
-    width: 1px;
+.grid-animation .line,
+.grid-animation-bg .line {
+    width: 2px;
     height: 80%;
     margin: auto;
     transform-origin: center;
     transition: background-color 0.5s ease;
+    opacity: 0.6;
 }
