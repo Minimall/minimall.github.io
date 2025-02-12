@@ -1,11 +1,10 @@
-
 const createGridAnimation = (gridElement) => {
     const lines = [];
     const colors = [
         "#FF6B6B", "#4ECDC4", "#45B7D1", "#FFA07A", "#98D8C8", 
         "#F7FFF7", "#FFE66D", "#6B5B95", "#88D8B0", "#FF8C94"
     ];
-    
+
     const OPACITY_TRANSITION_TIME = 750;
     const ACCELERATION_TIME = 1000;
     const DECELERATION_TIME = 1000;
@@ -26,10 +25,10 @@ const createGridAnimation = (gridElement) => {
         const width = window.innerWidth;
         const baseColumns = 12;
         const baseRows = 12;
-        
+
         let columns = Math.min(Math.floor(width / 60), 24);
         let rows = Math.floor(columns * (window.innerHeight / window.innerWidth));
-        
+
         return {
             columns: Math.max(columns, baseColumns),
             rows: Math.max(rows, baseRows)
@@ -77,7 +76,7 @@ const createGridAnimation = (gridElement) => {
     // Initialize grid layout
     gridElement.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
     gridElement.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
-    
+
     initializeLines();
 
     function getRandomPoint() {
@@ -126,15 +125,14 @@ const createGridAnimation = (gridElement) => {
                 ? easeInQuad(t * 2) * 0.5 
                 : 0.5 + easeOutQuad((t - 0.5) * 2) * 0.5;
             return lerpPoint(currentFocalPoint, targetFocalPoint, easedT);
-        } else if (elapsedTime >= TOTAL_CYCLE_TIME - 16) {
+        } else if (elapsedTime >= TOTAL_CYCLE_TIME - 100) {
             // Near the end of pause, prepare for next cycle
             const nextTarget = getRandomPoint();
-            const prevTarget = targetFocalPoint;
-            currentFocalPoint = prevTarget;
             targetFocalPoint = nextTarget;
+            // Don't update currentFocalPoint, let it transition smoothly
             cycleStartTime = currentTime;
         }
-        
+
         return targetFocalPoint;
     }
 
@@ -173,7 +171,7 @@ const createGridAnimation = (gridElement) => {
 
         const focalPoint = updateFocalPoint(currentTime);
         const rect = gridElement.getBoundingClientRect();
-        
+
         // Update debug dot position
         debugDot.style.left = `${focalPoint.x}px`;
         debugDot.style.top = `${focalPoint.y}px`;
@@ -192,7 +190,7 @@ const createGridAnimation = (gridElement) => {
             line.element.style.transform = `rotate(${line.currentRotation}deg)`;
             updateLineOpacity(line, deltaTime);
             line.element.style.opacity = line.opacity;
-            
+
             if (Math.random() < 0.001) {
                 line.targetColor = colors[Math.floor(Math.random() * colors.length)];
             }
@@ -208,7 +206,7 @@ const createGridAnimation = (gridElement) => {
         gridElement.style.gridTemplateColumns = `repeat(${newColumns}, 1fr)`;
         gridElement.style.gridTemplateRows = `repeat(${newRows}, 1fr)`;
     });
-    
+
     resizeObserver.observe(gridElement);
 
     gridElement.addEventListener('mousemove', (event) => {
