@@ -325,7 +325,6 @@ li, .tag {
 @media (max-width: 788px) {
   .container {
     padding-top: 6vw;
-    overflow-x: hidden;
   }
   
   .menu {
@@ -336,17 +335,6 @@ li, .tag {
   
   .headline {
     font-size: 2.5rem;
-    max-width: 100%;
-  }
-  
-  .main-text {
-    width: 100%;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-  }
-  
-  p {
-    width: 100%;
     max-width: 100%;
   }
 
@@ -513,7 +501,7 @@ a span, .collapsible span {
 }
 
 .collapsible-content.active {
-	max-height: none;
+
   padding-top: 2vw;
   padding-right: 2vw;
   padding-left: 2vw;
