@@ -620,26 +620,3 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
     transform-origin: center;
     transition: background-color 0.5s ease;
 }
-.animation-container {
-  position: relative;
-  width: 100%;
-}
-
-.grid-animation-bg {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: -2;
-}
-
-.gradient-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(to bottom, #fff 0%, rgba(255, 255, 255, 0.1) 20%, rgba(255, 255, 255, 0.1) 80%, #fff 100%);
-  z-index: -1;
-}
