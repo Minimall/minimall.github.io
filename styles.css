@@ -201,6 +201,14 @@ nav a:hover {
   width: auto;
 }
 
+.case-logo img[src*="wombi.svg"] {
+  height: 24px;
+}
+
+.case-logo img[src*="datrics.svg"] {
+  height: 44px;
+}
+
 .case-title {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   font-size: 2.25rem;
