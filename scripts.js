@@ -1,4 +1,3 @@
-
 // Track hovered elements and rotation counter
 const hoveredElements = new Set();
 let rotationCounter = 0;
@@ -43,7 +42,7 @@ const setupHoverEffects = () => {
         } else {
             // Handle regular wave text effect
             if (!element.querySelector('.wave-text')) {
-                const text = element.textContent;
+                const text = element.textContent.trim();
                 element.innerHTML = `<span class="wave-text">${
                     text.split('').map(char => char === ' ' ? '<span>&nbsp;</span>' : `<span>${char}</span>`).join('')
                 }</span>`;
