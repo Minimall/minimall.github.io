@@ -21,13 +21,10 @@ const setupHoverEffects = () => {
             document.body.appendChild(img);
 
             // Split text for wave effect
-            const text = element.textContent;
-            element.innerHTML = `
-                <span class="original-text">${text}</span>
-                <span class="wave-text" aria-hidden="true">${
-                    text.split('').map(char => char === ' ' ? '<span>&nbsp;</span>' : `<span>${char}</span>`).join('')
-                }</span>
-            `;
+            const text = element.textContent.trim();
+            element.innerHTML = `<span class="wave-text">${
+                text.split('').map(char => char === ' ' ? `<span>&nbsp;</span>` : `<span>${char}</span>`).join('')
+            }</span>`;
 
             element.addEventListener('mouseenter', () => {
                 handleImageHover(element, img, true);
