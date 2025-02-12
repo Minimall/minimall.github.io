@@ -525,17 +525,26 @@ a span, .collapsible span {
 }
 
 @media (max-width: 788px) {
-  .case-gallery {
-    flex-direction: column;
-    padding: 3vw 5vw 0vw 5vw;
+  .case-study-content {
+    padding-top: 10vw;
   }
-  
+
+  .case-title {
+    font-size: 1.8rem;
+  }
+
   .case-image-portrait,
   .case-image-landscape {
     width: var(--max-width) !important;
     max-width: 100% !important;
     height: auto !important;
     margin: 0 !important;
+    border-radius: 4px;
+  }
+
+  .case-gallery {
+    flex-direction: column;
+    padding: 3vw 5vw 0vw 5vw;
   }
   
   .case-gallery:has(.case-image-portrait) {
