@@ -613,25 +613,25 @@ a span, .collapsible span {
 [data-hover="true"] span.wave-in {
   font-variation-settings: "wght" 640;
   letter-spacing: -0.03em;
-  animation: colorWave 0.8s ease-in-out forwards;
+  animation: colorWave 4s ease-in-out forwards;
 }
 
 [data-hover="true"] span.wave-out {
   font-variation-settings: "wght" 500;
-  transition: letter-spacing ease 0.4s;
+  animation: colorWaveReverse 4s ease-in-out forwards;
 }
 
-a:hover span:nth-child(1n) { animation-delay: 0.05s; }
-a:hover span:nth-child(2n) { animation-delay: 0.1s; }
-a:hover span:nth-child(3n) { animation-delay: 0.15s; }
-a:hover span:nth-child(4n) { animation-delay: 0.2s; }
-a:hover span:nth-child(5n) { animation-delay: 0.25s; }
+a:hover span:nth-child(1n) { animation-delay: 0.2s; }
+a:hover span:nth-child(2n) { animation-delay: 0.4s; }
+a:hover span:nth-child(3n) { animation-delay: 0.6s; }
+a:hover span:nth-child(4n) { animation-delay: 0.8s; }
+a:hover span:nth-child(5n) { animation-delay: 1s; }
 
-a:not(:hover) span:nth-child(1n) { animation-delay: 0.015s; }
-a:not(:hover) span:nth-child(2n) { animation-delay: 0.030s; }
-a:not(:hover) span:nth-child(3n) { animation-delay: 0.045s; }
-a:not(:hover) span:nth-child(4n) { animation-delay: 0.06s; }
-a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
+a:not(:hover) span:nth-child(5n) { animation-delay: 0.2s; }
+a:not(:hover) span:nth-child(4n) { animation-delay: 0.4s; }
+a:not(:hover) span:nth-child(3n) { animation-delay: 0.6s; }
+a:not(:hover) span:nth-child(2n) { animation-delay: 0.8s; }
+a:not(:hover) span:nth-child(1n) { animation-delay: 1s; }
 
 .case-logo {
 }
