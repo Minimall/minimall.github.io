@@ -29,16 +29,10 @@ class BottomSheet {
     
     setupGestures() {
         let startY = 0;
-        let isClosing = false;
-        
-        const resetClosingState = () => {
-            setTimeout(() => {
-                isClosing = false;
-            }, 300);
-        };
+        this.isClosing = false;
         
         const onStart = (e) => {
-            if (isClosing) return;
+            if (this.isClosing) return;
             startY = e.type === 'mousedown' ? e.clientY : e.touches[0].clientY;
             document.addEventListener(e.type === 'mousedown' ? 'mousemove' : 'touchmove', onMove);
             document.addEventListener(e.type === 'mousedown' ? 'mouseup' : 'touchend', onEnd);
@@ -125,6 +119,7 @@ class BottomSheet {
     }
     
     animateClose() {
+        this.isClosing = true;
         this.sheet.style.transform = 'translateY(100%)';
         this.sheet.style.transition = 'transform 0.25s cubic-bezier(0.4, 0.0, 0.2, 1)';
         
@@ -132,7 +127,7 @@ class BottomSheet {
             this.sheet.classList.remove('open');
             this.overlay.classList.remove('visible');
             this.sheet.style.transform = '';
-            resetClosingState();
+            this.isClosing = false;
         }, 250);
     }
     
