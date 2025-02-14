@@ -116,24 +116,17 @@ const setupHoverEffects = () => {
             // Handle regular wave text effect
             if (!element.querySelector('.wave-text')) {
                 const text = element.textContent.trim();
-                element.innerHTML = `<span class="wave-text">${
-                    text.split('').map(char => char === ' ' ? `<span>&nbsp;</span>` : `<span>${char}</span>`).join('')
-                }</span>`;
+                const needsWave = !element.querySelector('.wave-text');
+                if (needsWave) {
+                    element.innerHTML = `<span class="wave-text">${
+                        text.split('').map(char => char === ' ' ? `<span>&nbsp;</span>` : `<span>${char}</span>`).join('')
+                    }</span>`;
+                }
             }
 
             // Add wave effect listeners
-            element.addEventListener('mouseenter', () => {
-                handleWaveEffect(element.querySelector('.wave-text'), true);
-                if (!element.dataset.images) {
-                    element.style.color = '#003c8a';
-                }
-            });
-            element.addEventListener('mouseleave', () => {
-                handleWaveEffect(element.querySelector('.wave-text'), false);
-                if (!element.dataset.images) {
-                    element.style.color = '';
-                }
-            });
+            element.addEventListener('mouseenter', () => handleWaveEffect(element, true));
+            element.addEventListener('mouseleave', () => handleWaveEffect(element, false));
         }
 
         element.setAttribute('data-processed', 'true');
@@ -142,17 +135,10 @@ const setupHoverEffects = () => {
 
 // Handle wave animation effect
 const handleWaveEffect = (element, isEnter, isRandom = false) => {
-    if (!element) return;
-    const letters = element.querySelectorAll('span');
+    console.log('Wave effect on:', element.innerHTML);
+    const letters = element.querySelectorAll('.wave-text span');
     const enterDelay = isRandom ? 70 : 30;  // Faster for random waves
     const leaveDelay = isRandom ? 40 : 10;   // Faster exit for random waves
-
-    letters.forEach((letter, i) => {
-        letter.classList.remove('wave-in', 'wave-out');
-        setTimeout(() => {
-            letter.classList.add(isEnter ? 'wave-in' : 'wave-out');
-        }, isEnter ? i * enterDelay : (letters.length - 1 - i) * leaveDelay);
-    });
 
     // Clear previous animation timeouts
     if (element.waveTimeouts) {
