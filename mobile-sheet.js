@@ -42,8 +42,8 @@ class BottomSheet {
             const currentY = e.type === 'mousemove' ? e.clientY : e.touches[0].clientY;
             const diff = currentY - startY;
             
-            if (diff > 100 && !isClosing) {
-                isClosing = true;
+            if (diff > 100 && !this.isClosing) {
+                this.isClosing = true;
                 this.animateClose();
             }
         };
