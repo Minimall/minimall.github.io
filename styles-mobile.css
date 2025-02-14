@@ -39,8 +39,8 @@ body.has-safari-bar {
 }
 
 .bottom-sheet-indicator {
-    width: 28px;
-    height: 4px;
+    width: 36px;
+    height: 5px;
     background: rgba(255, 255, 255, 0.3);
     border-radius: 100px;
 }
@@ -73,19 +73,20 @@ body.has-safari-bar {
 
 .carousel {
     display: flex;
-    height: calc(80vh - 120px);
+    height: auto;
     transition: transform 0.3s ease-out;
     width: 100%;
 }
 
 .carousel img {
-    flex: 0 0 100%;
-    width: 100%;
-    height: calc(80vh - 120px);
-    padding: 0 10%;
+    flex: 0 0 90%;
+    width: 90%;
+    height: auto;
+    max-height: calc(80vh - 120px);
+    margin: 0 5%;
     object-fit: contain;
-    object-position: center;
     border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
 .carousel-dots {
