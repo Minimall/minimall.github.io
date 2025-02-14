@@ -40,7 +40,7 @@ class BottomSheet {
             const currentY = e.type === 'mouseup' ? e.clientY : e.changedTouches[0].clientY;
             const diff = currentY - startY;
             
-            if (diff > 50 && !isClosing) {
+            if (diff > 100 && !isClosing) {
                 isClosing = true;
                 this.animateClose();
             }
@@ -114,32 +114,14 @@ class BottomSheet {
     }
     
     animateClose() {
-        const steps = [
-            { transform: 'translateY(0)', duration: 100 },
-            { transform: 'translateY(-20px)', duration: 150 },
-            { transform: 'translateY(100%)', duration: 300 }
-        ];
+        this.sheet.style.transform = 'translateY(100%)';
+        this.sheet.style.transition = 'transform 0.25s cubic-bezier(0.4, 0.0, 0.2, 1)';
         
-        let currentStep = 0;
-        const animate = () => {
-            if (currentStep >= steps.length) {
-                this.sheet.classList.remove('open');
-                this.overlay.classList.remove('visible');
-                this.sheet.style.transform = '';
-                return;
-            }
-            
-            const step = steps[currentStep];
-            this.sheet.style.transform = step.transform;
-            this.sheet.style.transition = `transform ${step.duration}ms cubic-bezier(0.4, 0, 0.2, 1)`;
-            
-            setTimeout(() => {
-                currentStep++;
-                animate();
-            }, step.duration);
-        };
-        
-        animate();
+        setTimeout(() => {
+            this.sheet.classList.remove('open');
+            this.overlay.classList.remove('visible');
+            this.sheet.style.transform = '';
+        }, 250);
     }
     
     close() {
