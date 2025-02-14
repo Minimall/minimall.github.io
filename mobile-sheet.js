@@ -65,12 +65,13 @@ class BottomSheet {
 
     setupCarousel() {
         let startX = 0;
-        let startY = 0; // Added to track vertical starting position
-        let currentTranslate = 0;
+        let startY = 0;
+        let isHorizontalSwipe = false;
 
         const onStart = (e) => {
             startX = e.type === 'mousedown' ? e.clientX : e.touches[0].clientX;
-            startY = e.type === 'mousedown' ? e.clientY : e.touches[0].clientY; // Capture vertical starting position
+            startY = e.type === 'mousedown' ? e.clientY : e.touches[0].clientY;
+            isHorizontalSwipe = false;
             this.carousel.style.transition = 'none';
             document.addEventListener(e.type === 'mousedown' ? 'mousemove' : 'touchmove', onMove, { passive: false });
             document.addEventListener(e.type === 'mousedown' ? 'mouseup' : 'touchend', onEnd);
@@ -83,9 +84,15 @@ class BottomSheet {
             const diffX = currentX - startX;
             const diffY = Math.abs(currentY - startY);
 
-            // Only move carousel if horizontal movement is greater than vertical
-            const transform = -this.currentIndex * 100 + (diffX / this.carousel.offsetWidth * 100);
-            this.carousel.style.transform = `translateX(${transform}%)`;
+            if (!isHorizontalSwipe && Math.abs(diffX) > diffY && Math.abs(diffX) > 10) {
+                isHorizontalSwipe = true;
+            }
+
+            if (isHorizontalSwipe) {
+                const transform = -this.currentIndex * 100 + (diffX / this.carousel.offsetWidth * 100);
+                this.carousel.style.transform = `translateX(${transform}%)`;
+                this.sheet.style.transform = 'translateY(0)';
+            }
         };
 
         const onEnd = (e) => {
