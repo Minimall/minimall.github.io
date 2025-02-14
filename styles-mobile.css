@@ -66,46 +66,50 @@ body.has-safari-bar {
     position: relative;
     width: 100%;
     height: auto;
-    overflow: hidden;
-    padding: 0 0 40px;
+    overflow: visible;
+    padding: 0 0 50px;
 }
 
 .carousel {
     display: flex;
     height: auto;
     transition: transform 0.3s ease-out;
+    padding: 0 10%;
 }
 
 .carousel img {
-    flex: 0 0 80%; /* Reduced image width to show more edges */
+    flex: 0 0 80%;
     width: 80%;
     height: auto;
-    max-height: calc(80vh - 100px);
-    margin: 0 10%; /* Adjusted margin to compensate for width change */
+    max-height: calc(80vh - 120px);
+    margin: 0 10px;
     object-fit: contain;
     border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
 .carousel-dots {
     position: absolute;
-    bottom: 12px;
+    bottom: 20px;
     left: 0;
     right: 0;
     display: flex;
     justify-content: center;
-    gap: 6px;
+    gap: 8px;
     padding: 0 20px;
+    z-index: 1010;
 }
 
 .dot {
-    width: 6px;
-    height: 6px;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.3);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
 }
 
 .dot.active {
     background: white;
-    transform: scale(1.2);
+    transform: scale(1.3);
 }
