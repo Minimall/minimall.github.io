@@ -39,8 +39,8 @@ body.has-safari-bar {
 }
 
 .bottom-sheet-indicator {
-    width: 36px;
-    height: 5px;
+    width: 28px;
+    height: 4px;
     background: rgba(255, 255, 255, 0.3);
     border-radius: 100px;
 }
@@ -76,14 +76,15 @@ body.has-safari-bar {
     height: auto;
     transition: transform 0.3s ease-out;
     width: 100%;
+    padding: 0 10%;
 }
 
 .carousel img {
-    flex: 0 0 90%;
-    width: 90%;
+    flex: 0 0 80%;
+    width: 80%;
     height: auto;
     max-height: calc(80vh - 120px);
-    margin: 0 5%;
+    margin: 0 10%;
     object-fit: contain;
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
