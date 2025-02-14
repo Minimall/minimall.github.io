@@ -147,6 +147,13 @@ const handleWaveEffect = (element, isEnter, isRandom = false) => {
     const enterDelay = isRandom ? 70 : 30;  // Faster for random waves
     const leaveDelay = isRandom ? 40 : 10;   // Faster exit for random waves
 
+    letters.forEach((letter, i) => {
+        letter.classList.remove('wave-in', 'wave-out');
+        setTimeout(() => {
+            letter.classList.add(isEnter ? 'wave-in' : 'wave-out');
+        }, isEnter ? i * enterDelay : (letters.length - 1 - i) * leaveDelay);
+    });
+
     // Clear previous animation timeouts
     if (element.waveTimeouts) {
         element.waveTimeouts.forEach(timeout => clearTimeout(timeout));
