@@ -106,7 +106,8 @@ class BottomSheet {
     }
     
     updateCarousel() {
-        this.carousel.style.transform = `translateX(${-this.currentIndex * 100}%)`;
+        const offset = -this.currentIndex * 100;
+        this.carousel.style.transform = `translateX(${offset}%)`;
         this.dots.forEach((dot, i) => {
             dot.classList.toggle('active', i === this.currentIndex);
         });
