@@ -45,13 +45,19 @@ class BottomSheet {
             const currentY = e.type === 'mousemove' ? e.clientY : e.touches[0].clientY;
             const currentX = e.type === 'mousemove' ? e.clientX : e.touches[0].clientX;
             const diffY = currentY - startY;
-            const diffX = Math.abs(currentX - startX);
+            const diffX = currentX - startX;
+            const absX = Math.abs(diffX);
+            const absY = Math.abs(diffY);
             
-            // If horizontal movement is dominant, don't apply vertical transform
-            if (diffX > Math.abs(diffY)) return;
-            
-            if (diffY > 0) {
-                this.sheet.style.transform = `translateY(calc(-100% + ${diffY}px))`;
+            // Determine dominant direction and apply transform accordingly
+            if (absX > absY) {
+                // Horizontal movement is dominant - carousel should handle this
+                return;
+            } else if (absY > absX) {
+                // Vertical movement is dominant
+                if (diffY > 0) {
+                    this.sheet.style.transform = `translateY(calc(-100% + ${diffY}px))`;
+                }
             }
         };
         
@@ -87,8 +93,14 @@ class BottomSheet {
         const onMove = (e) => {
             e.preventDefault();
             const currentX = e.type === 'mousemove' ? e.clientX : e.touches[0].clientX;
-            const diff = currentX - startX;
-            const transform = -this.currentIndex * 100 + (diff / this.carousel.offsetWidth * 100);
+            const currentY = e.type === 'mousemove' ? e.clientY : e.touches[0].clientY;
+            const diffX = currentX - startX;
+            const diffY = Math.abs(currentY - (e.type === 'mousemove' ? e.clientY : e.touches[0].clientY));
+            
+            // Only apply horizontal transform if vertical movement isn't dominant
+            if (diffY > Math.abs(diffX)) return;
+            
+            const transform = -this.currentIndex * 100 + (diffX / this.carousel.offsetWidth * 100);
             this.carousel.style.transform = `translateX(${transform}%) translateY(0)`;
             this.carousel.style.touchAction = 'pan-x';
         };
