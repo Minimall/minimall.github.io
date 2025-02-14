@@ -33,18 +33,22 @@ class BottomSheet {
         const onStart = (e) => {
             if (isClosing) return;
             startY = e.type === 'mousedown' ? e.clientY : e.touches[0].clientY;
+            document.addEventListener(e.type === 'mousedown' ? 'mousemove' : 'touchmove', onMove);
             document.addEventListener(e.type === 'mousedown' ? 'mouseup' : 'touchend', onEnd);
         };
         
-        const onEnd = (e) => {
-            const currentY = e.type === 'mouseup' ? e.clientY : e.changedTouches[0].clientY;
+        const onMove = (e) => {
+            const currentY = e.type === 'mousemove' ? e.clientY : e.touches[0].clientY;
             const diff = currentY - startY;
             
             if (diff > 100 && !isClosing) {
                 isClosing = true;
                 this.animateClose();
             }
-            
+        };
+        
+        const onEnd = (e) => {
+            document.removeEventListener(e.type === 'mousemove' ? 'mousemove' : 'touchmove', onMove);
             document.removeEventListener(e.type === 'mouseup' ? 'mouseup' : 'touchend', onEnd);
         };
         
