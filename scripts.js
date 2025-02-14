@@ -8,8 +8,15 @@ const isMobile = () => window.innerWidth <= 788;
 const setupBottomSheet = () => {
     const sheetHtml = `
         <div class="bottom-sheet-hover">
-            <div class="bottom-sheet-indicator"></div>
-            <img class="hover-image" alt="">
+            <div class="bottom-sheet-header">
+                <div class="bottom-sheet-indicator"></div>
+            </div>
+            <div class="carousel-container">
+                <div class="carousel">
+                    <img class="hover-image" alt="">
+                </div>
+                <div class="carousel-dots"></div>
+            </div>
         </div>
         <div class="overlay-hover"></div>
     `;
@@ -82,9 +89,24 @@ const setupHoverEffects = () => {
                 
                 element.addEventListener('click', (e) => {
                     e.preventDefault();
+                    handleWaveEffect(element, true);
                     if (element.dataset.images) {
                         const images = element.dataset.images.split(',');
-                        img.src = `images/1x/${images[0]}`;
+                        const carousel = mobileElements.sheet.querySelector('.carousel');
+                        carousel.innerHTML = '';
+                        
+                        images.forEach(imageName => {
+                            const imgElement = document.createElement('img');
+                            imgElement.src = `images/1x/${imageName.trim()}`;
+                            imgElement.alt = element.textContent;
+                            carousel.appendChild(imgElement);
+                        });
+                        
+                        const dots = mobileElements.sheet.querySelector('.carousel-dots');
+                        dots.innerHTML = images.map((_, i) => 
+                            `<div class="dot${i === 0 ? ' active' : ''}"></div>`
+                        ).join('');
+                        
                         mobileElements.sheet.classList.add('open');
                         mobileElements.overlay.classList.add('visible');
                     }

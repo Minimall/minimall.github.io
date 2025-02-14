@@ -284,6 +284,21 @@ li, .tag {
   transition: opacity 0.4s ease, transform 0.4s ease;
 }
 
+@media (max-width: 788px) {
+  .hover-image {
+    position: static;
+    opacity: 1;
+    pointer-events: auto;
+    height: auto;
+    max-height: calc(80vh - 120px);
+    width: 90%;
+    margin: 0 5%;
+    padding: 0;
+    transform: none;
+    border-radius: 8px;
+  }
+}
+
 .hover-image.active {
 	opacity: 1;
 	transform: translate(-50%, -100%) scale(1) rotate(var(--rotation));
