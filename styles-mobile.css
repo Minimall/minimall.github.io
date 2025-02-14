@@ -3,6 +3,11 @@ body {
     margin: 0;
     font-family: -apple-system, system-ui, BlinkMacSystemFont;
     overflow: hidden;
+    --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+body.has-safari-bar {
+    padding-bottom: var(--safe-area-bottom);
 }
 
 .content {

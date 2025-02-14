@@ -125,5 +125,13 @@ class BottomSheet {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Detect iOS Safari
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+    
+    if (isIOS && isSafari) {
+        document.body.classList.add('has-safari-bar');
+    }
+    
     new BottomSheet();
 });
