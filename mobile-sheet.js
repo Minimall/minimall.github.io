@@ -13,6 +13,7 @@ class BottomSheet {
         
         document.getElementById('openSheet').addEventListener('click', () => this.open());
         this.overlay.addEventListener('click', () => this.close());
+        document.querySelector('.bottom-sheet-indicator').addEventListener('click', () => this.close());
     }
     
     setupDots() {
@@ -29,6 +30,12 @@ class BottomSheet {
     setupGestures() {
         let startY = 0;
         let isClosing = false;
+        
+        const resetClosingState = () => {
+            setTimeout(() => {
+                isClosing = false;
+            }, 300);
+        };
         
         const onStart = (e) => {
             if (isClosing) return;
@@ -125,6 +132,7 @@ class BottomSheet {
             this.sheet.classList.remove('open');
             this.overlay.classList.remove('visible');
             this.sheet.style.transform = '';
+            resetClosingState();
         }, 250);
     }
     
