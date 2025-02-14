@@ -84,10 +84,8 @@ class BottomSheet {
             const diffY = Math.abs(currentY - startY);
 
             // Only move carousel if horizontal movement is greater than vertical
-            if (diffY < Math.abs(diffX)) {
-                const transform = -this.currentIndex * 100 + (diffX / this.carousel.offsetWidth * 100);
-                this.carousel.style.transform = `translateX(${transform}%)`;
-            }
+            const transform = -this.currentIndex * 100 + (diffX / this.carousel.offsetWidth * 100);
+            this.carousel.style.transform = `translateX(${transform}%)`;
         };
 
         const onEnd = (e) => {

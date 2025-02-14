@@ -73,21 +73,19 @@ body.has-safari-bar {
 
 .carousel {
     display: flex;
-    height: auto;
+    height: calc(80vh - 120px);
     transition: transform 0.3s ease-out;
     width: 100%;
-    padding: 0 10%;
+    align-items: center;
 }
 
 .carousel img {
-    flex: 0 0 80%;
-    width: 80%;
-    height: auto;
-    max-height: calc(80vh - 120px);
-    margin: 0 10%;
+    flex: 0 0 100%;
+    width: 100%;
+    height: 100%;
+    padding: 0 10%;
     object-fit: contain;
     border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
 .carousel-dots {
