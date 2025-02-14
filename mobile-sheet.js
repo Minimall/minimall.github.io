@@ -30,7 +30,6 @@ class BottomSheet {
         let startY = 0;
         let startX = 0;
         let startTranslate = 0;
-        const VERTICAL_THRESHOLD = 150;
         
         const onStart = (e) => {
             startY = e.type === 'mousedown' ? e.clientY : e.touches[0].clientY;
@@ -65,7 +64,7 @@ class BottomSheet {
             const currentY = e.type === 'mouseup' ? e.clientY : e.changedTouches[0].clientY;
             const diff = currentY - startY;
             
-            if (diff > VERTICAL_THRESHOLD) {
+            if (diff > 100) {
                 this.close();
             } else {
                 this.sheet.style.transform = '';
