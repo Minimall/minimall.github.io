@@ -84,16 +84,35 @@ const handleWaveEffect = (element, isEnter, isRandom = false) => {
 
 // Handle image hover effects
 const handleImageHover = (element, img, isEnter) => {
-    if (isEnter) {
-        const rotation = (rotationCounter % 2 === 0) ? 3 : -3;
-        rotationCounter++;
-        img.style.setProperty('--rotation', `${rotation}deg`);
-        img.classList.add('active');
-        element.stopImageCycle = cycleImages(element, img);
-    } else if (element.stopImageCycle) {
-        img.classList.remove('active');
-        element.stopImageCycle();
-        element.stopImageCycle = null;
+    const isMobile = window.innerWidth <= 788;
+    
+    if (isMobile) {
+        const bottomSheet = document.querySelector('.bottom-sheet');
+        const carousel = bottomSheet.querySelector('.carousel');
+        const overlay = document.querySelector('.overlay');
+        
+        if (isEnter) {
+            const images = element.dataset.images?.split(",") || [];
+            carousel.innerHTML = images.map(image => 
+                `<img src="/images/1x/${image}" srcset="/images/1x/${image} 1x, /images/2x/${image} 2x" alt="${element.textContent}">`
+            ).join('');
+            
+            bottomSheet.classList.add('open');
+            overlay.classList.add('visible');
+            setupCarouselDots();
+        }
+    } else {
+        if (isEnter) {
+            const rotation = (rotationCounter % 2 === 0) ? 3 : -3;
+            rotationCounter++;
+            img.style.setProperty('--rotation', `${rotation}deg`);
+            img.classList.add('active');
+            element.stopImageCycle = cycleImages(element, img);
+        } else if (element.stopImageCycle) {
+            img.classList.remove('active');
+            element.stopImageCycle();
+            element.stopImageCycle = null;
+        }
     }
 };
 

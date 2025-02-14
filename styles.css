@@ -1,4 +1,3 @@
-
 .debug {
     outline: 1px solid red;
     background: rgba(255,0,0,0.1);
@@ -334,12 +333,14 @@ li, .tag {
     padding-top: 6vw;
   }
 
-  .case-study-content {
-    max-width: var(--max-width);
-    margin: 0 auto;
-    padding-top: 10vw;
-    padding-right: 5vw;
-    padding-left: 5vw;
+  .hover-image {
+    display: none;
+  }
+
+  [data-hover="true"] {
+    text-decoration: underline;
+    text-decoration-style: dotted;
+    cursor: pointer;
   }
 
   .collapsible-content {
