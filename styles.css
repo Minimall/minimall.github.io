@@ -672,12 +672,15 @@ a span, .collapsible span {
 }
 
 [data-hover="true"] span {
-  color: #003c8a;
+  color: inherit;
   font-variation-settings: "wght" 500;
   transition: color 0.3s ease, font-variation-settings 0.3s ease;
   letter-spacing: -0.005em;
-  width: auto;
-  display: inline;
+  display: inline-block;
+}
+
+a[data-hover="true"] span {
+  color: #003c8a;
 }
 
 .name [data-hover="true"] span {
