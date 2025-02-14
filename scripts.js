@@ -3,68 +3,8 @@ const hoveredElements = new Set();
 let rotationCounter = 0;
 
 // Unified setup function for hover effects
-const isMobile = () => window.innerWidth <= 788;
-
-const setupBottomSheet = () => {
-    const sheetHtml = `
-        <div class="bottom-sheet-hover">
-            <div class="bottom-sheet-indicator"></div>
-            <img class="hover-image" alt="">
-        </div>
-        <div class="overlay-hover"></div>
-    `;
-    document.body.insertAdjacentHTML('beforeend', sheetHtml);
-
-    const sheet = document.querySelector('.bottom-sheet-hover');
-    const overlay = document.querySelector('.overlay-hover');
-    const sheetImage = sheet.querySelector('.hover-image');
-    const indicator = sheet.querySelector('.bottom-sheet-indicator');
-
-    let startY = 0;
-    let isClosing = false;
-
-    const closeSheet = () => {
-        sheet.classList.remove('open');
-        overlay.classList.remove('visible');
-        isClosing = false;
-    };
-
-    const handleGesture = (e) => {
-        if (isClosing) return;
-        const currentY = e.type === 'mousemove' ? e.clientY : e.touches[0].clientY;
-        const diff = currentY - startY;
-        
-        if (diff > 100) {
-            isClosing = true;
-            closeSheet();
-        }
-    };
-
-    sheet.addEventListener('mousedown', e => {
-        startY = e.clientY;
-        document.addEventListener('mousemove', handleGesture);
-        document.addEventListener('mouseup', () => {
-            document.removeEventListener('mousemove', handleGesture);
-        });
-    });
-
-    sheet.addEventListener('touchstart', e => {
-        startY = e.touches[0].clientY;
-        document.addEventListener('touchmove', handleGesture);
-        document.addEventListener('touchend', () => {
-            document.removeEventListener('touchmove', handleGesture);
-        });
-    }, { passive: true });
-
-    overlay.addEventListener('click', closeSheet);
-    indicator.addEventListener('click', closeSheet);
-
-    return { sheet, overlay, sheetImage };
-};
-
 const setupHoverEffects = () => {
     const hoverableElements = document.querySelectorAll('a, [data-hover="true"]');
-    const mobileElements = isMobile() ? setupBottomSheet() : null;
 
     hoverableElements.forEach(element => {
         // Skip if already processed
@@ -75,26 +15,10 @@ const setupHoverEffects = () => {
 
         if (hasDirectImageHover) {
             // Create and handle hover image
-            let img;
-            if (isMobile()) {
-                img = mobileElements.sheetImage;
-                img.alt = element.textContent;
-                
-                element.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    if (element.dataset.images) {
-                        const images = element.dataset.images.split(',');
-                        img.src = `images/1x/${images[0]}`;
-                        mobileElements.sheet.classList.add('open');
-                        mobileElements.overlay.classList.add('visible');
-                    }
-                });
-            } else {
-                img = document.createElement('img');
-                img.className = 'hover-image';
-                img.alt = element.textContent;
-                document.body.appendChild(img);
-            }
+            const img = document.createElement('img');
+            img.className = 'hover-image';
+            img.alt = element.textContent;
+            document.body.appendChild(img);
 
             // Split text for wave effect
             const text = element.textContent.trim();
