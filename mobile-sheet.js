@@ -28,10 +28,13 @@ class BottomSheet {
     
     setupGestures() {
         let startY = 0;
+        let startX = 0;
         let startTranslate = 0;
+        const VERTICAL_THRESHOLD = 150;
         
         const onStart = (e) => {
             startY = e.type === 'mousedown' ? e.clientY : e.touches[0].clientY;
+            startX = e.type === 'mousedown' ? e.clientX : e.touches[0].clientX;
             startTranslate = this.sheet.getBoundingClientRect().top;
             document.addEventListener(e.type === 'mousedown' ? 'mousemove' : 'touchmove', onMove, { passive: false });
             document.addEventListener(e.type === 'mousedown' ? 'mouseup' : 'touchend', onEnd);
@@ -40,9 +43,15 @@ class BottomSheet {
         const onMove = (e) => {
             e.preventDefault();
             const currentY = e.type === 'mousemove' ? e.clientY : e.touches[0].clientY;
-            const diff = currentY - startY;
-            if (diff > 0) {
-                this.sheet.style.transform = `translateY(calc(-100% + ${diff}px))`;
+            const currentX = e.type === 'mousemove' ? e.clientX : e.touches[0].clientX;
+            const diffY = currentY - startY;
+            const diffX = Math.abs(currentX - startX);
+            
+            // If horizontal movement is dominant, don't apply vertical transform
+            if (diffX > Math.abs(diffY)) return;
+            
+            if (diffY > 0) {
+                this.sheet.style.transform = `translateY(calc(-100% + ${diffY}px))`;
             }
         };
         
@@ -50,7 +59,7 @@ class BottomSheet {
             const currentY = e.type === 'mouseup' ? e.clientY : e.changedTouches[0].clientY;
             const diff = currentY - startY;
             
-            if (diff > 100) {
+            if (diff > VERTICAL_THRESHOLD) {
                 this.close();
             } else {
                 this.sheet.style.transform = '';
