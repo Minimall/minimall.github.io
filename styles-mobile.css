@@ -39,8 +39,8 @@ body.has-safari-bar {
 }
 
 .bottom-sheet-indicator {
-    width: 36px;
-    height: 5px;
+    width: 25px;
+    height: 3.5px;
     background: rgba(255, 255, 255, 0.3);
     border-radius: 100px;
 }

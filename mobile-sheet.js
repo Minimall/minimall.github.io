@@ -80,7 +80,8 @@ class BottomSheet {
             const currentX = e.type === 'mousemove' ? e.clientX : e.touches[0].clientX;
             const diff = currentX - startX;
             const transform = -this.currentIndex * 100 + (diff / this.carousel.offsetWidth * 100);
-            this.carousel.style.transform = `translateX(${transform}%)`;
+            this.carousel.style.transform = `translateX(${transform}%) translateY(0)`;
+            this.carousel.style.touchAction = 'pan-x';
         };
         
         const onEnd = (e) => {
