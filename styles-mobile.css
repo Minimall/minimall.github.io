@@ -14,7 +14,8 @@ body {
     bottom: -100%;
     left: 0;
     right: 0;
-    height: 80vh;
+    max-height: 90vh;
+    height: auto;
     background: #000;
     border-radius: 16px 16px 0 0;
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -60,21 +61,24 @@ body {
 .carousel-container {
     position: relative;
     width: 100%;
-    height: calc(100% - 60px);
+    height: auto;
     overflow: hidden;
+    padding: 0 0 40px;
 }
 
 .carousel {
     display: flex;
-    height: 100%;
+    height: auto;
     transition: transform 0.3s ease-out;
 }
 
 .carousel img {
     flex: 0 0 90%;
     width: 90%;
+    height: auto;
+    max-height: calc(80vh - 100px);
     margin: 0 5%;
-    object-fit: cover;
+    object-fit: contain;
     border-radius: 8px;
 }
 
