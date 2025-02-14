@@ -612,7 +612,7 @@ a span, .collapsible span {
 
 [data-hover="true"] span.wave-in {
   font-variation-settings: "wght" 640;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.025em;
   animation: colorWave 0.8s ease-in-out forwards;
 }
 
