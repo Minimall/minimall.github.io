@@ -157,8 +157,8 @@ const setupHoverEffects = () => {
 
 // Handle wave animation effect
 const handleWaveEffect = (element, isEnter, isRandom = false) => {
-    console.log('Wave effect on:', element.innerHTML);
-    const letters = element.querySelectorAll('.wave-text span');
+    const waveText = element.querySelector('.wave-text') || element;
+    const letters = waveText.querySelectorAll('span');
     const enterDelay = isRandom ? 70 : 30;  // Faster for random waves
     const leaveDelay = isRandom ? 40 : 10;   // Faster exit for random waves
 
