@@ -28,50 +28,24 @@ class BottomSheet {
     
     setupGestures() {
         let startY = 0;
-        let startX = 0;
-        let startTranslate = 0;
+        let isClosing = false;
         
         const onStart = (e) => {
+            if (isClosing) return;
             startY = e.type === 'mousedown' ? e.clientY : e.touches[0].clientY;
-            startX = e.type === 'mousedown' ? e.clientX : e.touches[0].clientX;
-            startTranslate = this.sheet.getBoundingClientRect().top;
-            document.addEventListener(e.type === 'mousedown' ? 'mousemove' : 'touchmove', onMove, { passive: false });
             document.addEventListener(e.type === 'mousedown' ? 'mouseup' : 'touchend', onEnd);
-        };
-        
-        const onMove = (e) => {
-            e.preventDefault();
-            const currentY = e.type === 'mousemove' ? e.clientY : e.touches[0].clientY;
-            const currentX = e.type === 'mousemove' ? e.clientX : e.touches[0].clientX;
-            const diffY = currentY - startY;
-            const diffX = currentX - startX;
-            const absX = Math.abs(diffX);
-            const absY = Math.abs(diffY);
-            
-            // Determine dominant direction and apply transform accordingly
-            if (absX > absY) {
-                // Horizontal movement is dominant - carousel should handle this
-                return;
-            } else if (absY > absX) {
-                // Vertical movement is dominant
-                if (diffY > 0) {
-                    this.sheet.style.transform = `translateY(calc(-100% + ${diffY}px))`;
-                }
-            }
         };
         
         const onEnd = (e) => {
             const currentY = e.type === 'mouseup' ? e.clientY : e.changedTouches[0].clientY;
             const diff = currentY - startY;
             
-            if (diff > 100) {
-                this.close();
-            } else {
-                this.sheet.style.transform = '';
+            if (diff > 50 && !isClosing) {
+                isClosing = true;
+                this.animateClose();
             }
             
-            document.removeEventListener(e.type === 'mouseup' ? 'mousemove' : 'touchmove', onMove);
-            document.removeEventListener(e.type === 'mouseup' ? 'touchend' : 'touchend', onEnd);
+            document.removeEventListener(e.type === 'mouseup' ? 'mouseup' : 'touchend', onEnd);
         };
         
         this.sheet.addEventListener('mousedown', onStart);
@@ -139,10 +113,37 @@ class BottomSheet {
         this.overlay.classList.add('visible');
     }
     
+    animateClose() {
+        const steps = [
+            { transform: 'translateY(0)', duration: 100 },
+            { transform: 'translateY(-20px)', duration: 150 },
+            { transform: 'translateY(100%)', duration: 300 }
+        ];
+        
+        let currentStep = 0;
+        const animate = () => {
+            if (currentStep >= steps.length) {
+                this.sheet.classList.remove('open');
+                this.overlay.classList.remove('visible');
+                this.sheet.style.transform = '';
+                return;
+            }
+            
+            const step = steps[currentStep];
+            this.sheet.style.transform = step.transform;
+            this.sheet.style.transition = `transform ${step.duration}ms cubic-bezier(0.4, 0, 0.2, 1)`;
+            
+            setTimeout(() => {
+                currentStep++;
+                animate();
+            }, step.duration);
+        };
+        
+        animate();
+    }
+    
     close() {
-        this.sheet.classList.remove('open');
-        this.overlay.classList.remove('visible');
-        this.sheet.style.transform = '';
+        this.animateClose();
     }
 }
 
