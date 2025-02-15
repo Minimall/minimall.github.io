@@ -238,11 +238,53 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 const setupBottomSheet = () => {
-    const bottomSheet = document.createElement('div');
+    if (window.innerWidth > 768) return;
+
+    const bottomSheet = document.querySelector('.bottom-sheet-hover') || document.createElement('div');
     bottomSheet.classList.add('bottom-sheet-hover');
     bottomSheet.innerHTML = `
-        <img class="hover-image" alt="">
-        <div class="overlay-hover"></div>
+        <div class="bottom-sheet-header">
+            <div class="bottom-sheet-indicator"></div>
+        </div>
+        <div class="carousel-container">
+            <div class="carousel"></div>
+            <div class="carousel-dots"></div>
+        </div>
     `;
-    document.body.appendChild(bottomSheet);
+
+    if (!document.querySelector('.bottom-sheet-hover')) {
+        document.body.appendChild(bottomSheet);
+    }
+
+    document.querySelectorAll('[data-hover="true"]').forEach(element => {
+        element.addEventListener('click', (e) => {
+            if (window.innerWidth > 768) return;
+            e.preventDefault();
+            
+            const images = element.dataset.images?.split(",") || [];
+            if (!images.length) return;
+
+            const carousel = bottomSheet.querySelector('.carousel');
+            carousel.innerHTML = images.map(img => 
+                `<img src="/images/1x/${img}" srcset="/images/1x/${img} 1x, /images/2x/${img} 2x" alt="">`
+            ).join('');
+
+            bottomSheet.classList.add('open');
+            document.querySelector('.overlay-hover').classList.add('visible');
+        });
+    });
+
+    const overlay = document.querySelector('.overlay-hover') || document.createElement('div');
+    overlay.classList.add('overlay-hover');
+    if (!document.querySelector('.overlay-hover')) {
+        document.body.appendChild(overlay);
+    }
+
+    overlay.addEventListener('click', () => {
+        bottomSheet.classList.remove('open');
+        overlay.classList.remove('visible');
+    });
 }
+
+// Initialize bottom sheet
+document.addEventListener('DOMContentLoaded', setupBottomSheet);
