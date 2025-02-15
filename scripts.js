@@ -28,10 +28,10 @@ const setupHoverEffects = () => {
 
     hoverableElements.forEach(element => {
         if (element.hasAttribute('data-processed')) return;
-        
-        const hasImages = element.dataset.images || element.querySelector('[data-images]');
 
-        if (hasDirectImageHover) {
+        const hasDirectImageHover = element.dataset.images || element.querySelector('[data-images]');
+
+        if (hasDirectImageHover && !element.querySelector('.wave-text')) {
             // Create and handle hover image
             const img = document.createElement('img');
             img.className = 'hover-image';
@@ -60,10 +60,10 @@ const setupHoverEffects = () => {
             element.addEventListener('click', (e) => {
                 if (!isMobile) return;
                 e.preventDefault();
-                
+
                 const targetElement = element.dataset.images ? element : element.querySelector('[data-images]');
                 if (!targetElement) return;
-                
+
                 const images = targetElement.dataset.images?.split(",") || [];
                 if (!images.length) return;
 
@@ -305,7 +305,7 @@ const setupBottomSheet = () => {
         element.addEventListener('click', (e) => {
             if (window.innerWidth > 768) return;
             e.preventDefault();
-            
+
             const images = element.dataset.images?.split(",") || [];
             if (!images.length) return;
 
