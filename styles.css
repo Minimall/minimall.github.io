@@ -284,6 +284,43 @@ li, .tag {
   transition: opacity 0.4s ease, transform 0.4s ease;
 }
 
+@media (max-width: 768px) {
+  .bottom-sheet-hover {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    border-radius: 12px 12px 0 0;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+    z-index: 1000;
+    padding: 20px;
+  }
+
+  .bottom-sheet-hover.open {
+    transform: translateY(0);
+  }
+
+  .overlay-hover {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease;
+    z-index: 999;
+  }
+
+  .overlay-hover.visible {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
 .hover-image.active {
 	opacity: 1;
 	transform: translate(-50%, -100%) scale(1) rotate(var(--rotation));

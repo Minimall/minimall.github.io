@@ -236,3 +236,13 @@ document.addEventListener('DOMContentLoaded', () => {
         repeater.style.setProperty('--content-width', text.length + 'ch');
     });
 });
+
+const setupBottomSheet = () => {
+    const bottomSheet = document.createElement('div');
+    bottomSheet.classList.add('bottom-sheet-hover');
+    bottomSheet.innerHTML = `
+        <img class="hover-image" alt="">
+        <div class="overlay-hover"></div>
+    `;
+    document.body.appendChild(bottomSheet);
+}
