@@ -70,7 +70,7 @@ const setupHoverEffects = () => {
                 const bottomSheet = document.querySelector('.bottom-sheet-hover');
                 const carousel = bottomSheet.querySelector('.carousel');
                 carousel.innerHTML = images.map(img => 
-                    `<img src="/images/1x/${img}" srcset="/images/1x/${img} 1x, /images/2x/${img} 2x" alt="">`
+                    `<img src="./images/1x/${img}" srcset="./images/1x/${img} 1x, ./images/2x/${img} 2x" alt="">`
                 ).join('');
 
                 const dots = bottomSheet.querySelector('.carousel-dots');
@@ -152,8 +152,8 @@ const cycleImages = (element, img) => {
     let fadeTimeout;
 
     const showNextImage = () => {
-        img.src = `/images/1x/${images[currentIndex]}`;
-        img.srcset = `/images/1x/${images[currentIndex]} 1x, /images/2x/${images[currentIndex]} 2x`;
+        img.src = `./images/1x/${images[currentIndex]}`;
+        img.srcset = `./images/1x/${images[currentIndex]} 1x, ./images/2x/${images[currentIndex]} 2x`;
         img.style.opacity = "1";
 
         fadeTimeout = setTimeout(() => {
@@ -287,7 +287,7 @@ const setupBottomSheet = () => {
 
     let bottomSheet = document.querySelector('.bottom-sheet-hover');
     const overlay = document.querySelector('.overlay-hover') || document.createElement('div');
-    
+
     if (!bottomSheet) {
         bottomSheet = document.createElement('div');
         bottomSheet.classList.add('bottom-sheet-hover');
@@ -317,13 +317,13 @@ const setupBottomSheet = () => {
 
             const carousel = bottomSheet.querySelector('.carousel');
             carousel.innerHTML = images.map(img => 
-                `<img src="../images/1x/${img}" srcset="../images/1x/${img} 1x, ../images/2x/${img} 2x" alt="">`
+                `<img src="./images/1x/${img}" srcset="./images/1x/${img} 1x, ./images/2x/${img} 2x" alt="">`
             ).join('');
 
             let startX;
             let currentTranslate = 0;
             let currentIndex = 0;
-            
+
             const slides = carousel.querySelectorAll('img');
             const dots = bottomSheet.querySelector('.carousel-dots');
             dots.innerHTML = Array.from(slides).map((_, i) => 
