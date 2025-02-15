@@ -5,13 +5,31 @@ let rotationCounter = 0;
 // Unified setup function for hover effects
 const setupHoverEffects = () => {
     const hoverableElements = document.querySelectorAll('a, [data-hover="true"]');
+    const isMobile = window.innerWidth <= 768;
+
+    if (isMobile && !document.querySelector('.bottom-sheet-hover')) {
+        const bottomSheet = document.createElement('div');
+        bottomSheet.classList.add('bottom-sheet-hover');
+        bottomSheet.innerHTML = `
+            <div class="bottom-sheet-header">
+                <div class="bottom-sheet-indicator"></div>
+            </div>
+            <div class="carousel-container">
+                <div class="carousel"></div>
+                <div class="carousel-dots"></div>
+            </div>
+        `;
+        document.body.appendChild(bottomSheet);
+
+        const overlay = document.createElement('div');
+        overlay.classList.add('overlay-hover');
+        document.body.appendChild(overlay);
+    }
 
     hoverableElements.forEach(element => {
-        // Skip if already processed
         if (element.hasAttribute('data-processed')) return;
-
-        // Check if it's a direct image hover element
-        const hasDirectImageHover = element.dataset.images && !element.querySelector('.wave-text');
+        
+        const hasImages = element.dataset.images || element.querySelector('[data-images]');
 
         if (hasDirectImageHover) {
             // Create and handle hover image
@@ -26,15 +44,42 @@ const setupHoverEffects = () => {
                 text.split('').map(char => char === ' ' ? `<span>&nbsp;</span>` : `<span>${char}</span>`).join('')
             }</span>`;
 
-            element.addEventListener('mouseenter', () => {
-                handleImageHover(element, img, true);
-                handleWaveEffect(element, true);
-                hoveredElements.add(element);
-            });
-            element.addEventListener('mouseleave', () => {
-                handleImageHover(element, img, false);
-                handleWaveEffect(element, false);
-                hoveredElements.delete(element);
+            if (!isMobile) {
+                element.addEventListener('mouseenter', () => {
+                    handleImageHover(element, img, true);
+                    handleWaveEffect(element, true);
+                    hoveredElements.add(element);
+                });
+                element.addEventListener('mouseleave', () => {
+                    handleImageHover(element, img, false);
+                    handleWaveEffect(element, false);
+                    hoveredElements.delete(element);
+                });
+            }
+
+            element.addEventListener('click', (e) => {
+                if (!isMobile) return;
+                e.preventDefault();
+                
+                const targetElement = element.dataset.images ? element : element.querySelector('[data-images]');
+                if (!targetElement) return;
+                
+                const images = targetElement.dataset.images?.split(",") || [];
+                if (!images.length) return;
+
+                const bottomSheet = document.querySelector('.bottom-sheet-hover');
+                const carousel = bottomSheet.querySelector('.carousel');
+                carousel.innerHTML = images.map(img => 
+                    `<img src="/images/1x/${img}" srcset="/images/1x/${img} 1x, /images/2x/${img} 2x" alt="">`
+                ).join('');
+
+                const dots = bottomSheet.querySelector('.carousel-dots');
+                dots.innerHTML = images.map((_, i) => 
+                    `<div class="dot ${i === 0 ? 'active' : ''}"></div>`
+                ).join('');
+
+                bottomSheet.classList.add('open');
+                document.querySelector('.overlay-hover').classList.add('visible');
             });
         } else {
             // Handle regular wave text effect
