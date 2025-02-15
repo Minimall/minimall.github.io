@@ -3,40 +3,120 @@ const hoveredElements = new Set();
 let rotationCounter = 0;
 
 // Unified setup function for hover effects
-const setupHoverEffects = () => {
-    const hoverableElements = document.querySelectorAll('a, [data-hover="true"]');
-    const isMobile = window.innerWidth <= 768;
+const isMobile = () => window.innerWidth <= 788;
 
-    if (isMobile && !document.querySelector('.bottom-sheet-hover')) {
-        const bottomSheet = document.createElement('div');
-        bottomSheet.classList.add('bottom-sheet-hover');
-        bottomSheet.innerHTML = `
+const setupBottomSheet = () => {
+    const sheetHtml = `
+        <div class="bottom-sheet-hover">
             <div class="bottom-sheet-header">
                 <div class="bottom-sheet-indicator"></div>
             </div>
             <div class="carousel-container">
-                <div class="carousel"></div>
+                <div class="carousel">
+                    <img class="hover-image" alt="">
+                </div>
                 <div class="carousel-dots"></div>
             </div>
-        `;
-        document.body.appendChild(bottomSheet);
+        </div>
+        <div class="overlay-hover"></div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', sheetHtml);
 
-        const overlay = document.createElement('div');
-        overlay.classList.add('overlay-hover');
-        document.body.appendChild(overlay);
-    }
+    const sheet = document.querySelector('.bottom-sheet-hover');
+    const overlay = document.querySelector('.overlay-hover');
+    const sheetImage = sheet.querySelector('.hover-image');
+    const indicator = sheet.querySelector('.bottom-sheet-indicator');
+
+    let startY = 0;
+    let isClosing = false;
+
+    const closeSheet = () => {
+        sheet.classList.remove('open');
+        overlay.classList.remove('visible');
+        isClosing = false;
+    };
+
+    const handleGesture = (e) => {
+        if (isClosing) return;
+        const currentY = e.type === 'mousemove' ? e.clientY : e.touches[0].clientY;
+        const diff = currentY - startY;
+        
+        if (diff > 100) {
+            isClosing = true;
+            closeSheet();
+        }
+    };
+
+    sheet.addEventListener('mousedown', e => {
+        startY = e.clientY;
+        document.addEventListener('mousemove', handleGesture);
+        document.addEventListener('mouseup', () => {
+            document.removeEventListener('mousemove', handleGesture);
+        });
+    });
+
+    sheet.addEventListener('touchstart', e => {
+        startY = e.touches[0].clientY;
+        document.addEventListener('touchmove', handleGesture);
+        document.addEventListener('touchend', () => {
+            document.removeEventListener('touchmove', handleGesture);
+        });
+    }, { passive: true });
+
+    overlay.addEventListener('click', closeSheet);
+    indicator.addEventListener('click', closeSheet);
+
+    return { sheet, overlay, sheetImage };
+};
+
+const setupHoverEffects = () => {
+    const hoverableElements = document.querySelectorAll('a, [data-hover="true"]');
+    const mobileElements = isMobile() ? setupBottomSheet() : null;
 
     hoverableElements.forEach(element => {
+        // Skip if already processed
         if (element.hasAttribute('data-processed')) return;
 
-        const hasDirectImageHover = element.dataset.images || element.querySelector('[data-images]');
+        // Check if it's a direct image hover element
+        const hasDirectImageHover = element.dataset.images && !element.querySelector('.wave-text');
 
-        if (hasDirectImageHover && !element.querySelector('.wave-text')) {
+        if (hasDirectImageHover) {
             // Create and handle hover image
-            const img = document.createElement('img');
-            img.className = 'hover-image';
-            img.alt = element.textContent;
-            document.body.appendChild(img);
+            let img;
+            if (isMobile()) {
+                img = mobileElements.sheetImage;
+                img.alt = element.textContent;
+                
+                element.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    handleWaveEffect(element, true);
+                    if (element.dataset.images) {
+                        const images = element.dataset.images.split(',');
+                        const carousel = mobileElements.sheet.querySelector('.carousel');
+                        carousel.innerHTML = '';
+                        
+                        images.forEach(imageName => {
+                            const imgElement = document.createElement('img');
+                            imgElement.src = `images/1x/${imageName.trim()}`;
+                            imgElement.alt = element.textContent;
+                            carousel.appendChild(imgElement);
+                        });
+                        
+                        const dots = mobileElements.sheet.querySelector('.carousel-dots');
+                        dots.innerHTML = images.map((_, i) => 
+                            `<div class="dot${i === 0 ? ' active' : ''}"></div>`
+                        ).join('');
+                        
+                        mobileElements.sheet.classList.add('open');
+                        mobileElements.overlay.classList.add('visible');
+                    }
+                });
+            } else {
+                img = document.createElement('img');
+                img.className = 'hover-image';
+                img.alt = element.textContent;
+                document.body.appendChild(img);
+            }
 
             // Split text for wave effect
             const text = element.textContent.trim();
@@ -44,42 +124,15 @@ const setupHoverEffects = () => {
                 text.split('').map(char => char === ' ' ? `<span>&nbsp;</span>` : `<span>${char}</span>`).join('')
             }</span>`;
 
-            if (!isMobile) {
-                element.addEventListener('mouseenter', () => {
-                    handleImageHover(element, img, true);
-                    handleWaveEffect(element, true);
-                    hoveredElements.add(element);
-                });
-                element.addEventListener('mouseleave', () => {
-                    handleImageHover(element, img, false);
-                    handleWaveEffect(element, false);
-                    hoveredElements.delete(element);
-                });
-            }
-
-            element.addEventListener('click', (e) => {
-                if (!isMobile) return;
-                e.preventDefault();
-
-                const targetElement = element.dataset.images ? element : element.querySelector('[data-images]');
-                if (!targetElement) return;
-
-                const images = targetElement.dataset.images?.split(",") || [];
-                if (!images.length) return;
-
-                const bottomSheet = document.querySelector('.bottom-sheet-hover');
-                const carousel = bottomSheet.querySelector('.carousel');
-                carousel.innerHTML = images.map(img => 
-                    `<img src="./images/1x/${img}" srcset="./images/1x/${img} 1x, ./images/2x/${img} 2x" alt="">`
-                ).join('');
-
-                const dots = bottomSheet.querySelector('.carousel-dots');
-                dots.innerHTML = images.map((_, i) => 
-                    `<div class="dot ${i === 0 ? 'active' : ''}"></div>`
-                ).join('');
-
-                bottomSheet.classList.add('open');
-                document.querySelector('.overlay-hover').classList.add('visible');
+            element.addEventListener('mouseenter', () => {
+                handleImageHover(element, img, true);
+                handleWaveEffect(element, true);
+                hoveredElements.add(element);
+            });
+            element.addEventListener('mouseleave', () => {
+                handleImageHover(element, img, false);
+                handleWaveEffect(element, false);
+                hoveredElements.delete(element);
             });
         } else {
             // Handle regular wave text effect
@@ -104,8 +157,9 @@ const setupHoverEffects = () => {
 
 // Handle wave animation effect
 const handleWaveEffect = (element, isEnter, isRandom = false) => {
-    console.log('Wave effect on:', element.innerHTML);
     const letters = element.querySelectorAll('.wave-text span');
+    if (!letters.length) return;
+    
     const enterDelay = isRandom ? 70 : 30;  // Faster for random waves
     const leaveDelay = isRandom ? 40 : 10;   // Faster exit for random waves
 
@@ -152,8 +206,8 @@ const cycleImages = (element, img) => {
     let fadeTimeout;
 
     const showNextImage = () => {
-        img.src = `./images/1x/${images[currentIndex]}`;
-        img.srcset = `./images/1x/${images[currentIndex]} 1x, ./images/2x/${images[currentIndex]} 2x`;
+        img.src = `/images/1x/${images[currentIndex]}`;
+        img.srcset = `/images/1x/${images[currentIndex]} 1x, /images/2x/${images[currentIndex]} 2x`;
         img.style.opacity = "1";
 
         fadeTimeout = setTimeout(() => {
@@ -281,71 +335,3 @@ document.addEventListener('DOMContentLoaded', () => {
         repeater.style.setProperty('--content-width', text.length + 'ch');
     });
 });
-
-const setupBottomSheet = () => {
-    if (window.innerWidth > 768) return;
-
-    let bottomSheet = document.querySelector('.bottom-sheet-hover');
-    const overlay = document.querySelector('.overlay-hover') || document.createElement('div');
-
-    if (!bottomSheet) {
-        bottomSheet = document.createElement('div');
-        bottomSheet.classList.add('bottom-sheet-hover');
-        document.body.appendChild(bottomSheet);
-    }
-    bottomSheet.innerHTML = `
-        <div class="bottom-sheet-header">
-            <div class="bottom-sheet-indicator"></div>
-        </div>
-        <div class="carousel-container">
-            <div class="carousel"></div>
-            <div class="carousel-dots"></div>
-        </div>
-    `;
-
-    if (!document.querySelector('.bottom-sheet-hover')) {
-        document.body.appendChild(bottomSheet);
-    }
-
-    document.querySelectorAll('[data-hover="true"]').forEach(element => {
-        element.addEventListener('click', (e) => {
-            if (window.innerWidth > 768) return;
-            e.preventDefault();
-
-            const images = element.dataset.images?.split(",") || [];
-            if (!images.length) return;
-
-            const carousel = bottomSheet.querySelector('.carousel');
-            carousel.innerHTML = images.map(img => 
-                `<img src="./images/1x/${img}" srcset="./images/1x/${img} 1x, ./images/2x/${img} 2x" alt="">`
-            ).join('');
-
-            let startX;
-            let currentTranslate = 0;
-            let currentIndex = 0;
-
-            const slides = carousel.querySelectorAll('img');
-            const dots = bottomSheet.querySelector('.carousel-dots');
-            dots.innerHTML = Array.from(slides).map((_, i) => 
-                `<div class="dot ${i === 0 ? 'active' : ''}"></div>`
-            ).join('');
-
-            bottomSheet.classList.add('open');
-            document.querySelector('.overlay-hover').classList.add('visible');
-        });
-    });
-
-    const overlay = document.querySelector('.overlay-hover') || document.createElement('div');
-    overlay.classList.add('overlay-hover');
-    if (!document.querySelector('.overlay-hover')) {
-        document.body.appendChild(overlay);
-    }
-
-    overlay.addEventListener('click', () => {
-        bottomSheet.classList.remove('open');
-        overlay.classList.remove('visible');
-    });
-}
-
-// Initialize bottom sheet
-document.addEventListener('DOMContentLoaded', setupBottomSheet);
