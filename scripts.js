@@ -285,8 +285,14 @@ document.addEventListener('DOMContentLoaded', () => {
 const setupBottomSheet = () => {
     if (window.innerWidth > 768) return;
 
-    const bottomSheet = document.querySelector('.bottom-sheet-hover') || document.createElement('div');
-    bottomSheet.classList.add('bottom-sheet-hover');
+    let bottomSheet = document.querySelector('.bottom-sheet-hover');
+    const overlay = document.querySelector('.overlay-hover') || document.createElement('div');
+    
+    if (!bottomSheet) {
+        bottomSheet = document.createElement('div');
+        bottomSheet.classList.add('bottom-sheet-hover');
+        document.body.appendChild(bottomSheet);
+    }
     bottomSheet.innerHTML = `
         <div class="bottom-sheet-header">
             <div class="bottom-sheet-indicator"></div>
@@ -311,7 +317,17 @@ const setupBottomSheet = () => {
 
             const carousel = bottomSheet.querySelector('.carousel');
             carousel.innerHTML = images.map(img => 
-                `<img src="/images/1x/${img}" srcset="/images/1x/${img} 1x, /images/2x/${img} 2x" alt="">`
+                `<img src="../images/1x/${img}" srcset="../images/1x/${img} 1x, ../images/2x/${img} 2x" alt="">`
+            ).join('');
+
+            let startX;
+            let currentTranslate = 0;
+            let currentIndex = 0;
+            
+            const slides = carousel.querySelectorAll('img');
+            const dots = bottomSheet.querySelector('.carousel-dots');
+            dots.innerHTML = Array.from(slides).map((_, i) => 
+                `<div class="dot ${i === 0 ? 'active' : ''}"></div>`
             ).join('');
 
             bottomSheet.classList.add('open');
