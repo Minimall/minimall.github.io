@@ -183,16 +183,44 @@ const handleWaveEffect = (element, isEnter, isRandom = false) => {
 
 // Handle image hover effects
 const handleImageHover = (element, img, isEnter) => {
-    if (isEnter) {
-        const rotation = (rotationCounter % 2 === 0) ? 3 : -3;
-        rotationCounter++;
-        img.style.setProperty('--rotation', `${rotation}deg`);
-        img.classList.add('active');
-        element.stopImageCycle = cycleImages(element, img);
-    } else if (element.stopImageCycle) {
-        img.classList.remove('active');
-        element.stopImageCycle();
-        element.stopImageCycle = null;
+    if (isMobile()) {
+        if (isEnter) {
+            const sheet = document.querySelector('.bottom-sheet-hover');
+            const overlay = document.querySelector('.overlay-hover');
+            const carousel = sheet.querySelector('.carousel');
+            
+            if (element.dataset.images) {
+                const images = element.dataset.images.split(',');
+                carousel.innerHTML = '';
+                
+                images.forEach(imageName => {
+                    const imgElement = document.createElement('img');
+                    imgElement.src = `images/1x/${imageName.trim()}`;
+                    imgElement.alt = element.textContent;
+                    carousel.appendChild(imgElement);
+                });
+                
+                const dots = sheet.querySelector('.carousel-dots');
+                dots.innerHTML = images.map((_, i) => 
+                    `<div class="dot${i === 0 ? ' active' : ''}"></div>`
+                ).join('');
+                
+                sheet.classList.add('open');
+                overlay.classList.add('visible');
+            }
+        }
+    } else {
+        if (isEnter) {
+            const rotation = (rotationCounter % 2 === 0) ? 3 : -3;
+            rotationCounter++;
+            img.style.setProperty('--rotation', `${rotation}deg`);
+            img.classList.add('active');
+            element.stopImageCycle = cycleImages(element, img);
+        } else if (element.stopImageCycle) {
+            img.classList.remove('active');
+            element.stopImageCycle();
+            element.stopImageCycle = null;
+        }
     }
 };
 
@@ -260,6 +288,38 @@ document.addEventListener("DOMContentLoaded", () => {
     setupHoverEffects();
     window.addEventListener("mousemove", updateMousePosition, { passive: true });
     setTimeout(triggerRandomWave, 5000);
+    
+    if (isMobile()) {
+        const sheet = document.querySelector('.bottom-sheet-hover');
+        const overlay = document.querySelector('.overlay-hover');
+        const indicator = sheet.querySelector('.bottom-sheet-indicator');
+        
+        let startY = 0;
+        let isClosing = false;
+        
+        const closeSheet = () => {
+            sheet.classList.remove('open');
+            overlay.classList.remove('visible');
+            isClosing = false;
+        };
+        
+        overlay.addEventListener('click', closeSheet);
+        indicator.addEventListener('click', closeSheet);
+        
+        sheet.addEventListener('touchstart', (e) => {
+            startY = e.touches[0].clientY;
+        }, { passive: true });
+        
+        sheet.addEventListener('touchmove', (e) => {
+            if (isClosing) return;
+            const diff = e.touches[0].clientY - startY;
+            
+            if (diff > 100) {
+                isClosing = true;
+                closeSheet();
+            }
+        }, { passive: true });
+    }
 
     // Collapsible content handling
     document.querySelectorAll('.collapsible-link').forEach(link => {
