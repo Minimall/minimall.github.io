@@ -794,7 +794,8 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
   left: 0;
   right: 0;
   bottom: 0;
-  opacity: 1;
+  opacity: 0;
+  transition: opacity 800ms ease;
   z-index: 0;
   overflow: hidden;
   height: 60vh;
@@ -815,33 +816,27 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
   background: linear-gradient(
     to bottom,
     rgba(255, 255, 255, 1) 0%,
-    rgba(255, 255, 255, 0.9) 15%,
-    rgba(255, 255, 255, 0.8) 40%,
     rgba(255, 255, 255, 0) 100%
   );
   mask-image: linear-gradient(
     to bottom,
-    rgba(0, 0, 0, 1) 0%
-    rgba(0, 0, 0, 0.9) 15%
-    rgba(0, 0, 0, 0.8) 40%,
+    rgba(0, 0, 0, 1) 0%,
     rgba(0, 0, 0, 0) 100%
   );
   -webkit-mask-image: linear-gradient(
     to bottom,
     rgba(0, 0, 0, 1) 0%,
-    rgba(0, 0, 0, 0.9) 15%
-    rgba(0, 0, 0, 0.8) 40%,
     rgba(0, 0, 0, 0) 100%
   );
   pointer-events: none;
   z-index: 1;
   will-change: backdrop-filter;
   transform: translateZ(0);
-  height: 100%;
 }
 
 .line {
   background-color: #4ECDC4;
+  opacity: 0.5;
   width: 1px;
   height: 40px;
   margin: auto;
@@ -864,6 +859,4 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
 .footer2 .main-text {
   position: relative;
   z-index: 1;
-  opacity: 1;
-  transition: none;
 }
