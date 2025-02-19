@@ -27,8 +27,16 @@ function createGridAnimation(gridElement) {
     const calculateGridSize = () => {
         const width = window.innerWidth;
         const height = window.innerHeight;
-        const columns = Math.max(Math.min(Math.floor(width / 40), 48), 24);
-        const rows = Math.max(Math.floor(height / 40), 24);
+        const area = width * height;
+        const density = 0.00035; // Lines per pixel squared, adjusted down by 25%
+        const aspectRatio = width / height;
+        
+        // Calculate desired number of lines based on screen area
+        const totalDesiredLines = Math.floor(area * density);
+        
+        // Calculate columns and rows while maintaining aspect ratio
+        const columns = Math.max(Math.min(Math.floor(Math.sqrt(totalDesiredLines * aspectRatio)), 36), 18);
+        const rows = Math.max(Math.floor(Math.sqrt(totalDesiredLines / aspectRatio)), 18);
         
         gridElement.style.display = 'grid';
         gridElement.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
