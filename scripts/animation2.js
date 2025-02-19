@@ -23,11 +23,12 @@ const createGridAnimation = (gridElement) => {
     // Calculate responsive grid size
     const calculateGridSize = () => {
         const width = window.innerWidth;
-        const baseColumns = 12;
-        const baseRows = 12;
+        const height = window.innerHeight;
+        const baseColumns = 24;
+        const baseRows = 24;
 
-        let columns = Math.min(Math.floor(width / 60), 24);
-        let rows = Math.floor(columns * (window.innerHeight / window.innerWidth));
+        let columns = Math.min(Math.floor(width / 40), 48);
+        let rows = Math.floor(height / 40);
 
         return {
             columns: Math.max(columns, baseColumns),
