@@ -110,45 +110,6 @@ const handleImageHover = (element, img, isEnter) => {
 };
 
 // Image cycling functionality
-// Intersection Observer for fade-in animations
-const observeElements = () => {
-  const elements = [
-    document.querySelector('nav'),
-    document.querySelector('.headline'),
-    document.querySelector('.main-text'),
-    document.querySelector('#case1-placeholder'),
-    document.querySelector('#case2-placeholder'),
-    document.querySelector('#case3-placeholder')
-  ];
-
-  elements.forEach(element => {
-    if (element) {
-      element.classList.add('fade-move-up');
-    }
-  });
-
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-        observer.unobserve(entry.target); // Stop observing once visible
-      }
-    });
-  }, {
-    threshold: 0.15,
-    rootMargin: '0px'
-  });
-
-  elements.forEach(element => {
-    if (element) {
-      observer.observe(element);
-    }
-  });
-};
-
-// Initialize animations after DOM content is loaded
-document.addEventListener('DOMContentLoaded', observeElements);
-
 const cycleImages = (element, img) => {
     const images = element.dataset.images?.split(",") || [];
     if (!images.length) return null;
