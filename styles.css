@@ -1,18 +1,8 @@
-.debug {
-    outline: 1px solid red;
-    background: rgba(255,0,0,0.1);
-}
 
 /* ==========================================================================
    Base & Reset
    ========================================================================== */
-@font-face {
-  font-family: 'Geist';
-  src: url('https://assets.website-files.com/6571cd8955f9e7f772615980/65768a0c0939d846cfdc8c68_Geist-Bold.woff2') format('woff2');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400&display=swap');
 
 :root {
   --spacing: 2rem;
@@ -52,8 +42,6 @@ h2 {
   color: #111;
   margin-bottom: 1rem;
 }
-
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400&display=swap');
 
 .headline {
   font-family: 'Syne', sans-serif;
