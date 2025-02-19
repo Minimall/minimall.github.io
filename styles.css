@@ -790,3 +790,32 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
     transform: translateY(0);
   }
 }
+
+.footer2 {
+  background: transparent !important;
+  position: relative;
+}
+
+.animation-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0;
+  transition: opacity 800ms ease;
+}
+
+.animation-wrapper.visible {
+  opacity: 1;
+}
+
+#footer-animation-container {
+  width: 100%;
+  height: 100%;
+}
+
+.footer2 .main-text {
+  position: relative;
+  z-index: 1;
+}

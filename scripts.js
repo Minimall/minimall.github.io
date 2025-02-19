@@ -2,6 +2,37 @@
 const hoveredElements = new Set();
 let rotationCounter = 0;
 
+// Footer animation initialization
+function initFooterAnimation() {
+    const footer = document.querySelector('.footer2');
+    if (!footer) return;
+
+    const animationWrapper = footer.querySelector('.animation-wrapper');
+    const animationContainer = document.getElementById('footer-animation-container');
+    let isAnimationInitialized = false;
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting && !isAnimationInitialized) {
+                isAnimationInitialized = true;
+                createGridAnimation(animationContainer);
+                setTimeout(() => {
+                    animationWrapper.classList.add('visible');
+                }, 100);
+            }
+        });
+    }, { threshold: 0.2 });
+
+    observer.observe(footer);
+}
+
+// Add to your existing DOMContentLoaded listener
+document.addEventListener("DOMContentLoaded", () => {
+    initFooterAnimation();
+    // ... your existing initialization code
+});
+
+
 // Unified setup function for hover effects
 const setupHoverEffects = () => {
     const hoverableElements = document.querySelectorAll('a, [data-hover="true"]');
