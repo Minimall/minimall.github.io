@@ -168,19 +168,13 @@ nav a:hover {
   padding-left: 5vw;
 }
 
-.footer-content, .header-content {
+.footer-content {
   max-width: var(--max-width);
   margin: 0 auto;
   padding-top: 5vw;
   padding-right: 5vw;
   padding-left: 5vw;
   padding-bottom: 10vw;
-}
-
-.header-overlay {
-  background: linear-gradient(to bottom, 
-    rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 1) 100%);
 }
 
 .case-content {

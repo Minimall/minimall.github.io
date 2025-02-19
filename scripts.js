@@ -238,14 +238,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // First load header and case studies
     const loadPromises = [
-        fetch('/header2.html').then(response => response.text()).then(data => {
-            const headerPlaceholder = document.getElementById('header2-placeholder');
+        fetch('/header.html').then(response => response.text()).then(data => {
+            const headerPlaceholder = document.getElementById('header-placeholder');
             if (headerPlaceholder) {
                 headerPlaceholder.innerHTML = data;
                 setupHoverEffects(); // Initialize after header load
             }
         }),
-        ...Array.from(document.querySelectorAll('[data-case-file]')).map(placeholder =>
+        ...Array.from(document.querySelectorAll('[data-case-file]')).map(placeholder => 
             fetch(placeholder.dataset.caseFile)
                 .then(response => response.text())
                 .then(data => {
@@ -282,6 +282,35 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     });
 
+    // Load header
+    fetch('/header.html')
+        .then(response => {
+            if (!response.ok) throw new Error('Failed to load header');
+            return response.text();
+        })
+        .then(data => {
+            const headerPlaceholder = document.getElementById('header-placeholder');
+            if (headerPlaceholder) {
+                headerPlaceholder.innerHTML = data;
+                setupHoverEffects();
+            }
+        })
+        .catch(error => {
+            console.error('Error loading header:', error);
+            const headerPlaceholder = document.getElementById('header-placeholder');
+            if (headerPlaceholder) {
+                headerPlaceholder.innerHTML = `
+                    <nav>
+                        <a href="index.html">Dmytro Dvornichenko</a>
+                        <div>
+                            <a href="mailto:email@example.com">Email</a>
+                            <a href="https://linkedin.com/in/username">LinkedIn</a>
+                            <a href="https://twitter.com/username">Twitter</a>
+                        </div>
+                    </nav>`;
+                setupHoverEffects();
+            }
+        });
 
     // Load all case studies
     document.querySelectorAll('[data-case-file]').forEach(placeholder => {
@@ -303,7 +332,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             })
             .finally(() => {
                 // Initialize footer animation after content is loaded
-
+                
             });
     });
 });
@@ -455,8 +484,4 @@ class BottomSheet {
             document.querySelector('.carousel-dots').innerHTML = '';
         }, 300);
     }
-}
-
-function createGridAnimation(container) {
-    //Existing code for animation remains unchanged.  Implementation details omitted for brevity.
 }
