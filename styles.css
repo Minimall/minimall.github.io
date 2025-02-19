@@ -798,6 +798,16 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
   overflow: hidden;
   height: 100vh;
   width: 100%;
+  background: transparent;
+}
+
+.animation-wrapper.visible {
+  opacity: 1;
+}
+
+.line {
+  background-color: #4ECDC4;
+  opacity: 0.5;
 }
 
 .animation-wrapper.visible {

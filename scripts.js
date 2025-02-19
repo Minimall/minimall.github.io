@@ -226,6 +226,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     const animationContainer = document.getElementById('footer-animation-container');
     if (animationContainer) {
         console.log("Found animation container, initializing");
+        const wrapper = document.querySelector('.animation-wrapper');
+        if (wrapper) {
+            wrapper.classList.add('visible');
+        }
         createGridAnimation(animationContainer);
     } else {
         console.log("Animation container not found");
