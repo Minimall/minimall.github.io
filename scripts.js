@@ -282,21 +282,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     });
 
-    // Initialize header animation
-    setTimeout(() => {
-        const headerAnimationContainer = document.getElementById('header-animation-container');
-        if (headerAnimationContainer) {
-            const wrapper = headerAnimationContainer.closest('.animation-wrapper');
-            if (wrapper) {
-                wrapper.style.opacity = '1';
-                wrapper.style.background = '#ffffff';
-            }
-            createGridAnimation(headerAnimationContainer);
-        }
-    }, 500);
-
     // Load header
-    fetch('/header2.html')
+    fetch('/header.html')
         .then(response => {
             if (!response.ok) throw new Error('Failed to load header');
             return response.text();
