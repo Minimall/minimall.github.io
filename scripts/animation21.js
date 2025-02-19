@@ -1,4 +1,3 @@
-
 function createGridAnimation(gridElement) {
     console.log("Starting grid animation");
     if (!gridElement) {
@@ -48,6 +47,8 @@ function createGridAnimation(gridElement) {
             for (let i = start; i < end; i++) {
                 const line = document.createElement('div');
                 line.className = 'line';
+                line.style.opacity = '0.5';
+                line.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
                 gridElement.appendChild(line);
                 lines.push({
                     element: line,
@@ -111,7 +112,7 @@ function createGridAnimation(gridElement) {
 
         const elapsedTime = currentTime - movementStartTime;
         const cycleDuration = MOVEMENT_TIME + PAUSE_TIME;
-        
+
         if (elapsedTime >= cycleDuration) {
             currentPoint = targetPoint;
             targetPoint = nextTargetPoint;
