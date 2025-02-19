@@ -655,6 +655,10 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
     transition: background-color 0.5s ease;
 }
 @media (max-width: 788px) {
+  body {
+    overflow-x: hidden;
+  }
+  
   .overlay {
     position: fixed;
     top: 0;
