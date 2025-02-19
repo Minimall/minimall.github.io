@@ -158,6 +158,12 @@ const triggerRandomWave = () => {
 
 // Initialize everything
 document.addEventListener("DOMContentLoaded", () => {
+    const isMobile = window.matchMedia('(max-width: 788px)').matches;
+    
+    if (isMobile) {
+        new BottomSheet();
+    }
+    
     setupHoverEffects();
     window.addEventListener("mousemove", updateMousePosition, { passive: true });
     setTimeout(triggerRandomWave, 5000);
@@ -236,3 +242,98 @@ document.addEventListener('DOMContentLoaded', () => {
         repeater.style.setProperty('--content-width', text.length + 'ch');
     });
 });
+class BottomSheet {
+    constructor() {
+        this.sheet = document.querySelector('.bottom-sheet');
+        this.overlay = document.querySelector('.overlay');
+        this.carousel = document.querySelector('.carousel');
+        this.setupGestures();
+        this.setupTriggers();
+        
+        this.overlay.addEventListener('click', () => this.close());
+        document.querySelector('.bottom-sheet-indicator').addEventListener('click', () => this.close());
+    }
+    
+    setupGestures() {
+        let startY = 0;
+        this.isClosing = false;
+        
+        const onStart = (e) => {
+            startY = e.type === 'mousedown' ? e.clientY : e.touches[0].clientY;
+            document.addEventListener(e.type === 'mousedown' ? 'mousemove' : 'touchmove', onMove);
+            document.addEventListener(e.type === 'mousedown' ? 'mouseup' : 'touchend', onEnd);
+        };
+        
+        const onMove = (e) => {
+            const currentY = e.type === 'mousemove' ? e.clientY : e.touches[0].clientY;
+            const diff = currentY - startY;
+            
+            if (diff > 100 && !this.isClosing) {
+                this.isClosing = true;
+                this.close();
+            }
+        };
+        
+        const onEnd = () => {
+            document.removeEventListener('mousemove', onMove);
+            document.removeEventListener('touchmove', onMove);
+            document.removeEventListener('mouseup', onEnd);
+            document.removeEventListener('touchend', onEnd);
+        };
+        
+        this.sheet.addEventListener('mousedown', onStart);
+        this.sheet.addEventListener('touchstart', onStart, { passive: true });
+    }
+    
+    setupTriggers() {
+        document.querySelectorAll('[data-hover="true"]').forEach(element => {
+            element.addEventListener('click', (e) => {
+                if (window.matchMedia('(max-width: 788px)').matches) {
+                    e.preventDefault();
+                    this.updateImages(element);
+                    this.open();
+                }
+            });
+        });
+    }
+    
+    updateImages(element) {
+        const images = element.dataset.images?.split(',') || [];
+        this.carousel.innerHTML = '';
+        
+        images.forEach(image => {
+            const img = document.createElement('img');
+            img.src = `/images/1x/${image}`;
+            img.srcset = `/images/1x/${image} 1x, /images/2x/${image} 2x`;
+            this.carousel.appendChild(img);
+        });
+        
+        this.setupDots(images.length);
+    }
+    
+    setupDots(count) {
+        const dotsContainer = document.querySelector('.carousel-dots');
+        dotsContainer.innerHTML = '';
+        
+        for (let i = 0; i < count; i++) {
+            const dot = document.createElement('div');
+            dot.classList.add('dot');
+            if (i === 0) dot.classList.add('active');
+            dotsContainer.appendChild(dot);
+        }
+    }
+    
+    open() {
+        this.sheet.classList.add('open');
+        this.overlay.classList.add('visible');
+    }
+    
+    close() {
+        this.sheet.classList.remove('open');
+        this.overlay.classList.remove('visible');
+        setTimeout(() => {
+            this.carousel.innerHTML = '';
+            document.querySelector('.carousel-dots').innerHTML = '';
+        }, 300);
+    }
+}

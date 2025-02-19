@@ -654,3 +654,83 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
     transform-origin: center;
     transition: background-color 0.5s ease;
 }
+@media (max-width: 788px) {
+  .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease;
+    z-index: 998;
+  }
+
+  .overlay.visible {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .bottom-sheet {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    border-radius: 12px 12px 0 0;
+    transform: translateY(100%);
+    z-index: 999;
+    transition: transform 0.3s ease;
+    touch-action: none;
+  }
+
+  .bottom-sheet.open {
+    transform: translateY(0);
+  }
+
+  .bottom-sheet-indicator {
+    width: 36px;
+    height: 4px;
+    background: #e0e0e0;
+    border-radius: 2px;
+    margin: 8px auto;
+  }
+
+  .carousel {
+    width: 100%;
+    height: 70vh;
+    display: flex;
+    transition: transform 0.3s ease-out;
+  }
+
+  .carousel img {
+    width: 100%;
+    flex-shrink: 0;
+    object-fit: contain;
+  }
+
+  .carousel-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    padding: 16px;
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #e0e0e0;
+    transition: background-color 0.3s ease;
+  }
+
+  .dot.active {
+    background: #000;
+  }
+
+  .hover-image {
+    display: none;
+  }
+}
