@@ -794,8 +794,7 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
   left: 0;
   right: 0;
   bottom: 0;
-  opacity: 0;
-  transition: opacity 800ms ease;
+  opacity: 1;
   z-index: 0;
   overflow: hidden;
   height: 60vh;
@@ -865,4 +864,6 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
 .footer2 .main-text {
   position: relative;
   z-index: 1;
+  opacity: 1;
+  transition: none;
 }
