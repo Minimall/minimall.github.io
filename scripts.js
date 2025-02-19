@@ -157,7 +157,25 @@ const triggerRandomWave = () => {
 };
 
 // Initialize everything
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+    // First load header and case studies
+    const loadPromises = [
+        fetch('/header.html').then(response => response.text()).then(data => {
+            const headerPlaceholder = document.getElementById('header-placeholder');
+            if (headerPlaceholder) headerPlaceholder.innerHTML = data;
+        }),
+        ...Array.from(document.querySelectorAll('[data-case-file]')).map(placeholder => 
+            fetch(placeholder.dataset.caseFile)
+                .then(response => response.text())
+                .then(data => {
+                    placeholder.innerHTML = data;
+                })
+        )
+    ];
+
+    await Promise.all(loadPromises).catch(error => console.error('Loading error:', error));
+
+    // Then initialize all UI elements
     if (window.matchMedia('(max-width: 788px)').matches) {
         new BottomSheet();
     }
