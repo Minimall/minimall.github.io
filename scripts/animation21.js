@@ -35,7 +35,7 @@ function createGridAnimation(gridElement) {
         const targetColumns = Math.floor(baseColumns * scaleFactor);
         
         // Ensure columns stay within reasonable bounds
-        const columns = Math.max(Math.min(targetColumns, 48), 18);
+        const columns = Math.max(Math.min(targetColumns, 48), 12);
         
         // Calculate rows maintaining similar density
         const cellWidth = width / columns;
