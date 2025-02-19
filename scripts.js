@@ -260,6 +260,7 @@ class BottomSheet {
         this.isClosing = false;
 
         const onStart = (e) => {
+            this.isClosing = false;
             startY = e.type === 'mousedown' ? e.clientY : e.touches[0].clientY;
             startX = e.type === 'mousedown' ? e.clientX : e.touches[0].clientX;
             document.addEventListener(e.type === 'mousedown' ? 'mousemove' : 'touchmove', onMove, { passive: true });
@@ -372,6 +373,7 @@ class BottomSheet {
     close() {
         this.sheet.classList.remove('open');
         this.overlay.classList.remove('visible');
+        this.isClosing = false;
         setTimeout(() => {
             this.carousel.innerHTML = '';
             document.querySelector('.carousel-dots').innerHTML = '';
