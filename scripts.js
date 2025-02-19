@@ -174,24 +174,29 @@ document.addEventListener("DOMContentLoaded", async () => {
     const loadPromises = [
         fetch('/header.html').then(response => response.text()).then(data => {
             const headerPlaceholder = document.getElementById('header-placeholder');
-            if (headerPlaceholder) headerPlaceholder.innerHTML = data;
+            if (headerPlaceholder) {
+                headerPlaceholder.innerHTML = data;
+                setupHoverEffects(); // Initialize after header load
+            }
         }),
         ...Array.from(document.querySelectorAll('[data-case-file]')).map(placeholder => 
             fetch(placeholder.dataset.caseFile)
                 .then(response => response.text())
                 .then(data => {
                     placeholder.innerHTML = data;
+                    setupHoverEffects(); // Initialize after each case load
                 })
         )
     ];
 
     await Promise.all(loadPromises).catch(error => console.error('Loading error:', error));
 
-    // Then initialize all UI elements
+    // Initialize UI and ensure wave effects are set up
     if (window.matchMedia('(max-width: 788px)').matches) {
         new BottomSheet();
     }
 
+    // Run setupHoverEffects again to catch any elements that might have been missed
     setupHoverEffects();
     window.addEventListener("mousemove", updateMousePosition, { passive: true });
     setTimeout(triggerRandomWave, 5000);
