@@ -798,7 +798,7 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
   transition: opacity 800ms ease;
   z-index: 0;
   overflow: hidden;
-  height: 60vh;
+  height: 100vh;
   width: 100%;
   background: #ffffff;
 }
@@ -816,8 +816,8 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
   background: linear-gradient(
     to bottom,
     rgba(255, 255, 255, 1) 0%,
-    rgba(255, 255, 255, 0.8) 10%,
-    rgba(255, 255, 255, 0.6) 20%,
+    rgba(255, 255, 255, 0.3) 10%,
+    rgba(255, 255, 255, 0.2) 20%,
     rgba(255, 255, 255, 0) 100%
   );
   mask-image: linear-gradient(
