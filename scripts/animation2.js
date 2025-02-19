@@ -93,10 +93,10 @@ const createGridAnimation = (gridElement) => {
     initializeLines();
 
     function getRandomPoint() {
-        const rect = gridElement.getBoundingClientRect();
+        const footerRect = document.querySelector('.footer2').getBoundingClientRect();
         return {
-            x: Math.random() * rect.width,
-            y: rect.height / 2 // Center vertically
+            x: Math.random() * footerRect.width,
+            y: Math.random() * footerRect.height
         };
     }
 
@@ -194,21 +194,14 @@ const createGridAnimation = (gridElement) => {
 
         const focalPoint = updateFocalPoint(currentTime);
         const rect = gridElement.getBoundingClientRect();
-        const footerRect = document.querySelector('.footer2').getBoundingClientRect();
-        
-        // Calculate position relative to the footer
-        const adjustedFocalPoint = {
-            x: focalPoint.x,
-            y: focalPoint.y + (rect.top - footerRect.top)
-        };
 
         // Update debug dot position
-        debugDot.style.left = `${adjustedFocalPoint.x}px`;
-        debugDot.style.top = `${adjustedFocalPoint.y}px`;
+        debugDot.style.left = `${focalPoint.x}px`;
+        debugDot.style.top = `${focalPoint.y}px`;
 
         lines.forEach((line, index) => {
-            const x = (index % columns + 0.5) * rect.width / columns - adjustedFocalPoint.x;
-            const y = (Math.floor(index / columns) + 0.5) * rect.height / rows - adjustedFocalPoint.y;
+            const x = (index % columns + 0.5) * rect.width / columns - focalPoint.x;
+            const y = (Math.floor(index / columns) + 0.5) * rect.height / rows - focalPoint.y;
 
             const angleToFocalPoint = Math.atan2(y, x);
             const targetRotation = (angleToFocalPoint * 180 / Math.PI) + 90;
