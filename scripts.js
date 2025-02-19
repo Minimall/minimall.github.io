@@ -48,14 +48,9 @@ const setupHoverEffects = () => {
                 }
             }
 
-            // Add wave effect listeners for both mouse and touch
-            if (window.matchMedia('(max-width: 788px)').matches) {
-                element.addEventListener('touchstart', () => handleWaveEffect(element, true), { passive: true });
-                element.addEventListener('touchend', () => handleWaveEffect(element, false), { passive: true });
-            } else {
-                element.addEventListener('mouseenter', () => handleWaveEffect(element, true));
-                element.addEventListener('mouseleave', () => handleWaveEffect(element, false));
-            }
+            // Add wave effect listeners
+            element.addEventListener('mouseenter', () => handleWaveEffect(element, true));
+            element.addEventListener('mouseleave', () => handleWaveEffect(element, false));
         }
 
         element.setAttribute('data-processed', 'true');
@@ -359,10 +354,10 @@ class BottomSheet {
 
     showImage(index) {
         if (index < 0 || index >= this.totalImages) return;
-
+        
         this.currentImageIndex = index;
         const images = this.carousel.querySelectorAll('img');
-
+        
         images.forEach((img, i) => {
             img.style.transform = `translateX(${(i - index) * 100}%)`;
             img.style.transition = 'transform 0.3s ease-out';
