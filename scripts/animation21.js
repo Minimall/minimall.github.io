@@ -10,10 +10,10 @@ function createGridAnimation(gridElement) {
         "#F7FFF7", "#FFE66D", "#6B5B95", "#88D8B0", "#FF8C94"
     ];
 
-    const OPACITY_TRANSITION_TIME = 750 * 3;
-    const MOVEMENT_TIME = 2000 * 3;
-    const PAUSE_TIME = 500 * 3;
-    const TRANSITION_DURATION = 125 * 3;
+    const OPACITY_TRANSITION_TIME = 750;
+    const MOVEMENT_TIME = 2000;
+    const PAUSE_TIME = 500;
+    const TRANSITION_DURATION = 125;
 
     let mousePosition = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
     let lastKnownPosition = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
@@ -29,22 +29,22 @@ function createGridAnimation(gridElement) {
         const height = window.innerHeight;
         const baseWidth = 1920; // Baseline width
         const baseColumns = 36; // Baseline columns for 1920px
-
+        
         // Calculate columns based on viewport width ratio
         const scaleFactor = width / baseWidth;
         const targetColumns = Math.floor(baseColumns * scaleFactor);
-
+        
         // Ensure columns stay within reasonable bounds
         const columns = Math.max(Math.min(targetColumns, 48), 12);
-
+        
         // Calculate rows maintaining similar density
         const cellWidth = width / columns;
         const rows = Math.max(Math.floor(height / cellWidth), 18);
-
+        
         gridElement.style.display = 'grid';
         gridElement.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
         gridElement.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
-
+        
         return { columns, rows };
     };
 
@@ -159,6 +159,18 @@ function createGridAnimation(gridElement) {
         }
     }
 
+    const debugDot = document.createElement('div');
+    debugDot.style.cssText = `
+        position: absolute;
+        width: 8px;
+        height: 8px;
+        background: red;
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 1000;
+        transform: translate(-50%, -50%);
+    `;
+    gridElement.appendChild(debugDot);
 
     function animateLines(currentTime) {
         const deltaTime = currentTime - (animateLines.lastTime || currentTime);
@@ -167,6 +179,8 @@ function createGridAnimation(gridElement) {
         const currentPosition = updatePosition(currentTime);
         const rect = gridElement.getBoundingClientRect();
 
+        debugDot.style.left = `${currentPosition.x}px`;
+        debugDot.style.top = `${currentPosition.y}px`;
 
         lines.forEach((line, index) => {
             const lineX = (index % columns + 0.5) * rect.width / columns;
