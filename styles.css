@@ -843,7 +843,6 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
 
 .line {
   background-color: #4ECDC4;
-  opacity: 0.5;
   width: 1px;
   height: 40px;
   margin: auto;

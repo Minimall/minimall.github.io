@@ -10,7 +10,6 @@ function createGridAnimation(gridElement) {
         "#F7FFF7", "#FFE66D", "#6B5B95", "#88D8B0", "#FF8C94"
     ];
 
-    const OPACITY_TRANSITION_TIME = 750;
     const MOVEMENT_TIME = 2000;
     const PAUSE_TIME = 500;
     const TRANSITION_DURATION = 125;
@@ -29,22 +28,22 @@ function createGridAnimation(gridElement) {
         const height = window.innerHeight;
         const baseWidth = 1920; // Baseline width
         const baseColumns = 36; // Baseline columns for 1920px
-        
+
         // Calculate columns based on viewport width ratio
         const scaleFactor = width / baseWidth;
         const targetColumns = Math.floor(baseColumns * scaleFactor);
-        
+
         // Ensure columns stay within reasonable bounds
         const columns = Math.max(Math.min(targetColumns, 48), 12);
-        
+
         // Calculate rows maintaining similar density
         const cellWidth = width / columns;
         const rows = Math.max(Math.floor(height / cellWidth), 18);
-        
+
         gridElement.style.display = 'grid';
         gridElement.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
         gridElement.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
-        
+
         return { columns, rows };
     };
 
@@ -62,17 +61,14 @@ function createGridAnimation(gridElement) {
             for (let i = start; i < end; i++) {
                 const line = document.createElement('div');
                 line.className = 'line';
-                line.style.opacity = '0.5';
+                line.style.opacity = '1'; //Removed opacity transition, set to 1
                 line.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
                 gridElement.appendChild(line);
                 lines.push({
                     element: line,
                     color: colors[Math.floor(Math.random() * colors.length)],
                     targetColor: colors[Math.floor(Math.random() * colors.length)],
-                    currentRotation: 0,
-                    opacity: 0,
-                    targetOpacity: 1,
-                    opacityTransitionProgress: 0
+                    currentRotation: 0
                 });
             }
 
@@ -151,13 +147,6 @@ function createGridAnimation(gridElement) {
         return delta;
     }
 
-    function updateLineOpacity(line, deltaTime) {
-        if (line.opacityTransitionProgress < 1) {
-            line.opacityTransitionProgress += deltaTime / OPACITY_TRANSITION_TIME;
-            if (line.opacityTransitionProgress > 1) line.opacityTransitionProgress = 1;
-            line.opacity = easeInOutCubic(line.opacityTransitionProgress);
-        }
-    }
 
     const debugDot = document.createElement('div');
     debugDot.style.cssText = `
@@ -197,8 +186,6 @@ function createGridAnimation(gridElement) {
             line.currentRotation %= 360;
 
             line.element.style.transform = `rotate(${line.currentRotation}deg)`;
-            updateLineOpacity(line, deltaTime);
-            line.element.style.opacity = line.opacity;
 
             if (Math.random() < 0.001) {
                 line.targetColor = colors[Math.floor(Math.random() * colors.length)];
