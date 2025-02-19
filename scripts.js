@@ -13,7 +13,7 @@ function initFooterAnimation() {
 
     const animationWrapper = footer.querySelector('.animation-wrapper');
     const animationContainer = document.getElementById('footer-animation-container');
-    
+
     if (!animationContainer) {
         console.log("Animation container not found");
         return;
@@ -48,7 +48,7 @@ function initFooterAnimation() {
 
 // Add to your existing DOMContentLoaded listener
 document.addEventListener("DOMContentLoaded", () => {
-    initFooterAnimation();
+    // initFooterAnimation();
     // ... your existing initialization code
 });
 
@@ -110,7 +110,7 @@ const setupHoverEffects = () => {
                     setTimeout(() => handleWaveEffect(element, false), 300);
                 });
             }
-            
+
             // Keep desktop behavior
             element.addEventListener('mouseenter', () => handleWaveEffect(element, true));
             element.addEventListener('mouseleave', () => handleWaveEffect(element, false));
@@ -324,6 +324,14 @@ document.addEventListener("DOMContentLoaded", async () => {
             .catch(error => {
                 console.error(error);
                 placeholder.innerHTML = `<div class="case-study-error">Failed to load case study</div>`;
+            })
+            .finally(() => {
+                // Initialize footer animation after content is loaded
+                const animationContainer = document.getElementById('footer-animation-container');
+                if (animationContainer) {
+                    console.log("Found animation container, initializing");
+                    createGridAnimation(animationContainer);
+                }
             });
     });
 });
@@ -432,10 +440,10 @@ class BottomSheet {
 
     showImage(index) {
         if (index < 0 || index >= this.totalImages) return;
-        
+
         this.currentImageIndex = index;
         const images = this.carousel.querySelectorAll('img');
-        
+
         images.forEach((img, i) => {
             img.style.transform = `translateX(${(i - index) * 100}%)`;
             img.style.transition = 'transform 0.3s ease-out';
