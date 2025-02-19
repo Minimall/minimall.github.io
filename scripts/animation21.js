@@ -24,6 +24,27 @@ function createGridAnimation(gridElement) {
     let isMouseInside = false;
     let transitionStartTime = 0;
 
+    // Initialize grid
+    const { columns, rows } = calculateGridSize();
+    gridElement.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
+    gridElement.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
+
+    // Create lines
+    for (let i = 0; i < columns * rows; i++) {
+        const lineElement = document.createElement('div');
+        lineElement.className = 'line';
+        lineElement.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        gridElement.appendChild(lineElement);
+        
+        lines.push({
+            element: lineElement,
+            targetColor: lineElement.style.backgroundColor
+        });
+    }
+
+    // Start animation
+    requestAnimationFrame(animateLines);
+
     const calculateGridSize = () => {
         const width = window.innerWidth;
         const height = window.innerHeight;
