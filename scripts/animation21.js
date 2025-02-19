@@ -201,8 +201,11 @@ function createGridAnimation(gridElement) {
             const targetRotation = (angleToFocalPoint * 180 / Math.PI) + 90;
 
             const rotationDelta = shortestRotation(line.currentRotation, targetRotation);
-            line.currentRotation += rotationDelta * 0.1;
-            line.currentRotation %= 360;
+            line.currentRotation += rotationDelta * 0.15;
+
+            // Ensure rotation stays within 360 degrees
+            if (line.currentRotation > 360) line.currentRotation -= 360;
+            if (line.currentRotation < -360) line.currentRotation += 360;
 
             line.element.style.transform = `rotate(${line.currentRotation}deg)`;
             updateLineOpacity(line, deltaTime);
