@@ -326,12 +326,7 @@ li, .tag {
   100% { transform: translate3d(-50%, 0, 0); }
 }
 
-@keyframes blurGradient {
-  0%, 100% {
-    backdrop-filter: blur(calc(var(--blur-top) * (1 - var(--y, 0)) + var(--blur-bottom) * var(--y, 0)));
-    -webkit-backdrop-filter: blur(calc(var(--blur-top) * (1 - var(--y, 0)) + var(--blur-bottom) * var(--y, 0)));
-  }
-}
+
 
 /* ==========================================================================
    Responsive Design
@@ -820,11 +815,9 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
   bottom: 0;
   background: linear-gradient(
     to bottom,
-    rgba(255, 255, 255, 0.8) 0%,
+    rgba(255, 255, 255, 1) 0%,
     rgba(255, 255, 255, 0) 100%
   );
-  backdrop-filter: blur(32px);
-  -webkit-backdrop-filter: blur(32px);
   mask-image: linear-gradient(
     to bottom,
     rgba(0, 0, 0, 1) 0%,
