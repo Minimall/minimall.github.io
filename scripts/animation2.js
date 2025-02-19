@@ -93,10 +93,10 @@ const createGridAnimation = (gridElement) => {
     initializeLines();
 
     function getRandomPoint() {
-        const footerRect = document.querySelector('.footer2').getBoundingClientRect();
+        const rect = gridElement.getBoundingClientRect();
         return {
-            x: Math.random() * footerRect.width,
-            y: Math.random() * footerRect.height
+            x: Math.random() * rect.width,
+            y: rect.height / 2 // Center vertically
         };
     }
 
@@ -194,12 +194,12 @@ const createGridAnimation = (gridElement) => {
 
         const focalPoint = updateFocalPoint(currentTime);
         const rect = gridElement.getBoundingClientRect();
-        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-
-        // Adjust focal point for mobile viewport
+        const footerRect = document.querySelector('.footer2').getBoundingClientRect();
+        
+        // Calculate position relative to the footer
         const adjustedFocalPoint = {
             x: focalPoint.x,
-            y: focalPoint.y - scrollTop
+            y: focalPoint.y + (rect.top - footerRect.top)
         };
 
         // Update debug dot position
