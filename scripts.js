@@ -223,17 +223,18 @@ const triggerRandomWave = () => {
 document.addEventListener("DOMContentLoaded", async () => {
     console.log("DOM Content Loaded");
     // Initialize footer animation
-    const animationContainer = document.getElementById('footer-animation-container');
-    if (animationContainer) {
-        console.log("Found animation container, initializing");
-        const wrapper = document.querySelector('.animation-wrapper');
-        if (wrapper) {
-            wrapper.classList.add('visible');
+    setTimeout(() => {
+        const animationContainer = document.getElementById('footer-animation-container');
+        if (animationContainer) {
+            console.log("Found animation container, initializing");
+            const wrapper = document.querySelector('.animation-wrapper');
+            if (wrapper) {
+                wrapper.style.opacity = '1';
+                wrapper.style.background = '#ffffff';
+            }
+            createGridAnimation(animationContainer);
         }
-        createGridAnimation(animationContainer);
-    } else {
-        console.log("Animation container not found");
-    }
+    }, 500);
 
     // First load header and case studies
     const loadPromises = [
@@ -331,11 +332,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             })
             .finally(() => {
                 // Initialize footer animation after content is loaded
-                const animationContainer = document.getElementById('footer-animation-container');
-                if (animationContainer) {
-                    console.log("Found animation container, initializing");
-                    createGridAnimation(animationContainer);
-                }
+                
             });
     });
 });

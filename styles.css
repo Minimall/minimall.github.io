@@ -798,7 +798,7 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
   overflow: hidden;
   height: 100vh;
   width: 100%;
-  background: transparent;
+  background: #ffffff;
 }
 
 .animation-wrapper.visible {
