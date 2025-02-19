@@ -48,7 +48,7 @@ h2 {
   font-size: 3.4rem;
   line-height: 1.2;
   letter-spacing: -0.035em;
-  margin-top: calc(var(--spacing) * 3);
+
   margin-bottom: calc(var(--spacing));
   font-feature-settings: "liga" 1, "kern" 1, "calt" 1, "ss01" 1, "ss02" 1, "ss04" 1;
   -webkit-font-feature-settings: "liga" 1, "kern" 1, "calt" 1, "ss01" 1, "ss02" 1, "ss04" 1;
@@ -87,6 +87,7 @@ p {
 
 .header {
   max-width: var(--max-width);
+  margin-top: calc(var(--spacing) * 3);
   margin-bottom: calc(var(--spacing) * 3);
 }
 
@@ -781,7 +782,7 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
 .footer2 {
   background: transparent !important;
   position: relative;
-  min-height: 100vh;
+  min-height: 50vh;
   overflow: hidden;
 }
 
@@ -795,7 +796,7 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
   transition: opacity 800ms ease;
   z-index: 0;
   overflow: hidden;
-  height: 100vh;
+  height: 60vh;
   width: 100%;
   background: #ffffff;
 }
