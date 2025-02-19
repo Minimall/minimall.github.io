@@ -130,18 +130,12 @@ const createGridAnimation = (gridElement) => {
                 currentFocalPoint = targetFocalPoint; // Update current when reaching target
             }
             return currentPos;
-        } else if (elapsedTime >= TOTAL_CYCLE_TIME - PAUSE_TIME / 2) {
-            // Calculate next target during pause
-            if (!animateLines.nextTarget) {
-                animateLines.nextTarget = getRandomPoint();
-            }
-            return targetFocalPoint;
         } else if (elapsedTime >= TOTAL_CYCLE_TIME) {
-            // Start new cycle with pre-calculated target
+            // Start new cycle
             currentFocalPoint = targetFocalPoint;
-            targetFocalPoint = animateLines.nextTarget;
-            animateLines.nextTarget = null;
+            targetFocalPoint = getRandomPoint();
             cycleStartTime = currentTime;
+            return currentFocalPoint;
         }
 
         return targetFocalPoint;
