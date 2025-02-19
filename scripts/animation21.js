@@ -1,5 +1,10 @@
 
-const createGridAnimation = (gridElement) => {
+function createGridAnimation(gridElement) {
+    console.log("Starting grid animation");
+    if (!gridElement) {
+        console.error("No grid element provided");
+        return;
+    }
     const lines = [];
     const colors = [
         "#FF6B6B", "#4ECDC4", "#45B7D1", "#FFA07A", "#98D8C8", 

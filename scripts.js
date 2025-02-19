@@ -221,6 +221,16 @@ const triggerRandomWave = () => {
 
 // Initialize everything
 document.addEventListener("DOMContentLoaded", async () => {
+    console.log("DOM Content Loaded");
+    // Initialize footer animation
+    const animationContainer = document.getElementById('footer-animation-container');
+    if (animationContainer) {
+        console.log("Found animation container, initializing");
+        createGridAnimation(animationContainer);
+    } else {
+        console.log("Animation container not found");
+    }
+
     // First load header and case studies
     const loadPromises = [
         fetch('/header.html').then(response => response.text()).then(data => {
