@@ -782,6 +782,8 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
 .footer2 {
   background: transparent !important;
   position: relative;
+  min-height: 100vh;
+  overflow: hidden;
 }
 
 .animation-wrapper {
