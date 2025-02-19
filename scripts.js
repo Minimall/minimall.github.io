@@ -48,17 +48,9 @@ const setupHoverEffects = () => {
                 }
             }
 
-            // Add wave effect listeners for both mouse and touch events
-            if (window.matchMedia('(max-width: 788px)').matches) {
-                element.addEventListener('touchstart', (e) => {
-                    e.preventDefault();
-                    handleWaveEffect(element, true);
-                });
-                element.addEventListener('touchend', () => handleWaveEffect(element, false));
-            } else {
-                element.addEventListener('mouseenter', () => handleWaveEffect(element, true));
-                element.addEventListener('mouseleave', () => handleWaveEffect(element, false));
-            }
+            // Add wave effect listeners
+            element.addEventListener('mouseenter', () => handleWaveEffect(element, true));
+            element.addEventListener('mouseleave', () => handleWaveEffect(element, false));
         }
 
         element.setAttribute('data-processed', 'true');
