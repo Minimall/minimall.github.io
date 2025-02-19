@@ -326,6 +326,13 @@ li, .tag {
   100% { transform: translate3d(-50%, 0, 0); }
 }
 
+@keyframes blurGradient {
+  0%, 100% {
+    backdrop-filter: blur(calc(var(--blur-top) * (1 - var(--y, 0)) + var(--blur-bottom) * var(--y, 0)));
+    -webkit-backdrop-filter: blur(calc(var(--blur-top) * (1 - var(--y, 0)) + var(--blur-bottom) * var(--y, 0)));
+  }
+}
+
 /* ==========================================================================
    Responsive Design
    ========================================================================== */
@@ -816,8 +823,6 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
     rgba(255, 255, 255, 1) 0%,
     rgba(255, 255, 255, 0) 100%
   );
-  backdrop-filter: blur(32px);
-  -webkit-backdrop-filter: blur(32px);
   mask-image: linear-gradient(
     to bottom,
     rgba(0, 0, 0, 1) 0%,
@@ -828,6 +833,35 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
     rgba(0, 0, 0, 1) 0%,
     rgba(0, 0, 0, 0) 100%
   );
+  --blur-top: 32px;
+  --blur-bottom: 0px;
+  backdrop-filter: blur(var(--blur-top));
+  -webkit-backdrop-filter: blur(var(--blur-top));
+  mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 1) 0%,
+    rgba(0, 0, 0, 0) 100%
+  ),
+  linear-gradient(
+    to bottom,
+    black,
+    black
+  );
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 1) 0%,
+    rgba(0, 0, 0, 0) 100%
+  ),
+  linear-gradient(
+    to bottom,
+    black,
+    black
+  );
+  mask-composite: intersect;
+  -webkit-mask-composite: source-in;
+  mask-size: 100% 100%, 100% 100%;
+  -webkit-mask-size: 100% 100%, 100% 100%;
+  animation: blurGradient 1ms linear infinite;
   pointer-events: none;
   z-index: 1;
 }
