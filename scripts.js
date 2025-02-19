@@ -158,21 +158,11 @@ const triggerRandomWave = () => {
 
 // Initialize everything
 document.addEventListener("DOMContentLoaded", () => {
-    setupHoverEffects();
-    const isMobile = window.matchMedia('(max-width: 788px)').matches;
-    
-    if (isMobile) {
-        const bottomSheet = new BottomSheet();
-        document.querySelectorAll('[data-hover="true"]').forEach(element => {
-            if (element.dataset.images) {
-                element.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    bottomSheet.updateImages(element);
-                    bottomSheet.open();
-                });
-            }
-        });
+    if (window.matchMedia('(max-width: 788px)').matches) {
+        new BottomSheet();
     }
+    
+    setupHoverEffects();
     window.addEventListener("mousemove", updateMousePosition, { passive: true });
     setTimeout(triggerRandomWave, 5000);
 
