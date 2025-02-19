@@ -245,8 +245,10 @@ class BottomSheet {
         this.sheet = document.querySelector('.bottom-sheet');
         this.overlay = document.querySelector('.overlay');
         this.carousel = document.querySelector('.carousel');
+        this.currentImageIndex = 0;
         this.setupGestures();
         this.setupTriggers();
+        this.totalImages = 0;
 
         this.overlay.addEventListener('click', () => this.close());
         document.querySelector('.bottom-sheet-indicator').addEventListener('click', () => this.close());
@@ -254,19 +256,37 @@ class BottomSheet {
 
     setupGestures() {
         let startY = 0;
+        let startX = 0;
         this.isClosing = false;
 
         const onStart = (e) => {
             startY = e.type === 'mousedown' ? e.clientY : e.touches[0].clientY;
-            document.addEventListener(e.type === 'mousedown' ? 'mousemove' : 'touchmove', onMove);
+            startX = e.type === 'mousedown' ? e.clientX : e.touches[0].clientX;
+            document.addEventListener(e.type === 'mousedown' ? 'mousemove' : 'touchmove', onMove, { passive: true });
             document.addEventListener(e.type === 'mousedown' ? 'mouseup' : 'touchend', onEnd);
         };
 
         const onMove = (e) => {
             const currentY = e.type === 'mousemove' ? e.clientY : e.touches[0].clientY;
-            const diff = currentY - startY;
+            const currentX = e.type === 'mousemove' ? e.clientX : e.touches[0].clientX;
+            const diffY = currentY - startY;
+            const diffX = currentX - startX;
 
-            if (diff > 100 && !this.isClosing) {
+            // Determine if the swipe is more horizontal or vertical
+            if (Math.abs(diffX) > Math.abs(diffY) && this.totalImages > 1) {
+                // Horizontal swipe for carousel
+                e.preventDefault();
+                if (Math.abs(diffX) > 50) {
+                    if (diffX > 0 && this.currentImageIndex > 0) {
+                        this.showImage(this.currentImageIndex - 1);
+                        startX = currentX;
+                    } else if (diffX < 0 && this.currentImageIndex < this.totalImages - 1) {
+                        this.showImage(this.currentImageIndex + 1);
+                        startX = currentX;
+                    }
+                }
+            } else if (diffY > 100 && !this.isClosing) {
+                // Vertical swipe to close
                 this.isClosing = true;
                 this.close();
             }
@@ -298,15 +318,37 @@ class BottomSheet {
     updateImages(element) {
         const images = element.dataset.images?.split(',') || [];
         this.carousel.innerHTML = '';
+        this.currentImageIndex = 0;
+        this.totalImages = images.length;
 
-        images.forEach(image => {
+        images.forEach((image, index) => {
             const img = document.createElement('img');
             img.src = `/images/1x/${image}`;
             img.srcset = `/images/1x/${image} 1x, /images/2x/${image} 2x`;
+            img.style.transform = `translateX(${index * 100}%)`;
+            img.style.position = 'absolute';
             this.carousel.appendChild(img);
         });
 
         this.setupDots(images.length);
+    }
+
+    showImage(index) {
+        if (index < 0 || index >= this.totalImages) return;
+        
+        this.currentImageIndex = index;
+        const images = this.carousel.querySelectorAll('img');
+        
+        images.forEach((img, i) => {
+            img.style.transform = `translateX(${(i - index) * 100}%)`;
+            img.style.transition = 'transform 0.3s ease-out';
+        });
+
+        // Update dots
+        const dots = document.querySelectorAll('.dot');
+        dots.forEach((dot, i) => {
+            dot.classList.toggle('active', i === index);
+        });
     }
 
     setupDots(count) {
@@ -317,6 +359,7 @@ class BottomSheet {
             const dot = document.createElement('div');
             dot.classList.add('dot');
             if (i === 0) dot.classList.add('active');
+            dot.addEventListener('click', () => this.showImage(i));
             dotsContainer.appendChild(dot);
         }
     }
