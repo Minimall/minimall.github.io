@@ -48,7 +48,19 @@ const setupHoverEffects = () => {
                 }
             }
 
-            // Add wave effect listeners
+            // Add wave effect listeners for both desktop and mobile
+            if ('ontouchstart' in window) {
+                // For mobile - using touchstart/end and preserving link clicks
+                element.addEventListener('touchstart', (e) => {
+                    // Don't prevent default to keep links working
+                    handleWaveEffect(element, true);
+                });
+                element.addEventListener('touchend', () => {
+                    setTimeout(() => handleWaveEffect(element, false), 300);
+                });
+            }
+            
+            // Keep desktop behavior
             element.addEventListener('mouseenter', () => handleWaveEffect(element, true));
             element.addEventListener('mouseleave', () => handleWaveEffect(element, false));
         }
