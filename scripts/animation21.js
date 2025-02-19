@@ -27,8 +27,8 @@ function createGridAnimation(gridElement) {
     const calculateGridSize = () => {
         const width = window.innerWidth;
         const height = window.innerHeight;
-        const columns = Math.max(Math.min(Math.floor(width / 60), 32), 16);
-        const rows = Math.max(Math.floor(height / 60), 16);
+        const columns = Math.max(Math.min(Math.floor(width / 40), 48), 24);
+        const rows = Math.max(Math.floor(height / 40), 24);
         
         gridElement.style.display = 'grid';
         gridElement.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
@@ -161,27 +161,8 @@ function createGridAnimation(gridElement) {
     `;
     gridElement.appendChild(debugDot);
 
-    let lastRectWidth = 0;
-    let lastRectHeight = 0;
-    let linePositions = [];
-
-    function precalculateLinePositions(rect) {
-        if (rect.width === lastRectWidth && rect.height === lastRectHeight) return;
-        
-        lastRectWidth = rect.width;
-        lastRectHeight = rect.height;
-        linePositions = lines.map((_, index) => ({
-            x: (index % columns + 0.5) * rect.width / columns,
-            y: (Math.floor(index / columns) + 0.5) * rect.height / rows
-        }));
-    }
-
     function animateLines(currentTime) {
         const deltaTime = currentTime - (animateLines.lastTime || currentTime);
-        if (deltaTime < 16) { // Cap at ~60fps
-            requestAnimationFrame(animateLines);
-            return;
-        }
         animateLines.lastTime = currentTime;
 
         const currentPosition = updatePosition(currentTime);
@@ -190,30 +171,28 @@ function createGridAnimation(gridElement) {
         debugDot.style.left = `${currentPosition.x}px`;
         debugDot.style.top = `${currentPosition.y}px`;
 
-        precalculateLinePositions(rect);
-
         lines.forEach((line, index) => {
-            const pos = linePositions[index];
-            const dx = currentPosition.x - pos.x;
-            const dy = currentPosition.y - pos.y;
+            const lineX = (index % columns + 0.5) * rect.width / columns;
+            const lineY = (Math.floor(index / columns) + 0.5) * rect.height / rows;
+
+            const dx = currentPosition.x - lineX;
+            const dy = currentPosition.y - lineY;
 
             const angleToFocalPoint = Math.atan2(dy, dx);
             const targetRotation = (angleToFocalPoint * 180 / Math.PI) + 90;
 
             const rotationDelta = shortestRotation(line.currentRotation, targetRotation);
-            line.currentRotation += rotationDelta * 0.15;
-
-            // Ensure rotation stays within 360 degrees
-            if (line.currentRotation > 360) line.currentRotation -= 360;
-            if (line.currentRotation < -360) line.currentRotation += 360;
+            line.currentRotation += rotationDelta * 0.1;
+            line.currentRotation %= 360;
 
             line.element.style.transform = `rotate(${line.currentRotation}deg)`;
             updateLineOpacity(line, deltaTime);
+            line.element.style.opacity = line.opacity;
 
-            if (Math.random() < 0.0005) {
+            if (Math.random() < 0.001) {
                 line.targetColor = colors[Math.floor(Math.random() * colors.length)];
-                line.element.style.backgroundColor = line.targetColor;
             }
+            line.element.style.backgroundColor = line.targetColor;
         });
 
         requestAnimationFrame(animateLines);
