@@ -180,6 +180,14 @@ nav a:hover {
   padding-left: 5vw;
 }
 
+.footer-content {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding-top: 5vw;
+  padding-right: 5vw;
+  padding-left: 5vw;
+}
+
 .case-content {
   width: 100%;
 }
