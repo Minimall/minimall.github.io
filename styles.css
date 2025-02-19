@@ -809,7 +809,7 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
   background-color: #4ECDC4;
   opacity: 0.5;
   width: 1px;
-  height: 80%;
+  height: 40px;
   margin: auto;
   transform-origin: center;
   transition: background-color 0.5s ease;

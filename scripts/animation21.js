@@ -28,8 +28,8 @@ function createGridAnimation(gridElement) {
         const width = window.innerWidth;
         const height = window.innerHeight;
         return {
-            columns: Math.max(Math.min(Math.floor(width / 40), 48), 24),
-            rows: Math.max(Math.floor(height / 40), 24)
+            columns: Math.max(Math.min(Math.floor(width / 20), 48), 24),
+            rows: Math.max(Math.floor(height / 20), 24)
         };
     };
 
