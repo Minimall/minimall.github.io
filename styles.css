@@ -58,9 +58,9 @@ h2 {
 .headline {
   font-family: 'Syne', sans-serif;
   font-weight: 400;
-  font-size: 4.5rem;
+  font-size: 3.4rem;
   line-height: 1.2;
-  letter-spacing: -0.055em;
+  letter-spacing: -0.045em;
   margin-top: calc(var(--spacing) * 3);
   margin-bottom: calc(var(--spacing));
   font-feature-settings: "liga" 1, "kern" 1, "calt" 1, "ss01" 1, "ss02" 1, "ss04" 1;
