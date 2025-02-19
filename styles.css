@@ -58,7 +58,7 @@ h2 {
   font-weight: 700;
   font-size: 4.5rem;
   line-height: 1.2;
-  letter-spacing: -0.01em;
+  letter-spacing: -2px;
   margin-top: calc(var(--spacing) * 3);
   margin-bottom: calc(var(--spacing));
 }
