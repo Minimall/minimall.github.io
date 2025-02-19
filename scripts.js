@@ -158,7 +158,9 @@ const triggerRandomWave = () => {
 
 // Initialize everything
 document.addEventListener("DOMContentLoaded", () => {
-    if (window.matchMedia('(max-width: 788px)').matches) {
+    const isMobile = window.matchMedia('(max-width: 788px)').matches;
+    
+    if (isMobile) {
         new BottomSheet();
     }
     
