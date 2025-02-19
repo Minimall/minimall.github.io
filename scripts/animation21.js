@@ -179,8 +179,14 @@ function createGridAnimation(gridElement) {
         const currentPosition = updatePosition(currentTime);
         const rect = gridElement.getBoundingClientRect();
 
+        const rect = gridElement.getBoundingClientRect();
         debugDot.style.left = `${currentPosition.x}px`;
         debugDot.style.top = `${currentPosition.y}px`;
+        // Adjust line calculations to match cursor position
+        lines.forEach((line, index) => {
+            const lineRect = line.element.getBoundingClientRect();
+            const lineX = lineRect.left - rect.left + lineRect.width / 2;
+            const lineY = lineRect.top - rect.top + lineRect.height / 2;
 
         lines.forEach((line, index) => {
             const lineX = (index % columns + 0.5) * rect.width / columns;
