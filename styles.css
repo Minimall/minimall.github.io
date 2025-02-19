@@ -796,7 +796,7 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
   bottom: 0;
   opacity: 0;
   transition: opacity 800ms ease;
-  z-index: 0;
+  z-index: 2;
   overflow: hidden;
   height: 100%;
   width: 100%;
@@ -814,6 +814,7 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
   right: 0;
   bottom: 0;
   height: 100%;
+  z-index: 3;
   background: linear-gradient(
     to bottom,
     rgba(255, 255, 255, 1) 25%, /* Changed to 25% for desktop */
