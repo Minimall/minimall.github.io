@@ -1,0 +1,47 @@
+```cpp
+// Task: Integrate a mobile bottom sheet (drawer) into an existing website (about.html).
+
+// Context:
+//  - We have three files: about.html (main page), scripts.js (JavaScript), and styles.css (main CSS).
+//  - We also have mobile-sheet.js and styles-mobile.css, containing the bottom sheet implementation and its mobile-specific styles.
+//  - The bottom sheet should only be used on mobile viewports.
+//  - Desktop functionality MUST remain unchanged.  The existing hover effects and other interactions on desktop should be preserved.
+//  - The integration must be modular; the mobile sheet code should be added to the existing scripts.js and styles.css, not kept as separate files.
+// - Bottom sheet trigger: Links and elements with the `data-hover` attribute within about.html.  Clicking these should open the bottom sheet on mobile. Different links may show different images based on data-image attribute.
+
+// Detailed Steps:
+
+// 1. CSS Integration:
+//    - Append the contents of styles-mobile.css to the END of styles.css.
+//    - Ensure proper scoping: Add a media query `@media (max-width: 788px) { ... }` around the ENTIRE contents of styles-mobile.css that were just appended. This is crucial to prevent the mobile styles from affecting the desktop layout.
+// - Remove any duplicated styles in `styles-mobile.css` that has been previously declared in `styles.css`.
+// - Resolve specificity issues: If there are any style conflicts between styles.css and the newly added mobile styles (even within the media query), adjust the selectors in styles.css as needed to ensure the correct styles are applied on both mobile and desktop.  Prioritize the *existing* desktop styles.
+
+// 2. JavaScript Integration:
+//    - Append the contents of mobile-sheet.js to the END of scripts.js.
+//    - Modify the `DOMContentLoaded` event listener in scripts.js to conditionally initialize the `BottomSheet` class *only* on mobile. Use a similar `max-width: 788px` media query check within the JavaScript to determine if the `BottomSheet` should be initialized. This is a crucial step to prevent the mobile-only script from interfering with desktop interactions. Example: `if (window.matchMedia('(max-width: 788px)').matches) { new BottomSheet(); }`.
+//    - Modify hover-image image initialization to prevent showing hover-image element on mobile device (under `@media (max-width: 788px)`), but show bottom-sheet instead.
+
+// 3. Bottom Sheet Triggering (about.html integration):
+//    -  Within the existing `setupHoverEffects` function in scripts.js, add a new event listener for `click` events *specifically for mobile devices, using JS media query from step 2.*. This listener should be added to elements that have the `data-hover="true"` attribute.
+//    - Inside this new `click` event listener:
+//        - Prevent the default link behavior (using `event.preventDefault()`).
+//        -  Get image URLs: Retrieve the value of the `data-images` attribute from the clicked element. If present, split the comma-separated string into an array of image URLs.
+//        -  Bottom sheet content:  Dynamically populate the `.carousel` inside the bottom sheet with `<img>` tags using the image URLs retrieved in the previous step.  Ensure the `src` and `srcset` attributes are set correctly for responsive images (using the same 1x/2x structure as the existing desktop hover images).  Clear any existing images from the carousel before adding new ones.
+//		  -  Update Dots: Call the function which will recreate/update dots for bottom-sheet, depending on images amount in newly created carousel.
+//        -  Open the sheet: Call the `open()` method of the `BottomSheet` instance (created in step 2).
+
+// 4. Testing and Refinement:
+//    - Thoroughly test the integration on BOTH mobile and desktop devices.
+//    - Verify that the bottom sheet opens and closes correctly on mobile.
+//    - Verify that the image carousel within the bottom sheet displays the correct images and handles swipes/gestures.
+//    - Verify that the desktop hover effects and other interactions remain completely unaffected.
+//    - Address any console errors or unexpected behavior.
+
+// 5. Code Style & Comments:
+//      - Ensure code is well-formatted and consistent with the existing codebase.
+//      - Add clear and concise comments to explain the newly added code and any modifications to existing code.
+//      - Preserve all original comments in all provided files.
+
+// Deliverables: Modified scripts.js, styles.css, and about.html
+```
