@@ -27,10 +27,14 @@ function createGridAnimation(gridElement) {
     const calculateGridSize = () => {
         const width = window.innerWidth;
         const height = window.innerHeight;
-        return {
-            columns: Math.max(Math.min(Math.floor(width / 20), 48), 24),
-            rows: Math.max(Math.floor(height / 20), 24)
-        };
+        const columns = Math.max(Math.min(Math.floor(width / 40), 48), 24);
+        const rows = Math.max(Math.floor(height / 40), 24);
+        
+        gridElement.style.display = 'grid';
+        gridElement.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
+        gridElement.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
+        
+        return { columns, rows };
     };
 
     const { columns, rows } = calculateGridSize();
