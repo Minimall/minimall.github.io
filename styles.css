@@ -796,11 +796,12 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
   bottom: 0;
   opacity: 0;
   transition: opacity 800ms ease;
-  z-index: 2;
+  z-index: 0;
   overflow: hidden;
   height: 100%;
   width: 100%;
   background: #ffffff;
+  pointer-events: none;
 }
 
 .animation-wrapper.visible {
