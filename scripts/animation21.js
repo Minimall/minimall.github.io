@@ -186,14 +186,18 @@ function createGridAnimation(gridElement) {
             const lineX = (index % columns + 0.5) * rect.width / columns;
             const lineY = (Math.floor(index / columns) + 0.5) * rect.height / rows;
 
-            const dx = currentPosition.x - lineX;
-            const dy = currentPosition.y - lineY;
+            // Calculate direction from line to focal point
+            const dx = lineX - currentPosition.x;
+            const dy = lineY - currentPosition.y;
 
             const angleToFocalPoint = Math.atan2(dy, dx);
-            const targetRotation = (angleToFocalPoint * 180 / Math.PI) + 90;
+            const targetRotation = (angleToFocalPoint * 180 / Math.PI) - 90;
 
             const rotationDelta = shortestRotation(line.currentRotation, targetRotation);
-            line.currentRotation += rotationDelta * 0.1;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            const rotationSpeed = Math.min(0.1, 0.1 * (50 / Math.max(distance, 50)));
+            
+            line.currentRotation += rotationDelta * rotationSpeed;
             line.currentRotation %= 360;
 
             line.element.style.transform = `rotate(${line.currentRotation}deg)`;
