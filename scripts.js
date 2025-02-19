@@ -48,20 +48,7 @@ const setupHoverEffects = () => {
                 }
             }
 
-            // Add wave effect listeners for both mouse and touch
-            const isMobile = window.matchMedia('(max-width: 788px)').matches;
-            
-            if (isMobile) {
-                element.addEventListener('touchstart', (e) => {
-                    e.preventDefault();
-                    handleWaveEffect(element, true);
-                });
-                element.addEventListener('touchend', () => {
-                    setTimeout(() => handleWaveEffect(element, false), 800);
-                });
-            }
-            
-            // Always add mouse events for desktop
+            // Add wave effect listeners
             element.addEventListener('mouseenter', () => handleWaveEffect(element, true));
             element.addEventListener('mouseleave', () => handleWaveEffect(element, false));
         }
@@ -175,30 +162,23 @@ document.addEventListener("DOMContentLoaded", async () => {
     const loadPromises = [
         fetch('/header.html').then(response => response.text()).then(data => {
             const headerPlaceholder = document.getElementById('header-placeholder');
-            if (headerPlaceholder) {
-                headerPlaceholder.innerHTML = data;
-                setupHoverEffects(); // Initialize effects after header load
-            }
+            if (headerPlaceholder) headerPlaceholder.innerHTML = data;
         }),
         ...Array.from(document.querySelectorAll('[data-case-file]')).map(placeholder => 
             fetch(placeholder.dataset.caseFile)
                 .then(response => response.text())
                 .then(data => {
                     placeholder.innerHTML = data;
-                    setupHoverEffects(); // Initialize effects after each case load
                 })
         )
     ];
 
     await Promise.all(loadPromises).catch(error => console.error('Loading error:', error));
 
-    // Initialize bottom sheet for mobile
+    // Then initialize all UI elements
     if (window.matchMedia('(max-width: 788px)').matches) {
         new BottomSheet();
     }
-
-    // Ensure wave effects work on both desktop and mobile
-    setupHoverEffects();
 
     setupHoverEffects();
     window.addEventListener("mousemove", updateMousePosition, { passive: true });
