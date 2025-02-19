@@ -63,8 +63,8 @@ h2 {
   letter-spacing: -0.055em;
   margin-top: calc(var(--spacing) * 3);
   margin-bottom: calc(var(--spacing));
-  font-feature-settings: "liga" 1, "kern" 1, "calt" 1, "ss01" 1, "ss02" 1;
-  -webkit-font-feature-settings: "liga" 1, "kern" 1, "calt" 1, "ss01" 1, "ss02" 1;
+  font-feature-settings: "liga" 1, "kern" 1, "calt" 1, "ss01" 1, "ss02" 1, "ss04" 1;
+  -webkit-font-feature-settings: "liga" 1, "kern" 1, "calt" 1, "ss01" 1, "ss02" 1, "ss04" 1;
   text-rendering: optimizeLegibility;
 }
 
