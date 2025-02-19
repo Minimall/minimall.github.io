@@ -60,7 +60,7 @@ h2 {
   font-weight: 400;
   font-size: 3.4rem;
   line-height: 1.2;
-  letter-spacing: -0.045em;
+  letter-spacing: -0.035em;
   margin-top: calc(var(--spacing) * 3);
   margin-bottom: calc(var(--spacing));
   font-feature-settings: "liga" 1, "kern" 1, "calt" 1, "ss01" 1, "ss02" 1, "ss04" 1;
@@ -377,12 +377,12 @@ li, .tag {
   .menu {
     display: flex;
     flex-direction: column;
-    gap: calc(var(--spacing));
+    gap: calc(var(--spacing) / 3);
   }
 
   .headline {
     font-size: 2.5rem;
-    letter-spacing: -0.045em;
+    letter-spacing: -0.035em;
     max-width: 100%;
   }
 
