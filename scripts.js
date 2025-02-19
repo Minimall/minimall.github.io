@@ -11,6 +11,15 @@ function initFooterAnimation() {
     const animationContainer = document.getElementById('footer-animation-container');
     let isAnimationInitialized = false;
 
+    // Set initial styles
+    animationContainer.style.cssText = `
+        width: 100%;
+        height: 100%;
+        position: relative;
+        display: grid;
+        background: transparent;
+    `;
+
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting && !isAnimationInitialized) {

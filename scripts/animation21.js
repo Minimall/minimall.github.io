@@ -64,8 +64,16 @@ const createGridAnimation = (gridElement) => {
         createBatch();
     };
 
-    gridElement.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
-    gridElement.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
+    gridElement.style.cssText = `
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        grid-template-columns: repeat(${columns}, 1fr);
+        grid-template-rows: repeat(${rows}, 1fr);
+        overflow: hidden;
+    `;
     initializeLines();
 
     function getRandomPoint() {
