@@ -162,17 +162,9 @@ document.addEventListener("DOMContentLoaded", () => {
         new BottomSheet();
     }
 
-    // Load and setup integrated HTML documents first
-    Promise.all([
-        loadDocument('header-placeholder', '/header.html'),
-        ...Array.from(document.querySelectorAll('[data-case-file]')).map(placeholder => 
-            loadDocument(placeholder.id, placeholder.dataset.caseFile)
-        )
-    ]).then(() => {
-        setupHoverEffects();
-        window.addEventListener("mousemove", updateMousePosition, { passive: true });
-        setTimeout(triggerRandomWave, 5000);
-    });
+    setupHoverEffects();
+    window.addEventListener("mousemove", updateMousePosition, { passive: true });
+    setTimeout(triggerRandomWave, 5000);
 
     // Collapsible content handling
     document.querySelectorAll('.collapsible-link').forEach(link => {
@@ -189,38 +181,55 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    function loadDocument(elementId, path) {
-        return fetch(path)
+    // Load header
+    fetch('/header.html')
+        .then(response => {
+            if (!response.ok) throw new Error('Failed to load header');
+            return response.text();
+        })
+        .then(data => {
+            const headerPlaceholder = document.getElementById('header-placeholder');
+            if (headerPlaceholder) {
+                headerPlaceholder.innerHTML = data;
+                setupHoverEffects();
+            }
+        })
+        .catch(error => {
+            console.error('Error loading header:', error);
+            const headerPlaceholder = document.getElementById('header-placeholder');
+            if (headerPlaceholder) {
+                headerPlaceholder.innerHTML = `
+                    <nav>
+                        <a href="index.html">Dmytro Dvornichenko</a>
+                        <div>
+                            <a href="mailto:email@example.com">Email</a>
+                            <a href="https://linkedin.com/in/username">LinkedIn</a>
+                            <a href="https://twitter.com/username">Twitter</a>
+                        </div>
+                    </nav>`;
+                setupHoverEffects();
+            }
+        });
+
+    // Load all case studies
+    document.querySelectorAll('[data-case-file]').forEach(placeholder => {
+        const caseFile = placeholder.dataset.caseFile;
+        if (!caseFile) return;
+
+        fetch(caseFile)
             .then(response => {
-                if (!response.ok) throw new Error(`Failed to load: ${path}`);
+                if (!response.ok) throw new Error(`Failed to load case study: ${caseFile}`);
                 return response.text();
             })
             .then(data => {
-                const element = document.getElementById(elementId);
-                if (element) {
-                    element.innerHTML = data;
-                }
+                placeholder.innerHTML = data;
+                setupHoverEffects();
             })
             .catch(error => {
-                console.error(`Error loading ${path}:`, error);
-                const element = document.getElementById(elementId);
-                if (element) {
-                    if (path === '/header.html') {
-                        element.innerHTML = `
-                            <nav>
-                                <a href="index.html">Dmytro Dvornichenko</a>
-                                <div>
-                                    <a href="mailto:email@example.com">Email</a>
-                                    <a href="https://linkedin.com/in/username">LinkedIn</a>
-                                    <a href="https://twitter.com/username">Twitter</a>
-                                </div>
-                            </nav>`;
-                    } else {
-                        element.innerHTML = `<div class="case-study-error">Failed to load content</div>`;
-                    }
-                }
+                console.error(error);
+                placeholder.innerHTML = `<div class="case-study-error">Failed to load case study</div>`;
             });
-    }
+    });
 });
 // Text repeater functionality
 document.addEventListener('DOMContentLoaded', () => {
