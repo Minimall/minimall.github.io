@@ -53,14 +53,19 @@ h2 {
   margin-bottom: 1rem;
 }
 
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400&display=swap');
+
 .headline {
-  font-family: 'Geist', sans-serif;
-  font-weight: 700;
+  font-family: 'Syne', sans-serif;
+  font-weight: 400;
   font-size: 4.5rem;
   line-height: 1.2;
   letter-spacing: -0.055em;
   margin-top: calc(var(--spacing) * 3);
   margin-bottom: calc(var(--spacing));
+  font-feature-settings: "liga" 1, "kern" 1, "calt" 1;
+  -webkit-font-feature-settings: "liga" 1, "kern" 1, "calt" 1;
+  text-rendering: optimizeLegibility;
 }
 
 .subheadline {
