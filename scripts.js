@@ -4,18 +4,29 @@ let rotationCounter = 0;
 
 // Footer animation initialization
 function initFooterAnimation() {
+    console.log("Initializing footer animation");
     const footer = document.querySelector('.footer2');
-    if (!footer) return;
+    if (!footer) {
+        console.log("Footer not found");
+        return;
+    }
 
     const animationWrapper = footer.querySelector('.animation-wrapper');
     const animationContainer = document.getElementById('footer-animation-container');
+    
+    if (!animationContainer) {
+        console.log("Animation container not found");
+        return;
+    }
+
     let isAnimationInitialized = false;
 
-    // Set initial styles
     animationContainer.style.cssText = `
         width: 100%;
-        height: 100%;
-        position: relative;
+        height: 100vh;
+        position: absolute;
+        top: 0;
+        left: 0;
         display: grid;
         background: transparent;
     `;
