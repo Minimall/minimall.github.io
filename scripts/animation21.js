@@ -168,14 +168,17 @@ function createGridAnimation(gridElement) {
         debugDot.style.top = `${currentPosition.y}px`;
 
         lines.forEach((line, index) => {
-            const x = (index % columns + 0.5) * rect.width / columns - currentPosition.x;
-            const y = (Math.floor(index / columns) + 0.5) * rect.height / rows - currentPosition.y;
+            const lineX = (index % columns + 0.5) * rect.width / columns;
+            const lineY = (Math.floor(index / columns) + 0.5) * rect.height / rows;
 
-            const angleToPoint = Math.atan2(y, x);
-            const targetRotation = (angleToPoint * 180 / Math.PI) + 90;
+            const dx = currentPosition.x - lineX;
+            const dy = currentPosition.y - lineY;
+
+            const angleToFocalPoint = Math.atan2(dy, dx);
+            const targetRotation = (angleToFocalPoint * 180 / Math.PI) + 90;
 
             const rotationDelta = shortestRotation(line.currentRotation, targetRotation);
-            line.currentRotation += rotationDelta * 0.05;
+            line.currentRotation += rotationDelta * 0.1;
             line.currentRotation %= 360;
 
             line.element.style.transform = `rotate(${line.currentRotation}deg)`;
