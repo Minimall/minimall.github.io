@@ -194,14 +194,21 @@ const createGridAnimation = (gridElement) => {
 
         const focalPoint = updateFocalPoint(currentTime);
         const rect = gridElement.getBoundingClientRect();
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+        // Adjust focal point for mobile viewport
+        const adjustedFocalPoint = {
+            x: focalPoint.x,
+            y: focalPoint.y - scrollTop
+        };
 
         // Update debug dot position
-        debugDot.style.left = `${focalPoint.x}px`;
-        debugDot.style.top = `${focalPoint.y}px`;
+        debugDot.style.left = `${adjustedFocalPoint.x}px`;
+        debugDot.style.top = `${adjustedFocalPoint.y}px`;
 
         lines.forEach((line, index) => {
-            const x = (index % columns + 0.5) * rect.width / columns - focalPoint.x;
-            const y = (Math.floor(index / columns) + 0.5) * rect.height / rows - focalPoint.y;
+            const x = (index % columns + 0.5) * rect.width / columns - adjustedFocalPoint.x;
+            const y = (Math.floor(index / columns) + 0.5) * rect.height / rows - adjustedFocalPoint.y;
 
             const angleToFocalPoint = Math.atan2(y, x);
             const targetRotation = (angleToFocalPoint * 180 / Math.PI) + 90;
