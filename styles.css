@@ -784,7 +784,7 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
 .footer2 {
   background: transparent !important;
   position: relative;
-  min-height: 50vh;
+  min-height: clamp(30vh, calc(30vh + (50 - 30) * ((100vw - 320px) / (1920 - 320))), 50vh);
   overflow: hidden;
 }
 

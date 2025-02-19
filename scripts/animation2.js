@@ -24,15 +24,27 @@ const createGridAnimation = (gridElement) => {
     const calculateGridSize = () => {
         const width = window.innerWidth;
         const height = window.innerHeight;
-        const baseColumns = 24;
-        const baseRows = 24;
-
-        let columns = Math.min(Math.floor(width / 40), 48);
-        let rows = Math.floor(height / 40);
-
+        const footerHeight = document.querySelector('.footer2').offsetHeight;
+        
+        // Base cell size that maintains density
+        const baseCellSize = Math.min(width, height) * 0.02; // 2% of viewport
+        const minCellSize = 24;
+        const maxCellSize = 40;
+        
+        // Calculate actual cell size within bounds
+        const cellSize = Math.max(minCellSize, Math.min(maxCellSize, baseCellSize));
+        
+        // Calculate grid dimensions
+        const columns = Math.floor(width / cellSize);
+        const rows = Math.floor(footerHeight / cellSize);
+        
+        // Ensure minimum density
+        const minColumns = 16;
+        const minRows = 12;
+        
         return {
-            columns: Math.max(columns, baseColumns),
-            rows: Math.max(rows, baseRows)
+            columns: Math.max(columns, minColumns),
+            rows: Math.max(rows, minRows)
         };
     };
 
@@ -81,9 +93,10 @@ const createGridAnimation = (gridElement) => {
     initializeLines();
 
     function getRandomPoint() {
+        const footerRect = document.querySelector('.footer2').getBoundingClientRect();
         return {
-            x: Math.random() * window.innerWidth,
-            y: Math.random() * window.innerHeight
+            x: Math.random() * footerRect.width,
+            y: Math.random() * footerRect.height
         };
     }
 
