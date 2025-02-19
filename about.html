@@ -1,107 +1,128 @@
 <!DOCTYPE html>
+
+<div class="overlay"></div>
+<div class="bottom-sheet">
+  <div class="bottom-sheet-indicator"></div>
+  <div class="carousel"></div>
+  <div class="carousel-dots"></div>
+</div>
+
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<!-- IMPORTANT: Do not remove cache control - required for complete page refresh -->
 		<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 		<meta http-equiv="Pragma" content="no-cache" />
 		<meta http-equiv="Expires" content="0" />
 		<title>About • Dmytro Dvornichenko</title>
 		<link rel="preconnect" href="https://fonts.googleapis.com">
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 		<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..600;1,400..600&family=Faculty+Glyphic&display=swap" rel="stylesheet">
 		<link rel="stylesheet" href="styles.css" />
 	</head>
 	<body>
-		<div class="overlay"></div>
-		<div class="bottom-sheet">
-			<div class="bottom-sheet-indicator"></div>
-			<div class="carousel"></div>
-			<div class="carousel-dots"></div>
-		</div>
-
 		<div class="container">
 			<div id="header-placeholder"></div>
 
 			<header class="header">
 				<img src="images/1x/me.jpg" 
-					srcset="images/1x/me.jpg 1x, images/2x/me.jpg 2x" 
-					alt="Dmytro Dvornichenko" 
-					class="profile-image">
+             srcset="images/1x/me.jpg 1x, images/2x/me.jpg 2x" 
+             alt="Dmytro Dvornichenko" 
+             class="profile-image">
 			</header>
+				<div class="main-text">
 
-			<div class="main-text">
-				<p>I'm a Product Design Lead who transforms complex technical systems into elegant, human experiences. </p>
-				<p>Over 17 years, I've evolved from crafting interfaces to architecting entire product experiences, particularly in domains where technical complexity meets user needs. </p>
-				<p>Whether it's making AI accessible, simplifying analytics, or modernizing enterprise platforms – I focus on finding elegant solutions to complex challenges.</p>
+					<p>I'm a Product Design Lead who transforms complex technical systems into elegant, human experiences. </p><p>Over 17 years, I've evolved from crafting interfaces to architecting entire product experiences, particularly in domains where technical complexity meets user needs. </p><p>Whether it's making AI accessible, simplifying analytics, or modernizing enterprise platforms – I focus on finding elegant solutions to complex challenges.</p>
 
-				<p>Here's <span class="collapsible-link wave-text" data-hover="true"> a personal story </span> about me and tech →</p>
-				<div class="collapsible-content">
-					<p>My journey into design began in <span data-hover="true" data-images="kharkiv1.jpg,kharkiv2.jpg,kharkiv3.jpg">Kharkiv</span>, Ukraine, where my early fascination with technology was shaped by a stack of tech <span data-hover="true" data-images="kharkiv2.jpg">magazines</span> my friend gave me when I was 13.</p>
+					
+					<p>Here's <span class="collapsible-link wave-text" data-hover="true"> a personal story </span> about me and tech →</p>
+					<div class="collapsible-content">
+						<p>My journey into design began in <span data-hover="true" data-images="kharkiv1.jpg,kharkiv2.jpg,kharkiv3.jpg">Kharkiv</span>, Ukraine, where my early fascination with technology was shaped by a stack of tech <span data-hover="true" data-images="kharkiv2.jpg">magazines</span> my friend gave me when I was 13. Inside were images of MacBooks and smartphones, but what really got me excited was Mac OS X Tiger, and specifically <span data-hover="true" data-images="kharkiv1.jpg">GarageBand</span> UI – those perfectly crafted skeuomorphic buttons and virtual instruments that looked both realistic and futuristic. <p>Those magazines came with an HTML textbook, and I started staying after school in the computer lab, creating my first websites.</p><p>
+						<p>I still remember being amazed by the marquee tag:
 
-					<p>Those magazines came with an HTML textbook, and I started staying after school in the computer lab, creating my first websites.</p>
+						<div class="marquee-container">
+							<div class="marquee">imagine like text is sliding through display, same as LED boards! imagine like text is sliding through display, same as LED boards! imagine like text is sliding through display, same as LED boards! </div>
+						</div></p>	
 
-					<p>I still remember being amazed by the marquee tag:</p>
-					<div class="marquee-container">
-						<div class="marquee">imagine like text is sliding through display, same as LED boards! imagine like text is sliding through display, same as LED boards! imagine like text is sliding through display, same as LED boards!</div>
+						<p>In 2005, my grandmother passed away in <span data-hover="true" data-images="kharkiv1.jpg">Bilopillia</span>, a small city near Ukraine's border with Russia (now <span data-hover="true" data-images="kharkiv1.jpg">heavily damaged</span> by Russian attacks). She had been secretly saving money, which my mom used to buy me <span data-hover="true" data-images="kharkiv1.jpg">my first computer</span> – an AMD-powered Windows PC with a CRT monitor. Within three months, I had transformed it into a Hackintosh, finally able to explore macOS and GarageBand myself.</p>
+
+						<p>These early days were filled with experimentation which led me to launch a local mobile content website, then landing my first design role at <a href="https://meta.ua" data-hover="true">meta.ua</a> at 18.</p>
+
+						<p>That same year, my friend got an <span data-hover="true" data-images="kharkiv1.jpg">original iPhone</span> – before they were even officially available in Ukraine. We spent hours <span data-hover="true" data-images="kharkiv1.jpg">jailbreaking it</span> to work with local carriers, adding localization, installing Cydia and games before the App Store existed. Every new feature we unlocked felt like discovering a small piece of the future. Each story like this taught me how to make complex technology feel simple and accessible.</p>
+
+						<p>Few years later, I joined the leading UX-focused bureau developing <a href="https://rozetka.ua" data-hover="true">rozetka.ua</a>, which would become Ukraine's largest online retailer. Later, my fascination with Apple's approach to design helped us win a contract to develop mobile banking apps for iOS and iPad when smartphones were just starting to change how people interacted with their banks.</p>
+
+						<p>In 2013, I found myself in Ryanair's Dublin office, redesigning their check-in experience while watching the Revolution of Dignity unfold on office screens – a surreal moment of personal and professional worlds colliding.</p>
+
+						<p>Through all the changes in technology and circumstances – including leading a team of 30+ designers through a full-scale invasion in 2022 – I've maintained that same curiosity about making complex systems work for people.</p>
+						<p>Seventeen years later, I still get excited about making complex technology feel simple and natural. Whether I'm designing AI interfaces or enterprise systems, I bring that same curiosity and technical understanding to every project.</p>
 					</div>
 
-					<p>In 2005, my grandmother passed away in <span data-hover="true" data-images="kharkiv1.jpg">Bilopillia</span>, a small city near Ukraine's border with Russia (now <span data-hover="true" data-images="kharkiv1.jpg">heavily damaged</span> by Russian attacks). She had been secretly saving money, which my mom used to buy me <span data-hover="true" data-images="kharkiv1.jpg">my first computer</span> – an AMD-powered Windows PC with a CRT monitor.</p>
+					
 
-					<p>Through all the changes in technology and circumstances – including leading a team of 30+ designers through a full-scale invasion in 2022 – I've maintained that same curiosity about making complex systems work for people.</p>
-					<p>Seventeen years later, I still get excited about making complex technology feel simple and natural. Whether I'm designing AI interfaces or enterprise systems, I bring that same curiosity and technical understanding to every project.</p>
-				</div>
+					<p>Based in Kyiv 🇺🇦, but working with teams worldwide, I'm selective about projects, choosing to work with companies where I can make a meaningful impact. I'm particularly drawn to challenges that require both technical depth and design excellence.</p>
 
-				<p>Based in Kyiv 🇺🇦, but working with teams worldwide, I'm selective about projects, choosing to work with companies where I can make a meaningful impact.</p>
-
-				<h1 class="headline">My capabilities</h1>
-
-				<div class="case-content">
-					<h1 class="case-title">
-						<span class="company-name">Zero to One</span> Product Design
+					<h1 class="headline">
+						My capabilities
 					</h1>
-					<ul>
-						<li>Start-ups</li>
-						<li>Solo founders</li>
-						<li>Early stage companies</li>
-					</ul>
-					<div class="case-text">
-						<div class="service">
-							<p>I act as a hands-on design partner for founding teams looking to ship the first iteration of their product to market, or for early stage companies struggling to find product market fit.</p>
-						</div>
-					</div>
 
-					<h1 class="case-title">
-						Design <span class="company-name">Leadership</span>
-					</h1>
-					<ul>
-						<li>Scale-ups</li>
-						<li>Mature organisations</li>
-					</ul>
-					<div class="case-text">
-						<div class="service">
-							<p>I act as a fractional Design Manager / DesignOps for established companies looking for a go to resource for all things design leadership: from helping you define your hiring process, to finding and retaining great designers, to managing and mentoring them to do the best work of their career.</p>
-						</div>
-					</div>
+					<div class="case-content">
 
-					<h1 class="headline">Key principles</h1>
+						<h1 class="case-title" style="color: var(--case-title-color, #111);">
+							<span class="company-name" style="color: var(--company-name-color, #003c8a);">Zero to One</span> Product Design
+						</h1>
+						<ul>
+							<li>Start-ups</li>
+							<li>Solo founders</li>
+							<li>Early stage companies</li>
+						</ul>
+						<div class="case-text">
+							<div class="service">
 
-					<h1 class="case-title">Team</h1>
+								<p>
+									I act as a hands-on design partner for founding teams looking to ship the first iteration of their product to market, or for early stage companies struggling to find product market fit.
+								</p>
+								
+								<h1 class="case-title" style="color: var(--case-title-color, #111);">
+									Design <span class="company-name" style="color: var(--company-name-color, #003c8a);">Leadership</span>
+								</h1>
+								<ul>
+									<li>Scale-ups</li>
+									<li>Mature organisations</li>
+								</ul>
+								<div class="case-text">
+									<div class="service">
+
+										<p>
+											I act as a fractional Design Manager / DesignOps for established companies looking for a go to resource for all things design leadership: from helping you define your hiring process, to finding and retaining great designers, to managing and mentoring them to do the best work of their career.
+										</p>
+										
+
+										<h1 class="headline">
+											Key principles
+										</h1>
+
+										<h1 class="case-title" style="color: var(--case-title-color, #111);">
+										Team
+										</h1>
 					<p>I embed myself within your team, working as a true partner from kick-off to launch. Your goals become my goals, and I proactively look for ways to push the project forward.</p>
 
 					<h1 class="case-title">Prototype-Driven</h1>
 					<p>I believe the best way to understand something is by interacting with it. We'll spend more time with working prototypes than presentations, making decisions based on real experiences rather than theoretical discussions.</p>
 
-					<h1 class="case-title">Focus push</h1>
+										<h1 class="case-title">Focus push</h1>
+
 					<p>I share work early and often, focusing on continuous improvement rather than big reveals. This allows us to learn and adapt quickly, ensuring we're always moving in the right direction.</p>
 
-					<h1 class="case-title">Scaling</h1>
-					<p>Whether you need hands-on design work or strategic leadership, I adapt my involvement to match your requirements. I can work independently or collaborate closely with a team of designers, engineers or strategists for larger initiatives.</p>
+										<h1 class="case-title">Scaling</h1>
+					<p>Whether you need hands-on design work or strategic leadership, I adapt my involvement to match your requirements. I can work independently or collaborate closely a team of designers, engineers or strategists for larger initiatives.</p>
+		
 				</div>
-			</div>
-		</div>
 
-		<div id="footer-placeholder" data-case-file="footer.html"></div>
+		</div>
+								<div id="footer-placeholder" data-case-file="footer.html"></div>
+								
 		<script src="scripts.js"></script>
 	</body>
 </html>
