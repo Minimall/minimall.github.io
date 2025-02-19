@@ -29,22 +29,22 @@ function createGridAnimation(gridElement) {
         const height = window.innerHeight;
         const baseWidth = 1920; // Baseline width
         const baseColumns = 36; // Baseline columns for 1920px
-
+        
         // Calculate columns based on viewport width ratio
         const scaleFactor = width / baseWidth;
         const targetColumns = Math.floor(baseColumns * scaleFactor);
-
+        
         // Ensure columns stay within reasonable bounds
         const columns = Math.max(Math.min(targetColumns, 48), 12);
-
+        
         // Calculate rows maintaining similar density
         const cellWidth = width / columns;
         const rows = Math.max(Math.floor(height / cellWidth), 18);
-
+        
         gridElement.style.display = 'grid';
         gridElement.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
         gridElement.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
-
+        
         return { columns, rows };
     };
 
@@ -172,8 +172,6 @@ function createGridAnimation(gridElement) {
     `;
     gridElement.appendChild(debugDot);
 
-    const focalPointOffset = { x: 0, y: 20 }; // Adjust these values to fine-tune the focal point
-
     function animateLines(currentTime) {
         const deltaTime = currentTime - (animateLines.lastTime || currentTime);
         animateLines.lastTime = currentTime;
@@ -188,21 +186,14 @@ function createGridAnimation(gridElement) {
             const lineX = (index % columns + 0.5) * rect.width / columns;
             const lineY = (Math.floor(index / columns) + 0.5) * rect.height / rows;
 
-            const focalPoint = {
-                x: currentPosition.x + focalPointOffset.x,
-                y: currentPosition.y + focalPointOffset.y
-            };
+            const dx = currentPosition.x - lineX;
+            const dy = currentPosition.y - lineY;
 
-            const x = lineX - focalPoint.x;
-            const y = lineY - focalPoint.y;
-
-            const angleToFocalPoint = Math.atan2(y, x);
+            const angleToFocalPoint = Math.atan2(dy, dx);
             const targetRotation = (angleToFocalPoint * 180 / Math.PI) + 90;
-            const distance = Math.sqrt(x * x + y * y);
-            const rotationSpeed = Math.min(0.1, 0.1 * (50 / Math.max(distance, 50)));
 
             const rotationDelta = shortestRotation(line.currentRotation, targetRotation);
-            line.currentRotation += rotationDelta * rotationSpeed;
+            line.currentRotation += rotationDelta * 0.1;
             line.currentRotation %= 360;
 
             line.element.style.transform = `rotate(${line.currentRotation}deg)`;
