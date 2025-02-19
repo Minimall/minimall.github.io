@@ -801,7 +801,6 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
   height: 100%;
   width: 100%;
   background: #ffffff;
-  pointer-events: none;
 }
 
 .animation-wrapper.visible {
@@ -815,10 +814,9 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
   right: 0;
   bottom: 0;
   height: 100%;
-  z-index: 3;
   background: linear-gradient(
     to bottom,
-    rgba(255, 255, 255, 1) 25%, /* Changed to 25% for desktop */
+    rgba(255, 255, 255, 1) 0%,
     rgba(255, 255, 255, 0) 100%
   );
   mask-image: linear-gradient(
@@ -862,14 +860,4 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
 .footer2 .main-text {
   position: relative;
   z-index: 1;
-}
-
-@media (max-width: 788px) {
-  .animation-overlay {
-    background: linear-gradient(
-      to bottom,
-      rgba(255, 255, 255, 1) 40%, /* Changed to 40% for mobile */
-      rgba(255, 255, 255, 0) 100%
-    );
-  }
 }

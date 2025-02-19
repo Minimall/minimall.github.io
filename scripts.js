@@ -223,19 +223,18 @@ const triggerRandomWave = () => {
 document.addEventListener("DOMContentLoaded", async () => {
     console.log("DOM Content Loaded");
     // Initialize footer animation
-    const initializeAnimation = () => {
+    setTimeout(() => {
         const animationContainer = document.getElementById('footer-animation-container');
-        const wrapper = document.querySelector('.animation-wrapper');
-        
-        if (animationContainer && wrapper) {
+        if (animationContainer) {
             console.log("Found animation container, initializing");
+            const wrapper = document.querySelector('.animation-wrapper');
+            if (wrapper) {
+                wrapper.style.opacity = '1';
+                wrapper.style.background = '#ffffff';
+            }
             createGridAnimation(animationContainer);
-            wrapper.classList.add('visible');
         }
-    };
-
-    // Initialize animation with a slight delay
-    setTimeout(initializeAnimation, 500);
+    }, 500);
 
     // First load header and case studies
     const loadPromises = [

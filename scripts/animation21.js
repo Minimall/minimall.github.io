@@ -24,27 +24,6 @@ function createGridAnimation(gridElement) {
     let isMouseInside = false;
     let transitionStartTime = 0;
 
-    // Initialize grid
-    const { columns, rows } = calculateGridSize();
-    gridElement.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
-    gridElement.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
-
-    // Create lines
-    for (let i = 0; i < columns * rows; i++) {
-        const lineElement = document.createElement('div');
-        lineElement.className = 'line';
-        lineElement.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-        gridElement.appendChild(lineElement);
-        
-        lines.push({
-            element: lineElement,
-            targetColor: lineElement.style.backgroundColor
-        });
-    }
-
-    // Start animation
-    requestAnimationFrame(animateLines);
-
     const calculateGridSize = () => {
         const width = window.innerWidth;
         const height = window.innerHeight;
@@ -199,13 +178,9 @@ function createGridAnimation(gridElement) {
 
         const currentPosition = updatePosition(currentTime);
         const rect = gridElement.getBoundingClientRect();
+
         debugDot.style.left = `${currentPosition.x}px`;
         debugDot.style.top = `${currentPosition.y}px`;
-        // Adjust line calculations to match cursor position
-        lines.forEach((line, index) => {
-            const lineRect = line.element.getBoundingClientRect();
-            const lineX = lineRect.left - rect.left + lineRect.width / 2;
-            const lineY = lineRect.top - rect.top + lineRect.height / 2;
 
         lines.forEach((line, index) => {
             const lineX = (index % columns + 0.5) * rect.width / columns;
