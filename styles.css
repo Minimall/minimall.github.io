@@ -278,20 +278,20 @@ li, .tag {
   width: auto;
   max-width: 640px;
   object-fit: contain;
-  transform: translate(-50%, -100%) scale(0);
+  transform: translate(-50%, -100%) scale(0) rotate(0deg);
   will-change: transform, opacity;
   padding: 24px 0 12px;
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transition: opacity 0.4s ease, transform 0.4s ease;
 }
 
 .hover-image.active {
 	opacity: 1;
-	transform: translate(-50%, -100%) scale(1);
+	transform: translate(-50%, -100%) scale(1) rotate(var(--rotation));
 }
 
 .hover-image:not(.active) {
-	transform: translate(-50%, -100%) scale(0);
-	transition: opacity 0.2s ease, transform 0.2s ease;
+	transform: translate(-50%, -100%) scale(0) rotate(0deg);
+	transition: opacity 0.4s ease, transform 0.5s ease;
 }
 
 .hover-image.move-down {
