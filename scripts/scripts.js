@@ -170,15 +170,24 @@ const cycleImages = (element, img) => {
     let fadeTimeout;
 
     const showNextImage = () => {
-        img.src = `/images/1x/${images[currentIndex]}`;
-        img.srcset = `/images/1x/${images[currentIndex]} 1x, /images/2x/${images[currentIndex]} 2x`;
-        img.style.opacity = "1";
-
-        fadeTimeout = setTimeout(() => {
-            img.style.opacity = "0";
-            currentIndex = (currentIndex + 1) % images.length;
-            cycleTimeout = setTimeout(showNextImage, 0);
-        }, 600);
+        const currentImg = img;
+        currentImg.style.transform = 'translate(calc(-50% - 100px), -100%) scale(0.8)';
+        currentImg.style.opacity = '0';
+        
+        setTimeout(() => {
+            currentImg.src = `/images/1x/${images[currentIndex]}`;
+            currentImg.srcset = `/images/1x/${images[currentIndex]} 1x, /images/2x/${images[currentIndex]} 2x`;
+            currentImg.style.transform = 'translate(calc(-50% + 100px), -100%) scale(0.8)';
+            
+            setTimeout(() => {
+                currentImg.style.transform = 'translate(-50%, -100%) scale(1)';
+                currentImg.style.opacity = '1';
+                currentIndex = (currentIndex + 1) % images.length;
+                fadeTimeout = setTimeout(() => {
+                    cycleTimeout = setTimeout(showNextImage, 0);
+                }, 300);
+            }, 50);
+        }, 200);
     };
 
     if (images.length >= 1) showNextImage();
