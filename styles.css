@@ -49,8 +49,8 @@ h2 {
   line-height: 1.2;
   letter-spacing: -0.035em;
   margin-bottom: calc(var(--spacing));
-  font-feature-settings: "liga" on;
-  -webkit-font-feature-settings: "liga" on;
+  font-feature-settings: "liga" 1, "ss01" 1, "ss04" 1;
+  -webkit-font-feature-settings: "liga" 1, "ss01" 1, "ss04" 1;
   text-rendering: optimizeLegibility;
 }
 
