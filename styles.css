@@ -1,7 +1,7 @@
 /* ==========================================================================
    Base & Reset
    ========================================================================== */
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400&text=ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789&display=block');
 
 :root {
   --spacing: 2rem;
@@ -51,11 +51,12 @@ h2 {
   margin-bottom: calc(var(--spacing));
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "liga" 1, "ss01" 1, "ss04" 1;
+  -webkit-font-feature-settings: "liga" 1, "ss01" 1, "ss04" 1;
+  -moz-font-feature-settings: "liga" 1, "ss01" 1, "ss04" 1;
   font-variant-ligatures: common-ligatures;
-  font-feature-settings: "liga" on, "ss01" on, "ss04" on;
-  -webkit-font-feature-settings: "liga" on, "ss01" on, "ss04" on;
-  -moz-font-feature-settings: "liga" on, "ss01" on, "ss04" on;
   text-rendering: optimizeLegibility;
+  font-synthesis: none;
 }
 
 .subheadline {
