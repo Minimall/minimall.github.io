@@ -170,22 +170,42 @@ const cycleImages = (element, img) => {
     let fadeTimeout;
 
     const showNextImage = () => {
-        img.src = `/images/1x/${images[currentIndex]}`;
-        img.srcset = `/images/1x/${images[currentIndex]} 1x, /images/2x/${images[currentIndex]} 2x`;
-        img.style.opacity = "1";
+        if (images.length <= 1) {
+            img.src = `/images/1x/${images[0]}`;
+            img.srcset = `/images/1x/${images[0]} 1x, /images/2x/${images[0]} 2x`;
+            img.style.opacity = '1';
+            img.style.transform = 'translate(-50%, -100%)';
+            return;
+        }
 
-        fadeTimeout = setTimeout(() => {
-            img.style.opacity = "0";
-            currentIndex = (currentIndex + 1) % images.length;
-            cycleTimeout = setTimeout(showNextImage, 0);
-        }, 600);
+        const currentImg = img;
+        currentImg.style.transform = 'translate(calc(-50% - 100px), -100%)';
+        currentImg.style.opacity = '0';
+
+        setTimeout(() => {
+            currentImg.src = `/images/1x/${images[currentIndex]}`;
+            currentImg.srcset = `/images/1x/${images[currentIndex]} 1x, /images/2x/${images[currentIndex]} 2x`;
+            currentImg.style.transform = 'translate(calc(-50% + 100px), -100%)';
+
+            setTimeout(() => {
+                currentImg.style.transform = 'translate(-50%, -100%)';
+                currentImg.style.opacity = '1';
+                currentIndex = (currentIndex + 1) % images.length;
+                fadeTimeout = setTimeout(() => {
+                    cycleTimeout = setTimeout(showNextImage, 800);
+                }, 1200);
+            }, 200);
+        }, 400);
     };
 
     if (images.length >= 1) showNextImage();
+
     return () => {
         clearTimeout(cycleTimeout);
         clearTimeout(fadeTimeout);
-        img.style.opacity = "0";
+        img.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
+        img.style.opacity = '0';
+        img.style.transform = 'translate(-50%, -100%) scale(0)';
     };
 };
 
@@ -332,7 +352,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             })
             .finally(() => {
                 // Initialize footer animation after content is loaded
-                
+
             });
     });
 });
