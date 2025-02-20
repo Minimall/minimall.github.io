@@ -359,6 +359,7 @@ li, .tag {
     max-height: fit-content !important;
     padding: 5vw 5vw 0 5vw !important;
     margin-bottom: 6vw;
+    padding-bottom: 3vw;
     opacity: 1;
     transform: translateY(0);
   }
@@ -561,7 +562,8 @@ a span, .collapsible span {
 
 .collapsible-content.active {
   max-height: fit-content;
-  padding: 2vw;
+  padding: 2vw 2vw 0 2vw; !important;
+  margin-bottom: 2vw;
   opacity: 1;
   transform: translateY(0);
 }
