@@ -1,7 +1,7 @@
-const OPACITY_TRANSITION_TIME = 750;
-const MOVEMENT_TIME = 16000;  
-const PAUSE_TIME = 4000;     
-const TRANSITION_DURATION = 125;
+const OPACITY_TRANSITION_TIME = 375;
+const MOVEMENT_TIME = 8000;   // 2x faster
+const PAUSE_TIME = 1000;      // 4x shorter
+const TRANSITION_DURATION = 62;
 
 let line = {
   currentRotation: 0,
