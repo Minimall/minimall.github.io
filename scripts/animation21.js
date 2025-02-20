@@ -11,8 +11,8 @@ function createGridAnimation(gridElement) {
     ];
 
     const OPACITY_TRANSITION_TIME = 750;
-    const MOVEMENT_TIME = 2000;
-    const PAUSE_TIME = 500;
+    const MOVEMENT_TIME = 8000;
+    const PAUSE_TIME = 2000;
     const TRANSITION_DURATION = 125;
 
     let mousePosition = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
@@ -159,28 +159,12 @@ function createGridAnimation(gridElement) {
         }
     }
 
-    const debugDot = document.createElement('div');
-    debugDot.style.cssText = `
-        position: absolute;
-        width: 8px;
-        height: 8px;
-        background: red;
-        border-radius: 50%;
-        pointer-events: none;
-        z-index: 1000;
-        transform: translate(-50%, -50%);
-    `;
-    gridElement.appendChild(debugDot);
-
     function animateLines(currentTime) {
         const deltaTime = currentTime - (animateLines.lastTime || currentTime);
         animateLines.lastTime = currentTime;
 
         const currentPosition = updatePosition(currentTime);
         const rect = gridElement.getBoundingClientRect();
-
-        debugDot.style.left = `${currentPosition.x}px`;
-        debugDot.style.top = `${currentPosition.y}px`;
 
         lines.forEach((line, index) => {
             const lineX = (index % columns + 0.5) * rect.width / columns;
@@ -193,7 +177,7 @@ function createGridAnimation(gridElement) {
             const targetRotation = (angleToFocalPoint * 180 / Math.PI) + 90;
 
             const rotationDelta = shortestRotation(line.currentRotation, targetRotation);
-            line.currentRotation += rotationDelta * 0.1;
+            line.currentRotation += rotationDelta * 0.05;
             line.currentRotation %= 360;
 
             line.element.style.transform = `rotate(${line.currentRotation}deg)`;

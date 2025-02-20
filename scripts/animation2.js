@@ -175,29 +175,12 @@ const createGridAnimation = (gridElement) => {
     }
 
     // Create debug dot
-    const debugDot = document.createElement('div');
-    debugDot.style.cssText = `
-        position: absolute;
-        width: 8px;
-        height: 8px;
-        background: red;
-        border-radius: 50%;
-        pointer-events: none;
-        z-index: 1000;
-        transform: translate(-50%, -50%);
-    `;
-    gridElement.appendChild(debugDot);
-
     function animateLines(currentTime) {
         const deltaTime = currentTime - (animateLines.lastTime || currentTime);
         animateLines.lastTime = currentTime;
 
         const focalPoint = updateFocalPoint(currentTime);
         const rect = gridElement.getBoundingClientRect();
-
-        // Update debug dot position
-        debugDot.style.left = `${focalPoint.x}px`;
-        debugDot.style.top = `${focalPoint.y}px`;
 
         lines.forEach((line, index) => {
             const x = (index % columns + 0.5) * rect.width / columns - focalPoint.x;
