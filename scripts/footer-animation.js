@@ -11,8 +11,8 @@ function createGridAnimation(gridElement) {
     ];
 
     const OPACITY_TRANSITION_TIME = 750;
-    const MOVEMENT_TIME = 32000;  // 4x slower
-    const PAUSE_TIME = 8000;     // 4x slower
+    const MOVEMENT_TIME = 16000;  // 2x slower
+    const PAUSE_TIME = 4000;      // 2x shorter
     const TRANSITION_DURATION = 125;
 
     let mousePosition = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
@@ -177,7 +177,7 @@ function createGridAnimation(gridElement) {
             const targetRotation = (angleToFocalPoint * 180 / Math.PI) + 90;
 
             const rotationDelta = shortestRotation(line.currentRotation, targetRotation);
-            line.currentRotation += rotationDelta * 0.025; // 2x slower
+            line.currentRotation += rotationDelta * 0.0375; // 1.5x faster
             line.currentRotation %= 360;
 
             line.element.style.transform = `rotate(${line.currentRotation}deg)`;
