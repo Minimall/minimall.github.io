@@ -180,8 +180,7 @@ const createGridAnimation = (gridElement) => {
         position: absolute;
         width: 8px;
         height: 8px;
-        background: red;
-        border-radius: 50%;
+        background: transparent;
         pointer-events: none;
         z-index: 1000;
         transform: translate(-50%, -50%);
@@ -207,7 +206,7 @@ const createGridAnimation = (gridElement) => {
             const targetRotation = (angleToFocalPoint * 180 / Math.PI) + 90;
 
             const rotationDelta = shortestRotation(line.currentRotation, targetRotation);
-            line.currentRotation += rotationDelta * 0.05;
+            line.currentRotation += rotationDelta * 0.2;
             line.currentRotation %= 360;
 
             line.element.style.transform = `rotate(${line.currentRotation}deg)`;
