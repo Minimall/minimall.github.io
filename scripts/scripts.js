@@ -170,15 +170,21 @@ const cycleImages = (element, img) => {
     let fadeTimeout;
 
     const showNextImage = () => {
+        const currentImg = img;
+        
         if (images.length <= 1) {
-            img.src = `/images/1x/${images[0]}`;
-            img.srcset = `/images/1x/${images[0]} 1x, /images/2x/${images[0]} 2x`;
-            img.style.opacity = '1';
-            img.style.transform = 'translate(-50%, -100%)';
+            currentImg.src = `/images/1x/${images[0]}`;
+            currentImg.srcset = `/images/1x/${images[0]} 1x, /images/2x/${images[0]} 2x`;
+            currentImg.style.transform = 'translate(-50%, -100%) scale(0)';
+            currentImg.style.opacity = '0';
+            
+            requestAnimationFrame(() => {
+                currentImg.style.transform = 'translate(-50%, -100%) scale(1)';
+                currentImg.style.opacity = '1';
+            });
             return;
         }
 
-        const currentImg = img;
         currentImg.style.transform = 'translate(calc(-50% - 100px), -100%)';
         currentImg.style.opacity = '0';
 
@@ -186,14 +192,14 @@ const cycleImages = (element, img) => {
             currentImg.src = `/images/1x/${images[currentIndex]}`;
             currentImg.srcset = `/images/1x/${images[currentIndex]} 1x, /images/2x/${images[currentIndex]} 2x`;
             currentImg.style.transform = 'translate(calc(-50% + 100px), -100%)';
-
+            
             setTimeout(() => {
                 currentImg.style.transform = 'translate(-50%, -100%)';
                 currentImg.style.opacity = '1';
                 currentIndex = (currentIndex + 1) % images.length;
                 fadeTimeout = setTimeout(() => {
-                    cycleTimeout = setTimeout(showNextImage, 800);
-                }, 1200);
+                    cycleTimeout = setTimeout(showNextImage, 400);
+                }, 800);
             }, 200);
         }, 400);
     };
