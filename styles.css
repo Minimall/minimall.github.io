@@ -1,7 +1,7 @@
 /* ==========================================================================
    Base & Reset
    ========================================================================== */
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400&display=fallback&text=ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789');
 
 :root {
   --spacing: 2rem;
@@ -49,9 +49,13 @@ h2 {
   line-height: 1.2;
   letter-spacing: -0.035em;
   margin-bottom: calc(var(--spacing));
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   font-feature-settings: "liga" 1, "ss01" 1, "ss04" 1;
   -webkit-font-feature-settings: "liga" 1, "ss01" 1, "ss04" 1;
+  -moz-font-feature-settings: "liga" 1, "ss01" 1, "ss04" 1;
   text-rendering: optimizeLegibility;
+  font-synthesis: none;
 }
 
 .subheadline {
