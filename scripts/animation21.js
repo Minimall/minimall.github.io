@@ -164,8 +164,7 @@ function createGridAnimation(gridElement) {
         position: absolute;
         width: 8px;
         height: 8px;
-        background: red;
-        border-radius: 50%;
+        background: transparent;
         pointer-events: none;
         z-index: 1000;
         transform: translate(-50%, -50%);
