@@ -273,11 +273,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         link.addEventListener('click', (e) => {
             e.preventDefault();
             const content = document.querySelector('.collapsible-content');
-            const links = document.querySelectorAll('.collapsible-link');
-
             if (content) {
                 content.classList.toggle('active');
-                links.forEach(l => l.classList.toggle('hidden'));
             }
         });
     });
@@ -332,7 +329,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             })
             .finally(() => {
                 // Initialize footer animation after content is loaded
-                
+
             });
     });
 });

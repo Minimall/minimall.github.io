@@ -589,9 +589,7 @@ a span, .collapsible span {
 	cursor: pointer;
 }
 
-.collapsible-link.hidden {
-	display: none;
-}
+
 
 .marquee-container {
 	width: 100%;
