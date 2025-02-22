@@ -252,7 +252,7 @@ ul {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
-  padding-bottom: 2rem;
+  padding-bottom: 1rem;
 }
 
 li, .tag {
@@ -351,11 +351,15 @@ li, .tag {
   .case-study-content {
     max-width: var(--max-width);
     margin: 0 auto;
-    padding-top: 10vw;
+    padding-top: 16vw;
     padding-right: 5vw;
     padding-left: 5vw;
   }
-
+  
+  .case-study-container {
+    padding-bottom: 12vw;
+  }
+  
   .collapsible-content {
     max-height: 0;
     overflow: hidden;
@@ -574,7 +578,7 @@ a span, .collapsible span {
 
 .collapsible-content.active {
   max-height: fit-content;
-  padding: 2vw 2vw 0 2vw; !important;
+  padding: 2vw; !important;
   margin-bottom: 2vw;
   opacity: 1;
   transform: translateY(0);
