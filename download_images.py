@@ -1,6 +1,6 @@
 
 import os
-import urllib.request
+import shutil
 
 def download_images():
     base_dir = 'images/2x/'
@@ -13,10 +13,10 @@ def download_images():
                 source = os.path.join(base_dir, filename)
                 destination = os.path.join('downloaded_images', filename)
                 try:
-                    urllib.request.urlretrieve(source, destination)
-                    print(f'Downloaded: {filename}')
+                    shutil.copy2(source, destination)
+                    print(f'Copied: {filename}')
                 except Exception as e:
-                    print(f'Error downloading {filename}: {e}')
+                    print(f'Error copying {filename}: {e}')
 
 if __name__ == '__main__':
     download_images()
