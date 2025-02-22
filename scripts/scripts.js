@@ -170,8 +170,13 @@ const cycleImages = (element, img) => {
     let fadeTimeout;
 
     const showNextImage = () => {
-        img.src = `/images/1x/${images[currentIndex]}`;
-        img.srcset = `/images/1x/${images[currentIndex]} 1x, /images/2x/${images[currentIndex]} 2x`;
+        const imgPath = `/images/${images[currentIndex]}`;
+        if (images[currentIndex].endsWith('.webp')) {
+            img.type = 'image/webp';
+        } else if (images[currentIndex].endsWith('.avif')) {
+            img.type = 'image/avif';
+        }
+        img.src = imgPath;
         img.style.opacity = "1";
 
         fadeTimeout = setTimeout(() => {
@@ -426,8 +431,13 @@ class BottomSheet {
 
         images.forEach((image, index) => {
             const img = document.createElement('img');
-            img.src = `/images/1x/${image}`;
-            img.srcset = `/images/1x/${image} 1x, /images/2x/${image} 2x`;
+            const imgPath = `/images/${image}`;
+            if (image.endsWith('.webp')) {
+                img.type = 'image/webp';
+            } else if (image.endsWith('.avif')) {
+                img.type = 'image/avif';
+            }
+            img.src = imgPath;
             img.style.transform = `translateX(${index * 100}%)`;
             img.style.position = 'absolute';
             this.carousel.appendChild(img);

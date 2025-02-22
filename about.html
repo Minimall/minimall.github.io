@@ -30,15 +30,19 @@
 			<div id="header-placeholder"></div>
 
 			<header class="header">
-				<img src="images/me.avif" 
-             alt="Dmytro Dvornichenko" 
-             class="profile-image">
+				<picture>
+					<source srcset="images/me.avif" type="image/avif">
+					<source srcset="images/me.webp" type="image/webp">
+					<img src="images/me.jpg" 
+							 alt="Dmytro Dvornichenko" 
+							 class="profile-image">
+				</picture>
 			</header>
 				<div class="main-text">
 					<h1 class="headline">Me & my path</h1>
 
 						<p>My journey into design began in <span data-hover="true" data-images="kharkiv1.jpg,kharkiv2.jpg,kharkiv3.jpg">Kharkiv</span>, Ukraine, where my early fascination with technology was shaped by a stack of tech <span data-hover="true" data-images="magazines1.jpg,magazines2.jpg,magazines3.jpg">magazines</span> my friend gave me when I was 13. Inside were images of MacBooks and smartphones, but what really got me excited was Mac OS X Tiger, and specifically <span data-hover="true" data-images="garageband.jpg">GarageBand</span> UI – those perfectly crafted skeuomorphic buttons and virtual instruments that looked both realistic and futuristic. 
-					
+
                     <p>Those magazines came with an HTML textbook, and I spent afternoons after school in the computer lab, creating my first websites. I still remember being amazed by the <span class="collapsible-link wave-text" data-hover="true">&lt;marquee&gt;</span> tag: </p>
 							<div class="collapsible-content">
 						<div class="marquee-container">
