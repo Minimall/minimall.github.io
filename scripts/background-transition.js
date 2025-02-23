@@ -63,4 +63,18 @@ function initBackgroundTransition() {
   cases.forEach(caseElement => observer.observe(caseElement));
 }
 
-document.addEventListener('DOMContentLoaded', initBackgroundTransition);
+document.addEventListener('DOMContentLoaded', () => {
+  console.log('DOM Content Loaded');
+  initBackgroundTransition();
+});
+
+// Also try loading on window load
+window.addEventListener('load', () => {
+  console.log('Window Loaded');
+  initBackgroundTransition();
+});
+
+// Log any potential errors
+window.addEventListener('error', (event) => {
+  console.error('Script error:', event.error);
+});
