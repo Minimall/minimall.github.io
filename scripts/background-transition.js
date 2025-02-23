@@ -1,6 +1,7 @@
 
 function initBackgroundTransition() {
   const cases = document.querySelectorAll('.case-study-container');
+  console.log('Found case containers:', cases.length);
   let currentBgColor = '#FFFFFF';
 
   const hexToRgb = (hex) => {
@@ -31,8 +32,17 @@ function initBackgroundTransition() {
     entries.forEach(entry => {
       const container = entry.target;
       const bgColor = getComputedStyle(container).getPropertyValue('--case-background').trim();
+      console.log('Background color found:', bgColor);
       
-      if (!bgColor) return;
+      // Handle cases where color might be in rgb() format
+      if (!bgColor || bgColor === 'none' || bgColor === '') return;
+      
+      // Convert rgb() to hex if needed
+      const actualColor = bgColor.startsWith('rgb') ? 
+        bgColor : 
+        bgColor.startsWith('#') ? 
+          bgColor : 
+          `#${bgColor}`;
       
       const ratio = entry.intersectionRatio;
       const threshold = 0.3;
