@@ -1,0 +1,78 @@
+Below is an adjusted PDP incorporating the details about your integrated HTML blocks and the inline CSS variables:
+
+1. Problem Definition
+	•	Objective:
+Smoothly transition the entire page’s background color while scrolling, based on the background color defined in each case’s container.
+	•	Behavior Details:
+	•	Transition Start:
+When a new case (integrated block like case*-teaser.html) starts to become visible, the page background color begins to interpolate toward that case’s color.
+	•	Transition End:
+When more than 30% of the viewport is filled by the case, the page background color fully adopts that case’s color.
+	•	Continuous Behavior:
+As additional cases appear, the transition repeats.
+
+2. Key Requirements & Considerations
+	•	Element Identification:
+	•	Each case is included via an HTML block (e.g., case*-teaser.html).
+	•	The first <div> in each block has a class of case-study-container with inline style variables, e.g.:
+
+<div class="case-study-container" style="--case-background: #EEEDE5; --case-title-color: #333; --company-name-color: #777;">
+
+
+	•	Use the CSS variable --case-background to determine the target background color.
+
+	•	Visibility Detection:
+	•	Utilize the Intersection Observer API to monitor when each .case-study-container element enters the viewport.
+	•	Clarify whether the 30% threshold is based on the case element’s height or the viewport’s height.
+	•	Smooth Transition Mechanism:
+	•	Use JavaScript to read the computed style for --case-background on the active case.
+	•	Implement color interpolation (using linear interpolation or a similar approach) to blend from the current background to the new target color as the case scrolls into view.
+	•	Apply a CSS transition to the <body> or root container for smooth effects (e.g., transition: background-color 0.5s ease;).
+	•	Performance & Compatibility:
+	•	Ensure efficient calculation and update of color changes, especially during fast scrolling.
+	•	Verify the functionality across different browsers and devices.
+
+3. Proposed Approach & Technologies
+	•	Markup Adjustments:
+	•	Confirm that each case block uses the <div class="case-study-container"> structure with the inline style providing --case-background.
+	•	JavaScript Implementation:
+	•	Intersection Observer:
+	•	Create an observer for each .case-study-container to detect when it becomes visible.
+	•	Use multiple thresholds to determine the transition start (initial slight visibility) and the full transition point (30% visible).
+	•	Color Extraction:
+	•	Use window.getComputedStyle(element).getPropertyValue('--case-background') to retrieve the background color from each case.
+	•	Color Interpolation:
+	•	Compute the interpolation factor between the current page background and the new case’s color based on the visible percentage.
+	•	Update the <body>’s background color accordingly.
+	•	Scroll Optimization:
+	•	Consider throttling or debouncing the scroll events if not using Intersection Observer exclusively.
+	•	CSS Enhancements:
+	•	Set a transition on the <body> background color for smooth visual updates:
+
+body {
+  transition: background-color 0.5s ease;
+}
+
+4. Questions for Clarification
+	•	Visibility Metrics:
+	•	Is the 30% threshold based on the case’s element height or the viewport’s height?
+	•	Transition Behavior:
+	•	Should the interpolation react instantly during fast scrolling, or would you prefer some throttling/debouncing to smooth out abrupt changes?
+	•	Easing Function:
+	•	Do you have a preferred easing function for the background color transition (e.g., ease-in-out)?
+	•	Fallbacks & Defaults:
+	•	What should happen if a case does not have a defined --case-background value?
+	•	Frameworks or Libraries:
+	•	Are you using any frameworks (e.g., React, Vue) that might influence how the Intersection Observer or scroll events are managed?
+
+5. Next Steps
+	1.	Prototype:
+	•	Implement a basic version on one case block.
+	•	Test reading the computed style for --case-background and applying it to the <body>’s background.
+	2.	Extend:
+	•	Set up the Intersection Observer for all case blocks.
+	•	Implement the logic for smoothly interpolating the background color based on the visibility percentage.
+	3.	Optimize & Test:
+	•	Refine the interpolation and scroll handling, test on various devices/browsers, and handle edge cases such as rapid scrolling.
+
+This revised PDP should help guide you quickly to achieving the desired scroll-based background color transition effect. Let me know if you need further clarification or additional details!
