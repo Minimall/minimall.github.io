@@ -100,14 +100,17 @@ h2 {
   0% {
     font-variation-settings: "wght" 500;
     color: #111111;
+    letter-spacing: -0.06em;
   }
   50% {
     font-variation-settings: "wght" 840;
     color: #1a4ce0;
+    letter-spacing: -0.06em;
   }
   100% {
     font-variation-settings: "wght" 500;
     color: #111111;
+    letter-spacing: -0.06em;
   }
 }
 
@@ -701,9 +704,9 @@ a span, .collapsible span {
 
 [data-hover="true"] span.wave-in {
   font-variation-settings: "wght" 840;
-  /* letter-spacing: -0.025em; */
   animation: colorWave 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
   transition: font-variation-settings 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  letter-spacing: -0.06em;
 }
 
 [data-hover="true"] span.wave-out {
