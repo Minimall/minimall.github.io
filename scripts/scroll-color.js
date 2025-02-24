@@ -1,3 +1,4 @@
+
 // Color transition utilities
 const interpolateColor = (color1, color2, factor) => {
   const parseColor = (color) => {
@@ -24,74 +25,63 @@ const interpolateColor = (color1, color2, factor) => {
 };
 
 let currentBackground = '#FFFFFF';
-let targetBackground = '#FFFFFF';
-let transitionProgress = 0;
-let animationFrame = null;
-let lastTime = null;
-
-const TRANSITION_DURATION = 500; // Duration in milliseconds
+let animationFrame;
 
 const calculateVisibility = (element) => {
   const rect = element.getBoundingClientRect();
-  const viewportHeight = window.innerHeight;
-  const visibleHeight = Math.min(rect.bottom, viewportHeight) - Math.max(rect.top, 0);
-  const elementHeight = rect.height;
-
-  return Math.max(0, Math.min(1, visibleHeight / elementHeight));
+  const windowHeight = window.innerHeight;
+  
+  // Calculate the visibility threshold (45% of viewport)
+  const threshold = windowHeight * 0.45;
+  
+  // If element is completely above or below threshold
+  if (rect.bottom <= 0 || rect.top >= threshold) return 0;
+  
+  // Calculate visibility percentage
+  const visibleTop = Math.max(0, rect.top);
+  const visibleBottom = Math.min(threshold, rect.bottom);
+  const visibleHeight = visibleBottom - visibleTop;
+  
+  return Math.max(0, Math.min(1, visibleHeight / threshold));
 };
 
-const updateBackgroundColor = (timestamp) => {
-  if (!lastTime) lastTime = timestamp;
-  const deltaTime = timestamp - lastTime;
-
+const updateBackgroundColor = () => {
   const sections = document.querySelectorAll('.case-study-container');
-  let mostVisibleSection = null;
+  let targetBackground = '#FFFFFF';
   let maxVisibility = 0;
 
   sections.forEach(section => {
     const visibility = calculateVisibility(section);
     if (visibility > maxVisibility) {
       maxVisibility = visibility;
-      mostVisibleSection = section;
+      const sectionBg = getComputedStyle(section).getPropertyValue('--data-bg').trim();
+      targetBackground = sectionBg || '#FFFFFF';
     }
   });
 
-  const newTargetBackground = mostVisibleSection 
-    ? getComputedStyle(mostVisibleSection).getPropertyValue('--data-bg').trim() || '#FFFFFF'
-    : '#FFFFFF';
-
-  if (newTargetBackground !== targetBackground) {
-    targetBackground = newTargetBackground;
-    transitionProgress = 0;
-  }
-
-  transitionProgress = Math.min(1, transitionProgress + (deltaTime / TRANSITION_DURATION));
-
-  const interpolatedColor = interpolateColor(currentBackground, targetBackground, transitionProgress);
-  document.body.style.backgroundColor = interpolatedColor;
-
-  if (transitionProgress >= 1) {
+  // Interpolate between current and target color based on visibility
+  document.body.style.backgroundColor = interpolateColor(currentBackground, targetBackground, maxVisibility);
+  
+  if (maxVisibility >= 0.99) {
     currentBackground = targetBackground;
+  } else if (maxVisibility <= 0.01) {
+    currentBackground = '#FFFFFF';
   }
 
-  lastTime = timestamp;
   animationFrame = requestAnimationFrame(updateBackgroundColor);
 };
 
 // Initialize scroll tracking
 document.addEventListener('DOMContentLoaded', () => {
   document.body.style.transition = 'none';
-
+  
   window.addEventListener('scroll', () => {
     if (!animationFrame) {
-      animationFrame = requestAnimationFrame((timestamp) => {
-        lastTime = null;
-        updateBackgroundColor(timestamp);
-      });
+      animationFrame = requestAnimationFrame(updateBackgroundColor);
     }
   }, { passive: true });
-
-  updateBackgroundColor(performance.now());
+  
+  updateBackgroundColor();
 });
 
 // Cleanup
