@@ -83,7 +83,7 @@ h2 {
   color: #ffffff;
 }
 
-.headline .wave-text span {
+.headline .wave-text .word {
   transition: all 0.3s ease;
   font-variation-settings: "wght" 500, "CASL" 0.55;
   display: inline-block;
