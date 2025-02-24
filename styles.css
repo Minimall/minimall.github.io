@@ -660,7 +660,7 @@ a span, .collapsible span {
 }
 
 .wave-text {
-  white-space: nowrap;
+  white-space: normal;
   display: inline;
   position: relative;
   user-select: none;
