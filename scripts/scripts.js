@@ -274,7 +274,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             // Initialize shimmer effect after fonts are loaded
             setTimeout(() => {
                 initShimmerText('[data-shimmer="true"]');
-            }, 300);
+            }, 1900);
         });
     });
     
