@@ -81,13 +81,22 @@ const updateBackgroundColor = () => {
     const transitionZone = window.innerHeight * 0.45;
     
     if (distanceFromTop > 0) {
+      // Scrolling down towards first section
       currentVisibility = 1 - (distanceFromTop / transitionZone);
       currentVisibility = Math.max(0, Math.min(1, currentVisibility));
       targetBackground = firstSection.style.getPropertyValue('--data-bg').trim() || '#FFFFFF';
       previousBackground = '#FFFFFF';
-    } else {
-      currentVisibility = 1;
+    } else if (distanceFromTop < -rect.height) {
+      // Scrolling up from sections to header
+      const distanceFromBottom = Math.abs(distanceFromTop + rect.height);
+      currentVisibility = distanceFromBottom / transitionZone;
+      currentVisibility = Math.max(0, Math.min(1, currentVisibility));
       targetBackground = '#FFFFFF';
+      previousBackground = firstSection.style.getPropertyValue('--data-bg').trim() || '#FFFFFF';
+    } else {
+      // Within the first section
+      currentVisibility = 1;
+      targetBackground = firstSection.style.getPropertyValue('--data-bg').trim() || '#FFFFFF';
       previousBackground = currentBackground;
     }
   }
