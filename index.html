@@ -1,38 +1,162 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-  <meta http-equiv="Pragma" content="no-cache" />
-  <meta http-equiv="Expires" content="0" />
-  <title>Dmytro Dvornichenko • Product Design Lead</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="stylesheet" href="styles/animation.css" />
-  <link rel="preload" href="about.html" as="document" crossorigin="anonymous" />
-</head>
-<body>
-  <div class="container">
-    <div id="header-placeholder"></div>
-    <header class="header">
-      <h1 class="headline"><span class="wave-text">I design</span> products, apps, and websites for startups & large orgs.</h1>
-    </header>
-    <div class="main-text">
-      <p>I'm a Product Design Lead with 17 years of experience in building complex technical products that feel simple and intuitive. Currently I'm architecting product design for AI Agent Builder platform at <a data-hover="true" href="https://datrics.ai" style="color: #111">Datrics</a> and advising tech startups across the world.</p>
-      <p><a href="about.html" data-hover="true">More about me</a></p>
-      <p>As a designer, I help teams bridge technical complexity with user needs – whether it's making AI accessible, simplifying analytics, or modernizing enterprise platforms.</p>
-      <p>As a leader & manager, I've helped large orgs build happy & successful teams, and provided the right environment for designers to do the best work of their career.</p>
-      <div class="menu">
-        <a href="https://calendly.com/dmytrodvornichenko/30-min-meeting" data-hover="true">Schedule a call</a>
-        <a href="mailto:hi@dvornichenko.design" data-hover="true">hi@dvornichenko.design</a>
-      </div>
-    </div>
-    <div id="case1-placeholder" data-case-file="cases/case1-teaser.html"></div>
-    <div id="case2-placeholder" data-case-file="cases/case2-teaser.html"></div>
-    <div id="case3-placeholder" data-case-file="cases/case3-teaser.html"></div>
-    <div id="footer-placeholder" data-case-file="footer.html"></div>
-  </div>
-  <script src="scripts/scripts.js"></script>
-  <script src="scripts/footer-animation.js"></script>
-</body>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<!-- IMPORTANT: Do not remove cache control - required for complete page refresh -->
+		<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+		<meta http-equiv="Pragma" content="no-cache" />
+		<meta http-equiv="Expires" content="0" />
+		<title>Dmytro Dvornichenko • Product Design Lead</title>
+
+		<link rel="stylesheet" href="styles.css" />
+		<link rel="stylesheet" href="styles/animation.css" />
+		<!-- Preload about.html -->
+		<link rel="preload" href="about.html" as="document" crossorigin="anonymous" />
+	</head>
+	<body>
+		<div class="container">
+			<div id="header-placeholder"></div>
+			<header class="header">  <!-- style="--company-name-color: #ffffff;" --> 
+				<h1 class="headline">
+					<span class="wave-text">I design</span> products, apps, and websites for startups & large orgs.
+				</h1>
+				<div class="subheadline"></div>
+			</header>
+			<div class="main-text">
+				<p>
+					I'm a Product Design Lead with 17 years of experience in building complex technical products that feel simple and intuitive. Currently I'm architecting product design for AI Agent Builder platform at <a data-hover="true" href="https://datrics.ai" style="color: #111">Datrics</a> and advising tech startups across the world.
+				</p>
+				<p>
+					<a href="about.html" data-hover="true">More about me</a>
+				</p>
+				<p>
+					As a designer, I help teams bridge technical complexity with user needs – whether it's making AI accessible, simplifying analytics, or modernizing enterprise platforms. 
+				</p>
+				<p>
+					As a leader & manager, I've helped large orgs build happy & successful teams, and provided the right environment for designers to do the best work of their career.
+				</p>
+				<div class="menu">
+					<a href="https://calendly.com/dmytrodvornichenko/30-min-meeting" data-hover="true">Schedule a call</a>
+					<a href="mailto:hi@dvornichenko.design" data-hover="true">hi@dvornichenko.design</a>
+				</div>
+			</div>
+			<!-- Case Study Placeholders -->
+			<div id="case1-placeholder" data-case-file="cases/case1-teaser.html">
+				<div class="case-study-container" style="--case-background: #EEEDE5; --case-title-color: #333; --company-name-color: #777;">
+					<div class="case-study-content">
+						<div class="case-content">
+							<div class="case-logo">
+								<img src="/logos/datrics.svg" alt="Datrics.ai">
+							</div>
+							<h1 class="case-title">
+								<span class="company-name">Datrics is an innovative startup helping enterprises build and deploy custom AI agents.</span>
+									I partnered with their team as Principal Product Designer to transform their technical platform into an intuitive enterprise solution.
+							</h1>
+							<ul>
+								<li>Startups</li>
+								<li>Strategy</li>
+								<li>Product Design</li>
+							</ul>
+							<div class="case-text">
+								<div class="service">
+									<p>After delivering a successful proof-of-concept for a major enterprise client, I led the end-to-end redesign of their core platform experience – streamlining AI agent configuration, creating an integrated testing environment, and optimizing user acquisition flows. This foundational work led to several more POCs and helped Datrics attract major B2B2C clients.</p>
+									<p>Together with the founding team and engineers, I designed a flexible design system that supported custom feature development for enterprise, and making complex features easy to use.</p>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="case-gallery">
+						<div class="case-image-landscape">
+							<img src="../images/datrics-playground-instructions.webp" alt="Datrics Playground Instructions">
+						</div>
+					</div>
+					<div class="case-gallery">
+						<div class="case-image-landscape">
+							<img src="../images/datrics-playground-instructions-concept.webp" alt="Datrics Playground Instructions Concept">
+						</div>
+					</div>
+					<div class="case-gallery">
+						<div class="case-image-landscape">
+							<img src="../images/datrics-data-simulation.webp" alt="Datrics Data Simulation">
+						</div>
+					</div>
+				</div>
+			</div>
+			<div id="case2-placeholder" data-case-file="cases/case2-teaser.html">
+				<div class="case-study-container" style="--case-background: #E9E8EC; --case-title-color: #28272D; --company-name-color: #7F73C1;">
+					<div class="case-study-content">
+						<div class="case-content">
+							<div class="case-logo">
+								<img src="/logos/cinderblock.svg" alt="Cinderblock.com">
+							</div>
+							<h1 class="case-title">
+								<span class="company-name">Cinderblock is a job management platform helping contractors run their businesses efficiently.</span> I joined their team as Lead Product Designer to guide a complete platform redesign ahead of a major marketing push. 
+							</h1>
+							<ul>
+								<li>Startups</li>
+								<li>Product Design</li>
+							</ul>
+							<div class="case-text">
+								<div class="service">
+									<p>In early 2023, I partnered with the founding team to modernize their Ember.js-based product, focusing on the complex Estimates & Invoices section. Within three months, I built a comprehensive component library in Figma with documentation and interactive prototypes that respected technical constraints.</p>
+									<p>The project resulted in a scalable design system that supported Cinderblock's growth plans while maintaining their core value of practical usability. My work established patterns for future product development for both web & mobile, and helped Cinderblock grow to a global marketplace.</p>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="case-gallery">
+						<div class="case-image-landscape">
+							<img src="../images/cinderblock-estimate-signed.webp" alt="Cinderblock Estimate Signed">
+						</div>
+					</div>
+					<div class="case-gallery">
+						<div class="case-image-landscape">
+							<img src="../images/cinderblock-ds-demo.webp" alt="Cinderblock Design System Demo">
+						</div>
+					</div>
+				</div>
+			</div>
+			<div id="case3-placeholder" data-case-file="cases/case3-teaser.html">
+				<div class="case-study-container" style="--case-background: #FFFFFF; --case-title-color: #28272D; --company-name-color: #5390CD;">
+					<div class="case-study-content">
+						<div class="case-content">
+							<div class="case-logo">
+								<img src="/logos/wombi.svg" alt="Wombi.xyz">
+							</div>
+							<h1 class="case-title">
+								<span class="company-name">WOMBI is a pioneering platform for web3 user attribution analytics. </span> As a Founding Product Designer, I shaped the product concept, designed core UI and created brand identity. 
+							</h1>
+							<ul>
+								<li>Startups</li>
+								<li>Product Design</li>
+							</ul>
+							<div class="case-text">
+								<div class="service">
+									<p>Together with the founder, we developed a unique approach for web3 user attribution by analyzing traditional analytics methods and creating strong value proposition for product companies. I created a consistent design system that enabled organized and predictable user experience throughout the platform, while maintaining the complexity required for analytics interfaces.</p>
+									<p>Beyond the core product, I established WOMBI's market presence through distinctive branding with AI-generated wombat mascots and a strategic landing page. Our market research improved customer targeting, which led to better community engagement and sales growth.</p>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="case-gallery">
+						<div class="case-image-landscape">
+							<img src="../images/wombi-ui.webp" alt="Wombi UI">
+						</div>
+					</div>
+					<div class="case-gallery">
+						<div class="case-image-landscape">
+							<video autoplay="autoplay" loop muted playsinline preload="auto" webkit-playsinline x5-playsinline style="width: 100%; height: 100%; object-fit: cover;">
+								<source src="../videos/wombi-reel.mp4" type="video/mp4">
+								Your browser does not support the video tag.
+							</video>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div id="footer-placeholder" data-case-file="footer.html"></div>
+		
+		<script src="scripts/scripts.js"></script>
+		<script src="scripts/footer-animation.js"></script>
+	</body>
 </html>
