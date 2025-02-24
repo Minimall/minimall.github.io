@@ -225,58 +225,37 @@ function initHeadlineWave() {
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
-                const targetElement = entry.target;
+                const h1Element = entry.target;
                 setTimeout(() => {
-                    // Find spans either directly in wave-text or in headlines
-                    const spans = targetElement.classList.contains('wave-text') ? 
-                        targetElement.querySelectorAll('span') : 
-                        targetElement.querySelectorAll('.wave-text span');
-                    
-                    const baseDelay = 25;
-                    spans.forEach((span, i) => {
-                        setTimeout(() => {
-                            span.classList.add('shimmer-in');
-                        }, i * baseDelay);
-                    });
+                    const waveTextSpan = h1Element.querySelector('.wave-text');
+                    if (waveTextSpan) {
+                        const spans = waveTextSpan.querySelectorAll('span');
+                        const baseDelay = 25;
+                        spans.forEach((span, i) => {
+                            setTimeout(() => {
+                                span.classList.add('shimmer-in');
+                            }, i * baseDelay);
+                        });
+                    }
                 }, 1200);
                 
-                observer.unobserve(targetElement);
+                observer.unobserve(h1Element);
             }
         });
     }, { threshold: 0.5 });
 
-    // Observe both headlines and footer wave-text elements
-    const headlines = document.querySelectorAll('.headline');
-    const waveTexts = document.querySelectorAll('.wave-text');
+    // Only observe h1 elements
+    const headlines = document.querySelectorAll('h1');
     
-    const processElement = element => {
-        const text = element.textContent.trim();
-        const processedText = text.split('').map(char => 
-            char === ' ' ? `<span>&nbsp;</span>` : `<span>${char}</span>`
-        ).join('');
-        element.innerHTML = processedText;
-        observer.observe(element);
-    };
-
     headlines.forEach(headline => {
-        const existingWaveText = headline.querySelector('.wave-text');
-        if (existingWaveText) {
-            processElement(existingWaveText);
-        } else {
-            const text = headline.textContent.trim();
-            const processedText = text.split(' ').map(word => {
-                const letters = word.split('').map(char => `<span>${char}</span>`).join('');
-                return `<span class="word">${letters}</span>` + ' ';
-            }).join('');
-            headline.innerHTML = `<span class="wave-text">${processedText}</span>`;
+        const waveTextSpan = headline.querySelector('.wave-text');
+        if (waveTextSpan) {
+            const text = waveTextSpan.textContent.trim();
+            const processedText = text.split('').map(char => 
+                char === ' ' ? `<span>&nbsp;</span>` : `<span>${char}</span>`
+            ).join('');
+            waveTextSpan.innerHTML = processedText;
             observer.observe(headline);
-        }
-    });
-
-    // Process standalone wave-text elements that aren't in headlines
-    waveTexts.forEach(waveText => {
-        if (!waveText.closest('.headline')) {
-            processElement(waveText);
         }
     });
 }
