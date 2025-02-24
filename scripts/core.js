@@ -7,10 +7,14 @@ export const initCore = () => {
   // Initialize performance optimizations first
   initPerformance();
   
-  // Then initialize other features
-  setupHoverEffects();
-  initializeAnimations();
-  initializeContentLoader('header');
+  // Initialize content loader with progressive strategy
+  initializeContentLoader();
+  
+  // Initialize features after content is loaded
+  document.addEventListener('ContentLoaded', () => {
+    setupHoverEffects();
+    initializeAnimations();
+  });
   
   // Set up event delegation for hover effects
   document.addEventListener('mouseover', (e) => {
