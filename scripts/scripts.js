@@ -235,8 +235,9 @@ function initHeadlineWave() {
         if (!headline.querySelector('.wave-text')) {
             const text = headline.textContent.trim();
             const words = text.split(' ');
-            const processedText = words.map(word => {
-                return word.split('').map(char => `<span>${char}</span>`).join('') + '<span class="space"> </span>';
+            const processedText = words.map((word, i) => {
+                const wordSpans = word.split('').map(char => `<span>${char}</span>`).join('');
+                return wordSpans + (i < words.length - 1 ? '<span class="space"> </span>' : '');
             }).join('');
             headline.innerHTML = `<span class="wave-text">${processedText}</span>`;
         }
