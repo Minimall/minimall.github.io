@@ -1,18 +1,4 @@
 
-/* Debug Helpers */
-*:not(body):not(html) {
-  outline: 1px solid rgba(255, 0, 0, 0.05);
-  transition-duration: 0s !important;
-}
-
-*:not(body):not(html)[style*="transform"] {
-  outline: 2px solid rgba(0, 255, 0, 0.2) !important;
-}
-
-*:not(body):not(html)[style*="transition"] {
-  outline: 2px solid rgba(0, 0, 255, 0.2) !important;
-}
-
 /* ==========================================================================
    Base & Reset
    ========================================================================== */
