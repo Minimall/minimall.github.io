@@ -246,24 +246,38 @@ function initHeadlineWave() {
     }, { threshold: 0.5 });
 
     // Observe both headlines and footer wave-text elements
-    const headlines = document.querySelectorAll('.headline, .wave-text');
+    const headlines = document.querySelectorAll('.headline');
+    const waveTexts = document.querySelectorAll('.wave-text');
+    
+    const processElement = element => {
+        const text = element.textContent.trim();
+        const processedText = text.split('').map(char => 
+            char === ' ' ? `<span>&nbsp;</span>` : `<span>${char}</span>`
+        ).join('');
+        element.innerHTML = processedText;
+        observer.observe(element);
+    };
+
     headlines.forEach(headline => {
-        const waveSpans = headline.querySelectorAll('.wave-text');
-        if (waveSpans.length === 0) {
+        const existingWaveText = headline.querySelector('.wave-text');
+        if (existingWaveText) {
+            processElement(existingWaveText);
+        } else {
             const text = headline.textContent.trim();
             const processedText = text.split(' ').map(word => {
                 const letters = word.split('').map(char => `<span>${char}</span>`).join('');
                 return `<span class="word">${letters}</span>` + ' ';
             }).join('');
             headline.innerHTML = `<span class="wave-text">${processedText}</span>`;
-        } else {
-            waveSpans.forEach(waveSpan => {
-                const text = waveSpan.textContent.trim();
-                const letters = text.split('').map(char => `<span>${char}</span>`).join('');
-                waveSpan.innerHTML = letters;
-            });
+            observer.observe(headline);
         }
-        observer.observe(headline);
+    });
+
+    // Process standalone wave-text elements that aren't in headlines
+    waveTexts.forEach(waveText => {
+        if (!waveText.closest('.headline')) {
+            processElement(waveText);
+        }
     });
 }
 
