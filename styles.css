@@ -34,7 +34,6 @@ body {
   font-family: 'Recursive', -apple-system, BlinkMacSystemFont, "Bahnschrift", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   font-size: 1.2rem;
   line-height: 1.6;
-  transition: background-color 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   letter-spacing: -0.02em;
   color: #111;
   background: #ffffff;
