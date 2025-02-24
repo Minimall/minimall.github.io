@@ -80,6 +80,23 @@ h2 {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+  color: #ffffff;
+}
+
+.headline .wave-text span {
+  transition: all 0.3s ease;
+  font-variation-settings: "wght" 500, "CASL" 0.55;
+  display: inline-block;
+}
+
+.headline .wave-text span.wave-in {
+  font-variation-settings: "wght" 1000, "CASL" 1;
+  color: #111111;
+}
+
+.headline .wave-text span.wave-out {
+  font-variation-settings: "wght" 500, "CASL" 0.55;
+  color: #111111;
 }
 
 .subheadline {

@@ -225,8 +225,49 @@ const triggerRandomWave = () => {
 };
 
 // Initialize everything
+function initHeadlineWave() {
+    const headlines = document.querySelectorAll('.headline');
+    headlines.forEach(headline => {
+        if (!headline.querySelector('.wave-text')) {
+            const text = headline.textContent.trim();
+            headline.innerHTML = `<span class="wave-text">${
+                text.split('').map(char => char === ' ' ? `<span>&nbsp;</span>` : `<span>${char}</span>`).join('')
+            }</span>`;
+        }
+        
+        const letters = headline.querySelectorAll('.wave-text span');
+        const enterDelay = 30;
+        const leaveDelay = 10;
+        let hasPlayed = false;
+
+        if (!hasPlayed) {
+            letters.forEach((letter, i) => {
+                setTimeout(() => {
+                    letter.classList.add('wave-in');
+                }, i * enterDelay);
+            });
+
+            setTimeout(() => {
+                letters.forEach((letter, i) => {
+                    setTimeout(() => {
+                        letter.classList.remove('wave-in');
+                        letter.classList.add('wave-out');
+                    }, i * leaveDelay);
+                });
+            }, (letters.length * enterDelay) + 600);
+
+            hasPlayed = true;
+        }
+    });
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
     console.log("DOM Content Loaded");
+    
+    // Wait for all resources to load before playing the animation
+    window.addEventListener('load', () => {
+        setTimeout(initHeadlineWave, 100);
+    });
     // Initialize footer animation
     setTimeout(() => {
         const animationContainer = document.getElementById('footer-animation-container');
