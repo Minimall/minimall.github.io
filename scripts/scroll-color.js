@@ -31,19 +31,16 @@ let animationFrame;
 const calculateVisibility = (element) => {
   const rect = element.getBoundingClientRect();
   const windowHeight = window.innerHeight;
-
-  // Calculate visibility based on element position
-  const visibleHeight = Math.min(rect.bottom, windowHeight) - Math.max(rect.top, 0);
-  const elementHeight = rect.height;
-  const viewportCenter = windowHeight / 2;
-  const elementCenter = rect.top + (elementHeight / 2);
-  const distanceFromCenter = Math.abs(viewportCenter - elementCenter);
   
-  // Normalize visibility value
-  let visibility = visibleHeight / (elementHeight * 0.5);
-  visibility *= 1 - (distanceFromCenter / (windowHeight * 0.75));
+  // Calculate visibility based on first 45% of the element
+  const elementHeight = rect.height * 0.45;
+  const elementTop = rect.top;
+  const visibleTop = Math.max(0, elementTop);
+  const visibleBottom = Math.min(elementTop + elementHeight, windowHeight);
+  const visibleHeight = Math.max(0, visibleBottom - visibleTop);
   
-  return Math.max(0, Math.min(1, visibility));
+  // Calculate visibility ratio based on the 45% portion
+  return Math.max(0, Math.min(1, visibleHeight / elementHeight));
 };
 
 const updateBackgroundColor = () => {
@@ -53,11 +50,12 @@ const updateBackgroundColor = () => {
 
   sections.forEach(section => {
     const visibility = calculateVisibility(section);
-    const sectionColor = section.dataset.bg;
+    const computedStyle = getComputedStyle(section);
+    const caseBackground = computedStyle.getPropertyValue('--case-background').trim() || '#EEEDE5';
 
-    if (visibility > maxVisibility && sectionColor) {
+    if (visibility > maxVisibility) {
       maxVisibility = visibility;
-      targetColor = sectionColor;
+      targetColor = caseBackground;
     }
   });
 
