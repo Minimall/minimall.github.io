@@ -90,7 +90,7 @@ h2 {
 }
 
 .headline .wave-text span.wave-in {
-  font-variation-settings: "wght" 1000;
+  font-variation-settings: "wght" 800;
   animation: colorWave 1.2s ease-in-out forwards;
 }
 
