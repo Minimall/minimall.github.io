@@ -97,17 +97,21 @@ h2 {
 }
 
 @keyframes shimmerWave {
-  0% {
+  0% { 
     font-variation-settings: "wght" 500;
-    color: #111111;
+    color: #1a4ce0; 
   }
-  50% {
+  33% { 
     font-variation-settings: "wght" 840;
-    color: #1a4ce0;
+    color: #c12f78; 
   }
-  100% {
+  88% { 
+    font-variation-settings: "wght" 840;
+    color: #540a99; 
+  }
+  100% { 
     font-variation-settings: "wght" 500;
-    color: #111111;
+    color: #111; 
   }
 }
 
