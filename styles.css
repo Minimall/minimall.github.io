@@ -668,6 +668,7 @@ a span, .collapsible span {
 
 .wave-text span {
   user-select: none;
+  margin-right: 0.02em;
 }
 
 [data-hover="true"] span {
