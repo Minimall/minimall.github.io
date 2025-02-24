@@ -80,20 +80,14 @@ h2 {
   color: #111111;
 }
 
-.headline span {
+.headline .wave-text .word {
   display: inline;
   font-variation-settings: "wght" 500, "CASL" 0.55;
   color: #111111;
-  opacity: 0;
-  transform: translateY(10px);
-  white-space: pre-wrap;
-  letter-spacing: -0.06em;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.headline span.shimmer-in {
   opacity: 1;
   transform: translateY(0);
+  white-space: pre-wrap;
+  letter-spacing: -0.06em;
 }
 
 .headline .wave-text span.shimmer-in {

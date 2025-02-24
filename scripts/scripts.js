@@ -222,35 +222,25 @@ const triggerRandomWave = () => {
 
 // Initialize everything
 function initHeadlineWave() {
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                setTimeout(() => {
-                    const spans = entry.target.querySelectorAll('span');
-                    const baseDelay = 25;
-                    
-                    spans.forEach((span, i) => {
-                        setTimeout(() => {
-                            span.classList.add('shimmer-in');
-                        }, i * baseDelay);
-                    });
-                }, 1200);
-                
-                observer.unobserve(entry.target);
-            }
-        });
-    }, { threshold: 0.5 });
-
     const headlines = document.querySelectorAll('.headline');
     headlines.forEach(headline => {
-        if (!headline.querySelector('span')) {
+        if (!headline.querySelector('.wave-text')) {
             const text = headline.textContent.trim();
-            const processedText = text.split('').map(char => 
-                char === ' ' ? ' ' : `<span>${char}</span>`
-            ).join('');
-            headline.innerHTML = processedText;
+            const processedText = text.split(' ').map(word => {
+                const letters = word.split('').map(char => `<span>${char}</span>`).join('');
+                return `<span class="word">${letters}</span>` + ' ';
+            }).join('');
+            headline.innerHTML = `<span class="wave-text">${processedText}</span>`;
         }
-        observer.observe(headline);
+
+        const letters = headline.querySelectorAll('.wave-text .word span');
+        const baseDelay = 25;
+
+        letters.forEach((letter, i) => {
+            setTimeout(() => {
+                letter.classList.add('shimmer-in');
+            }, i * baseDelay);
+        });
     });
 }
 
