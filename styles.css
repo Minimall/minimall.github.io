@@ -81,15 +81,13 @@ h2 {
 }
 
 .headline .wave-text .word {
-  display: inline-block;
+  display: inline;
   font-variation-settings: "wght" 500, "CASL" 0.55;
   color: #111111;
   transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
   opacity: 1;
   transform: translateY(0);
-  white-space: nowrap;
-  margin-right: 0.25em;
-  color: #111111;
+  white-space: pre-wrap;
 }
 
 .headline .wave-text span.shimmer-in {
