@@ -670,11 +670,8 @@ a span, .collapsible span {
   user-select: text;
 }
 
-.wave-text span.space {
-  margin: 0;
-  padding: 0;
-  display: inline;
-  white-space: pre;
+.wave-text .word {
+  white-space: pre-wrap;
 }
 
 [data-hover="true"] span {
