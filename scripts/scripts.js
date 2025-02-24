@@ -234,36 +234,20 @@ function initHeadlineWave() {
     headlines.forEach(headline => {
         if (!headline.querySelector('.wave-text')) {
             const text = headline.textContent.trim();
-            const words = text.split(' ');
-            const processedText = words.map((word, i) => {
-                return word.split('').map(char => `<span>${char}</span>`).join('') + (i < words.length - 1 ? '<span> </span>' : '');
-            }).join('');
+            const processedText = text.split('').map(char => 
+                char === ' ' ? '<span>&nbsp;</span>' : `<span>${char}</span>`
+            ).join('');
             headline.innerHTML = `<span class="wave-text">${processedText}</span>`;
         }
 
         const letters = headline.querySelectorAll('.wave-text span');
-        const enterDelay = 30;
-        const leaveDelay = 10;
-        let hasPlayed = false;
-
-        if (!hasPlayed) {
-            letters.forEach((letter, i) => {
-                setTimeout(() => {
-                    letter.classList.add('wave-in');
-                }, i * enterDelay);
-            });
-
+        const baseDelay = 25;
+        
+        letters.forEach((letter, i) => {
             setTimeout(() => {
-                letters.forEach((letter, i) => {
-                    setTimeout(() => {
-                        letter.classList.remove('wave-in');
-                        letter.classList.add('wave-out');
-                    }, i * leaveDelay);
-                });
-            }, (letters.length * enterDelay) + 600);
-
-            hasPlayed = true;
-        }
+                letter.classList.add('shimmer-in');
+            }, i * baseDelay);
+        });
     });
 }
 

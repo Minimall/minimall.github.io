@@ -80,21 +80,34 @@ h2 {
   color: #ffffff;
 }
 
-.headline .wave-text .word {
-  transition: all 0.3s ease;
-  font-variation-settings: "wght" 500, "CASL" 0.55;
+.headline .wave-text span {
   display: inline-block;
-}
-
-.headline .wave-text span.wave-in {
-  font-variation-settings: "wght" 1000;
-  animation: colorWave 1.2s ease-in-out forwards;
-}
-
-.headline .wave-text span.wave-out {
-  font-variation-settings: "wght" 500;
-  transition: all 2.4s cubic-bezier(0.4, 0, 0.2, 1);
+  font-variation-settings: "wght" 500, "CASL" 0.55;
   color: #111111;
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.headline .wave-text span.shimmer-in {
+  opacity: 1;
+  transform: translateY(0);
+  animation: shimmerWave 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes shimmerWave {
+  0% {
+    font-variation-settings: "wght" 500;
+    color: #111111;
+  }
+  50% {
+    font-variation-settings: "wght" 840;
+    color: #1a4ce0;
+  }
+  100% {
+    font-variation-settings: "wght" 500;
+    color: #111111;
+  }
 }
 
 .subheadline {
