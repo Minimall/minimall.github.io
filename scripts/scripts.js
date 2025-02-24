@@ -245,7 +245,8 @@ function initShimmerText(selector) {
 }
 
 function initHeadlineWave() {
-    initShimmerText('.headline');
+    const headlines = document.querySelectorAll('.headline');
+    headlines.forEach(headline => {
         if (!headline.querySelector('.wave-text')) {
             const text = headline.textContent.trim();
             const processedText = text.split(' ').map(word => {
