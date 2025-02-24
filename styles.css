@@ -690,12 +690,12 @@ a span, .collapsible span {
 [data-hover="true"] span.wave-in {
   font-variation-settings: "wght" 840;
   /* letter-spacing: -0.025em; */
-  animation: colorWave 0.8s ease-in-out forwards;
+  animation: colorWave 0.64s ease-in-out forwards;
 }
 
 [data-hover="true"] span.wave-out {
   font-variation-settings: "wght" 500;
-  transition: letter-spacing ease 0.4s;
+  transition: all 0.52s ease-in-out;
 }
 
 a:hover span:nth-child(1n) { animation-delay: 0.05s; }
