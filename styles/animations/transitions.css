@@ -1,0 +1,12 @@
+
+.wave-text span {
+  transition: color 0.3s ease, font-variation-settings 0.3s ease;
+}
+
+.hover-image {
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.case-study-container {
+  transition: background-color 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
