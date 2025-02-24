@@ -91,16 +91,8 @@ const setupHoverEffects = () => {
             // Handle regular wave text effect
             if (!element.querySelector('.wave-text')) {
                 const text = element.textContent.trim();
-                const needsWave = !element.querySelector('.wave-text');
-                if (needsWave) {
-                    const processedText = text.split('').map(char => {
-                        if (char === ' ') {
-                            return `<span class="space"> </span>`;
-                        }
-                        return `<span>${char}</span>`;
-                    }).join('');
-                    element.innerHTML = `<span class="wave-text">${processedText}</span>`;
-                }
+                const processedText = text.split('').map(char => `<span>${char}</span>`).join('');
+                element.innerHTML = `<span class="wave-text">${processedText}</span>`;
             }
 
             // Add wave effect listeners for both desktop and mobile
@@ -243,7 +235,7 @@ function initHeadlineWave() {
 
         const letters = headline.querySelectorAll('.wave-text .word span');
         const baseDelay = 25;
-        
+
         letters.forEach((letter, i) => {
             setTimeout(() => {
                 letter.classList.add('shimmer-in');
