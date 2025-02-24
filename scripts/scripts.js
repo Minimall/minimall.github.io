@@ -128,8 +128,8 @@ const setupHoverEffects = () => {
 const handleWaveEffect = (element, isEnter, isRandom = false) => {
     console.log('Wave effect on:', element.innerHTML);
     const letters = element.querySelectorAll('.wave-text span');
-    const enterDelay = isRandom ? 140 : 60;  // Slower for random waves
-    const leaveDelay = isRandom ? 80 : 20;   // Slower exit for random waves
+    const enterDelay = isRandom ? 70 : 30;  // Faster for random waves
+    const leaveDelay = isRandom ? 40 : 10;   // Faster exit for random waves
 
     // Clear previous animation timeouts
     if (element.waveTimeouts) {
