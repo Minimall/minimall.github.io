@@ -126,12 +126,7 @@ const setupHoverEffects = () => {
 
 // Handle wave animation effect
 const handleWaveEffect = (element, isEnter, isRandom = false) => {
-    // Debug letter positions before animation
-    const letters = element.querySelectorAll('.wave-text span');
-    letters.forEach(letter => {
-        const rect = letter.getBoundingClientRect();
-        console.log(`Letter "${letter.textContent}", Position: ${rect.left}, Width: ${rect.width}`);
-    });
+    console.log('Wave effect on:', element.innerHTML);
     const letters = element.querySelectorAll('.wave-text span');
     const enterDelay = isRandom ? 112 : 48;  // 20% faster for wave-in
     const leaveDelay = isRandom ? 104 : 26;  // 30% slower for wave-out
