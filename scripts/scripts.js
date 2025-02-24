@@ -221,29 +221,6 @@ const triggerRandomWave = () => {
 };
 
 // Initialize everything
-function initShimmerText(selector) {
-    const elements = document.querySelectorAll(selector);
-    elements.forEach(element => {
-        if (!element.querySelector('.shimmer-text')) {
-            const text = element.textContent.trim();
-            const processedText = text.split(' ').map(word => {
-                const letters = word.split('').map(char => `<span>${char}</span>`).join('');
-                return `<span class="word">${letters}</span>` + ' ';
-            }).join('');
-            element.innerHTML = `<span class="shimmer-text">${processedText}</span>`;
-        }
-
-        const letters = element.querySelectorAll('.shimmer-text .word span');
-        const baseDelay = 25;
-
-        letters.forEach((letter, i) => {
-            setTimeout(() => {
-                letter.classList.add('shimmer-in');
-            }, i * baseDelay);
-        });
-    });
-}
-
 function initHeadlineWave() {
     const headlines = document.querySelectorAll('.headline');
     headlines.forEach(headline => {
@@ -269,15 +246,10 @@ function initHeadlineWave() {
 
 document.addEventListener("DOMContentLoaded", async () => {
     console.log("DOM Content Loaded");
-    
-    // Wait for all resources to load before playing animations
+
+    // Wait for all resources to load before playing the animation
     window.addEventListener('load', () => {
-        // Initialize wave first
         setTimeout(initHeadlineWave, 100);
-        // Initialize shimmer last, with a delay
-        setTimeout(() => {
-            initShimmerText('[data-shimmer="true"]');
-        }, 800);
     });
     // Initialize footer animation
     setTimeout(() => {
