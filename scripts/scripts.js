@@ -234,16 +234,13 @@ function initShimmerText(selector) {
         }
 
         const letters = element.querySelectorAll('.shimmer-text .word span');
-        const baseDelay = 45;
+        const baseDelay = 25;
 
-        // Wait for a small initial delay before starting the animation
-        setTimeout(() => {
-            letters.forEach((letter, i) => {
-                setTimeout(() => {
-                    letter.classList.add('shimmer-in');
-                }, i * baseDelay);
-            });
-        }, 300);
+        letters.forEach((letter, i) => {
+            setTimeout(() => {
+                letter.classList.add('shimmer-in');
+            }, i * baseDelay);
+        });
     });
 }
 
@@ -275,7 +272,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Initialize shimmer effect immediately
     initShimmerText('[data-shimmer="true"]');
-
+    
     // Wait for all resources to load before playing the wave animation
     window.addEventListener('load', () => {
         setTimeout(initHeadlineWave, 100);
