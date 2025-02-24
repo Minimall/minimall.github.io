@@ -281,7 +281,7 @@ nav a:hover {
   font-size: 2.25rem;
   line-height: 1.35;
   letter-spacing: -0.035em;
-  font-variation-settings: "wght" 350;
+  font-variation-settings: "wght" 400;
   color: var(--case-title-color);
   max-width: var(--max-width);
   padding-top: 4rem;
@@ -289,7 +289,9 @@ nav a:hover {
 }
 
 .company-name {
+  font-variation-settings: "wght" 400;
   color: var(--company-name-color);
+  letter-spacing: -0.035em;
 }
 
 /* ==========================================================================
