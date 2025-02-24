@@ -71,7 +71,7 @@ h2 {
   font-weight: 500;
   font-size: 4.1rem;
   line-height: 1.2;
-  letter-spacing: -0.05em;
+  letter-spacing: -0.06em;
   margin-bottom: calc(var(--spacing));
   font-variation-settings: "slnt" 0, "CASL" 0.55, "CRSV" 1, "MONO" 0;
   -webkit-font-smoothing: antialiased;
