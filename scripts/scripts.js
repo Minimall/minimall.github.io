@@ -269,13 +269,15 @@ function initHeadlineWave() {
 
 document.addEventListener("DOMContentLoaded", async () => {
     console.log("DOM Content Loaded");
-
-    // Initialize shimmer effect first
-    initShimmerText('[data-shimmer="true"]');
     
-    // Wait for all resources to load before playing other animations
+    // Wait for all resources to load before playing animations
     window.addEventListener('load', () => {
+        // Initialize wave first
         setTimeout(initHeadlineWave, 100);
+        // Initialize shimmer last, with a delay
+        setTimeout(() => {
+            initShimmerText('[data-shimmer="true"]');
+        }, 800);
     });
     // Initialize footer animation
     setTimeout(() => {
