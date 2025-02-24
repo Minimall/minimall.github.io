@@ -40,3 +40,29 @@ const loadCaseStudies = async () => {
 
   await Promise.all(loadPromises);
 };
+// Content loader module
+export const initializeContentLoader = async (section) => {
+  const loadContent = async (placeholder, file) => {
+    try {
+      const response = await fetch(file);
+      if (!response.ok) throw new Error(`Failed to load ${file}`);
+      const content = await response.text();
+      placeholder.innerHTML = content;
+    } catch (error) {
+      console.error(`Error loading ${file}:`, error);
+    }
+  };
+
+  // Load initial section
+  if (section === 'header') {
+    const headerPlaceholder = document.getElementById('header-placeholder');
+    if (headerPlaceholder) {
+      await loadContent(headerPlaceholder, '/header.html');
+    }
+  }
+
+  // Load case studies and footer
+  document.querySelectorAll('[data-case-file]').forEach(async (placeholder) => {
+    await loadContent(placeholder, placeholder.dataset.caseFile);
+  });
+};
