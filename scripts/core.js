@@ -28,18 +28,7 @@ export const initCore = () => {
   });
 };
 
-// Basic hover effect handling 
-const setupHoverEffects = () => {
-  const hoverableElements = document.querySelectorAll('a, [data-hover="true"]');
-  
-  hoverableElements.forEach(element => {
-    if (element.hasAttribute('data-processed')) return;
-    
-    element.addEventListener('mouseenter', () => handleWaveEffect(element, true));
-    element.addEventListener('mouseleave', () => handleWaveEffect(element, false));
-    element.setAttribute('data-processed', 'true');
-  });
-};
+
 
 // Optimized wave effect
 const handleWaveEffect = (element, isEnter) => {
