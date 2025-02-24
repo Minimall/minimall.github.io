@@ -93,9 +93,13 @@ const setupHoverEffects = () => {
                 const text = element.textContent.trim();
                 const needsWave = !element.querySelector('.wave-text');
                 if (needsWave) {
-                    element.innerHTML = `<span class="wave-text">${
-                        text.split('').map(char => char === ' ' ? `<span>&nbsp;</span>` : `<span>${char}</span>`).join('')
-                    }</span>`;
+                    const processedText = text.split('').map(char => {
+                        if (char === ' ') {
+                            return `<span class="space"> </span>`;
+                        }
+                        return `<span>${char}</span>`;
+                    }).join('');
+                    element.innerHTML = `<span class="wave-text">${processedText}</span>`;
                 }
             }
 
@@ -230,11 +234,15 @@ function initHeadlineWave() {
     headlines.forEach(headline => {
         if (!headline.querySelector('.wave-text')) {
             const text = headline.textContent.trim();
-            headline.innerHTML = `<span class="wave-text">${
-                text.split('').map(char => char === ' ' ? `<span> </span>` : `<span>${char}</span>`).join('')
-            }</span>`;
+            const processedText = text.split('').map(char => {
+                if (char === ' ') {
+                    return `<span class="space"> </span>`;
+                }
+                return `<span>${char}</span>`;
+            }).join('');
+            headline.innerHTML = `<span class="wave-text">${processedText}</span>`;
         }
-        
+
         const letters = headline.querySelectorAll('.wave-text span');
         const enterDelay = 30;
         const leaveDelay = 10;
@@ -263,7 +271,7 @@ function initHeadlineWave() {
 
 document.addEventListener("DOMContentLoaded", async () => {
     console.log("DOM Content Loaded");
-    
+
     // Wait for all resources to load before playing the animation
     window.addEventListener('load', () => {
         setTimeout(initHeadlineWave, 100);

@@ -667,7 +667,14 @@ a span, .collapsible span {
 }
 
 .wave-text span {
-  user-select: none;
+  user-select: text;
+}
+
+.wave-text span.space {
+  margin: 0;
+  padding: 0;
+  display: inline;
+  white-space: pre;
 }
 
 [data-hover="true"] span {
