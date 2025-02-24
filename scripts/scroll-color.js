@@ -102,12 +102,22 @@ const updateBackgroundColor = () => {
   animationFrame = requestAnimationFrame(updateBackgroundColor);
 };
 
+let lastColorUpdate = null;
+const FRAME_RATE = 1000 / 60; // 60fps
+
 // Initialize scroll tracking
 document.addEventListener('DOMContentLoaded', () => {
   document.body.style.transition = 'none'; // Remove CSS transition to handle it in JS
+  
   window.addEventListener('scroll', () => {
-    if (!animationFrame) {
-      animationFrame = requestAnimationFrame(updateBackgroundColor);
+    const now = performance.now();
+    if (!lastColorUpdate || now - lastColorUpdate >= FRAME_RATE) {
+      if (!animationFrame) {
+        animationFrame = requestAnimationFrame(() => {
+          updateBackgroundColor();
+          lastColorUpdate = now;
+        });
+      }
     }
   }, { passive: true });
   
