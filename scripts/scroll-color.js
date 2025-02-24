@@ -57,12 +57,12 @@ const updateBackgroundColor = () => {
   const deltaTime = Math.min(currentTime - lastScrollTime, 50); // Cap delta time
   const currentScrollY = window.scrollY;
   
-  // Calculate and dampen scroll velocity
+  // Calculate and heavily dampen scroll velocity
   const rawVelocity = deltaTime > 0 ? (currentScrollY - lastScrollY) / deltaTime : 0;
-  scrollVelocity = Math.sign(rawVelocity) * Math.min(Math.abs(rawVelocity), 0.5);
+  scrollVelocity = Math.sign(rawVelocity) * Math.pow(Math.min(Math.abs(rawVelocity), 1), 2) * 0.25;
   
-  // Smoothed position prediction
-  const predictedOffset = scrollVelocity * Math.min(deltaTime, 16);
+  // Enhanced smoothed position prediction with stronger dampening
+  const predictedOffset = scrollVelocity * Math.min(deltaTime * 1.5, 24);
   
   const sections = document.querySelectorAll('.case-study-container');
   let targetBackground = '#FFFFFF';
@@ -77,12 +77,13 @@ const updateBackgroundColor = () => {
     }
   });
 
-  // Interpolate between current and target color based on visibility
-  document.body.style.backgroundColor = interpolateColor(currentBackground, targetBackground, maxVisibility);
+  // Enhance color interpolation with stronger visibility impact
+  const transitionFactor = Math.pow(maxVisibility, 1.5); // Makes transition more pronounced
+  document.body.style.backgroundColor = interpolateColor(currentBackground, targetBackground, transitionFactor);
   
-  if (maxVisibility >= 0.99) {
+  if (maxVisibility >= 0.95) {
     currentBackground = targetBackground;
-  } else if (maxVisibility <= 0.01) {
+  } else if (maxVisibility <= 0.05) {
     currentBackground = '#FFFFFF';
   }
 
