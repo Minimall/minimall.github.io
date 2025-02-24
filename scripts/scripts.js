@@ -228,18 +228,15 @@ function initShimmerText(selector) {
             const text = element.textContent.trim();
             const processedText = text.split(' ').map(word => {
                 const letters = word.split('').map(char => `<span>${char}</span>`).join('');
-                return `<span class="word">${letters}</span>` + ' ';
-            }).join('');
+                return `<span class="word">${letters}</span>`;
+            }).join(' ');
             element.innerHTML = `<span class="shimmer-text">${processedText}</span>`;
         }
 
         const letters = element.querySelectorAll('.shimmer-text .word span');
-        const baseDelay = 25;
-
         letters.forEach((letter, i) => {
-            setTimeout(() => {
-                letter.classList.add('shimmer-in');
-            }, i * baseDelay);
+            letter.style.transitionDelay = `${i * 50}ms`;
+            letter.classList.add('shimmer-in');
         });
     });
 }
@@ -270,13 +267,10 @@ function initHeadlineWave() {
 document.addEventListener("DOMContentLoaded", async () => {
     console.log("DOM Content Loaded");
 
-    // Wait for first paint and DOM to be ready
-    requestAnimationFrame(() => {
-        // Ensure content is visible before starting animations
-        setTimeout(() => {
-            initShimmerText('[data-shimmer="true"]');
-        }, 300);
-    });
+    // Initialize shimmer effect
+    initShimmerText('[data-shimmer="true"]');
+    
+    // Wait for all resources to load before playing other animations
     
     // Initialize other animations after full load
     window.addEventListener('load', () => {
