@@ -225,10 +225,14 @@ function initHeadlineWave() {
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
+                const targetElement = entry.target;
                 setTimeout(() => {
-                    const spans = entry.target.querySelectorAll('.wave-text span');
-                    const baseDelay = 25;
+                    // Find spans either directly in wave-text or in headlines
+                    const spans = targetElement.classList.contains('wave-text') ? 
+                        targetElement.querySelectorAll('span') : 
+                        targetElement.querySelectorAll('.wave-text span');
                     
+                    const baseDelay = 25;
                     spans.forEach((span, i) => {
                         setTimeout(() => {
                             span.classList.add('shimmer-in');
@@ -236,12 +240,13 @@ function initHeadlineWave() {
                     });
                 }, 1200);
                 
-                observer.unobserve(entry.target);
+                observer.unobserve(targetElement);
             }
         });
     }, { threshold: 0.5 });
 
-    const headlines = document.querySelectorAll('.headline');
+    // Observe both headlines and footer wave-text elements
+    const headlines = document.querySelectorAll('.headline, .wave-text');
     headlines.forEach(headline => {
         const waveSpans = headline.querySelectorAll('.wave-text');
         if (waveSpans.length === 0) {
