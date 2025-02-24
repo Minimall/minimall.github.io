@@ -228,15 +228,18 @@ function initShimmerText(selector) {
             const text = element.textContent.trim();
             const processedText = text.split(' ').map(word => {
                 const letters = word.split('').map(char => `<span>${char}</span>`).join('');
-                return `<span class="word">${letters}</span>`;
-            }).join(' ');
+                return `<span class="word">${letters}</span>` + ' ';
+            }).join('');
             element.innerHTML = `<span class="shimmer-text">${processedText}</span>`;
         }
 
         const letters = element.querySelectorAll('.shimmer-text .word span');
+        const baseDelay = 25;
+
         letters.forEach((letter, i) => {
-            letter.style.transitionDelay = `${i * 50}ms`;
-            letter.classList.add('shimmer-in');
+            setTimeout(() => {
+                letter.classList.add('shimmer-in');
+            }, i * baseDelay);
         });
     });
 }
@@ -267,18 +270,7 @@ function initHeadlineWave() {
 document.addEventListener("DOMContentLoaded", async () => {
     console.log("DOM Content Loaded");
 
-    // Wait for first meaningful paint
-    requestAnimationFrame(() => {
-        // Wait for fonts and resources to be ready
-        document.fonts.ready.then(() => {
-            // Initialize shimmer effect after fonts are loaded
-            setTimeout(() => {
-                initShimmerText('[data-shimmer="true"]');
-            }, 800);
-        });
-    });
-
-    // Initialize other animations after full load
+    // Wait for all resources to load before playing the animation
     window.addEventListener('load', () => {
         setTimeout(initHeadlineWave, 100);
     });
