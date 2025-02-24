@@ -90,7 +90,17 @@ h2 {
   letter-spacing: -0.06em;
 }
 
-.headline .wave-text span.shimmer-in {
+.shimmer-text {
+  display: inline;
+}
+
+.shimmer-text .word {
+  display: inline;
+  white-space: pre-wrap;
+  letter-spacing: -0.06em;
+}
+
+.shimmer-text span.shimmer-in {
   opacity: 1;
   transform: translateY(0);
   animation: shimmerWave 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;

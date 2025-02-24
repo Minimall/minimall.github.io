@@ -221,9 +221,31 @@ const triggerRandomWave = () => {
 };
 
 // Initialize everything
+function initShimmerText(selector) {
+    const elements = document.querySelectorAll(selector);
+    elements.forEach(element => {
+        if (!element.querySelector('.shimmer-text')) {
+            const text = element.textContent.trim();
+            const processedText = text.split(' ').map(word => {
+                const letters = word.split('').map(char => `<span>${char}</span>`).join('');
+                return `<span class="word">${letters}</span>` + ' ';
+            }).join('');
+            element.innerHTML = `<span class="shimmer-text">${processedText}</span>`;
+        }
+
+        const letters = element.querySelectorAll('.shimmer-text .word span');
+        const baseDelay = 25;
+
+        letters.forEach((letter, i) => {
+            setTimeout(() => {
+                letter.classList.add('shimmer-in');
+            }, i * baseDelay);
+        });
+    });
+}
+
 function initHeadlineWave() {
-    const headlines = document.querySelectorAll('.headline');
-    headlines.forEach(headline => {
+    initShimmerText('.headline');
         if (!headline.querySelector('.wave-text')) {
             const text = headline.textContent.trim();
             const processedText = text.split(' ').map(word => {
