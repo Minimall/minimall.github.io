@@ -140,6 +140,8 @@ p {
   margin-bottom: calc(var(--spacing) * 4);
   max-width: var(--max-width);
   padding-bottom: 2vw;
+  contain-intrinsic-size: 1000px; /* Reserve approximate space */
+  content-visibility: auto;
 }
 
 /* ==========================================================================
@@ -302,7 +304,8 @@ li, .tag {
    ========================================================================== */
 .profile-image {
   width: 100%;
-  height: auto;
+  height: 640px; /* Explicit height */
+  aspect-ratio: 4/3;
   border-radius: 8px;
   margin-bottom: var(--spacing);
   border: 1px solid #dbdbdb;
