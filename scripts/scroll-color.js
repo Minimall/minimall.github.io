@@ -54,14 +54,15 @@ const calculateVisibility = (element, predictedOffset = 0) => {
 
 const updateBackgroundColor = () => {
   const currentTime = performance.now();
-  const deltaTime = currentTime - lastScrollTime;
+  const deltaTime = Math.min(currentTime - lastScrollTime, 50); // Cap delta time
   const currentScrollY = window.scrollY;
   
-  // Calculate scroll velocity (pixels per millisecond)
-  scrollVelocity = deltaTime > 0 ? (currentScrollY - lastScrollY) / deltaTime : 0;
+  // Calculate and dampen scroll velocity
+  const rawVelocity = deltaTime > 0 ? (currentScrollY - lastScrollY) / deltaTime : 0;
+  scrollVelocity = Math.sign(rawVelocity) * Math.min(Math.abs(rawVelocity), 0.5);
   
-  // Predict scroll position based on velocity
-  const predictedOffset = scrollVelocity * 32; // Predict ~32ms ahead
+  // Smoothed position prediction
+  const predictedOffset = scrollVelocity * Math.min(deltaTime, 16);
   
   const sections = document.querySelectorAll('.case-study-container');
   let targetBackground = '#FFFFFF';
