@@ -91,7 +91,7 @@ h2 {
 
 .headline .wave-text span.wave-in {
   font-variation-settings: "wght" 1000, "CASL" 1;
-  color: #111111;
+  animation: colorWave 1.6s ease-in-out forwards;
 }
 
 .headline .wave-text span.wave-out {
