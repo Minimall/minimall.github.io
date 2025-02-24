@@ -1,11 +1,27 @@
 import { setupHoverEffects } from './modules/interactions.js';
 import { initializeAnimations } from './modules/animations.js';
 import { initializeContentLoader } from './modules/loader.js';
+import { initPerformance } from './modules/performance.js';
 
 export const initCore = () => {
+  // Initialize performance optimizations first
+  initPerformance();
+  
+  // Then initialize other features
   setupHoverEffects();
   initializeAnimations();
   initializeContentLoader('header');
+  
+  // Set up event delegation for hover effects
+  document.addEventListener('mouseover', (e) => {
+    const target = e.target.closest('[data-hover="true"]');
+    if (target) handleHoverEffect(target, true);
+  });
+
+  document.addEventListener('mouseout', (e) => {
+    const target = e.target.closest('[data-hover="true"]');
+    if (target) handleHoverEffect(target, false);
+  });
 };
 
 // Basic hover effect handling 
