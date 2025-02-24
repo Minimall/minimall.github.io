@@ -244,20 +244,38 @@ function initHeadlineWave() {
         });
     }, { threshold: 0.5 });
 
-    // Only observe h1 elements
-    const headlines = document.querySelectorAll('h1');
-    
-    headlines.forEach(headline => {
-        const waveTextSpan = headline.querySelector('.wave-text');
-        if (waveTextSpan) {
-            const text = waveTextSpan.textContent.trim();
-            const processedText = text.split('').map(char => 
-                char === ' ' ? `<span>&nbsp;</span>` : `<span>${char}</span>`
-            ).join('');
-            waveTextSpan.innerHTML = processedText;
-            observer.observe(headline);
-        }
+    function processHeadlines() {
+        const headlines = document.querySelectorAll('h1');
+        headlines.forEach(headline => {
+            // Skip if already processed
+            if (headline.hasAttribute('data-wave-processed')) return;
+            
+            const waveTextSpan = headline.querySelector('.wave-text');
+            if (waveTextSpan) {
+                const text = waveTextSpan.textContent.trim();
+                const processedText = text.split('').map(char => 
+                    char === ' ' ? `<span>&nbsp;</span>` : `<span>${char}</span>`
+                ).join('');
+                waveTextSpan.innerHTML = processedText;
+                observer.observe(headline);
+                headline.setAttribute('data-wave-processed', 'true');
+            }
+        });
+    }
+
+    // Initial processing
+    processHeadlines();
+
+    // Watch for dynamically loaded content
+    const footerObserver = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            if (mutation.addedNodes.length) {
+                processHeadlines();
+            }
+        });
     });
+
+    footerObserver.observe(document.body, { childList: true, subtree: true });
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
