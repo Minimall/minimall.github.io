@@ -126,27 +126,64 @@ const setupHoverEffects = () => {
 
 // Handle wave animation effect
 const handleWaveEffect = (element, isEnter, isRandom = false) => {
-    console.log('Wave effect on:', element.innerHTML);
     const letters = element.querySelectorAll('.wave-text span');
+
+    // Create performance marks for this animation
+    const markId = `wave-${Date.now()}`;
+    performance.mark(`${markId}-start`);
+
+    // Track initial positions
+    const initialPositions = new Map();
+    letters.forEach(letter => {
+        const rect = letter.getBoundingClientRect();
+        initialPositions.set(letter, {
+            left: rect.left,
+            width: rect.width,
+            transform: getComputedStyle(letter).transform
+        });
+    });
+
+    // Track changes during animation
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach(mutation => {
+            const letter = mutation.target;
+            const initial = initialPositions.get(letter);
+            if (initial) {
+                const current = letter.getBoundingClientRect();
+                const transform = getComputedStyle(letter).transform;
+                if (current.left !== initial.left || 
+                    current.width !== initial.width || 
+                    transform !== initial.transform) {
+                    console.log(`Letter "${letter.textContent}" changed:`, {
+                        positionDelta: current.left - initial.left,
+                        widthDelta: current.width - initial.width,
+                        transform: transform
+                    });
+                }
+            }
+        });
+    });
+
+    // Observe each letter
+    letters.forEach(letter => {
+        observer.observe(letter, {
+            attributes: true,
+            characterData: true,
+            childList: true,
+            subtree: true
+        });
+    });
+
     const enterDelay = isRandom ? 112 : 48;  // 20% faster for wave-in
     const leaveDelay = isRandom ? 104 : 26;  // 30% slower for wave-out
 
-    // Clear previous animation timeouts
-    if (element.waveTimeouts) {
-        element.waveTimeouts.forEach(timeout => clearTimeout(timeout));
-    }
-    element.waveTimeouts = [];
-
-    letters.forEach((letter, i) => {
-        const timeout = setTimeout(
-            () => {
-                letter.classList.remove('wave-in', 'wave-out');
-                letter.classList.add(isEnter ? 'wave-in' : 'wave-out');
-            },
-            isEnter ? i * enterDelay : (letters.length - 1 - i) * leaveDelay
-        );
-        element.waveTimeouts.push(timeout);
-    });
+    // Stop observing after animation
+    setTimeout(() => {
+        observer.disconnect();
+        performance.mark(`${markId}-end`);
+        performance.measure(`Wave Effect Duration`, `${markId}-start`, `${markId}-end`);
+        console.log(performance.getEntriesByName('Wave Effect Duration'));
+    }, (letters.length * (isEnter ? enterDelay : leaveDelay)) + 100);
 };
 
 // Handle image hover effects
