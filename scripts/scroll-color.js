@@ -59,7 +59,7 @@ const updateBackgroundColor = () => {
   sections.forEach(section => {
     const visibility = calculateVisibility(section);
     const computedStyle = getComputedStyle(section);
-    const sectionBackground = computedStyle.getPropertyValue('--case-background').trim();
+    const sectionBackground = computedStyle.getPropertyValue('--data-bg').trim();
     
     if (visibility > maxVisibility) {
       maxVisibility = visibility;
