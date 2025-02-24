@@ -274,10 +274,10 @@ document.addEventListener("DOMContentLoaded", async () => {
             // Initialize shimmer effect after fonts are loaded
             setTimeout(() => {
                 initShimmerText('[data-shimmer="true"]');
-            }, 1900);
+            }, 800);
         });
     });
-    
+
     // Initialize other animations after full load
     window.addEventListener('load', () => {
         setTimeout(initHeadlineWave, 100);
