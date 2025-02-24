@@ -234,13 +234,14 @@ function initHeadlineWave() {
     headlines.forEach(headline => {
         if (!headline.querySelector('.wave-text')) {
             const text = headline.textContent.trim();
-            const processedText = text.split(' ').map(word => 
-                `<span class="word">${word}</span>`
-            ).join(' ');
+            const processedText = text.split(' ').map(word => {
+                const letters = word.split('').map(char => `<span>${char}</span>`).join('');
+                return `<span class="word">${letters}</span>`;
+            }).join(' ');
             headline.innerHTML = `<span class="wave-text">${processedText}</span>`;
         }
 
-        const letters = headline.querySelectorAll('.wave-text span');
+        const letters = headline.querySelectorAll('.wave-text .word span');
         const baseDelay = 25;
         
         letters.forEach((letter, i) => {
