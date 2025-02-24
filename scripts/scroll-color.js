@@ -32,42 +32,54 @@ const calculateVisibility = (element) => {
   const rect = element.getBoundingClientRect();
   const windowHeight = window.innerHeight;
   
-  // Calculate visibility based on first 45% of the element
-  const elementHeight = rect.height * 0.45;
+  // Calculate how much of the element is visible in the first 45% of viewport
+  const viewportThreshold = windowHeight * 0.45;
   const elementTop = rect.top;
+  const elementBottom = rect.bottom;
+  
+  // If element is above viewport, return 0
+  if (elementBottom <= 0) return 0;
+  
+  // If element is below 45% threshold, return 0
+  if (elementTop >= viewportThreshold) return 0;
+  
+  // Calculate visibility percentage within the 45% threshold
   const visibleTop = Math.max(0, elementTop);
-  const visibleBottom = Math.min(elementTop + elementHeight, windowHeight);
+  const visibleBottom = Math.min(viewportThreshold, elementBottom);
   const visibleHeight = Math.max(0, visibleBottom - visibleTop);
   
-  // Calculate visibility ratio based on the 45% portion
-  return Math.max(0, Math.min(1, visibleHeight / elementHeight));
+  return Math.min(1, visibleHeight / viewportThreshold);
 };
 
 const updateBackgroundColor = () => {
   const sections = document.querySelectorAll('.case-study-container');
-  let targetColor = '#FFFFFF';
+  let targetBackground = '#FFFFFF';
   let maxVisibility = 0;
 
   sections.forEach(section => {
     const visibility = calculateVisibility(section);
     const computedStyle = getComputedStyle(section);
-    const caseBackground = computedStyle.getPropertyValue('--case-background').trim() || '#EEEDE5';
-
+    const sectionBackground = computedStyle.getPropertyValue('--case-background').trim();
+    
     if (visibility > maxVisibility) {
       maxVisibility = visibility;
-      targetColor = caseBackground;
+      targetBackground = sectionBackground || '#FFFFFF';
     }
   });
 
-  document.body.style.backgroundColor = interpolateColor(currentBackground, targetColor, 0.1);
-  currentBackground = document.body.style.backgroundColor;
+  // Smoothly interpolate between current and target color
+  document.body.style.backgroundColor = interpolateColor(currentBackground, targetBackground, maxVisibility);
+  
+  if (maxVisibility === 1) {
+    currentBackground = targetBackground;
+  }
 
   animationFrame = requestAnimationFrame(updateBackgroundColor);
 };
 
 // Initialize scroll tracking
 document.addEventListener('DOMContentLoaded', () => {
-  document.body.style.transition = 'background-color 0.2s ease-out';
+  document.body.style.transition = 'none'; // Remove CSS transition to handle it in JS
   window.addEventListener('scroll', () => {
     if (!animationFrame) {
       animationFrame = requestAnimationFrame(updateBackgroundColor);
