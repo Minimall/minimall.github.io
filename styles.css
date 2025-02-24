@@ -35,7 +35,7 @@ body {
   font-size: 1.2rem;
   line-height: 1.6;
   transition: background-color 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  font-variation-settings: "wght" 430;
+  font-variation-settings: "slnt" 0, "CASL" 0.55, "CRSV" 1, "MONO" 0;
   letter-spacing: -0.02em;
   color: #111;
   background: #ffffff;
