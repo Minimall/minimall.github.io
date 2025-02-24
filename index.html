@@ -1,47 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<!-- IMPORTANT: Do not remove cache control - required for complete page refresh -->
-		<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-		<meta http-equiv="Pragma" content="no-cache" />
-		<meta http-equiv="Expires" content="0" />
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+		<meta http-equiv="Pragma" content="no-cache">
+		<meta http-equiv="Expires" content="0">
 		<title>Dmytro Dvornichenko • Product Design Lead</title>
-
-		<link rel="stylesheet" href="styles.css" />
-		<link rel="stylesheet" href="styles/animation.css" />
-		<!-- Preload about.html -->
-		<link rel="preload" href="about.html" as="document" crossorigin="anonymous" />
+		<link rel="stylesheet" href="styles.css">
+		<link rel="stylesheet" href="styles/animation.css">
+		<link rel="preload" href="about.html" as="document" crossorigin="anonymous">
+		<link rel="preload" href="/fonts/Syne-Regular.woff2" as="font" type="font/woff2" crossorigin>
+		<link rel="preload" href="/fonts/Recursive-Regular.woff2" as="font" type="font/woff2" crossorigin>
 	</head>
 	<body>
 		<div class="container">
 			<div id="header-placeholder"></div>
-			<header class="header">  <!-- style="--company-name-color: #ffffff;" --> 
-				<h1 class="headline">
-					<span class="wave-text">I design</span> products, apps, and websites for startups & large orgs.
-				</h1>
-				<div class="subheadline"></div>
+			<header class="header">
+				<h1 class="headline"><span class="wave-text">I design</span> products, apps, and websites for startups & large orgs.</h1>
 			</header>
 			<div class="main-text">
-				<p>
-					I'm a Product Design Lead with 17 years of experience in building complex technical products that feel simple and intuitive. Currently I'm architecting product design for AI Agent Builder platform at <a data-hover="true" href="https://datrics.ai" style="color: #111">Datrics</a> and advising tech startups across the world.
-				</p>
-				<p>
-					<a href="about.html" data-hover="true">More about me</a>
-				</p>
-				<p>
-					As a designer, I help teams bridge technical complexity with user needs – whether it's making AI accessible, simplifying analytics, or modernizing enterprise platforms. 
-				</p>
-				<p>
-					As a leader & manager, I've helped large orgs build happy & successful teams, and provided the right environment for designers to do the best work of their career.
-				</p>
+				<p>I'm a Product Design Lead with 17 years of experience in building complex technical products that feel simple and intuitive. Currently I'm architecting product design for AI Agent Builder platform at <a data-hover="true" href="https://datrics.ai">Datrics</a> and advising tech startups across the world.</p>
+				<p><a href="about.html" data-hover="true">More about me</a></p>
+				<p>As a designer, I help teams bridge technical complexity with user needs – whether it's making AI accessible, simplifying analytics, or modernizing enterprise platforms.</p>
+				<p>As a leader & manager, I've helped large orgs build happy & successful teams, and provided the right environment for designers to do the best work of their career.</p>
 				<div class="menu">
 					<a href="https://calendly.com/dmytrodvornichenko/30-min-meeting" data-hover="true">Schedule a call</a>
 					<a href="mailto:hi@dvornichenko.design" data-hover="true">hi@dvornichenko.design</a>
 				</div>
 			</div>
-			<!-- Case Study Placeholders -->
+			<!-- Case Studies -->
 			<div id="case1-placeholder" data-case-file="cases/case1-teaser.html">
 				<div class="case-study-container" style="--case-background: #EEEDE5; --case-title-color: #333; --company-name-color: #777;">
 					<div class="case-study-content">
@@ -51,7 +39,7 @@
 							</div>
 							<h1 class="case-title">
 								<span class="company-name">Datrics is an innovative startup helping enterprises build and deploy custom AI agents.</span>
-									I partnered with their team as Principal Product Designer to transform their technical platform into an intuitive enterprise solution.
+								I partnered with their team as Principal Product Designer to transform their technical platform into an intuitive enterprise solution.
 							</h1>
 							<ul>
 								<li>Startups</li>
@@ -155,8 +143,8 @@
 				</div>
 			</div>
 			<div id="footer-placeholder" data-case-file="footer.html"></div>
-		
-		<script src="scripts/scripts.js"></script>
-		<script src="scripts/footer-animation.js"></script>
+		</div>
+		<script src="scripts/scripts.js" defer></script>
+		<script src="scripts/footer-animation.js" defer></script>
 	</body>
 </html>
