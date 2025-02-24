@@ -278,8 +278,11 @@ function initHeadlineWave() {
     footerObserver.observe(document.body, { childList: true, subtree: true });
 }
 
+import { initCore } from './core.js';
+
 document.addEventListener("DOMContentLoaded", async () => {
-    console.log("DOM Content Loaded");
+    // Initialize core functionality
+    initCore();
 
     // Wait for all resources to load before playing the animation
     window.addEventListener('load', () => {
