@@ -31,46 +31,54 @@ let animationFrame;
 const calculateVisibility = (element) => {
   const rect = element.getBoundingClientRect();
   const windowHeight = window.innerHeight;
-  
-  // Calculate how much of the element is visible in the first 45% of viewport
   const viewportThreshold = windowHeight * 0.45;
-  const elementTop = rect.top;
-  const elementBottom = rect.bottom;
+  const minVisiblePixels = 1;
   
-  // If element is above viewport, return 0
-  if (elementBottom <= 0) return 0;
+  // If element is completely above or below viewport
+  if (rect.bottom <= 0 || rect.top >= windowHeight) return 0;
   
-  // If element is below 45% threshold, return 0
-  if (elementTop >= viewportThreshold) return 0;
-  
-  // Calculate visibility percentage within the 45% threshold
-  const visibleTop = Math.max(0, elementTop);
-  const visibleBottom = Math.min(viewportThreshold, elementBottom);
+  // Calculate visibility percentage from first pixel to 45% threshold
+  const visibleTop = Math.max(0, rect.top);
+  const visibleBottom = Math.min(viewportThreshold, rect.bottom);
   const visibleHeight = Math.max(0, visibleBottom - visibleTop);
   
+  // If element is barely visible (at least 1px), return minimum progress
+  if (visibleHeight > 0 && visibleHeight < minVisiblePixels) {
+    return 0.01; // 1% progress for minimal visibility
+  }
+  
+  // Calculate progress (1% to 100%) based on visibility from 0 to 45% viewport
   return Math.min(1, visibleHeight / viewportThreshold);
 };
 
 const updateBackgroundColor = () => {
   const sections = document.querySelectorAll('.case-study-container');
   let targetBackground = '#FFFFFF';
-  let maxVisibility = 0;
+  let currentVisibility = 0;
+  let previousBackground = currentBackground;
 
+  // Find the most visible section
   sections.forEach(section => {
     const visibility = calculateVisibility(section);
     const computedStyle = getComputedStyle(section);
     const sectionBackground = computedStyle.getPropertyValue('--data-bg').trim();
     
-    if (visibility > maxVisibility) {
-      maxVisibility = visibility;
+    if (visibility > 0) {
+      currentVisibility = visibility;
       targetBackground = sectionBackground || '#FFFFFF';
+      previousBackground = currentBackground;
     }
   });
 
-  // Smoothly interpolate between current and target color
-  document.body.style.backgroundColor = interpolateColor(currentBackground, targetBackground, maxVisibility);
+  // Handle transition to default white when no section is visible
+  if (!targetBackground || targetBackground === '') {
+    targetBackground = '#FFFFFF';
+  }
+
+  // Update color with smooth interpolation
+  document.body.style.backgroundColor = interpolateColor(previousBackground, targetBackground, currentVisibility);
   
-  if (maxVisibility === 1) {
+  if (currentVisibility >= 0.99) {
     currentBackground = targetBackground;
   }
 
