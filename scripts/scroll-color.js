@@ -77,15 +77,33 @@ const updateBackgroundColor = () => {
     }
   });
 
-  // Enhance color interpolation with stronger visibility impact
-  const transitionFactor = Math.pow(maxVisibility, 1.5); // Makes transition more pronounced
-  document.body.style.backgroundColor = interpolateColor(currentBackground, targetBackground, transitionFactor);
+  // Smooth easing with velocity consideration
+  const startTime = performance.now();
+  const easeDuration = 1200; // 1200ms transition
   
-  if (maxVisibility >= 0.95) {
-    currentBackground = targetBackground;
-  } else if (maxVisibility <= 0.05) {
-    currentBackground = '#FFFFFF';
-  }
+  const smoothTransition = () => {
+    const elapsed = performance.now() - startTime;
+    const progress = Math.min(elapsed / easeDuration, 1);
+    
+    // Cubic easing
+    const easedProgress = 1 - Math.pow(1 - progress, 3);
+    
+    // Blend current visibility with eased transition
+    const transitionFactor = Math.pow(maxVisibility, 1.5) * easedProgress;
+    document.body.style.backgroundColor = interpolateColor(currentBackground, targetBackground, transitionFactor);
+    
+    if (progress < 1) {
+      requestAnimationFrame(smoothTransition);
+    } else {
+      if (maxVisibility >= 0.95) {
+        currentBackground = targetBackground;
+      } else if (maxVisibility <= 0.05) {
+        currentBackground = '#FFFFFF';
+      }
+    }
+  };
+  
+  smoothTransition();
 
   animationFrame = requestAnimationFrame(updateBackgroundColor);
 };
