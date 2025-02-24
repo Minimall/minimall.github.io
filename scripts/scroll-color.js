@@ -72,12 +72,24 @@ const updateBackgroundColor = () => {
     }
   });
 
-  // If no section is visible, transition back to white
+  // If no section is visible, calculate visibility based on the closest section
   if (!hasVisibleSection) {
-    currentVisibility = 1 - (window.scrollY / (window.innerHeight * 0.45));
-    currentVisibility = Math.max(0, Math.min(1, currentVisibility));
-    targetBackground = '#FFFFFF';
-    previousBackground = currentBackground;
+    const scrollPosition = window.scrollY;
+    const firstSection = sections[0];
+    const rect = firstSection.getBoundingClientRect();
+    const distanceFromTop = rect.top;
+    const transitionZone = window.innerHeight * 0.45;
+    
+    if (distanceFromTop > 0) {
+      currentVisibility = 1 - (distanceFromTop / transitionZone);
+      currentVisibility = Math.max(0, Math.min(1, currentVisibility));
+      targetBackground = firstSection.style.getPropertyValue('--data-bg').trim() || '#FFFFFF';
+      previousBackground = '#FFFFFF';
+    } else {
+      currentVisibility = 1;
+      targetBackground = '#FFFFFF';
+      previousBackground = currentBackground;
+    }
   }
 
   // Update color with smooth interpolation
