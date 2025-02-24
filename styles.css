@@ -305,11 +305,15 @@ nav a:hover {
 @keyframes caseTitleWave {
   0% { 
     font-variation-settings: "wght" 400;
-    color: var(--case-title-color);
+    color: #1a4ce0;
   }
-  50% { 
+  33% { 
     font-variation-settings: "wght" 700;
-    color: var(--company-name-color);
+    color: #c12f78;
+  }
+  88% { 
+    font-variation-settings: "wght" 700;
+    color: #540a99;
   }
   100% { 
     font-variation-settings: "wght" 400;
