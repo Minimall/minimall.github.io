@@ -1,16 +1,14 @@
-
 @font-face {
   font-family: 'Recursive';
-  src: url('/fonts/Recursive-Regular.woff2') format('woff2');
-  font-weight: 400;
+  src: local('Recursive'),
+       url('https://fonts.googleapis.com/css2?family=Recursive:wght@300..1000&display=swap');
   font-display: swap;
 }
 
 body {
-  font-family: var(--font-primary);
-  font-size: var(--font-size-base);
-  line-height: var(--line-height-base);
-  letter-spacing: -0.02em;
+  font-family: 'Recursive', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 1.2rem;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
 }
 

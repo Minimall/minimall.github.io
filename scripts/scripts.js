@@ -279,7 +279,6 @@ function initHeadlineWave() {
 }
 
 import { initCore } from './core.js';
-import { setupHoverEffects } from './modules/interactions.js';
 
 document.addEventListener("DOMContentLoaded", async () => {
     // Initialize core functionality with optimized loading
