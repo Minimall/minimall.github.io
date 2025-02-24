@@ -26,32 +26,49 @@ const interpolateColor = (color1, color2, factor) => {
 
 let currentBackground = '#FFFFFF';
 let animationFrame;
+let lastScrollY = window.scrollY;
+let scrollVelocity = 0;
+let lastScrollTime = performance.now();
 
-const calculateVisibility = (element) => {
+const calculateVisibility = (element, predictedOffset = 0) => {
   const rect = element.getBoundingClientRect();
   const windowHeight = window.innerHeight;
-  
-  // Calculate the visibility threshold (45% of viewport)
   const threshold = windowHeight * 0.45;
   
-  // If element is completely above or below threshold
-  if (rect.bottom <= 0 || rect.top >= threshold) return 0;
+  // Adjust rect based on predicted scroll
+  const predictedRect = {
+    top: rect.top - predictedOffset,
+    bottom: rect.bottom - predictedOffset
+  };
   
-  // Calculate visibility percentage
-  const visibleTop = Math.max(0, rect.top);
-  const visibleBottom = Math.min(threshold, rect.bottom);
+  // If element is completely above or below threshold with prediction
+  if (predictedRect.bottom <= 0 || predictedRect.top >= threshold) return 0;
+  
+  // Calculate visibility percentage with prediction
+  const visibleTop = Math.max(0, predictedRect.top);
+  const visibleBottom = Math.min(threshold, predictedRect.bottom);
   const visibleHeight = visibleBottom - visibleTop;
   
   return Math.max(0, Math.min(1, visibleHeight / threshold));
 };
 
 const updateBackgroundColor = () => {
+  const currentTime = performance.now();
+  const deltaTime = currentTime - lastScrollTime;
+  const currentScrollY = window.scrollY;
+  
+  // Calculate scroll velocity (pixels per millisecond)
+  scrollVelocity = deltaTime > 0 ? (currentScrollY - lastScrollY) / deltaTime : 0;
+  
+  // Predict scroll position based on velocity
+  const predictedOffset = scrollVelocity * 32; // Predict ~32ms ahead
+  
   const sections = document.querySelectorAll('.case-study-container');
   let targetBackground = '#FFFFFF';
   let maxVisibility = 0;
 
   sections.forEach(section => {
-    const visibility = calculateVisibility(section);
+    const visibility = calculateVisibility(section, predictedOffset);
     if (visibility > maxVisibility) {
       maxVisibility = visibility;
       const sectionBg = getComputedStyle(section).getPropertyValue('--data-bg').trim();
@@ -76,6 +93,8 @@ document.addEventListener('DOMContentLoaded', () => {
   document.body.style.transition = 'none';
   
   window.addEventListener('scroll', () => {
+    lastScrollY = window.scrollY;
+    lastScrollTime = performance.now();
     if (!animationFrame) {
       animationFrame = requestAnimationFrame(updateBackgroundColor);
     }
