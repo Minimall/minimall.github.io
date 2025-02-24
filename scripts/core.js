@@ -1,37 +1,19 @@
-import { setupHoverEffects } from './modules/interactions.js';
-import { initializeAnimations } from './modules/animations.js';
-import { initializeContentLoader } from './modules/loader.js';
-import { initPerformance } from './modules/performance.js';
-
+// Core functionality initialization
 export const initCore = () => {
-  // Initialize performance optimizations first
-  initPerformance();
-  
-  // Initialize content loader with progressive strategy
-  initializeContentLoader();
-  
-  // Initialize features after content is loaded
-  document.addEventListener('ContentLoaded', () => {
-    setupHoverEffects();
-    initializeAnimations();
-  });
-  
   // Set up event delegation for hover effects
   document.addEventListener('mouseover', (e) => {
     const target = e.target.closest('[data-hover="true"]');
-    if (target) handleHoverEffect(target, true);
+    if (target) handleWaveEffect(target, true); //Corrected to use handleWaveEffect
   });
 
   document.addEventListener('mouseout', (e) => {
     const target = e.target.closest('[data-hover="true"]');
-    if (target) handleHoverEffect(target, false);
+    if (target) handleWaveEffect(target, false); //Corrected to use handleWaveEffect
   });
 };
 
-
-
 // Optimized wave effect
-const handleWaveEffect = (element, isEnter) => {
+export const handleWaveEffect = (element, isEnter) => {
   const letters = element.querySelectorAll('.wave-text span');
   requestAnimationFrame(() => {
     letters.forEach((letter, i) => {
@@ -47,7 +29,7 @@ const handleWaveEffect = (element, isEnter) => {
 };
 
 // Initialize headline animations
-const initHeadlineWave = () => {
+export const initHeadlineWave = () => {
   const observer = new IntersectionObserver(entries => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -69,8 +51,10 @@ const initHeadlineWave = () => {
   });
 };
 
-//This file needs to be created: modules/interactions.js
-//This file needs to be created: modules/animations.js
-//This file needs to be created: modules/loader.js
+import { setupHoverEffects } from './modules/interactions.js';
+import { initializeAnimations } from './modules/animations.js';
+import { initializeContentLoader } from './modules/loader.js';
+import { initPerformance } from './modules/performance.js';
 
-export {setupHoverEffects, initHeadlineWave}
+
+export {setupHoverEffects, initHeadlineWave, initCore, handleWaveEffect};
