@@ -71,10 +71,10 @@ h2 {
 
 .headline {
   font-family: 'Recursive', sans-serif;
-  font-weight: 400;
-  font-size: 3.4rem;
+  font-weight: 500;
+  font-size: 4.1rem;
   line-height: 1.2;
-  letter-spacing: -0.035em;
+  letter-spacing: -0.05em;
   margin-bottom: calc(var(--spacing));
   font-variation-settings: "slnt" 0, "CASL" 0.55, "CRSV" 1, "MONO" 0;
   -webkit-font-smoothing: antialiased;
@@ -246,12 +246,12 @@ nav a:hover {
 .case-title {
 
   font-size: 2.25rem;
-  line-height: 1.3;
+  line-height: 1.35;
   letter-spacing: -0.035em;
   font-variation-settings: "wght" 350;
   color: var(--case-title-color);
   max-width: var(--max-width);
-  padding-top: 1rem;
+  padding-top: 4rem;
   padding-bottom: 1rem;
 }
 
@@ -851,20 +851,7 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
     rgba(255, 255, 255, 0.6) 40%,
     rgba(255, 255, 255, 0) 100%
   );
-  mask-image: linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 1) 0%,
-    rgba(0, 0, 0, 0.8) 30%,
-    rgba(0, 0, 0, 0.6) 60%,
-    rgba(0, 0, 0, 0) 100%
-  );
-  -webkit-mask-image: linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 1) 0%,
-    rgba(0, 0, 0, 0.8) 30%,
-    rgba(0, 0, 0, 0.6) 60%,
-    rgba(0, 0, 0, 0) 100%
-  );
+
   pointer-events: none;
   z-index: 1;
   will-change: backdrop-filter;
