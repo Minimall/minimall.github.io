@@ -56,6 +56,7 @@ const updateBackgroundColor = () => {
   let targetBackground = '#FFFFFF';
   let currentVisibility = 0;
   let previousBackground = currentBackground;
+  let hasVisibleSection = false;
 
   // Find the most visible section
   sections.forEach(section => {
@@ -64,15 +65,19 @@ const updateBackgroundColor = () => {
     const sectionBackground = computedStyle.getPropertyValue('--data-bg').trim();
     
     if (visibility > 0) {
+      hasVisibleSection = true;
       currentVisibility = visibility;
       targetBackground = sectionBackground || '#FFFFFF';
       previousBackground = currentBackground;
     }
   });
 
-  // Handle transition to default white when no section is visible
-  if (!targetBackground || targetBackground === '') {
+  // If no section is visible, transition back to white
+  if (!hasVisibleSection) {
+    currentVisibility = 1 - (window.scrollY / (window.innerHeight * 0.45));
+    currentVisibility = Math.max(0, Math.min(1, currentVisibility));
     targetBackground = '#FFFFFF';
+    previousBackground = currentBackground;
   }
 
   // Update color with smooth interpolation
