@@ -270,10 +270,15 @@ function initHeadlineWave() {
 document.addEventListener("DOMContentLoaded", async () => {
     console.log("DOM Content Loaded");
 
-    // Initialize shimmer effect immediately
-    initShimmerText('[data-shimmer="true"]');
+    // Wait for first paint and DOM to be ready
+    requestAnimationFrame(() => {
+        // Ensure content is visible before starting animations
+        setTimeout(() => {
+            initShimmerText('[data-shimmer="true"]');
+        }, 300);
+    });
     
-    // Wait for all resources to load before playing the wave animation
+    // Initialize other animations after full load
     window.addEventListener('load', () => {
         setTimeout(initHeadlineWave, 100);
     });
