@@ -278,15 +278,10 @@ function initHeadlineWave() {
     footerObserver.observe(document.body, { childList: true, subtree: true });
 }
 
-import { initCore, handleWaveEffect, initHeadlineWave } from './core.js';
-
 document.addEventListener("DOMContentLoaded", async () => {
-    // Initialize core functionality with optimized loading
-    requestIdleCallback(() => {
-        initCore();
-    });
+    console.log("DOM Content Loaded");
 
-    // Set up event handlers when ready
+    // Wait for all resources to load before playing the animation
     window.addEventListener('load', () => {
         setTimeout(initHeadlineWave, 100);
     });
@@ -306,7 +301,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // First load header and case studies
     const loadPromises = [
-        fetch('header.html').then(response => response.text()).then(data => {
+        fetch('/header.html').then(response => response.text()).then(data => {
             const headerPlaceholder = document.getElementById('header-placeholder');
             if (headerPlaceholder) {
                 headerPlaceholder.innerHTML = data;
@@ -348,7 +343,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     // Load header
-    fetch('header.html')
+    fetch('/header.html')
         .then(response => {
             if (!response.ok) throw new Error('Failed to load header');
             return response.text();
