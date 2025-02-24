@@ -84,10 +84,10 @@ h2 {
   display: inline;
   font-variation-settings: "wght" 500, "CASL" 0.55;
   color: #111111;
-  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
   opacity: 1;
   transform: translateY(0);
   white-space: pre-wrap;
+  letter-spacing: -0.06em;
 }
 
 .headline .wave-text span.shimmer-in {
@@ -100,17 +100,14 @@ h2 {
   0% {
     font-variation-settings: "wght" 500;
     color: #111111;
-    letter-spacing: -0.06em;
   }
   50% {
     font-variation-settings: "wght" 840;
     color: #1a4ce0;
-    letter-spacing: -0.06em;
   }
   100% {
     font-variation-settings: "wght" 500;
     color: #111111;
-    letter-spacing: -0.06em;
   }
 }
 
