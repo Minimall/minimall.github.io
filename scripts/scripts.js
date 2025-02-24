@@ -279,12 +279,15 @@ function initHeadlineWave() {
 }
 
 import { initCore } from './core.js';
+import { setupHoverEffects } from './modules/interactions.js';
 
 document.addEventListener("DOMContentLoaded", async () => {
-    // Initialize core functionality
-    initCore();
+    // Initialize core functionality with optimized loading
+    requestIdleCallback(() => {
+        initCore();
+    });
 
-    // Wait for all resources to load before playing the animation
+    // Set up event handlers when ready
     window.addEventListener('load', () => {
         setTimeout(initHeadlineWave, 100);
     });

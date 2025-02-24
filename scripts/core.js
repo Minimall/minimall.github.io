@@ -1,9 +1,11 @@
+import { setupHoverEffects } from './modules/interactions.js';
+import { initializeAnimations } from './modules/animations.js';
+import { initializeContentLoader } from './modules/loader.js';
 
-// Core functionality module
 export const initCore = () => {
-  // Essential initialization
   setupHoverEffects();
-  initHeadlineWave();
+  initializeAnimations();
+  initializeContentLoader('header');
 };
 
 // Basic hover effect handling 
@@ -57,3 +59,9 @@ const initHeadlineWave = () => {
     }
   });
 };
+
+//This file needs to be created: modules/interactions.js
+//This file needs to be created: modules/animations.js
+//This file needs to be created: modules/loader.js
+
+export {setupHoverEffects, initHeadlineWave}
