@@ -14,7 +14,7 @@ const interpolateColor = (color1, color2, factor) => {
 
 // Visibility tracking
 const sections = new Map();
-let currentBackground = document.body.style.backgroundColor || '#FFFFFF';
+let currentBackground = getComputedStyle(document.body).backgroundColor || 'rgb(255, 255, 255)';
 let animationFrame;
 
 const calculateVisibility = (element) => {
@@ -28,23 +28,22 @@ const calculateVisibility = (element) => {
 };
 
 const updateBackgroundColor = () => {
-  let targetColor = '#FFFFFF';
+  let targetColor = 'rgb(255, 255, 255)';
   let maxVisibility = 0;
   
   sections.forEach((data, element) => {
     const visibility = calculateVisibility(element);
     data.visibility = visibility;
     
-    if (visibility > maxVisibility) {
-      maxVisibility = visibility;
+    if (visibility > 0) {
+      maxVisibility = Math.max(maxVisibility, visibility);
       targetColor = data.background;
     }
   });
   
-  if (maxVisibility > 0) {
-    document.body.style.backgroundColor = interpolateColor(currentBackground, targetColor, Math.min(1, maxVisibility));
-    currentBackground = document.body.style.backgroundColor;
-  }
+  const transitionFactor = Math.min(1, maxVisibility);
+  document.body.style.backgroundColor = interpolateColor(currentBackground, targetColor, transitionFactor);
+  currentBackground = document.body.style.backgroundColor;
   
   animationFrame = requestAnimationFrame(updateBackgroundColor);
 };
