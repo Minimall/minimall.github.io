@@ -277,7 +277,6 @@ nav a:hover {
 }
 
 .case-title {
-
   font-size: 2.25rem;
   line-height: 1.35;
   letter-spacing: -0.035em;
@@ -286,6 +285,36 @@ nav a:hover {
   max-width: var(--max-width);
   padding-top: 4rem;
   padding-bottom: 1rem;
+}
+
+.case-title .wave-text .word {
+  display: inline;
+  font-variation-settings: "wght" 400;
+  opacity: 1;
+  transform: translateY(0);
+  white-space: pre-wrap;
+  letter-spacing: -0.035em;
+}
+
+.case-title .wave-text span.shimmer-in {
+  opacity: 1;
+  transform: translateY(0);
+  animation: caseTitleWave 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes caseTitleWave {
+  0% { 
+    font-variation-settings: "wght" 400;
+    color: var(--case-title-color);
+  }
+  50% { 
+    font-variation-settings: "wght" 700;
+    color: var(--company-name-color);
+  }
+  100% { 
+    font-variation-settings: "wght" 400;
+    color: var(--case-title-color);
+  }
 }
 
 .company-name {

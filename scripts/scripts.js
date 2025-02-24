@@ -245,7 +245,7 @@ function initHeadlineWave() {
     }, { threshold: 0.5 });
 
     function processHeadlines() {
-        const headlines = document.querySelectorAll('h1');
+        const headlines = document.querySelectorAll('h1:not(.case-title), .case-title');
         headlines.forEach(headline => {
             // Skip if already processed
             if (headline.hasAttribute('data-wave-processed')) return;
