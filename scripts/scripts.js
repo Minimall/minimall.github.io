@@ -262,7 +262,24 @@ function initHeadlineWave() {
     footerObserver.observe(document.body, { childList: true, subtree: true });
 }
 
+// Video loading handler
+function initVideoLoading() {
+    const videos = document.querySelectorAll('video');
+    videos.forEach(video => {
+        const loading = video.parentElement.querySelector('.video-loading');
+        if (loading) {
+            video.addEventListener('playing', () => {
+                loading.classList.add('hidden');
+            });
+            video.addEventListener('waiting', () => {
+                loading.classList.remove('hidden');
+            });
+        }
+    });
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
+    initVideoLoading();
     console.log("DOM Content Loaded");
 
     // Wait for all resources to load before playing the animation
