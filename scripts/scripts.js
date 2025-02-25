@@ -202,26 +202,7 @@ const updateMousePosition = (e) => {
     });
 };
 
-// Random wave effect
-const triggerRandomWave = () => {
-    const availableElements = Array.from(document.querySelectorAll('[data-hover="true"]'))
-        .filter(element => !hoveredElements.has(element) && element.tagName.toLowerCase() !== 'a');
 
-    if (!availableElements.length) return;
-
-    const randomElement = availableElements[Math.floor(Math.random() * availableElements.length)];
-    const letters = randomElement.querySelectorAll('.wave-text span');
-    letters.forEach(letter => letter.classList.add('random-wave'));
-    handleWaveEffect(randomElement, true, true);
-
-    setTimeout(() => {
-        handleWaveEffect(randomElement, false, true);
-        setTimeout(() => {
-            letters.forEach(letter => letter.classList.remove('random-wave'));
-        }, 700);
-    }, 700);
-    setTimeout(triggerRandomWave, Math.random() * 3000 + 5000);
-};
 
 // Initialize everything
 function initHeadlineWave() {
@@ -331,7 +312,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Run setupHoverEffects again to catch any elements that might have been missed
     setupHoverEffects();
     window.addEventListener("mousemove", updateMousePosition, { passive: true });
-    setTimeout(triggerRandomWave, 5000);
 
     // Collapsible content handling
     document.querySelectorAll('.collapsible-link').forEach(link => {
