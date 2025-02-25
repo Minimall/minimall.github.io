@@ -175,11 +175,14 @@ const cycleImages = (element, img) => {
         img.src = imgPath;
         img.style.opacity = "1";
 
-        fadeTimeout = setTimeout(() => {
-            img.style.opacity = "0";
-            currentIndex = (currentIndex + 1) % images.length;
-            cycleTimeout = setTimeout(showNextImage, 0);
-        }, 600);
+        // Only set up cycling if there are multiple images
+        if (images.length > 1) {
+            fadeTimeout = setTimeout(() => {
+                img.style.opacity = "0";
+                currentIndex = (currentIndex + 1) % images.length;
+                cycleTimeout = setTimeout(showNextImage, 0);
+            }, 600);
+        }
     };
 
     if (images.length >= 1) showNextImage();
