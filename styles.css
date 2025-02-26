@@ -1,7 +1,15 @@
 /* ==========================================================================
    Base & Reset
    ========================================================================== */
-/* Fonts are loaded via font-loading.css */
+@import url('https://fonts.googleapis.com/css2?family=Recursive:wght,CASL,CRSV@300..1000,0,0&display=swap');
+
+@font-face {
+  font-family: 'Syne';
+  src: url('/fonts/Syne-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+  font-feature-settings: "liga" 1, "ss01" 1, "ss04" 1;
+}
 
 :root {
   --spacing: 2rem;
@@ -20,7 +28,7 @@
    Typography
    ========================================================================== */
 body {
-  font-family: 'Recursive', system-ui, -apple-system, BlinkMacSystemFont, "Bahnschrift", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: 'Recursive', -apple-system, BlinkMacSystemFont, "Bahnschrift", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   font-size: 1.2rem;
   line-height: 1.6;
   transition: background-color 0.5s cubic-bezier(0.4, 0, 0.2, 1);
@@ -39,7 +47,24 @@ h2 {
   margin-bottom: 1rem;
 }
 
-/* Headline styles are now handled by Recursive font */
+/* 
+.headline {
+  font-family: 'Syne', sans-serif;
+  font-weight: 400;
+  font-size: 3.4rem;
+  line-height: 1.2;
+  letter-spacing: -0.035em;
+  margin-bottom: calc(var(--spacing));
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "ss01", "ss04", "liga";
+  -webkit-font-feature-settings: "ss01", "ss04", "liga";
+  -moz-font-feature-settings: "ss01", "ss04", "liga";
+  font-variant-ligatures: common-ligatures;
+  text-rendering: optimizeLegibility;
+  font-synthesis: none;
+  font-variant-alternates: styleset('ss01', 'ss04');
+} */
 
 .headline {
   font-family: 'Recursive', sans-serif;
