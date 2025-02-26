@@ -1,15 +1,7 @@
 /* ==========================================================================
    Base & Reset
    ========================================================================== */
-@import url('https://fonts.googleapis.com/css2?family=Recursive:wght,CASL,CRSV@300..1000,0,0&display=swap');
-
-@font-face {
-  font-family: 'Syne';
-  src: url('/fonts/Syne-Regular.woff2') format('woff2');
-  font-weight: 400;
-  font-display: swap;
-  font-feature-settings: "liga" 1, "ss01" 1, "ss04" 1;
-}
+@import url('https://fonts.googleapis.com/css2?family=Recursive:wght,CASL,CRSV,MONO@300..1000,0..1,0..1,0..1&display=swap');
 
 :root {
   --spacing: 2rem;
@@ -47,24 +39,7 @@ h2 {
   margin-bottom: 1rem;
 }
 
-/* 
-.headline {
-  font-family: 'Syne', sans-serif;
-  font-weight: 400;
-  font-size: 3.4rem;
-  line-height: 1.2;
-  letter-spacing: -0.035em;
-  margin-bottom: calc(var(--spacing));
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  font-feature-settings: "ss01", "ss04", "liga";
-  -webkit-font-feature-settings: "ss01", "ss04", "liga";
-  -moz-font-feature-settings: "ss01", "ss04", "liga";
-  font-variant-ligatures: common-ligatures;
-  text-rendering: optimizeLegibility;
-  font-synthesis: none;
-  font-variant-alternates: styleset('ss01', 'ss04');
-} */
+/* Removed Syne font styling */
 
 .headline {
   font-family: 'Recursive', sans-serif;
