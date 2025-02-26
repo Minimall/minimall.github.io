@@ -1,7 +1,7 @@
 /* ==========================================================================
    Base & Reset
    ========================================================================== */
-@import url('https://fonts.googleapis.com/css2?family=Recursive:wght,CASL,CRSV,MONO@300..1000,0..1,0..1,0..1&display=swap');
+/* Removed Google Fonts import to avoid duplicate loading */
 
 :root {
   --spacing: 2rem;
