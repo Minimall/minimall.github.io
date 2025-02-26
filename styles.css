@@ -868,7 +868,7 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
 .footer2 {
   background: transparent !important;
   position: relative;
-  height: 100vh;
+  height: 70vh;
   overflow: hidden;
 }
 
