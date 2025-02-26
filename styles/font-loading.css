@@ -1,27 +1,23 @@
 
 /* Font loading styles with improved fallbacks */
 .fonts-loading {
-  /* Don't hide content - use system fonts immediately */
+  /* Show content with system fonts during loading */
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
 .fonts-loaded {
   visibility: visible;
-  opacity: 1;
+  /* Add a subtle transition when fonts are applied */
+  transition: font-family 0.1s ease-out;
 }
 
-/* Define what happens when fonts fail to load */
+/* Ensure clean fallbacks when Recursive font is unavailable */
 body {
-  /* Prioritize system fonts to avoid FOUT */
+  /* System fonts fallback chain */
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
-/* Override with Recursive when available */
-@font-face {
-  font-family: 'Recursive';
-  font-style: normal;
-  font-weight: 300 1000;
-  font-display: swap; /* Use swap to show text immediately with fallback fonts */
-  src: local('Recursive'), 
-       url('https://fonts.googleapis.com/css2?family=Recursive:wght,CASL,CRSV,MONO@300..1000,0..1,0..1,0..1&display=swap') format('woff2');
+/* Let the browser handle Recursive font properly through Google Fonts */
+.fonts-loaded body {
+  font-family: 'Recursive', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
