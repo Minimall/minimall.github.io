@@ -9,7 +9,7 @@
     // Simple polyfill/implementation for font loading detection
     const fontTimeoutMs = 3000; // 3 second timeout for font loading
     
-    // Create promises for each font
+    // Create promise for Recursive font
     const recursiveFont = new Promise((resolve) => {
       const fontLoader = new Image();
       fontLoader.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="300" height="50"><text font-family="Recursive" font-size="20" x="0" y="30">Recursive Font</text></svg>');
@@ -19,22 +19,12 @@
       setTimeout(resolve, fontTimeoutMs);
     });
     
-    const syneFont = new Promise((resolve) => {
-      const fontLoader = new Image();
-      fontLoader.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="300" height="50"><text font-family="Syne" font-size="20" x="0" y="30">Syne Font</text></svg>');
-      fontLoader.onload = () => {
-        resolve();
-      };
-      setTimeout(resolve, fontTimeoutMs);
+    // Wait for font to load or timeout
+    recursiveFont.then(() => {
+      document.documentElement.classList.remove('fonts-loading');
+      document.documentElement.classList.add('fonts-loaded');
+      localStorage.setItem('fonts-loaded', 'true');
     });
-    
-    // Wait for all fonts to load or timeout
-    Promise.all([recursiveFont, syneFont])
-      .then(() => {
-        document.documentElement.classList.remove('fonts-loading');
-        document.documentElement.classList.add('fonts-loaded');
-        localStorage.setItem('fonts-loaded', 'true');
-      });
   }
   
   // Use cached font loading information if available
