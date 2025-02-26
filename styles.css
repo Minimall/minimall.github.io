@@ -44,7 +44,7 @@ h2 {
 .headline {
   font-family: 'Recursive', sans-serif;
   font-weight: 500;
-  font-size: 4.1rem;
+  font-size: 4.2rem;
   line-height: 1.2;
   letter-spacing: -0.06em;
   margin-bottom: calc(var(--spacing));
@@ -127,7 +127,7 @@ p {
 }
 
 .main-text {
-  margin-bottom: calc(var(--spacing) * 4);
+
   max-width: var(--max-width);
   padding-bottom: 2vw;
 }
@@ -198,9 +198,10 @@ nav a:hover {
 .case-study-content {
   max-width: var(--max-width);
   margin: 0 auto;
-  padding-top: 5vw;
+  padding-top: 4vw;
   padding-right: 5vw;
   padding-left: 5vw;
+  padding-bottom: 4vw;
 }
 
 .footer-content {
@@ -258,7 +259,7 @@ nav a:hover {
   font-variation-settings: "wght" 400;
   color: var(--case-title-color);
   max-width: var(--max-width);
-  padding-top: 4rem;
+  padding-top: 2.5rem;
   padding-bottom: 1rem;
 }
 
