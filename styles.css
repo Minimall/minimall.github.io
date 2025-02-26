@@ -1,15 +1,7 @@
 /* ==========================================================================
    Base & Reset
    ========================================================================== */
-@import url('https://fonts.googleapis.com/css2?family=Recursive:wght,CASL,CRSV@300..1000,0,0&display=swap');
-
-@font-face {
-  font-family: 'Syne';
-  src: url('/fonts/Syne-Regular.woff2') format('woff2');
-  font-weight: 400;
-  font-display: swap;
-  font-feature-settings: "liga" 1, "ss01" 1, "ss04" 1;
-}
+/* Fonts are loaded via font-loading.css */
 
 :root {
   --spacing: 2rem;

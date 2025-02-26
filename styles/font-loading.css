@@ -1,0 +1,28 @@
+
+/* Font Loading Optimization */
+@font-face {
+  font-family: 'Recursive';
+  font-style: normal;
+  font-weight: 300 1000;
+  font-display: swap;
+  src: url('/fonts/Recursive-Regular.woff2') format('woff2');
+  font-feature-settings: "liga" 1;
+}
+
+@font-face {
+  font-family: 'Syne';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/Syne-Regular.woff2') format('woff2');
+  font-feature-settings: "liga" 1, "ss01" 1, "ss04" 1;
+}
+
+/* Hide content until fonts are loaded */
+.fonts-loading {
+  visibility: hidden;
+}
+
+.fonts-loaded {
+  visibility: visible;
+}
