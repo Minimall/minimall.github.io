@@ -9,11 +9,22 @@
   font-feature-settings: "liga" 1;
 }
 
-/* Hide content until fonts are loaded */
+/* Hide content until fonts are loaded or timeout occurs */
 .fonts-loading {
   visibility: hidden;
 }
 
 .fonts-loaded {
   visibility: visible;
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+/* Add a small delay to ensure the font is fully applied */
+body {
+  transition: color 0.2s ease;
 }
