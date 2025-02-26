@@ -1,11 +1,20 @@
 
-// Opacity transition for case studies based on scroll position
+// Scale transition for case studies based on scroll position
 document.addEventListener('DOMContentLoaded', () => {
-  // Initialize all case studies with opacity 0
+  // Initialize all case studies with scale 0.7 (70%)
   const caseStudies = document.querySelectorAll('.case-study-container:not(.footer2)');
-  caseStudies.forEach(section => {
-    section.style.opacity = '0';
-    section.style.transition = 'opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
+  
+  caseStudies.forEach((section, index) => {
+    // Set transform origin to the top for better scaling effect
+    section.style.transformOrigin = 'center top';
+    section.style.transition = 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
+    
+    // First case study starts at 100% scale, others at 70%
+    if (index === 0) {
+      section.style.transform = 'scale(1)';
+    } else {
+      section.style.transform = 'scale(0.7)';
+    }
   });
 
   let animationFrame;
@@ -35,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return Math.max(0, Math.min(1, visibleHeight / threshold));
   };
 
-  const updateCaseStudyOpacity = () => {
+  const updateCaseStudyScale = () => {
     const currentTime = performance.now();
     const deltaTime = Math.min(currentTime - lastScrollTime, 50); // Cap delta time
     const currentScrollY = window.scrollY;
@@ -47,27 +56,31 @@ document.addEventListener('DOMContentLoaded', () => {
     // Enhanced smoothed position prediction with stronger dampening
     const predictedOffset = scrollVelocity * Math.min(deltaTime * 1.5, 24);
     
-    // Update opacity for each case study based on visibility
-    caseStudies.forEach(section => {
+    // Update scale for each case study based on visibility
+    caseStudies.forEach((section, index) => {
       const visibility = calculateVisibility(section, predictedOffset);
-      // Apply visibility as opacity with a power function for more dramatic effect
-      section.style.opacity = Math.pow(visibility, 1.2).toString();
+      
+      // Calculate scale between 0.7 (70%) and 1 (100%)
+      const scale = 0.7 + (visibility * 0.3);
+      
+      // Apply scale transformation with a power function for more dramatic effect
+      section.style.transform = `scale(${scale})`;
     });
 
     lastScrollY = currentScrollY;
     lastScrollTime = currentTime;
-    animationFrame = requestAnimationFrame(updateCaseStudyOpacity);
+    animationFrame = requestAnimationFrame(updateCaseStudyScale);
   };
 
   // Initialize scroll tracking
   window.addEventListener('scroll', () => {
     if (!animationFrame) {
-      animationFrame = requestAnimationFrame(updateCaseStudyOpacity);
+      animationFrame = requestAnimationFrame(updateCaseStudyScale);
     }
   }, { passive: true });
   
   // Start the initial animation
-  updateCaseStudyOpacity();
+  updateCaseStudyScale();
 
   // Cleanup
   window.addEventListener('beforeunload', () => {
