@@ -265,23 +265,27 @@ function initHeadlineWave() {
 document.addEventListener("DOMContentLoaded", async () => {
     console.log("DOM Content Loaded");
 
-    // Wait for all resources to load before playing the animation
+    // 1. Wait for all resources to fully load before initializing animations
     window.addEventListener('load', () => {
+        console.log("Window fully loaded");
+        
+        // 2. First initialize headline animation (complete essential page loading)
         setTimeout(initHeadlineWave, 100);
-    });
-    // Initialize footer animation
-    setTimeout(() => {
-        const animationContainer = document.getElementById('footer-animation-container');
-        if (animationContainer) {
-            console.log("Found animation container, initializing");
-            const wrapper = document.querySelector('.animation-wrapper');
-            if (wrapper) {
-                wrapper.style.opacity = '1';
-                wrapper.style.background = '#ffffff';
+        
+        // 3. Then start footer animation with a delay to ensure proper sequence
+        setTimeout(() => {
+            const animationContainer = document.getElementById('footer-animation-container');
+            if (animationContainer) {
+                console.log("Starting footer animation");
+                const wrapper = document.querySelector('.animation-wrapper');
+                if (wrapper) {
+                    wrapper.style.opacity = '1';
+                    wrapper.style.background = '#ffffff';
+                }
+                createGridAnimation(animationContainer);
             }
-            createGridAnimation(animationContainer);
-        }
-    }, 500);
+        }, 1000); // Increased delay for footer animation
+    });
 
     // First load header and case studies
     const loadPromises = [

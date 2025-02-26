@@ -4,6 +4,13 @@ function createGridAnimation(gridElement) {
         console.error("No grid element provided");
         return;
     }
+    
+    // Ensure the document is fully loaded before starting animation
+    if (document.readyState !== 'complete') {
+        console.log("Waiting for page to fully load before starting footer animation");
+        window.addEventListener('load', () => createGridAnimation(gridElement));
+        return;
+    }
     const lines = [];
     const colors = [
         "#FF6B6B", "#4ECDC4", "#45B7D1", "#FFA07A", "#98D8C8", 
