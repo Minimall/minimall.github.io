@@ -181,7 +181,7 @@ const cycleImages = (element, img) => {
                 img.style.opacity = "0";
                 currentIndex = (currentIndex + 1) % images.length;
                 cycleTimeout = setTimeout(showNextImage, 0);
-            }, 600);
+            }, 1200);
         }
     };
 
