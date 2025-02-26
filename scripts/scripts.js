@@ -533,3 +533,31 @@ class BottomSheet {
         }, 300);
     }
 }
+
+// Preload all hover images
+function preloadHoverImages() {
+    document.querySelectorAll('[data-images]').forEach(element => {
+        const images = element.dataset.images?.split(',') || [];
+        images.forEach(image => {
+            const img = new Image();
+            img.src = `/images/${image}`;
+            
+            // Set image type based on extension
+            if (image.endsWith('.webp')) {
+                img.type = 'image/webp';
+            } else if (image.endsWith('.avif')) {
+                img.type = 'image/avif';
+            } else if (image.endsWith('.jpg') || image.endsWith('.jpeg')) {
+                img.type = 'image/jpeg';
+            }
+        });
+    });
+}
+
+// Add to your existing DOMContentLoaded listener
+document.addEventListener("DOMContentLoaded", () => {
+    // Existing code...
+    
+    // Preload all hover images as soon as DOM is ready
+    preloadHoverImages();
+});
