@@ -39,24 +39,7 @@ h2 {
   margin-bottom: 1rem;
 }
 
-/* 
-.headline {
-  font-family: 'Syne', sans-serif;
-  font-weight: 400;
-  font-size: 3.4rem;
-  line-height: 1.2;
-  letter-spacing: -0.035em;
-  margin-bottom: calc(var(--spacing));
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  font-feature-settings: "ss01", "ss04", "liga";
-  -webkit-font-feature-settings: "ss01", "ss04", "liga";
-  -moz-font-feature-settings: "ss01", "ss04", "liga";
-  font-variant-ligatures: common-ligatures;
-  text-rendering: optimizeLegibility;
-  font-synthesis: none;
-  font-variant-alternates: styleset('ss01', 'ss04');
-} */
+/* Headline styles are now handled by Recursive font */
 
 .headline {
   font-family: 'Recursive', sans-serif;
