@@ -287,14 +287,15 @@ document.addEventListener("DOMContentLoaded", async () => {
         }, 1000); // Increased delay for footer animation
     });
 
-    // First load header and case studies
+    // First load case studies (skipping header.html which is missing)
     const loadPromises = [
-        fetch('/header.html').then(response => response.text()).then(data => {
+        new Promise(resolve => {
             const headerPlaceholder = document.getElementById('header-placeholder');
             if (headerPlaceholder) {
-                headerPlaceholder.innerHTML = data;
-                setupHoverEffects(); // Initialize after header load
+                // Use inline content instead of fetching header.html
+                console.log('Header placeholder found but header.html is not available');
             }
+            resolve();
         }),
         ...Array.from(document.querySelectorAll('[data-case-file]')).map(placeholder => 
             fetch(placeholder.dataset.caseFile)
