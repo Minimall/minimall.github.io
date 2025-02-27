@@ -1,0 +1,7 @@
+
+User-agent: *
+Allow: /
+Sitemap: https://dvornichenko.design/sitemap.xml
+
+# Disallow access to any temporary files or development folders
+Disallow: /files/
