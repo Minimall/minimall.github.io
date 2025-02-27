@@ -246,15 +246,19 @@ nav a:hover {
 .case-logo img {
   height: 32px;
   width: auto;
-
+  display: block;
 }
 
-.case-logo img[src*="wombi.svg"] {
+.case-logo img[src$="wombi.svg"] {
   height: 24px;
 }
 
-.case-logo img[src*="datrics.svg"] {
+.case-logo img[src$="datrics.svg"] {
   height: 44px;
+}
+
+.logo-link {
+  display: inline-block;
 }
 
 .case-title {
