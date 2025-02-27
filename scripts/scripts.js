@@ -68,7 +68,7 @@ const setupHoverEffects = () => {
         const hasDirectImageHover = element.dataset.images && !element.querySelector('.wave-text');
 
         if (hasDirectImageHover) {
-            // Create and handle hover image with new SVG-like effect
+            // Create and handle hover image
             const img = document.createElement('img');
             img.className = 'hover-image';
             img.alt = element.textContent;
@@ -144,31 +144,22 @@ const handleWaveEffect = (element, isEnter, isRandom = false) => {
     });
 };
 
-// New hover image effect implementation
+// Handle image hover effects
 const handleImageHover = (element, img, isEnter) => {
     if (isEnter) {
-        // Apply SVG logo-like effect
         const rotation = (rotationCounter % 2 === 0) ? 3 : -3;
         rotationCounter++;
-        
-        // Set high z-index to ensure image is on top only on hover
-        img.style.zIndex = "9999";
-        img.style.transform = `rotate(${rotation}deg)`;
+        img.style.setProperty('--rotation', `${rotation}deg`);
         img.classList.add('active');
-        
-        // Apply smooth transition
-        img.style.transition = "transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease";
-        
         element.stopImageCycle = cycleImages(element, img);
     } else if (element.stopImageCycle) {
         img.classList.remove('active');
-        img.style.zIndex = "99"; // Reset to default z-index when not hovered
         element.stopImageCycle();
         element.stopImageCycle = null;
     }
 };
 
-// Improved image cycling functionality 
+// Image cycling functionality
 const cycleImages = (element, img) => {
     const images = element.dataset.images?.split(",") || [];
     if (!images.length) return null;
@@ -179,58 +170,38 @@ const cycleImages = (element, img) => {
 
     const showNextImage = () => {
         const imgPath = `/images/${images[currentIndex]}`;
-        
-        // Set image type based on extension
         if (images[currentIndex].endsWith('.webp')) {
             img.type = 'image/webp';
         } else if (images[currentIndex].endsWith('.avif')) {
             img.type = 'image/avif';
-        } else if (images[currentIndex].endsWith('.jpg') || images[currentIndex].endsWith('.jpeg')) {
-            img.type = 'image/jpeg';
-        } else if (images[currentIndex].endsWith('.png')) {
-            img.type = 'image/png';
         }
-        
         img.src = imgPath;
         img.style.opacity = "1";
-        
-        // Apply SVG-like effect on image change
-        const newRotation = (currentIndex % 2 === 0) ? 3 : -3;
-        img.style.transform = `rotate(${newRotation}deg)`;
 
         // Only set up cycling if there are multiple images
         if (images.length > 1) {
             fadeTimeout = setTimeout(() => {
-                img.style.opacity = "0.5";
+                img.style.opacity = "0";
                 currentIndex = (currentIndex + 1) % images.length;
-                cycleTimeout = setTimeout(showNextImage, 300);
-            }, 1500);
+                cycleTimeout = setTimeout(showNextImage, 0);
+            }, 1200);
         }
     };
 
     if (images.length >= 1) showNextImage();
-    
     return () => {
         clearTimeout(cycleTimeout);
         clearTimeout(fadeTimeout);
         img.style.opacity = "0";
-        img.style.zIndex = "initial";
     };
 };
 
-// Enhanced mouse position tracking for images
+// Mouse position tracking for images
 const updateMousePosition = (e) => {
     document.querySelectorAll('.hover-image').forEach((img) => {
-        // Add slight lag for more natural following
-        const targetX = e.clientX;
-        const targetY = e.clientY;
-        
-        // Set position with slight delay for smoother movement
-        requestAnimationFrame(() => {
-            img.style.left = `${targetX}px`;
-            img.style.top = `${targetY}px`;
-            img.classList.toggle('move-down', targetY < 480);
-        });
+        img.style.left = `${e.clientX}px`;
+        img.style.top = `${e.clientY}px`;
+        img.classList.toggle('move-down', e.clientY < 480);
     });
 };
 

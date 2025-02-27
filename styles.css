@@ -371,7 +371,7 @@ li, .tag {
 .hover-image {
   opacity: 0;
   position: fixed;
-  z-index: 99;
+  z-index: 1000;
   pointer-events: none;
   height: 480px;
   width: auto;
@@ -380,15 +380,12 @@ li, .tag {
   transform: translate(-50%, -100%) scale(0) rotate(0deg);
   will-change: transform, opacity;
   padding: 24px 0 12px;
-  transition: opacity 0.4s ease, transform 0.4s ease, z-index 0.01s linear;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  border-radius: 2px;
+  transition: opacity 0.4s ease, transform 0.4s ease;
 }
 
 .hover-image.active {
 	opacity: 1;
-	z-index: 9999;
-	transform: translate(-50%, -100%) scale(1) rotate(0deg);
+	transform: translate(-50%, -100%) scale(1) rotate(var(--rotation));
 }
 
 .hover-image:not(.active) {
@@ -397,11 +394,11 @@ li, .tag {
 }
 
 .hover-image.move-down {
-	transform: translate(-50%, 0) scale(0) rotate(0deg);
+	transform: translate(-50%, 0) scale(0) rotate(var(--rotation));
 }
 
 .hover-image.move-down.active {
-	transform: translate(-50%, 0) scale(1) rotate(0deg);
+	transform: translate(-50%, 0) scale(1) rotate(var(--rotation));
 }
 
 
@@ -437,11 +434,11 @@ li, .tag {
   .container {
     padding-top: 6vw;
   }
-
+  
   .case-logo {
     margin-bottom: 6vw;
   }
-
+  
   .case-study-content {
     max-width: var(--max-width);
     margin: 0 auto;
@@ -841,7 +838,7 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
     opacity: 1;
     visibility: visible;
   }
-
+  
   /* Prevent scrolling class added to body */
   body.no-scroll {
     overflow: hidden;
@@ -951,7 +948,7 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
     left: 0;
     right: 0;
   }
-
+  
   .centered-image-container {
     position: fixed;
     top: 0;
