@@ -311,7 +311,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Initialize UI and ensure wave effects are set up
     if (window.matchMedia('(max-width: 788px)').matches) {
-        new BottomSheet();
+        // Make sure required elements exist before creating BottomSheet
+        if (document.querySelector('.bottom-sheet') && document.querySelector('.overlay')) {
+            new BottomSheet();
+        } else {
+            console.log('Required elements for BottomSheet not found');
+        }
     }
 
     // Run setupHoverEffects again to catch any elements that might have been missed
@@ -397,7 +402,14 @@ class BottomSheet {
     constructor() {
         this.sheet = document.querySelector('.bottom-sheet');
         this.overlay = document.querySelector('.overlay');
-        this.carousel = document.querySelector('.carousel');
+        
+        // Early return if elements don't exist
+        if (!this.sheet || !this.overlay) {
+            console.log('BottomSheet elements not found in DOM');
+            return;
+        }
+        
+        this.carousel = this.sheet.querySelector('.carousel');
         this.currentImageIndex = 0;
         this.setupGestures();
         this.setupTriggers();
@@ -408,6 +420,9 @@ class BottomSheet {
     }
 
     setupGestures() {
+        // Safety check - if sheet doesn't exist, don't set up gestures
+        if (!this.sheet) return;
+        
         let startY = 0;
         let startX = 0;
         this.isClosing = false;
@@ -461,6 +476,9 @@ class BottomSheet {
     }
 
     setupTriggers() {
+        // Safety check - if sheet or overlay don't exist, don't set up triggers
+        if (!this.sheet || !this.overlay) return;
+        
         document.querySelectorAll('[data-images]').forEach(element => {
             element.addEventListener('click', (e) => {
                 if (window.matchMedia('(max-width: 788px)').matches) {
