@@ -60,6 +60,9 @@ const setupHoverEffects = () => {
     hoverableElements.forEach(element => {
         // Skip if already processed
         if (element.hasAttribute('data-processed')) return;
+        
+        // Skip logo elements - exclude case-logo links from hover effects
+        if (element.closest('.case-logo')) return;
 
         // Check if it's a direct image hover element
         const hasDirectImageHover = element.dataset.images && !element.querySelector('.wave-text');
@@ -210,9 +213,18 @@ function preserveLogos() {
     const caseLogos = document.querySelectorAll('.case-logo img');
     caseLogos.forEach(logo => {
         // Force logo visibility and prevent any CSS that might hide it
-        logo.style.display = 'block';
-        logo.style.visibility = 'visible';
-        logo.style.opacity = '1';
+        logo.style.display = 'block !important';
+        logo.style.visibility = 'visible !important';
+        logo.style.opacity = '1 !important';
+        
+        // Remove any classes that might be causing the issue
+        logo.classList.remove('wave-in', 'wave-out');
+        
+        // Mark logo parents to be excluded from hover effects
+        const logoParent = logo.closest('.case-logo');
+        if (logoParent) {
+            logoParent.setAttribute('data-logo-container', 'true');
+        }
     });
 }
 
@@ -280,11 +292,32 @@ function initHeadlineWave() {
     footerObserver.observe(document.body, { childList: true, subtree: true });
 }
 
+// Set up periodic check to ensure logos remain visible
+function setupLogoPreservation() {
+    // Initial preservation
+    preserveLogos();
+    
+    // Keep checking periodically
+    setInterval(preserveLogos, 1000);
+    
+    // Also preserve logos after any DOM changes
+    const observer = new MutationObserver(() => {
+        preserveLogos();
+    });
+    
+    observer.observe(document.body, { 
+        childList: true, 
+        subtree: true,
+        attributes: true,
+        attributeFilter: ['class', 'style']
+    });
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
     console.log("DOM Content Loaded");
     
-    // Make logos visible immediately
-    preserveLogos();
+    // Make logos visible immediately and set up preservation
+    setupLogoPreservation();
 
     // 1. Wait for all resources to fully load before initializing animations
     window.addEventListener('load', () => {
