@@ -246,6 +246,7 @@ nav a:hover {
 .case-logo img {
   height: 32px;
   width: auto;
+
 }
 
 .case-logo img[src*="wombi.svg"] {
@@ -769,6 +770,7 @@ a:not(:hover) span:nth-child(4n) { animation-delay: 0.06s; }
 a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
 
 .case-logo {
+  padding-bottom: 6vw;
 }
 /* Grid Animation */
 .grid-animation {
