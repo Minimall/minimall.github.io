@@ -545,7 +545,7 @@ li, .tag {
   position: relative;
   aspect-ratio: 9/16;
   overflow: hidden;
-  border-radius: 12px;
+  border-radius: 4px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   width: min(calc((100vw - 20vw) / 4), calc((var(--max-width) - 10vw) / 4));
   height: auto;
@@ -558,7 +558,7 @@ li, .tag {
   position: relative;
   aspect-ratio: 16/10;
   overflow: hidden;
-  border-radius: 6px;
+  border-radius: 4px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   width: 100%;
   max-width: 1680px;
