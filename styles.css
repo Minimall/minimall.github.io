@@ -258,7 +258,7 @@ nav a:hover {
 
 .case-title {
   font-size: 2.25rem;
-  line-height: 1.35;
+  line-height: 1.45;
   letter-spacing: -0.035em;
   font-variation-settings: "wght" 400;
   color: var(--case-title-color);
