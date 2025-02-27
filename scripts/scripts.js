@@ -480,8 +480,9 @@ class BottomSheet {
         const rotation = ((rotationCounter % 2 === 0) ? 1.5 : -1.5);
         rotationCounter++;
         
-        // Create overlay
+        // Create overlay and prevent scrolling
         this.overlay.classList.add('visible');
+        document.body.classList.add('no-scroll');
         
         // Get all images if this is part of an image set
         let images = [];
@@ -574,15 +575,16 @@ class BottomSheet {
         const images = container.querySelectorAll('img');
         const rotation = ((rotationCounter % 2 === 0) ? 1.5 : -1.5);
         
+        // Ensure container is set up for centering
+        container.style.display = 'flex';
+        container.style.alignItems = 'center';
+        container.style.justifyContent = 'center';
+        container.style.height = '100%';
+        
         images.forEach((img, i) => {
             if (i === newIndex) {
                 // Center the active image and add rotation/scale
                 img.style.transform = `rotate(${rotation}deg) scale(1)`;
-                // Ensure the image is centered vertically in its container
-                container.style.display = 'flex';
-                container.style.alignItems = 'center';
-                container.style.justifyContent = 'center';
-                container.style.height = '100%';
             } else {
                 // Position non-active images
                 img.style.transform = `translateX(${(i - newIndex) * 100}%)`;
@@ -656,6 +658,7 @@ class BottomSheet {
         });
         
         this.overlay.classList.remove('visible');
+        document.body.classList.remove('no-scroll');
         
         setTimeout(() => {
             container.remove();
@@ -710,6 +713,7 @@ class BottomSheet {
     close() {
         this.sheet.classList.remove('open');
         this.overlay.classList.remove('visible');
+        document.body.classList.remove('no-scroll');
         this.isClosing = false;
         setTimeout(() => {
             this.carousel.innerHTML = '';
