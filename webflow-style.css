@@ -1,0 +1,59 @@
+
+/**
+ * Webflow Grid Animation Styles
+ * Optimized CSS for the grid animation on Webflow landing page
+ */
+
+/* Main grid container */
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(20, 1fr);
+    grid-template-rows: repeat(20, 1fr);
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+    pointer-events: none;
+    background: transparent;
+    z-index: 1; /* Make sure it's above content but below interactive elements */
+}
+
+/* Animation line elements */
+.line {
+    width: 1px;
+    height: 80%;
+    margin: auto;
+    transform-origin: center;
+    transition: background-color 0.5s ease;
+    opacity: 0;
+    will-change: transform, opacity;
+}
+
+/* Optional: Add a container class that can be applied to any section */
+.animation-section {
+    position: relative;
+    width: 100%;
+    min-height: 60vh; /* Adjust height as needed */
+    overflow: hidden;
+}
+
+/* Optional: For sections with dark backgrounds, use these color adjustments */
+.dark-section .line {
+    filter: brightness(0.8) saturate(1.2);
+}
+
+/* For better performance on mobile devices */
+@media (max-width: 768px) {
+    .grid-container {
+        grid-template-columns: repeat(12, 1fr);
+        grid-template-rows: repeat(12, 1fr);
+    }
+    
+    .line {
+        height: 70%;
+    }
+}
