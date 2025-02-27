@@ -106,8 +106,8 @@ const setupHoverEffects = () => {
         }
         
         item.addEventListener('mouseenter', () => {
-            // Only increase z-index on hover
-            item.style.transform = 'scale(1)'; // No transformation
+            // Apply hover effect - scale container and increase z-index
+            item.style.transform = 'scale(1.15)'; // Restore increased scale
             item.style.zIndex = '9999';
         });
         item.addEventListener('mouseleave', () => {
