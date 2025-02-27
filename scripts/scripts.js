@@ -411,9 +411,11 @@ class BottomSheet {
         let startY = 0;
         let startX = 0;
         this.isClosing = false;
+        let isSwiping = false;
 
         const onStart = (e) => {
             this.isClosing = false;
+            isSwiping = false;
             startY = e.type === 'mousedown' ? e.clientY : e.touches[0].clientY;
             startX = e.type === 'mousedown' ? e.clientX : e.touches[0].clientX;
             document.addEventListener(e.type === 'mousedown' ? 'mousemove' : 'touchmove', onMove, { passive: false });
@@ -421,6 +423,7 @@ class BottomSheet {
         };
 
         const onMove = (e) => {
+            e.preventDefault(); // Prevent scrolling during swipe
             const currentY = e.type === 'mousemove' ? e.clientY : e.touches[0].clientY;
             const currentX = e.type === 'mousemove' ? e.clientX : e.touches[0].clientX;
             const diffY = currentY - startY;
@@ -429,17 +432,17 @@ class BottomSheet {
             // Determine if the swipe is more horizontal or vertical
             if (Math.abs(diffX) > Math.abs(diffY) && this.totalImages > 1) {
                 // Horizontal swipe for carousel
-                e.preventDefault();
-                if (Math.abs(diffX) > 50) {
+                isSwiping = true;
+                if (Math.abs(diffX) > 30) { // Lower threshold for better response
                     if (diffX > 0 && this.currentImageIndex > 0) {
                         this.showImage(this.currentImageIndex - 1);
-                        startX = currentX;
+                        startX = currentX; // Reset for continuous swiping
                     } else if (diffX < 0 && this.currentImageIndex < this.totalImages - 1) {
                         this.showImage(this.currentImageIndex + 1);
-                        startX = currentX;
+                        startX = currentX; // Reset for continuous swiping
                     }
                 }
-            } else if (diffY > 100 && !this.isClosing) {
+            } else if (diffY > 70 && !this.isClosing && !isSwiping) {
                 // Vertical swipe to close
                 this.isClosing = true;
                 this.close();
@@ -454,7 +457,7 @@ class BottomSheet {
         };
 
         this.sheet.addEventListener('mousedown', onStart);
-        this.sheet.addEventListener('touchstart', onStart, { passive: true });
+        this.sheet.addEventListener('touchstart', onStart, { passive: false }); // Changed to non-passive for preventDefault
     }
 
     setupTriggers() {
@@ -480,42 +483,171 @@ class BottomSheet {
         // Create overlay
         this.overlay.classList.add('visible');
         
+        // Get all images if this is part of an image set
+        let images = [];
+        let currentIndex = 0;
+        
+        // Check if image is from a set (data-images attribute)
+        const triggerElements = document.querySelectorAll('[data-images]');
+        for (const element of triggerElements) {
+            const elementImages = element.dataset.images?.split(',') || [];
+            if (elementImages.includes(image)) {
+                images = elementImages;
+                currentIndex = elementImages.indexOf(image);
+                break;
+            }
+        }
+        
+        // If no set was found, use just this image
+        if (images.length === 0) {
+            images = [image];
+        }
+        
         // Create centered container
         const centeredContainer = document.createElement('div');
         centeredContainer.className = 'centered-image-container';
         document.body.appendChild(centeredContainer);
         
-        // Create the image
-        const img = document.createElement('img');
-        const imgPath = `/images/${image}`;
-        if (image.endsWith('.webp')) {
-            img.type = 'image/webp';
-        } else if (image.endsWith('.avif')) {
-            img.type = 'image/avif';
+        // Create the image container to hold all images
+        const imageContainer = document.createElement('div');
+        imageContainer.className = 'carousel';
+        centeredContainer.appendChild(imageContainer);
+        
+        // Add all images to the container
+        images.forEach((img, index) => {
+            const imgElement = document.createElement('img');
+            const imgPath = `/images/${img}`;
+            if (img.endsWith('.webp')) {
+                imgElement.type = 'image/webp';
+            } else if (img.endsWith('.avif')) {
+                imgElement.type = 'image/avif';
+            }
+            imgElement.src = imgPath;
+            imgElement.className = 'centered-image';
+            imgElement.style.transform = index === currentIndex ? 
+                `rotate(${rotation}deg) scale(0)` : `translateX(${(index - currentIndex) * 100}%)`;
+            
+            imageContainer.appendChild(imgElement);
+        });
+        
+        // Setup dots for navigation if multiple images
+        if (images.length > 1) {
+            const dotsContainer = document.createElement('div');
+            dotsContainer.className = 'carousel-dots sticky-dots';
+            centeredContainer.appendChild(dotsContainer);
+            
+            for (let i = 0; i < images.length; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'dot';
+                if (i === currentIndex) dot.classList.add('active');
+                dot.addEventListener('click', () => {
+                    this.showImageInContainer(imageContainer, i, currentIndex);
+                    currentIndex = i;
+                    dotsContainer.querySelectorAll('.dot').forEach((dot, idx) => {
+                        dot.classList.toggle('active', idx === i);
+                    });
+                });
+                dotsContainer.appendChild(dot);
+            }
         }
-        img.src = imgPath;
-        img.className = 'centered-image';
-        img.style.transform = `rotate(${rotation}deg) scale(0)`;
         
-        centeredContainer.appendChild(img);
-        
-        // Trigger animation
+        // Trigger animation for the current image
+        const currentImg = imageContainer.querySelectorAll('img')[currentIndex];
         setTimeout(() => {
-            img.style.transform = `rotate(${rotation}deg) scale(1)`;
+            currentImg.style.transform = `rotate(${rotation}deg) scale(1)`;
         }, 10);
+        
+        // Add swipe gestures
+        this.setupCenteredImageSwipe(imageContainer, centeredContainer, images, currentIndex);
         
         // Add tap handler to close
         centeredContainer.addEventListener('click', () => {
-            this.closeCenteredImage(centeredContainer, img);
+            this.closeCenteredImage(centeredContainer);
         });
         
         this.overlay.addEventListener('click', () => {
-            this.closeCenteredImage(centeredContainer, img);
+            this.closeCenteredImage(centeredContainer);
         });
     }
     
-    closeCenteredImage(container, img) {
-        img.style.transform = 'rotate(0deg) scale(0)';
+    showImageInContainer(container, newIndex, oldIndex) {
+        const images = container.querySelectorAll('img');
+        const rotation = ((rotationCounter % 2 === 0) ? 1.5 : -1.5);
+        
+        images.forEach((img, i) => {
+            if (i === newIndex) {
+                img.style.transform = `rotate(${rotation}deg) scale(1)`;
+            } else {
+                img.style.transform = `translateX(${(i - newIndex) * 100}%)`;
+            }
+        });
+    }
+    
+    setupCenteredImageSwipe(container, centeredContainer, images, startIndex) {
+        let startX = 0;
+        let currentIndex = startIndex;
+        
+        const onStart = (e) => {
+            startX = e.type === 'mousedown' ? e.clientX : e.touches[0].clientX;
+            document.addEventListener(e.type === 'mousedown' ? 'mousemove' : 'touchmove', onMove, { passive: false });
+            document.addEventListener(e.type === 'mousedown' ? 'mouseup' : 'touchend', onEnd);
+        };
+        
+        const onMove = (e) => {
+            if (images.length <= 1) return;
+            
+            e.preventDefault();
+            const currentX = e.type === 'mousemove' ? e.clientX : e.touches[0].clientX;
+            const diffX = currentX - startX;
+            
+            if (Math.abs(diffX) > 50) {
+                if (diffX > 0 && currentIndex > 0) {
+                    // Swipe right - show previous image
+                    currentIndex--;
+                    this.showImageInContainer(container, currentIndex, currentIndex + 1);
+                    
+                    // Update dots
+                    const dots = centeredContainer.querySelectorAll('.dot');
+                    dots.forEach((dot, i) => {
+                        dot.classList.toggle('active', i === currentIndex);
+                    });
+                    
+                    startX = currentX;
+                } else if (diffX < 0 && currentIndex < images.length - 1) {
+                    // Swipe left - show next image
+                    currentIndex++;
+                    this.showImageInContainer(container, currentIndex, currentIndex - 1);
+                    
+                    // Update dots
+                    const dots = centeredContainer.querySelectorAll('.dot');
+                    dots.forEach((dot, i) => {
+                        dot.classList.toggle('active', i === currentIndex);
+                    });
+                    
+                    startX = currentX;
+                }
+            }
+        };
+        
+        const onEnd = () => {
+            document.removeEventListener('mousemove', onMove);
+            document.removeEventListener('touchmove', onMove);
+            document.removeEventListener('mouseup', onEnd);
+            document.removeEventListener('touchend', onEnd);
+        };
+        
+        container.addEventListener('mousedown', onStart);
+        container.addEventListener('touchstart', onStart, { passive: false });
+    }
+    
+    closeCenteredImage(container) {
+        const images = container.querySelectorAll('.centered-image');
+        
+        // Animate all images
+        images.forEach(img => {
+            img.style.transform = 'rotate(0deg) scale(0)';
+        });
+        
         this.overlay.classList.remove('visible');
         
         setTimeout(() => {
