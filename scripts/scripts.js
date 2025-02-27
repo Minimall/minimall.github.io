@@ -575,16 +575,34 @@ class BottomSheet {
         const images = container.querySelectorAll('img');
         const rotation = ((rotationCounter % 2 === 0) ? 1.5 : -1.5);
         
-        // Ensure container is set up for centering
+        // Ensure container is set up for proper centering
         container.style.display = 'flex';
         container.style.alignItems = 'center';
         container.style.justifyContent = 'center';
         container.style.height = '100%';
         
+        // Set up a wrapper for the images to ensure proper horizontal centering
+        if (!container.querySelector('.image-wrapper')) {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'image-wrapper';
+            wrapper.style.width = '100%';
+            wrapper.style.height = '100%';
+            wrapper.style.display = 'flex';
+            wrapper.style.alignItems = 'center';
+            wrapper.style.justifyContent = 'center';
+            
+            // Move all images into the wrapper
+            while (container.firstChild) {
+                wrapper.appendChild(container.firstChild);
+            }
+            container.appendChild(wrapper);
+        }
+        
         images.forEach((img, i) => {
             if (i === newIndex) {
                 // Center the active image and add rotation/scale
                 img.style.transform = `rotate(${rotation}deg) scale(1)`;
+                img.style.margin = '0 auto'; // Ensure horizontal centering
             } else {
                 // Position non-active images
                 img.style.transform = `translateX(${(i - newIndex) * 100}%)`;

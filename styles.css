@@ -801,8 +801,6 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
     visibility: hidden;
     transition: opacity 0.3s ease;
     z-index: 998;
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
   }
 
   .overlay.visible {
@@ -914,6 +912,23 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
     transform: scale(0) rotate(0deg);
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     will-change: transform;
+    margin: 0 auto; /* Ensure horizontal centering */
+    position: relative;
+    left: 0;
+    right: 0;
+  }
+  
+  .centered-image-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center; /* Additional centering */
   }
 }
 
