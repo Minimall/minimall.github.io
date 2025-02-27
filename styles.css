@@ -249,6 +249,11 @@ nav a:hover {
   display: block !important;
   visibility: visible !important;
   opacity: 1 !important;
+  transition: transform 0.3s cubic-bezier(0.18, 1.3, 0.4, 1) !important;
+}
+
+.case-logo a:hover img {
+  transform: scale(1.15);
 }
 
 .case-logo img[src$="wombi.svg"] {
