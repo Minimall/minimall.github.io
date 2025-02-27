@@ -151,7 +151,7 @@ const handleImageHover = (element, img, isEnter) => {
         const rotation = (rotationCounter % 2 === 0) ? 3 : -3;
         rotationCounter++;
         
-        // Set high z-index to ensure image is on top
+        // Set high z-index to ensure image is on top only on hover
         img.style.zIndex = "9999";
         img.style.transform = `rotate(${rotation}deg)`;
         img.classList.add('active');
@@ -162,6 +162,7 @@ const handleImageHover = (element, img, isEnter) => {
         element.stopImageCycle = cycleImages(element, img);
     } else if (element.stopImageCycle) {
         img.classList.remove('active');
+        img.style.zIndex = "99"; // Reset to default z-index when not hovered
         element.stopImageCycle();
         element.stopImageCycle = null;
     }
