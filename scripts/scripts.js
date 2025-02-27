@@ -208,11 +208,28 @@ const updateMousePosition = (e) => {
 function preserveLogos() {
     // Find all case logos and ensure they're visible
     const caseLogos = document.querySelectorAll('.case-logo img');
+    
+    // Create a persistent style element if it doesn't exist
+    if (!document.getElementById('logo-persistent-styles')) {
+        const styleEl = document.createElement('style');
+        styleEl.id = 'logo-persistent-styles';
+        styleEl.innerHTML = `
+            .case-logo img {
+                display: block !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+                pointer-events: auto !important;
+                z-index: 10 !important;
+                position: relative !important;
+            }
+        `;
+        document.head.appendChild(styleEl);
+    }
+    
+    // Also apply inline styles for immediate effect
     caseLogos.forEach(logo => {
-        // Force logo visibility and prevent any CSS that might hide it
-        logo.style.display = 'block';
-        logo.style.visibility = 'visible';
-        logo.style.opacity = '1';
+        logo.setAttribute('data-preserved', 'true');
+        logo.style.cssText = 'display: block !important; visibility: visible !important; opacity: 1 !important; pointer-events: auto !important; z-index: 10 !important; position: relative !important;';
     });
 }
 
@@ -285,13 +302,36 @@ document.addEventListener("DOMContentLoaded", async () => {
     
     // Make logos visible immediately
     preserveLogos();
+    
+    // Create a MutationObserver to ensure logos stay visible
+    // even if the DOM changes after initial load
+    const logoObserver = new MutationObserver(() => {
+        preserveLogos();
+    });
+    
+    // Start observing the entire document for changes
+    logoObserver.observe(document.body, {
+        childList: true,
+        subtree: true,
+        attributes: true,
+        attributeFilter: ['style', 'class']
+    });
 
+    // Force preserveLogos call on interval for the first few seconds
+    // to handle any potential race conditions
+    const logoInterval = setInterval(preserveLogos, 250);
+    setTimeout(() => clearInterval(logoInterval), 5000);
+    
     // 1. Wait for all resources to fully load before initializing animations
     window.addEventListener('load', () => {
         console.log("Window fully loaded");
         
         // Ensure logos remain visible after load
         preserveLogos();
+        
+        // Force another preservation after a brief delay
+        setTimeout(preserveLogos, 300);
+        setTimeout(preserveLogos, 800);
         
         // 2. First initialize headline animation (complete essential page loading)
         setTimeout(() => {

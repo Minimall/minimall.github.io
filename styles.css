@@ -244,17 +244,19 @@ nav a:hover {
 }
 
 .case-logo img {
-  height: 32px;
-  width: auto;
-  display: block;
+  height: 32px !important;
+  width: auto !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
 }
 
 .case-logo img[src$="wombi.svg"] {
-  height: 24px;
+  height: 24px !important;
 }
 
 .case-logo img[src$="datrics.svg"] {
-  height: 44px;
+  height: 44px !important;
 }
 
 .logo-link {
