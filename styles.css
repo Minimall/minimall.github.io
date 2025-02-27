@@ -256,6 +256,12 @@ nav a:hover {
   transform: scale(1.15);
 }
 
+/* Prevent hover effects for Wombi logo */
+.case-logo img[src$="wombi.svg"] {
+  transition: none !important;
+  transform: none !important;
+}
+
 .case-logo img[src$="wombi.svg"] {
   height: 24px !important;
 }
