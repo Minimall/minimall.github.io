@@ -204,8 +204,23 @@ const updateMousePosition = (e) => {
 
 
 
+// Make sure logos are preserved
+function preserveLogos() {
+    // Find all case logos and ensure they're visible
+    const caseLogos = document.querySelectorAll('.case-logo img');
+    caseLogos.forEach(logo => {
+        // Force logo visibility and prevent any CSS that might hide it
+        logo.style.display = 'block';
+        logo.style.visibility = 'visible';
+        logo.style.opacity = '1';
+    });
+}
+
 // Initialize everything
 function initHeadlineWave() {
+    // Ensure logos are visible first
+    preserveLogos();
+    
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -221,6 +236,9 @@ function initHeadlineWave() {
                             }, i * baseDelay);
                         });
                     }
+                    
+                    // Ensure logos are still visible after animations
+                    preserveLogos();
                 }, 1200);
                 
                 observer.unobserve(h1Element);
@@ -264,13 +282,22 @@ function initHeadlineWave() {
 
 document.addEventListener("DOMContentLoaded", async () => {
     console.log("DOM Content Loaded");
+    
+    // Make logos visible immediately
+    preserveLogos();
 
     // 1. Wait for all resources to fully load before initializing animations
     window.addEventListener('load', () => {
         console.log("Window fully loaded");
         
+        // Ensure logos remain visible after load
+        preserveLogos();
+        
         // 2. First initialize headline animation (complete essential page loading)
-        setTimeout(initHeadlineWave, 100);
+        setTimeout(() => {
+            initHeadlineWave();
+            preserveLogos(); // Ensure logos stay visible
+        }, 100);
         
         // 3. Then start footer animation with a delay to ensure proper sequence
         setTimeout(() => {
@@ -283,6 +310,9 @@ document.addEventListener("DOMContentLoaded", async () => {
                     wrapper.style.background = '#ffffff';
                 }
                 createGridAnimation(animationContainer);
+                
+                // Final check to ensure logos are visible
+                preserveLogos();
             }
         }, 1000); // Increased delay for footer animation
     });
