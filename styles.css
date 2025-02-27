@@ -368,37 +368,27 @@ li, .tag {
               0 10px 34px -2.5px #0000001a;
 }
 
-.hover-image {
-  opacity: 0;
-  position: fixed;
-  z-index: 1000;
-  pointer-events: none;
-  height: 480px;
-  width: auto;
-  max-width: 640px;
-  object-fit: contain;
-  transform: translate(-50%, -100%) scale(0) rotate(0deg);
-  will-change: transform, opacity;
-  padding: 24px 0 12px;
-  transition: opacity 0.4s ease, transform 0.4s ease;
+.grid-item {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s cubic-bezier(0.18, 1.3, 0.4, 1), z-index 0.01s linear;
+  z-index: 1;
 }
 
-.hover-image.active {
-	opacity: 1;
-	transform: translate(-50%, -100%) scale(1) rotate(var(--rotation));
+.grid-item:hover {
+  transform: scale(1.05);
+  z-index: 9999;
 }
 
-.hover-image:not(.active) {
-	transform: translate(-50%, -100%) scale(0) rotate(0deg);
-	transition: opacity 0.4s ease, transform 0.5s ease;
+.grid-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s cubic-bezier(0.18, 1.3, 0.4, 1);
 }
 
-.hover-image.move-down {
-	transform: translate(-50%, 0) scale(0) rotate(var(--rotation));
-}
-
-.hover-image.move-down.active {
-	transform: translate(-50%, 0) scale(1) rotate(var(--rotation));
+.grid-item:hover img {
+  transform: scale(1.1);
 }
 
 
@@ -520,7 +510,7 @@ li, .tag {
     max-width: 100% !important;
     height: auto !important;
     margin: 0 !important;
-    border-radius: 6px;
+    border-radius: 2px;
   }
 
   .case-gallery:has(.case-image-portrait:only-child) .case-image-portrait,
