@@ -115,13 +115,13 @@ const setupHoverEffects = () => {
             });
         });
         item.addEventListener('mouseleave', () => {
-            // First reset the transform
-            item.style.transform = '';
+            // First reset the z-index immediately
+            item.style.zIndex = '1';
             
-            // Only reset z-index after animation completes
-            setTimeout(() => {
-                item.style.zIndex = '1';
-            }, 400); // Match the transform transition duration
+            // Then reset transform in the next frame to ensure sequence
+            requestAnimationFrame(() => {
+                item.style.transform = '';
+            });
         });
     });
 };
