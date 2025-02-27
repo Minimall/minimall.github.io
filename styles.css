@@ -679,6 +679,21 @@ a span, .collapsible span {
   column-gap: 3rem;
 }
 
+.flex-container {
+  display: flex;
+  margin-bottom: var(--spacing);
+  align-items: flex-start;
+  gap: 2rem;
+}
+
+.left-container {
+  flex: 0 0 auto;
+}
+
+.right-container {
+  flex: 1 1 auto;
+}
+
 .service {
   margin-bottom: calc(var(--spacing));
 }
