@@ -402,9 +402,10 @@ class BottomSheet {
         this.setupGestures();
         this.setupTriggers();
         this.totalImages = 0;
-
+        this.viewMode = 'drawer'; // 'drawer' or 'fullscreen'
+        
         this.overlay.addEventListener('click', () => this.close());
-        document.querySelector('.bottom-sheet-indicator').addEventListener('click', () => this.close());
+        // Remove drawer close icon/indicator event listener
     }
 
     setupGestures() {
@@ -416,7 +417,7 @@ class BottomSheet {
             this.isClosing = false;
             startY = e.type === 'mousedown' ? e.clientY : e.touches[0].clientY;
             startX = e.type === 'mousedown' ? e.clientX : e.touches[0].clientX;
-            document.addEventListener(e.type === 'mousedown' ? 'mousemove' : 'touchmove', onMove, { passive: true });
+            document.addEventListener(e.type === 'mousedown' ? 'mousemove' : 'touchmove', onMove, { passive: false });
             document.addEventListener(e.type === 'mousedown' ? 'mouseup' : 'touchend', onEnd);
         };
 
@@ -440,9 +441,13 @@ class BottomSheet {
                     }
                 }
             } else if (diffY > 100 && !this.isClosing) {
-                // Vertical swipe to close
+                // Vertical swipe to close (both drawer and fullscreen image)
                 this.isClosing = true;
-                this.close();
+                if (this.viewMode === 'fullscreen') {
+                    this.exitFullscreen();
+                } else {
+                    this.close();
+                }
             }
         };
 
@@ -474,6 +479,7 @@ class BottomSheet {
         this.carousel.innerHTML = '';
         this.currentImageIndex = 0;
         this.totalImages = images.length;
+        this.viewMode = 'drawer';
 
         images.forEach((image, index) => {
             const img = document.createElement('img');
@@ -486,10 +492,22 @@ class BottomSheet {
             img.src = imgPath;
             img.style.transform = `translateX(${index * 100}%)`;
             img.style.position = 'absolute';
+            img.style.transition = 'transform 0.3s ease-out';
+            
+            // Add click handler to show fullscreen image
+            img.addEventListener('click', () => {
+                if (this.viewMode === 'drawer') {
+                    this.showFullscreenImage(img, index);
+                }
+            });
+            
             this.carousel.appendChild(img);
         });
 
-        this.setupDots(images.length);
+        // Only show dots if there's more than one image
+        if (images.length > 1) {
+            this.setupDots(images.length);
+        }
     }
 
     showImage(index) {
@@ -500,10 +518,9 @@ class BottomSheet {
 
         images.forEach((img, i) => {
             img.style.transform = `translateX(${(i - index) * 100}%)`;
-            img.style.transition = 'transform 0.3s ease-out';
         });
 
-        // Update dots
+        // Update dots only if they exist
         const dots = document.querySelectorAll('.dot');
         dots.forEach((dot, i) => {
             dot.classList.toggle('active', i === index);
@@ -513,6 +530,7 @@ class BottomSheet {
     setupDots(count) {
         const dotsContainer = document.querySelector('.carousel-dots');
         dotsContainer.innerHTML = '';
+        dotsContainer.classList.add('sticky-dots');
 
         for (let i = 0; i < count; i++) {
             const dot = document.createElement('div');
@@ -523,18 +541,78 @@ class BottomSheet {
         }
     }
 
+    showFullscreenImage(img, index) {
+        this.viewMode = 'fullscreen';
+        this.currentImageIndex = index;
+        
+        // Get rotation similar to desktop but half the degree
+        const rotation = ((rotationCounter % 2 === 0) ? 1.5 : -1.5);
+        rotationCounter++;
+        
+        // Create fullscreen container
+        const fullscreenContainer = document.createElement('div');
+        fullscreenContainer.className = 'fullscreen-image-container';
+        
+        // Clone the image
+        const fullscreenImg = img.cloneNode(true);
+        fullscreenImg.className = 'fullscreen-image';
+        fullscreenImg.style.transform = `rotate(${rotation}deg) scale(1)`;
+        fullscreenImg.style.transition = 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+        
+        // Add scale animation
+        fullscreenImg.style.opacity = '0';
+        fullscreenImg.style.transform = `rotate(${rotation}deg) scale(0)`;
+        
+        fullscreenContainer.appendChild(fullscreenImg);
+        this.sheet.appendChild(fullscreenContainer);
+        
+        // Trigger animation
+        setTimeout(() => {
+            fullscreenImg.style.opacity = '1';
+            fullscreenImg.style.transform = `rotate(${rotation}deg) scale(1)`;
+        }, 10);
+        
+        // Add swipe/tap handlers
+        fullscreenContainer.addEventListener('click', (e) => {
+            if (e.target === fullscreenContainer) {
+                this.exitFullscreen();
+            }
+        });
+    }
+    
+    exitFullscreen() {
+        const fullscreenContainer = document.querySelector('.fullscreen-image-container');
+        if (fullscreenContainer) {
+            const fullscreenImg = fullscreenContainer.querySelector('.fullscreen-image');
+            fullscreenImg.style.opacity = '0';
+            fullscreenImg.style.transform = `rotate(0deg) scale(0)`;
+            
+            setTimeout(() => {
+                fullscreenContainer.remove();
+                this.viewMode = 'drawer';
+            }, 300);
+        }
+    }
+
     open() {
         this.sheet.classList.add('open');
         this.overlay.classList.add('visible');
     }
 
     close() {
+        if (this.viewMode === 'fullscreen') {
+            this.exitFullscreen();
+            setTimeout(() => this.close(), 300);
+            return;
+        }
+        
         this.sheet.classList.remove('open');
         this.overlay.classList.remove('visible');
         this.isClosing = false;
         setTimeout(() => {
             this.carousel.innerHTML = '';
-            document.querySelector('.carousel-dots').innerHTML = '';
+            const dotsContainer = document.querySelector('.carousel-dots');
+            if (dotsContainer) dotsContainer.innerHTML = '';
         }, 300);
     }
 }
