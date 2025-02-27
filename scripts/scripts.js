@@ -222,7 +222,7 @@ function initHeadlineWave() {
                         });
                     }
                 }, 1200);
-                
+
                 observer.unobserve(h1Element);
             }
         });
@@ -233,7 +233,7 @@ function initHeadlineWave() {
         headlines.forEach(headline => {
             // Skip if already processed
             if (headline.hasAttribute('data-wave-processed')) return;
-            
+
             const waveTextSpan = headline.querySelector('.wave-text');
             if (waveTextSpan) {
                 const text = waveTextSpan.textContent.trim();
@@ -268,10 +268,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     // 1. Wait for all resources to fully load before initializing animations
     window.addEventListener('load', () => {
         console.log("Window fully loaded");
-        
+
         // 2. First initialize headline animation (complete essential page loading)
         setTimeout(initHeadlineWave, 100);
-        
+
         // 3. Then start footer animation with a delay to ensure proper sequence
         setTimeout(() => {
             const animationContainer = document.getElementById('footer-animation-container');
@@ -403,7 +403,7 @@ class BottomSheet {
         this.setupTriggers();
         this.totalImages = 0;
         this.viewMode = 'drawer'; // 'drawer' or 'fullscreen'
-        
+
         this.overlay.addEventListener('click', () => this.close());
     }
 
@@ -474,19 +474,28 @@ class BottomSheet {
             });
         });
     }
-    
+
     showCenteredImage(image) {
         // Get rotation similar to desktop but half the amount
         const rotation = ((rotationCounter % 2 === 0) ? 1.5 : -1.5);
         rotationCounter++;
-        
+
         // Create overlay
         this.overlay.classList.add('visible');
-        
+
+        // Create centered container with explicit centering
+        const centeredContainer = document.createElement('div');
+        centeredContainer.className = 'centered-image-container';
+        centeredContainer.style.display = 'flex';
+        centeredContainer.style.alignItems = 'center';
+        centeredContainer.style.justifyContent = 'center';
+        centeredContainer.style.height = `calc(100vh - env(safe-area-inset-bottom))`; // Compensate for home indicator
+        document.body.appendChild(centeredContainer);
+
         // Get all images if this is part of an image set
         let images = [];
         let currentIndex = 0;
-        
+
         // Check if image is from a set (data-images attribute)
         const triggerElements = document.querySelectorAll('[data-images]');
         for (const element of triggerElements) {
@@ -497,22 +506,17 @@ class BottomSheet {
                 break;
             }
         }
-        
+
         // If no set was found, use just this image
         if (images.length === 0) {
             images = [image];
         }
-        
-        // Create centered container
-        const centeredContainer = document.createElement('div');
-        centeredContainer.className = 'centered-image-container';
-        document.body.appendChild(centeredContainer);
-        
+
         // Create the image container to hold all images
         const imageContainer = document.createElement('div');
         imageContainer.className = 'carousel';
         centeredContainer.appendChild(imageContainer);
-        
+
         // Add all images to the container
         images.forEach((img, index) => {
             const imgElement = document.createElement('img');
@@ -524,18 +528,33 @@ class BottomSheet {
             }
             imgElement.src = imgPath;
             imgElement.className = 'centered-image';
-            imgElement.style.transform = index === currentIndex ? 
-                `rotate(${rotation}deg) scale(0)` : `translateX(${(index - currentIndex) * 100}%)`;
-            
+
+            // Apply transform for proper positioning and centering
+            imgElement.style.width = '100%';
+            imgElement.style.height = 'auto';
+            imgElement.style.maxWidth = '80%'; //added max-width to prevent from overflowing.
+            imgElement.style.maxHeight = '80%'; //added max-height to prevent from overflowing.
+            imgElement.style.display = 'block'; // Ensure image takes up available space
+            imgElement.style.margin = '0 auto'; //added margin for better centering
+
+            if (index === currentIndex) {
+                imgElement.style.transform = `rotate(${rotation}deg) scale(0)`;
+                imgElement.style.position = 'relative';
+            } else {
+                imgElement.style.transform = `translateX(${(index - currentIndex) * 100}%)`;
+                imgElement.style.position = 'absolute';
+            }
+
             imageContainer.appendChild(imgElement);
         });
-        
+
         // Setup dots for navigation if multiple images
         if (images.length > 1) {
             const dotsContainer = document.createElement('div');
             dotsContainer.className = 'carousel-dots sticky-dots';
+            dotsContainer.style.marginBottom = 'env(safe-area-inset-bottom)'; // Adjust for home indicator
             centeredContainer.appendChild(dotsContainer);
-            
+
             for (let i = 0; i < images.length; i++) {
                 const dot = document.createElement('div');
                 dot.className = 'dot';
@@ -550,30 +569,30 @@ class BottomSheet {
                 dotsContainer.appendChild(dot);
             }
         }
-        
+
         // Trigger animation for the current image
         const currentImg = imageContainer.querySelectorAll('img')[currentIndex];
         setTimeout(() => {
             currentImg.style.transform = `rotate(${rotation}deg) scale(1)`;
         }, 10);
-        
+
         // Add swipe gestures
         this.setupCenteredImageSwipe(imageContainer, centeredContainer, images, currentIndex);
-        
+
         // Add tap handler to close
         centeredContainer.addEventListener('click', () => {
             this.closeCenteredImage(centeredContainer);
         });
-        
+
         this.overlay.addEventListener('click', () => {
             this.closeCenteredImage(centeredContainer);
         });
     }
-    
+
     showImageInContainer(container, newIndex, oldIndex) {
         const images = container.querySelectorAll('img');
         const rotation = ((rotationCounter % 2 === 0) ? 1.5 : -1.5);
-        
+
         images.forEach((img, i) => {
             if (i === newIndex) {
                 img.style.transform = `rotate(${rotation}deg) scale(1)`;
@@ -582,74 +601,74 @@ class BottomSheet {
             }
         });
     }
-    
+
     setupCenteredImageSwipe(container, centeredContainer, images, startIndex) {
         let startX = 0;
         let currentIndex = startIndex;
-        
+
         const onStart = (e) => {
             startX = e.type === 'mousedown' ? e.clientX : e.touches[0].clientX;
             document.addEventListener(e.type === 'mousedown' ? 'mousemove' : 'touchmove', onMove, { passive: false });
             document.addEventListener(e.type === 'mousedown' ? 'mouseup' : 'touchend', onEnd);
         };
-        
+
         const onMove = (e) => {
             if (images.length <= 1) return;
-            
+
             e.preventDefault();
             const currentX = e.type === 'mousemove' ? e.clientX : e.touches[0].clientX;
             const diffX = currentX - startX;
-            
+
             if (Math.abs(diffX) > 50) {
                 if (diffX > 0 && currentIndex > 0) {
                     // Swipe right - show previous image
                     currentIndex--;
                     this.showImageInContainer(container, currentIndex, currentIndex + 1);
-                    
+
                     // Update dots
                     const dots = centeredContainer.querySelectorAll('.dot');
                     dots.forEach((dot, i) => {
                         dot.classList.toggle('active', i === currentIndex);
                     });
-                    
+
                     startX = currentX;
                 } else if (diffX < 0 && currentIndex < images.length - 1) {
                     // Swipe left - show next image
                     currentIndex++;
                     this.showImageInContainer(container, currentIndex, currentIndex - 1);
-                    
+
                     // Update dots
                     const dots = centeredContainer.querySelectorAll('.dot');
                     dots.forEach((dot, i) => {
                         dot.classList.toggle('active', i === currentIndex);
                     });
-                    
+
                     startX = currentX;
                 }
             }
         };
-        
+
         const onEnd = () => {
             document.removeEventListener('mousemove', onMove);
             document.removeEventListener('touchmove', onMove);
             document.removeEventListener('mouseup', onEnd);
             document.removeEventListener('touchend', onEnd);
         };
-        
+
         container.addEventListener('mousedown', onStart);
         container.addEventListener('touchstart', onStart, { passive: false });
     }
-    
+
     closeCenteredImage(container) {
         const images = container.querySelectorAll('.centered-image');
-        
+
         // Animate all images
         images.forEach(img => {
             img.style.transform = 'rotate(0deg) scale(0)';
         });
-        
+
         this.overlay.classList.remove('visible');
-        
+
         setTimeout(() => {
             container.remove();
         }, 300);
@@ -681,7 +700,7 @@ class BottomSheet {
             if (dotsContainer) dotsContainer.innerHTML = '';
             return;
         }
-        
+
         const dotsContainer = document.querySelector('.carousel-dots');
         dotsContainer.innerHTML = '';
         dotsContainer.classList.add('sticky-dots');
@@ -719,7 +738,7 @@ function preloadHoverImages() {
         images.forEach(image => {
             const img = new Image();
             img.src = `/images/${image}`;
-            
+
             // Set image type based on extension
             if (image.endsWith('.webp')) {
                 img.type = 'image/webp';
@@ -735,7 +754,7 @@ function preloadHoverImages() {
 // Add to your existing DOMContentLoaded listener
 document.addEventListener("DOMContentLoaded", () => {
     // Existing code...
-    
+
     // Preload all hover images as soon as DOM is ready
     preloadHoverImages();
 });

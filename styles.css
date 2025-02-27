@@ -860,7 +860,7 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
 
   .sticky-dots {
     position: fixed;
-    bottom: 0;
+    bottom: 34px; /* Add space for home indicator */
     left: 0;
     right: 0;
     background: rgba(0, 0, 0, 0.3);
