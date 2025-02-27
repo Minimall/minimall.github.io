@@ -678,9 +678,8 @@ a span, .collapsible span {
   column-gap: 3rem;
 }
 
-.flex-container {
+.principle-container {
   display: flex;
-  margin-bottom: var(--spacing);
   padding-top: 2.5rem;
   align-items: flex-start;
   gap: 2rem;
