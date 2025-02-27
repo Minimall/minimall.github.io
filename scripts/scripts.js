@@ -826,3 +826,33 @@ document.addEventListener("DOMContentLoaded", () => {
     // Preload all hover images as soon as DOM is ready
     preloadHoverImages();
 });
+
+
+// Smooth scrolling for anchor links
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+      e.preventDefault();
+      
+      const targetId = this.getAttribute('href');
+      if (targetId === '#') return;
+      
+      const targetElement = document.querySelector(targetId);
+      if (targetElement) {
+        // Get the target's position
+        const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset;
+        
+        // Animate scroll
+        window.scrollTo({
+          top: targetPosition,
+          behavior: 'smooth',
+          // These don't work in all browsers but we're setting them anyway
+          // CSS scroll-behavior handles this in modern browsers
+        });
+        
+        // Update URL without scrolling
+        history.pushState(null, null, targetId);
+      }
+    });
+  });
+});
