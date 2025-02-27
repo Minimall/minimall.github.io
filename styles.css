@@ -263,7 +263,6 @@ nav a:hover {
   font-variation-settings: "wght" 400;
   color: var(--case-title-color);
   max-width: var(--max-width);
-  padding-top: 2.5rem;
   padding-bottom: 1rem;
 }
 
@@ -682,6 +681,7 @@ a span, .collapsible span {
 .flex-container {
   display: flex;
   margin-bottom: var(--spacing);
+  padding-top: 2.5rem;
   align-items: flex-start;
   gap: 2rem;
 }
