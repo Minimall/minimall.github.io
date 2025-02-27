@@ -53,66 +53,63 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-// Unified setup function for hover effects - optimized version
+// Unified setup function for hover effects
 const setupHoverEffects = () => {
-    // Limit DOM selection to only elements we haven't processed yet
-    const hoverableElements = document.querySelectorAll('a:not([data-processed]), [data-hover="true"]:not([data-processed])');
-    if (hoverableElements.length === 0) return;
-
-    // Create just one image element and reuse it
-    const sharedHoverImg = document.querySelector('.hover-image') || (() => {
-        const img = document.createElement('img');
-        img.className = 'hover-image';
-        document.body.appendChild(img);
-        return img;
-    })();
+    const hoverableElements = document.querySelectorAll('a, [data-hover="true"]');
 
     hoverableElements.forEach(element => {
+        // Skip if already processed
+        if (element.hasAttribute('data-processed')) return;
+
         // Check if it's a direct image hover element
         const hasDirectImageHover = element.dataset.images && !element.querySelector('.wave-text');
 
         if (hasDirectImageHover) {
-            // Split text for wave effect only if needed
+            // Create and handle hover image
+            const img = document.createElement('img');
+            img.className = 'hover-image';
+            img.alt = element.textContent;
+            document.body.appendChild(img);
+
+            // Split text for wave effect
             const text = element.textContent.trim();
-            
-            // Create the wave-text element only once
             element.innerHTML = `<span class="wave-text">${
                 text.split('').map(char => char === ' ' ? `<span>&nbsp;</span>` : `<span>${char}</span>`).join('')
             }</span>`;
 
             element.addEventListener('mouseenter', () => {
-                handleImageHover(element, sharedHoverImg, true);
+                handleImageHover(element, img, true);
                 handleWaveEffect(element, true);
                 hoveredElements.add(element);
-            }, { passive: true });
-            
+            });
             element.addEventListener('mouseleave', () => {
-                handleImageHover(element, sharedHoverImg, false);
+                handleImageHover(element, img, false);
                 handleWaveEffect(element, false);
                 hoveredElements.delete(element);
-            }, { passive: true });
+            });
         } else {
-            // Only process the text if needed
+            // Handle regular wave text effect
             if (!element.querySelector('.wave-text')) {
                 const text = element.textContent.trim();
                 const processedText = text.split('').map(char => `<span>${char}</span>`).join('');
                 element.innerHTML = `<span class="wave-text">${processedText}</span>`;
             }
 
-            // Optimize event listeners by using passive flag
+            // Add wave effect listeners for both desktop and mobile
             if ('ontouchstart' in window) {
-                element.addEventListener('touchstart', () => {
+                // For mobile - using touchstart/end and preserving link clicks
+                element.addEventListener('touchstart', (e) => {
+                    // Don't prevent default to keep links working
                     handleWaveEffect(element, true);
-                }, { passive: true });
-                
+                });
                 element.addEventListener('touchend', () => {
                     setTimeout(() => handleWaveEffect(element, false), 300);
-                }, { passive: true });
+                });
             }
 
-            // Keep desktop behavior with passive listeners
-            element.addEventListener('mouseenter', () => handleWaveEffect(element, true), { passive: true });
-            element.addEventListener('mouseleave', () => handleWaveEffect(element, false), { passive: true });
+            // Keep desktop behavior
+            element.addEventListener('mouseenter', () => handleWaveEffect(element, true));
+            element.addEventListener('mouseleave', () => handleWaveEffect(element, false));
         }
 
         element.setAttribute('data-processed', 'true');
@@ -208,16 +205,9 @@ const updateMousePosition = (e) => {
 
 
 // Make sure logos are preserved
-// Track if we've already set up logo preservation
-let logosPreserved = false;
-
 function preserveLogos() {
-    // Only run the full setup once
-    if (logosPreserved) return;
-    
     // Find all case logos and ensure they're visible
     const caseLogos = document.querySelectorAll('.case-logo img');
-    if (caseLogos.length === 0) return;
     
     // Create a persistent style element if it doesn't exist
     if (!document.getElementById('logo-persistent-styles')) {
@@ -234,75 +224,51 @@ function preserveLogos() {
             }
         `;
         document.head.appendChild(styleEl);
-        
-        // Mark logos as preserved to avoid redundant operations
-        logosPreserved = true;
     }
     
-    // Only set inline styles if we haven't marked as preserved yet
-    if (!logosPreserved) {
-        caseLogos.forEach(logo => {
-            logo.setAttribute('data-preserved', 'true');
-            logo.style.cssText = 'display: block !important; visibility: visible !important; opacity: 1 !important; pointer-events: auto !important; z-index: 10 !important; position: relative !important;';
-        });
-        logosPreserved = true;
-    }
+    // Also apply inline styles for immediate effect
+    caseLogos.forEach(logo => {
+        logo.setAttribute('data-preserved', 'true');
+        logo.style.cssText = 'display: block !important; visibility: visible !important; opacity: 1 !important; pointer-events: auto !important; z-index: 10 !important; position: relative !important;';
+    });
 }
 
 // Initialize everything
 function initHeadlineWave() {
-    // Call logo preservation once
+    // Ensure logos are visible first
     preserveLogos();
     
-    // Use a more efficient threshold
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 const h1Element = entry.target;
-                
-                // Only process once
-                if (h1Element.hasAttribute('data-animation-started')) return;
-                h1Element.setAttribute('data-animation-started', 'true');
-                
-                // Delay the animation slightly
                 setTimeout(() => {
                     const waveTextSpan = h1Element.querySelector('.wave-text');
                     if (waveTextSpan) {
-                        // Use requestAnimationFrame for better performance
                         const spans = waveTextSpan.querySelectorAll('span');
                         const baseDelay = 25;
-                        
-                        // Batch animations in groups of 3 characters for better performance
-                        const batchSize = 3;
-                        for (let i = 0; i < spans.length; i += batchSize) {
-                            const delay = Math.floor(i / batchSize) * baseDelay;
-                            
+                        spans.forEach((span, i) => {
                             setTimeout(() => {
-                                requestAnimationFrame(() => {
-                                    // Process multiple spans in each animation frame
-                                    for (let j = 0; j < batchSize && i + j < spans.length; j++) {
-                                        spans[i + j].classList.add('shimmer-in');
-                                    }
-                                });
-                            }, delay);
-                        }
+                                span.classList.add('shimmer-in');
+                            }, i * baseDelay);
+                        });
                     }
-                }, 800);
+                    
+                    // Ensure logos are still visible after animations
+                    preserveLogos();
+                }, 1200);
                 
                 observer.unobserve(h1Element);
             }
         });
-    }, { 
-        threshold: 0.2,  // Lower threshold for earlier triggering
-        rootMargin: '0px 0px 100px 0px' // Start animation earlier
-    });
+    }, { threshold: 0.5 });
 
     function processHeadlines() {
-        // Use a more specific selector and limit the scope
-        const headlines = document.querySelectorAll('h1:not([data-wave-processed]):not(.case-title), .case-title:not([data-wave-processed])');
-        if (headlines.length === 0) return;
-        
+        const headlines = document.querySelectorAll('h1:not(.case-title), .case-title');
         headlines.forEach(headline => {
+            // Skip if already processed
+            if (headline.hasAttribute('data-wave-processed')) return;
+            
             const waveTextSpan = headline.querySelector('.wave-text');
             if (waveTextSpan) {
                 const text = waveTextSpan.textContent.trim();
@@ -319,28 +285,16 @@ function initHeadlineWave() {
     // Initial processing
     processHeadlines();
 
-    // Use a more targeted observer with throttling
-    let processingQueued = false;
-    const headlineObserver = new MutationObserver(() => {
-        if (!processingQueued) {
-            processingQueued = true;
-            requestAnimationFrame(() => {
+    // Watch for dynamically loaded content
+    const footerObserver = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            if (mutation.addedNodes.length) {
                 processHeadlines();
-                processingQueued = false;
-            });
-        }
-    });
-
-    // Only observe container elements that might contain headlines
-    const containers = document.querySelectorAll('.container, .case-study-container');
-    containers.forEach(container => {
-        headlineObserver.observe(container, { 
-            childList: true, 
-            subtree: true,
-            characterData: false,
-            attributes: false
+            }
         });
     });
+
+    footerObserver.observe(document.body, { childList: true, subtree: true });
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -349,45 +303,24 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Make logos visible immediately
     preserveLogos();
     
-    // Use a more targeted MutationObserver with throttling
+    // Create a MutationObserver to ensure logos stay visible
+    // even if the DOM changes after initial load
     const logoObserver = new MutationObserver(() => {
-        // Use requestAnimationFrame to throttle updates
-        if (!window.logoUpdateScheduled) {
-            window.logoUpdateScheduled = true;
-            requestAnimationFrame(() => {
-                preserveLogos();
-                window.logoUpdateScheduled = false;
-            });
-        }
+        preserveLogos();
     });
     
-    // Only observe the case-logo containers rather than the entire document
-    const logoContainers = document.querySelectorAll('.case-logo');
-    if (logoContainers.length > 0) {
-        logoContainers.forEach(container => {
-            logoObserver.observe(container, {
-                childList: true,
-                subtree: true,
-                attributes: true,
-                attributeFilter: ['style', 'class']
-            });
-        });
-    } else {
-        // Fallback to observe just the relevant sections rather than the entire body
-        const sections = document.querySelectorAll('.case-study-container, .container');
-        sections.forEach(section => {
-            logoObserver.observe(section, {
-                childList: true,
-                subtree: true,
-                attributes: false
-            });
-        });
-    }
+    // Start observing the entire document for changes
+    logoObserver.observe(document.body, {
+        childList: true,
+        subtree: true,
+        attributes: true,
+        attributeFilter: ['style', 'class']
+    });
 
-    // Call preserveLogos a few times with increasing delays instead of an interval
-    setTimeout(preserveLogos, 500);
-    setTimeout(preserveLogos, 1500);
-    setTimeout(preserveLogos, 3000);
+    // Force preserveLogos call on interval for the first few seconds
+    // to handle any potential race conditions
+    const logoInterval = setInterval(preserveLogos, 250);
+    setTimeout(() => clearInterval(logoInterval), 5000);
     
     // 1. Wait for all resources to fully load before initializing animations
     window.addEventListener('load', () => {
@@ -458,17 +391,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Run setupHoverEffects again to catch any elements that might have been missed
     setupHoverEffects();
-    
-    // Throttle mousemove handler for better performance
-    let lastMouseMoveTime = 0;
-    window.addEventListener("mousemove", (e) => {
-        const now = performance.now();
-        // Only update every 16ms (~ 60fps)
-        if (now - lastMouseMoveTime > 16) {
-            updateMousePosition(e);
-            lastMouseMoveTime = now;
-        }
-    }, { passive: true });
+    window.addEventListener("mousemove", updateMousePosition, { passive: true });
 
     // Collapsible content handling
     document.querySelectorAll('.collapsible-link').forEach(link => {
