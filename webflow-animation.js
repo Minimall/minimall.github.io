@@ -2,10 +2,10 @@
 /**
  * Webflow Grid Animation
  * Optimized version of the animation for Webflow landing page
- * Works for both header and footer animations
+ * Works for header animation only
  */
-function createWebflowGridAnimation(containerSelector = '.grid-container') {
-    // Find all grid containers
+function createWebflowGridAnimation(containerSelector = '.header-grid-container') {
+    // Find all grid containers, specifically in header
     const gridElements = document.querySelectorAll(containerSelector);
     if (!gridElements.length) {
         console.error(`Grid containers not found. Make sure you have elements with class '${containerSelector}'`);
@@ -301,7 +301,7 @@ function createWebflowGridAnimation(containerSelector = '.grid-container') {
 document.addEventListener('DOMContentLoaded', function() {
     // Wait a bit for Webflow to fully initialize
     setTimeout(() => {
-        createWebflowGridAnimation('.grid-container');
+        createWebflowGridAnimation('.header-grid-container');
     }, 300);
 });
 
@@ -309,8 +309,22 @@ document.addEventListener('DOMContentLoaded', function() {
 window.addEventListener('load', function() {
     if (!window.gridAnimationInitialized) {
         window.gridAnimationInitialized = true;
-        createWebflowGridAnimation('.grid-container');
+        createWebflowGridAnimation('.header-grid-container');
     }
+});
+
+// Fix SVG width/height errors by ensuring they have numeric values
+document.addEventListener('DOMContentLoaded', function() {
+    const svgs = document.querySelectorAll('svg');
+    svgs.forEach(svg => {
+        // Check for invalid width/height values and replace them
+        if (svg.getAttribute('width') === 'currentWidth') {
+            svg.setAttribute('width', '100%');
+        }
+        if (svg.getAttribute('height') === 'currentHeight') {
+            svg.setAttribute('height', '100%');
+        }
+    });
 });
 
 // Add export button functionality (if needed)

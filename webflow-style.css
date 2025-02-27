@@ -1,18 +1,17 @@
-
 /**
  * Webflow Grid Animation Styles
  * Optimized CSS for the grid animation on Webflow landing page
  */
 
-/* Main grid container */
-.grid-container {
+/* Main grid container - for header only */
+.header-grid-container {
     display: grid;
     grid-template-columns: repeat(20, 1fr);
     grid-template-rows: repeat(20, 1fr);
     width: 100%;
     height: 100%;
     pointer-events: none;
-    background: #FAFAFC;
+    background: transparent;
     z-index: 0;
     position: absolute;
     top: 0;
@@ -79,11 +78,11 @@ canvas.background-animation {
 
 /* For better performance on mobile devices */
 @media (max-width: 768px) {
-    .grid-container {
+    .header-grid-container {
         grid-template-columns: repeat(10, 1fr);
         grid-template-rows: repeat(10, 1fr);
     }
-    
+
     .line {
         height: 70%;
     }
