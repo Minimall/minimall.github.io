@@ -772,6 +772,23 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
 .case-logo {
   padding-bottom: 3vw;
 }
+
+.logo-link {
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+
+.logo-link:hover {
+  transform: scale(1.05);
+}
+
+.logo-link img {
+  transition: opacity 0.3s ease;
+}
+
+.logo-link:hover img {
+  opacity: 0.9;
+}
 /* Grid Animation */
 .grid-animation {
     position: relative;
