@@ -244,17 +244,19 @@ nav a:hover {
 }
 
 .case-logo img {
-  height: 32px;
-  width: auto;
-  display: block;
+  height: 32px !important;
+  width: auto !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
 }
 
 .case-logo img[src$="wombi.svg"] {
-  height: 24px;
+  height: 24px !important;
 }
 
 .case-logo img[src$="datrics.svg"] {
-  height: 44px;
+  height: 44px !important;
 }
 
 .logo-link {
@@ -777,22 +779,7 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
   padding-bottom: 3vw;
 }
 
-.logo-link {
-  display: inline-block;
-  transition: transform 0.3s ease;
-}
-
-.logo-link:hover {
-  transform: scale(1.05);
-}
-
-.logo-link img {
-  transition: opacity 0.3s ease;
-}
-
-.logo-link:hover img {
-  opacity: 0.9;
-}
+/* Logo styles removed */
 /* Grid Animation */
 .grid-animation {
     position: relative;
