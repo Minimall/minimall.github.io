@@ -378,7 +378,7 @@ li, .tag {
 }
 
 .grid-item:hover {
-  transform: scale(1.15); /* Increased scale on hover */
+  transform: scale(1); /* No transformation on hover */
   z-index: 9999;
 }
 
