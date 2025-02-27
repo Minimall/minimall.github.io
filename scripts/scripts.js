@@ -93,9 +93,21 @@ const setupHoverEffects = () => {
     // Set up grid item hover effects
     const gridItems = document.querySelectorAll('.grid-item');
     gridItems.forEach(item => {
+        // Ensure container fits image initially
+        const img = item.querySelector('img');
+        if (img) {
+            img.addEventListener('load', () => {
+                // Set initial dimensions based on image
+                const imgWidth = img.naturalWidth;
+                const imgHeight = img.naturalHeight;
+                item.style.width = `${imgWidth}px`;
+                item.style.height = `${imgHeight}px`;
+            });
+        }
+        
         item.addEventListener('mouseenter', () => {
             // Apply SVG-like hover effect - scale container and increase z-index
-            item.style.transform = 'scale(1.05)';
+            item.style.transform = 'scale(1.15)'; // Increased scale
             item.style.zIndex = '9999';
         });
         item.addEventListener('mouseleave', () => {
