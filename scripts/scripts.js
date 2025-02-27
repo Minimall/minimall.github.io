@@ -106,17 +106,22 @@ const setupHoverEffects = () => {
         }
         
         item.addEventListener('mouseenter', () => {
-            // Apply hover effect - scale container and increase z-index
-            item.style.transform = 'scale(1.15)'; // Restore increased scale
+            // First change z-index instantly
             item.style.zIndex = '9999';
+            
+            // Then apply scale transform in the next frame to ensure sequence
+            requestAnimationFrame(() => {
+                item.style.transform = 'scale(1.15)';
+            });
         });
         item.addEventListener('mouseleave', () => {
-            // Reset to original state
+            // First reset the transform
             item.style.transform = '';
-            // Delay resetting the z-index to ensure smooth transition
+            
+            // Only reset z-index after animation completes
             setTimeout(() => {
                 item.style.zIndex = '1';
-            }, 300);
+            }, 400); // Match the transform transition duration
         });
     });
 };
