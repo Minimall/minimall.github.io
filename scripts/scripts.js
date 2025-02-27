@@ -480,7 +480,7 @@ class BottomSheet {
         // Create overlay
         this.overlay.classList.add('visible');
         
-        // Create fullscreen container
+        // Create centered container
         const centeredContainer = document.createElement('div');
         centeredContainer.className = 'centered-image-container';
         document.body.appendChild(centeredContainer);
@@ -544,7 +544,11 @@ class BottomSheet {
 
     setupDots(count) {
         // Only set up dots if there are multiple images
-        if (count <= 1) return;
+        if (count <= 1) {
+            const dotsContainer = document.querySelector('.carousel-dots');
+            if (dotsContainer) dotsContainer.innerHTML = '';
+            return;
+        }
         
         const dotsContainer = document.querySelector('.carousel-dots');
         dotsContainer.innerHTML = '';
