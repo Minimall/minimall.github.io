@@ -864,7 +864,7 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
     left: 0;
     right: 0;
     background: rgba(0, 0, 0, 0.3);
-    padding: 12px;
+    padding: 12px 12px 32px 12px; /* Increased bottom padding for iOS home indicator */
     z-index: 1001;
   }
 

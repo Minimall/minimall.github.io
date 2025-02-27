@@ -576,8 +576,15 @@ class BottomSheet {
         
         images.forEach((img, i) => {
             if (i === newIndex) {
+                // Center the active image and add rotation/scale
                 img.style.transform = `rotate(${rotation}deg) scale(1)`;
+                // Ensure the image is centered vertically in its container
+                container.style.display = 'flex';
+                container.style.alignItems = 'center';
+                container.style.justifyContent = 'center';
+                container.style.height = '100%';
             } else {
+                // Position non-active images
                 img.style.transform = `translateX(${(i - newIndex) * 100}%)`;
             }
         });
