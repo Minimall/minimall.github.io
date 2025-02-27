@@ -434,7 +434,11 @@ li, .tag {
   .container {
     padding-top: 6vw;
   }
-
+  
+  .case-logo {
+    margin-bottom: 6vw;
+  }
+  
   .case-study-content {
     max-width: var(--max-width);
     margin: 0 auto;
@@ -793,7 +797,7 @@ a:not(:hover) span:nth-child(4n) { animation-delay: 0.06s; }
 a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
 
 .case-logo {
-  padding-bottom: 3vw;
+  margin-bottom: 3vw;
 }
 
 /* Logo styles removed */
