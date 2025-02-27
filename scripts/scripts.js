@@ -94,9 +94,19 @@ const setupHoverEffects = () => {
     const gridItems = document.querySelectorAll('.grid-item');
     gridItems.forEach(item => {
         item.addEventListener('mouseenter', () => {
+            // Apply SVG-like hover effect - fill container and increase z-index
+            const img = item.querySelector('img');
+            if (img) {
+                img.style.transform = 'scale(1.05)';
+            }
             item.style.zIndex = '9999';
         });
         item.addEventListener('mouseleave', () => {
+            // Reset to original state
+            const img = item.querySelector('img');
+            if (img) {
+                img.style.transform = '';
+            }
             // Delay resetting the z-index to ensure smooth transition
             setTimeout(() => {
                 item.style.zIndex = '1';

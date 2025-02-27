@@ -371,12 +371,11 @@ li, .tag {
 .grid-item {
   position: relative;
   overflow: hidden;
-  transition: transform 0.3s cubic-bezier(0.18, 1.3, 0.4, 1), z-index 0.01s linear;
+  transition: z-index 0.01s linear;
   z-index: 1;
 }
 
 .grid-item:hover {
-  transform: scale(1.05);
   z-index: 9999;
 }
 
@@ -388,7 +387,7 @@ li, .tag {
 }
 
 .grid-item:hover img {
-  transform: scale(1.1);
+  transform: scale(1.05);
 }
 
 
