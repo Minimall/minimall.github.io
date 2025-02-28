@@ -219,8 +219,6 @@ document.addEventListener('DOMContentLoaded', () => {
         repeater.style.setProperty('--content-width', text.length + 'ch');
     });
 });
-// Global rotation counter for image animations
-let rotationCounter = 0;
 
 
 
