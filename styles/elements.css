@@ -1,3 +1,4 @@
+
 /* Swiss Grid Layout Styles */
 .swiss-grid {
   display: grid;
@@ -13,38 +14,15 @@
 
 .grid-item {
   position: relative;
-  z-index: 2;
-  transition: transform 0.3s ease, z-index 0.01s;
   overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  border-radius: 2px;
 }
 
-.grid-item:hover {
-  z-index: 99;
-}
-
-.grid-item img,
-.grid-item video {
-  width: 80%;
-  height: auto;
-  object-fit: cover;
-  display: block;
-  transition: all 0.3s ease;
-}
-
-.grid-item:hover img,
-.grid-item:hover video {
+.grid-item img {
   width: 100%;
-  transform: rotate(3deg);
+  height: 100%;
+  object-fit: cover;
 }
-
-/* Video handling */
-.grid-item video {
-  pointer-events: none; /* Prevents video from capturing mouse events */
-}
-
 
 /* Specific grid item placements with overlaps */
 .item-1 {
@@ -142,70 +120,70 @@
     gap: 1rem;
     padding: 0 1vw;
   }
-
+  
   .item-1 {
     grid-column: 1 / span 6;
     grid-row: 1 / span 3;
   }
-
+  
   .item-2 {
     grid-column: 2 / span 4;
     grid-row: 4 / span 2;
     margin-top: -0.75rem;
     margin-left: 0;
   }
-
+  
   .item-3 {
     grid-column: 1 / span 3;
     grid-row: 6 / span 2;
   }
-
+  
   .item-4 {
     grid-column: 3 / span 4;
     grid-row: 6 / span 3;
     margin-left: -0.75rem;
   }
-
+  
   .item-5 {
     grid-column: 1 / span 6;
     grid-row: 10 / span 2;
   }
-
+  
   .item-6 {
     grid-column: 2 / span 4;
     grid-row: 12 / span 2;
     margin-top: -0.5rem;
     margin-left: 0;
   }
-
+  
   .item-7 {
     grid-column: 1 / span 3;
     grid-row: 14 / span 2;
   }
-
+  
   .item-8 {
     grid-column: 3 / span 4;
     grid-row: 14 / span 2;
     margin-left: -0.5rem;
     margin-top: 0;
   }
-
+  
   .item-9 {
     grid-column: 1 / span 6;
     grid-row: 17 / span 2;
   }
-
+  
   .item-10 {
     grid-column: 2 / span 4;
     grid-row: 19 / span 2;
     margin-top: -0.5rem;
   }
-
+  
   .item-11 {
     grid-column: 1 / span 3;
     grid-row: 21 / span 2;
   }
-
+  
   .item-12 {
     grid-column: 3 / span 4;
     grid-row: 21 / span 2;
@@ -218,23 +196,8 @@
   .swiss-grid {
     gap: 0.75rem;
   }
-
+  
   .item-2, .item-4, .item-6, .item-8, .item-10, .item-12 {
     margin-left: -0.5rem;
   }
 }
-
-<script>
-  const gridItems = document.querySelectorAll('.grid-item video');
-
-  gridItems.forEach(video => {
-    video.addEventListener('mouseover', () => {
-      video.play();
-    });
-    video.addEventListener('mouseout', () => {
-      video.pause();
-    });
-    video.muted = true;
-    video.loop = true;
-  });
-</script>
