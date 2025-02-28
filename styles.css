@@ -422,11 +422,11 @@ li, .tag {
   .container {
     padding-top: 6vw;
   }
-
+  
   .case-logo {
     margin-bottom: 6vw;
   }
-
+  
   .case-study-content {
     max-width: var(--max-width);
     margin: 0 auto;
@@ -826,7 +826,7 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
     opacity: 1;
     visibility: visible;
   }
-
+  
   /* Prevent scrolling class added to body */
   body.no-scroll {
     overflow: hidden;
@@ -936,7 +936,7 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
     left: 0;
     right: 0;
   }
-
+  
   .centered-image-container {
     position: fixed;
     top: 0;
@@ -1021,14 +1021,3 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
   position: relative;
   z-index: 1;
 }
-
-.hover-image {
-    display: block;
-    pointer-events: none;
-  }
-
-  @media (max-width: 788px) {
-    .hover-image {
-      display: none;
-    }
-  }
