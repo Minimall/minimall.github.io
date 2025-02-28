@@ -767,12 +767,34 @@ function preloadHoverImages() {
     });
 }
 
+// Handle video play on hover
+function setupVideoHover() {
+    const videoContainers = document.querySelectorAll('.grid-item video');
+    
+    videoContainers.forEach(video => {
+        const container = video.closest('.grid-item');
+        
+        container.addEventListener('mouseenter', () => {
+            video.play();
+        });
+        
+        container.addEventListener('mouseleave', () => {
+            video.pause();
+            // Optional: reset to start
+            video.currentTime = 0;
+        });
+    });
+}
+
 // Add to your existing DOMContentLoaded listener
 document.addEventListener("DOMContentLoaded", () => {
     // Existing code...
     
     // Preload all hover images as soon as DOM is ready
     preloadHoverImages();
+    
+    // Initialize video hover functionality
+    setupVideoHover();
 });
 
 
