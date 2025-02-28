@@ -64,65 +64,58 @@ const setupHoverEffects = () => {
         // Skip logo elements - exclude case-logo links from hover effects
         if (element.closest('.case-logo')) return;
 
-        // Handle text wave effect
-        if (!element.querySelector('.wave-text')) {
+        // Check if it's a direct image hover element
+        const hasDirectImageHover = element.dataset.images && !element.querySelector('.wave-text');
+
+        if (hasDirectImageHover) {
+            // Create and handle hover image
+            const img = document.createElement('img');
+            img.className = 'hover-image';
+            img.alt = element.textContent;
+            document.body.appendChild(img);
+
+            // Split text for wave effect
             const text = element.textContent.trim();
-            const processedText = text.split('').map(char => `<span>${char}</span>`).join('');
-            element.innerHTML = `<span class="wave-text">${processedText}</span>`;
-        }
+            element.innerHTML = `<span class="wave-text">${
+                text.split('').map(char => char === ' ' ? `<span>&nbsp;</span>` : `<span>${char}</span>`).join('')
+            }</span>`;
 
-        // Add wave effect listeners for both desktop and mobile
-        if ('ontouchstart' in window) {
-            // For mobile - using touchstart/end and preserving link clicks
-            element.addEventListener('touchstart', (e) => {
-                // Don't prevent default to keep links working
+            element.addEventListener('mouseenter', () => {
+                handleImageHover(element, img, true);
                 handleWaveEffect(element, true);
+                hoveredElements.add(element);
             });
-            element.addEventListener('touchend', () => {
-                setTimeout(() => handleWaveEffect(element, false), 300);
+            element.addEventListener('mouseleave', () => {
+                handleImageHover(element, img, false);
+                handleWaveEffect(element, false);
+                hoveredElements.delete(element);
             });
-        }
+        } else {
+            // Handle regular wave text effect
+            if (!element.querySelector('.wave-text')) {
+                const text = element.textContent.trim();
+                const processedText = text.split('').map(char => `<span>${char}</span>`).join('');
+                element.innerHTML = `<span class="wave-text">${processedText}</span>`;
+            }
 
-        // Keep desktop behavior
-        element.addEventListener('mouseenter', () => handleWaveEffect(element, true));
-        element.addEventListener('mouseleave', () => handleWaveEffect(element, false));
+            // Add wave effect listeners for both desktop and mobile
+            if ('ontouchstart' in window) {
+                // For mobile - using touchstart/end and preserving link clicks
+                element.addEventListener('touchstart', (e) => {
+                    // Don't prevent default to keep links working
+                    handleWaveEffect(element, true);
+                });
+                element.addEventListener('touchend', () => {
+                    setTimeout(() => handleWaveEffect(element, false), 300);
+                });
+            }
+
+            // Keep desktop behavior
+            element.addEventListener('mouseenter', () => handleWaveEffect(element, true));
+            element.addEventListener('mouseleave', () => handleWaveEffect(element, false));
+        }
 
         element.setAttribute('data-processed', 'true');
-    });
-    
-    // Set up grid item hover effects
-    const gridItems = document.querySelectorAll('.grid-item');
-    gridItems.forEach(item => {
-        // Ensure container fits image initially
-        const img = item.querySelector('img');
-        if (img) {
-            img.addEventListener('load', () => {
-                // Set initial dimensions based on image
-                const imgWidth = img.naturalWidth;
-                const imgHeight = img.naturalHeight;
-                item.style.width = `${imgWidth}px`;
-                item.style.height = `${imgHeight}px`;
-            });
-        }
-        
-        item.addEventListener('mouseenter', () => {
-            // First change z-index instantly
-            item.style.zIndex = '9999';
-            
-            // Then apply scale transform in the next frame to ensure sequence
-            requestAnimationFrame(() => {
-                item.style.transform = 'scale(1.15)';
-            });
-        });
-        item.addEventListener('mouseleave', () => {
-            // First reset the z-index immediately
-            item.style.zIndex = '1';
-            
-            // Then reset transform in the next frame to ensure sequence
-            requestAnimationFrame(() => {
-                item.style.transform = '';
-            });
-        });
     });
 };
 
@@ -151,8 +144,66 @@ const handleWaveEffect = (element, isEnter, isRandom = false) => {
     });
 };
 
-// Handle wave animation effect only (no image hover handling needed)
-// This function is kept intact since we still need the text wave effect
+// Handle image hover effects
+const handleImageHover = (element, img, isEnter) => {
+    if (isEnter) {
+        const rotation = (rotationCounter % 2 === 0) ? 3 : -3;
+        rotationCounter++;
+        img.style.setProperty('--rotation', `${rotation}deg`);
+        img.classList.add('active');
+        element.stopImageCycle = cycleImages(element, img);
+    } else if (element.stopImageCycle) {
+        img.classList.remove('active');
+        element.stopImageCycle();
+        element.stopImageCycle = null;
+    }
+};
+
+// Image cycling functionality
+const cycleImages = (element, img) => {
+    const images = element.dataset.images?.split(",") || [];
+    if (!images.length) return null;
+
+    let currentIndex = 0;
+    let cycleTimeout;
+    let fadeTimeout;
+
+    const showNextImage = () => {
+        const imgPath = `/images/${images[currentIndex]}`;
+        if (images[currentIndex].endsWith('.webp')) {
+            img.type = 'image/webp';
+        } else if (images[currentIndex].endsWith('.avif')) {
+            img.type = 'image/avif';
+        }
+        img.src = imgPath;
+        img.style.opacity = "1";
+
+        // Only set up cycling if there are multiple images
+        if (images.length > 1) {
+            fadeTimeout = setTimeout(() => {
+                img.style.opacity = "0";
+                currentIndex = (currentIndex + 1) % images.length;
+                cycleTimeout = setTimeout(showNextImage, 0);
+            }, 1200);
+        }
+    };
+
+    if (images.length >= 1) showNextImage();
+    return () => {
+        clearTimeout(cycleTimeout);
+        clearTimeout(fadeTimeout);
+        img.style.opacity = "0";
+    };
+};
+
+// Mouse position tracking for images
+const updateMousePosition = (e) => {
+    document.querySelectorAll('.hover-image').forEach((img) => {
+        img.style.left = `${e.clientX}px`;
+        img.style.top = `${e.clientY}px`;
+        img.classList.toggle('move-down', e.clientY < 480);
+    });
+};
 
 
 
@@ -333,6 +384,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Run setupHoverEffects again to catch any elements that might have been missed
     setupHoverEffects();
+    window.addEventListener("mousemove", updateMousePosition, { passive: true });
 
     // Collapsible content handling
     document.querySelectorAll('.collapsible-link').forEach(link => {
