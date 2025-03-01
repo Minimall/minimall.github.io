@@ -81,7 +81,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const naturalWidth = image.naturalWidth || image.videoWidth || itemWidth;
     const naturalHeight = image.naturalHeight || image.videoHeight || itemHeight;
     
-    // Calculate how much we need to scale to reach natural size
+    // Calculate how much we need to scale to reach natural size (100% of image)
     const naturalScale = Math.max(naturalWidth / itemWidth, naturalHeight / itemHeight);
     
     // Get viewport dimensions with some padding
@@ -96,8 +96,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const viewportConstrainedScale = Math.min(maxWidthScale, maxHeightScale);
     
     // Choose the smaller of natural scale and viewport constrained scale
-    // but ensure it's at least 1.2 for a noticeable effect and max 2
-    return Math.min(Math.max(Math.min(naturalScale, viewportConstrainedScale), 1.2), 2);
+    // This ensures images are shown at 100% of their size but still fit in viewport
+    return Math.min(naturalScale, viewportConstrainedScale);
   }
   
   // Function to check if scaling would cause too much overlap
