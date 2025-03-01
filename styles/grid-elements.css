@@ -35,9 +35,8 @@
 .grid-item img, 
 .grid-item video {
   width: 100%;
-  height: auto;
-  max-height: 100%;
-  object-fit: contain; /* Changed to contain to preserve aspect ratio */
+  height: 100%;
+  object-fit: contain; /* Preserves aspect ratio */
   display: block;
 }
 
@@ -252,7 +251,8 @@
   }
 }
 
-/* Allow grid items to adjust to content's natural dimensions */
+/* Allow grid items to use their image's aspect ratio */
 .grid-item {
-  min-height: 200px;
+  /* Aspect ratio is dynamically set via JavaScript */
+  aspect-ratio: var(--aspect-ratio, 1);
 }
