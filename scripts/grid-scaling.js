@@ -1,3 +1,4 @@
+
 // Grid scaling script - consistent, predictable image scaling with viewport bounds awareness
 document.addEventListener('DOMContentLoaded', function() {
   const gridItems = document.querySelectorAll('.grid-item');
@@ -89,71 +90,72 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // Calculate consistent scale factor for an item, respecting viewport bounds and image resolution
+  // Calculate scale factor based on the new approach
   function calculateScaleFactor(item) {
-    // Get container dimensions and position
-    const rect = item.getBoundingClientRect();
-
-    // Find the image inside this container if it exists
-    const image = item.querySelector('img, video');
-
-    // For debugging
+    // Get the image or video inside this container
+    const media = item.querySelector('img, video');
+    
+    // Get viewport dimensions with 95% constraint
+    const viewportMaxWidth = window.innerWidth * 0.95;
+    const viewportMaxHeight = window.innerHeight * 0.95;
+    
+    // Default scale if no media is found (fallback)
+    let scaleFactor = 1.25;
+    
+    // Debug info
     let debugInfo = {
-      containerWidth: Math.round(rect.width),
-      containerHeight: Math.round(rect.height),
+      containerWidth: Math.round(item.getBoundingClientRect().width),
+      containerHeight: Math.round(item.getBoundingClientRect().height),
+      viewportMaxWidth: Math.round(viewportMaxWidth),
+      viewportMaxHeight: Math.round(viewportMaxHeight),
       naturalWidth: 0,
       naturalHeight: 0,
-      viewportWidth: Math.round(window.innerWidth * 0.95),
-      viewportHeight: Math.round(window.innerHeight * 0.95),
-      scaleFactor: 0,
+      isWidthLarger: false,
+      scaleToViewport: 0,
+      finalScaleFactor: 0,
       finalWidth: 0,
       finalHeight: 0
     };
-
-    // Get viewport dimensions with 95% padding
-    const viewportWidth = window.innerWidth * 0.95;
-    const viewportHeight = window.innerHeight * 0.95;
-
-    // Default scale if no image is found
-    let scaleFactor = 1.5;
-
-    // If we have an image, calculate scale based on its natural dimensions
-    if (image) {
+    
+    if (media) {
       // Get natural dimensions (for images) or video dimensions
-      const naturalWidth = image.tagName === 'IMG' ? image.naturalWidth : image.videoWidth || 0;
-      const naturalHeight = image.tagName === 'IMG' ? image.naturalHeight : image.videoHeight || 0;
-
+      const naturalWidth = media.tagName === 'IMG' ? media.naturalWidth : media.videoWidth || 0;
+      const naturalHeight = media.tagName === 'IMG' ? media.naturalHeight : media.videoHeight || 0;
+      
       debugInfo.naturalWidth = naturalWidth;
       debugInfo.naturalHeight = naturalHeight;
-
-      // If we have valid natural dimensions, calculate optimal scale
+      
       if (naturalWidth > 0 && naturalHeight > 0) {
         // Determine which dimension is larger in the image
         const isWidthLarger = naturalWidth >= naturalHeight;
-
-        // Calculate scale factor based on the larger dimension to fill 95% of viewport
+        debugInfo.isWidthLarger = isWidthLarger;
+        
+        // Calculate direct scale from container to 95% of viewport
         if (isWidthLarger) {
-          // Width is the larger dimension, so scale to 95% of viewport width
-          scaleFactor = viewportWidth / naturalWidth;
+          // Width is the larger dimension, so we need to scale width to 95% of viewport width
+          scaleFactor = viewportMaxWidth / naturalWidth;
         } else {
-          // Height is the larger dimension, so scale to 95% of viewport height
-          scaleFactor = viewportHeight / naturalHeight;
+          // Height is the larger dimension, so we need to scale height to 95% of viewport height
+          scaleFactor = viewportMaxHeight / naturalHeight;
         }
-
+        
+        debugInfo.scaleToViewport = scaleFactor.toFixed(3);
+        
         // Apply a minimum scale factor of 1.25 (some minimal zoom effect)
         scaleFactor = Math.max(1.25, scaleFactor);
-
-        debugInfo.scaleFactor = scaleFactor.toFixed(2);
+        
+        // Calculate final dimensions
+        debugInfo.finalScaleFactor = scaleFactor.toFixed(3);
         debugInfo.finalWidth = Math.round(naturalWidth * scaleFactor);
         debugInfo.finalHeight = Math.round(naturalHeight * scaleFactor);
       }
     }
-
-    // Check if this is the heateye-tote.jpg image for debugging
-    if (image && image.src.includes('heateye-tote.jpg')) {
+    
+    // Debug output for the specific image
+    if (media && media.src && media.src.includes('heateye-tote.jpg')) {
       console.log('New scaling calculation for heateye-tote.jpg:', debugInfo);
     }
-
+    
     return scaleFactor;
   }
 });
