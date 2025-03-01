@@ -1,4 +1,3 @@
-
 // Grid scaling script - consistent, predictable image scaling with viewport bounds awareness
 document.addEventListener('DOMContentLoaded', function() {
   const gridItems = document.querySelectorAll('.grid-item');
@@ -47,17 +46,17 @@ document.addEventListener('DOMContentLoaded', function() {
       }, 5);
     });
 
-    // On mouse leave, first reset z-index, then reset scale transform
+    // On mouse leave, first reset transform, then reset z-index
     item.addEventListener('mouseleave', function() {
-      // First reset the z-index
-      this.style.zIndex = '';
-      
-      // Then reset the transform after a minimal delay
+      // First reset the transform
+      this.style.transform = '';
+
+      // Then reset the z-index after a minimal delay
       setTimeout(() => {
         if (!this.matches(':hover')) {
-          this.style.transform = '';
+          this.style.zIndex = '';
         }
-      }, 5);
+      }, 300); // Delay to ensure transition completes
     });
   });
 
@@ -94,90 +93,67 @@ document.addEventListener('DOMContentLoaded', function() {
   function calculateScaleFactor(item) {
     // Get container dimensions and position
     const rect = item.getBoundingClientRect();
-    
+
     // Find the image inside this container if it exists
     const image = item.querySelector('img, video');
-    
-    // Default target scale (used when no image or for minimum scale)
-    const baseTargetScale = 2.0;
-    let targetScale = baseTargetScale;
-    
+
     // For debugging
     let debugInfo = {
       containerWidth: Math.round(rect.width),
       containerHeight: Math.round(rect.height),
       naturalWidth: 0,
       naturalHeight: 0,
-      resolutionScaleX: 0,
-      resolutionScaleY: 0,
-      resolutionScale: 0,
       viewportWidth: Math.round(window.innerWidth * 0.95),
       viewportHeight: Math.round(window.innerHeight * 0.95),
-      maxScaleX: 0,
-      maxScaleY: 0,
-      viewportConstrainedScale: 0,
-      finalScale: 0,
+      scaleFactor: 0,
       finalWidth: 0,
       finalHeight: 0
     };
-    
+
+    // Get viewport dimensions with 95% padding
+    const viewportWidth = window.innerWidth * 0.95;
+    const viewportHeight = window.innerHeight * 0.95;
+
+    // Default scale if no image is found
+    let scaleFactor = 1.5;
+
     // If we have an image, calculate scale based on its natural dimensions
     if (image) {
       // Get natural dimensions (for images) or video dimensions
       const naturalWidth = image.tagName === 'IMG' ? image.naturalWidth : image.videoWidth || 0;
       const naturalHeight = image.tagName === 'IMG' ? image.naturalHeight : image.videoHeight || 0;
-      
+
       debugInfo.naturalWidth = naturalWidth;
       debugInfo.naturalHeight = naturalHeight;
-      
-      // If we have valid natural dimensions, calculate resolution-based scale
+
+      // If we have valid natural dimensions, calculate optimal scale
       if (naturalWidth > 0 && naturalHeight > 0) {
-        // Calculate how much we could scale based on original resolution vs current size
-        const resolutionScaleX = naturalWidth / rect.width;
-        const resolutionScaleY = naturalHeight / rect.height;
-        
-        debugInfo.resolutionScaleX = resolutionScaleX.toFixed(2);
-        debugInfo.resolutionScaleY = resolutionScaleY.toFixed(2);
-        
-        // Use the minimum of width and height to maintain aspect ratio
-        const resolutionScale = Math.min(resolutionScaleX, resolutionScaleY);
-        
-        debugInfo.resolutionScale = resolutionScale.toFixed(2);
-        
-        // Cap the target scale at the resolution scale
-        // (never try to scale more than the image's native resolution would allow)
-        targetScale = Math.min(baseTargetScale, resolutionScale);
+        // Determine which dimension is larger in the image
+        const isWidthLarger = naturalWidth >= naturalHeight;
+
+        // Calculate scale factor based on the larger dimension to fill 95% of viewport
+        if (isWidthLarger) {
+          // Width is the larger dimension, so scale to 95% of viewport width
+          scaleFactor = viewportWidth / naturalWidth;
+        } else {
+          // Height is the larger dimension, so scale to 95% of viewport height
+          scaleFactor = viewportHeight / naturalHeight;
+        }
+
+        // Apply a minimum scale factor of 1.25 (some minimal zoom effect)
+        scaleFactor = Math.max(1.25, scaleFactor);
+
+        debugInfo.scaleFactor = scaleFactor.toFixed(2);
+        debugInfo.finalWidth = Math.round(naturalWidth * scaleFactor);
+        debugInfo.finalHeight = Math.round(naturalHeight * scaleFactor);
       }
     }
-    
-    // Get viewport dimensions with some padding (95% of available space)
-    const viewportWidth = window.innerWidth * 0.95;
-    const viewportHeight = window.innerHeight * 0.95;
-    
-    // Calculate maximum allowed scale based on viewport constraints
-    const maxScaleX = viewportWidth / rect.width;
-    const maxScaleY = viewportHeight / rect.height;
-    
-    debugInfo.maxScaleX = maxScaleX.toFixed(2);
-    debugInfo.maxScaleY = maxScaleY.toFixed(2);
-    
-    const viewportConstrainedScale = Math.min(maxScaleX, maxScaleY);
-    
-    debugInfo.viewportConstrainedScale = viewportConstrainedScale.toFixed(2);
-    
-    // Determine final scale - capped by viewport bounds and image resolution
-    // but never smaller than 1.25x (some minimal zoom effect)
-    const finalScale = Math.min(Math.max(1.25, targetScale), viewportConstrainedScale);
-    
-    debugInfo.finalScale = finalScale.toFixed(2);
-    debugInfo.finalWidth = Math.round(rect.width * finalScale);
-    debugInfo.finalHeight = Math.round(rect.height * finalScale);
-    
-    // Check if this is the heateye-tote.jpg image
+
+    // Check if this is the heateye-tote.jpg image for debugging
     if (image && image.src.includes('heateye-tote.jpg')) {
-      console.log('Scaling calculation for heateye-tote.jpg:', debugInfo);
+      console.log('New scaling calculation for heateye-tote.jpg:', debugInfo);
     }
-    
-    return finalScale;
+
+    return scaleFactor;
   }
 });
