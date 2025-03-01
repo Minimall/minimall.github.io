@@ -1,12 +1,23 @@
-// Simple image loading script
+
+// Simple grid initialization script
 document.addEventListener('DOMContentLoaded', function() {
   const gridItems = document.querySelectorAll('.grid-item');
-
-  // Basic image loading check
-  gridItems.forEach(item => {
+  
+  // Add random subtle rotation to some items for dynamic composition
+  gridItems.forEach((item, index) => {
+    // Apply subtle rotation to every other item
+    if (index % 2 === 0) {
+      const randomRotation = (Math.random() * 2 - 1) * 0.5; // Between -0.5 and 0.5 degrees
+      item.style.transform = `rotate(${randomRotation}deg)`;
+    }
+    
+    // Basic image loading check
     const media = item.querySelector('img, video');
     if (media) {
       if (media.tagName === 'IMG') {
+        // Set z-index randomly between items to create interesting overlaps
+        item.style.zIndex = Math.floor(Math.random() * 3) + 1;
+        
         // Log when images are loaded
         media.addEventListener('load', function() {
           console.log(`Image loaded: ${media.src.split('/').pop()}`);
