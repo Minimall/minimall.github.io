@@ -1,10 +1,9 @@
-
 /* Swiss Typographic Grid Styles */
 :root {
   --grid-columns: 12;
   --grid-rows: 12;
-  --grid-gap: 4vw; /* Further increased gap to minimize overlap */
-  --grid-margin: 5vw; /* Increased margin for more breathing room */
+  --grid-gap: 2vw;
+  --grid-margin: 5vw;
 }
 
 .grid-container {
@@ -26,20 +25,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), z-index 0s;
   z-index: 1;
-  /* Transform origin is dynamically set by JS */
-}
-
-.grid-item:hover {
-  /* Transform scale is calculated and applied by JS */
-  /* z-index is managed in JS to ensure proper sequence */
-  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), z-index 0s;
-}
-
-.grid-item:not(:hover) {
-  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), z-index 0s;
-  /* z-index is managed in JS to ensure proper sequence */
 }
 
 .grid-item img, 
@@ -48,97 +34,67 @@
   height: 100%;
   object-fit: contain;
   display: block;
-  transition: none; /* Explicitly remove transitions from images/videos */
 }
 
-/* Ensure aspect ratio is maintained for the container */
-.grid-item {
-  aspect-ratio: attr(data-aspect-ratio);
-}
-
-/* Specific placements following Swiss design principles - optimized for minimal overlap */
+/* Specific placements with increased sizes */
 .item-1 {
-  grid-column: 1 / span 4;
-  grid-row: 1 / span 4;
-  z-index: 2;
-  transform-origin: left top; /* Left edge items scale from left/top */
+  grid-column: 1 / span 6;
+  grid-row: 1 / span 5;
 }
 
 .item-2 {
-  grid-column: 8 / span 5;
-  grid-row: 1 / span 4;
-  z-index: 1;
-  transform-origin: right top; /* Right edge items scale from right/top */
+  grid-column: 7 / span 6;
+  grid-row: 1 / span 5;
 }
 
 .item-3 {
-  grid-column: 1 / span 4;
-  grid-row: 6 / span 4;
-  z-index: 3;
-  transform-origin: left center;
+  grid-column: 1 / span 6;
+  grid-row: 6 / span 5;
 }
 
 .item-4 {
-  grid-column: 6 / span 4;
-  grid-row: 8 / span 4;
-  z-index: 1;
-  transform-origin: center;
+  grid-column: 7 / span 6;
+  grid-row: 6 / span 5;
 }
 
 .item-5 {
-  grid-column: 6 / span 4;
-  grid-row: 13 / span 3;
-  z-index: 2;
-  transform-origin: center bottom;
+  grid-column: 1 / span 6;
+  grid-row: 11 / span 5;
 }
 
 .item-6 {
-  grid-column: 1 / span 4;
-  grid-row: 11 / span 4;
-  z-index: 1;
-  transform-origin: left bottom;
+  grid-column: 7 / span 6;
+  grid-row: 11 / span 5;
 }
 
 .item-7 {
-  grid-column: 10 / span 3;
-  grid-row: 6 / span 4;
-  z-index: 2;
-  transform-origin: right center;
+  grid-column: 1 / span 6;
+  grid-row: 16 / span 5;
 }
 
 .item-8 {
-  grid-column: 5 / span 3;
-  grid-row: 3 / span 4;
-  z-index: 4;
-  transform-origin: center top;
+  grid-column: 7 / span 6;
+  grid-row: 16 / span 5;
 }
 
 .item-9 {
-  grid-column: 10 / span 3;
-  grid-row: 11 / span 3;
-  z-index: 1;
-  transform-origin: right bottom;
+  grid-column: 1 / span 6;
+  grid-row: 21 / span 5;
 }
 
 .item-10 {
-  grid-column: 2 / span 3;
-  grid-row: 16 / span 3;
-  z-index: 3;
-  transform-origin: left center;
+  grid-column: 7 / span 6;
+  grid-row: 21 / span 5;
 }
 
 .item-11 {
-  grid-column: 5 / span 3;
-  grid-row: 16 / span 3;
-  z-index: 4;
-  transform-origin: center;
+  grid-column: 1 / span 6;
+  grid-row: 26 / span 5;
 }
 
 .item-12 {
-  grid-column: 9 / span 3;
-  grid-row: 16 / span 3;
-  z-index: 2;
-  transform-origin: right top;
+  grid-column: 7 / span 6;
+  grid-row: 26 / span 5;
 }
 
 /* Media queries for responsive design */
@@ -146,72 +102,67 @@
   :root {
     --grid-columns: 8;
     --grid-rows: 16;
-    --grid-gap: 2.5vw; /* Reduced gap for tablet to allow larger images */
+    --grid-gap: 2.5vw;
   }
-  
+
   .item-1 {
-    grid-column: 1 / span 4;
-    grid-row: 1 / span 4;
-  }
-  
-  .item-2 {
-    grid-column: 5 / span 4;
+    grid-column: 1 / span 8;
     grid-row: 1 / span 5;
   }
-  
+
+  .item-2 {
+    grid-column: 1 / span 8;
+    grid-row: 6 / span 5;
+  }
+
   .item-3 {
-    grid-column: 1 / span 4;
-    grid-row: 5 / span 4;
+    grid-column: 1 / span 8;
+    grid-row: 11 / span 5;
   }
-  
+
   .item-4 {
-    grid-column: 5 / span 4;
-    grid-row: 6 / span 4;
+    grid-column: 1 / span 8;
+    grid-row: 16 / span 5;
   }
-  
+
   .item-5 {
-    grid-column: 1 / span 4;
-    grid-row: 9 / span 4;
+    grid-column: 1 / span 8;
+    grid-row: 21 / span 5;
   }
-  
+
   .item-6 {
-    grid-column: 5 / span 4;
-    grid-row: 10 / span 4;
+    grid-column: 1 / span 8;
+    grid-row: 26 / span 5;
   }
-  
+
   .item-7 {
-    grid-column: 1 / span 4;
-    grid-row: 13 / span 4;
+    grid-column: 1 / span 8;
+    grid-row: 31 / span 5;
   }
-  
+
   .item-8 {
-    grid-column: 5 / span 4;
-    grid-row: 14 / span 3;
+    grid-column: 1 / span 8;
+    grid-row: 36 / span 5;
   }
-  
+
   .item-9 {
-    grid-column: 1 / span 3;
-    grid-row: 17 / span 3;
+    grid-column: 1 / span 8;
+    grid-row: 41 / span 5;
   }
-  
+
   .item-10 {
-    grid-column: 4 / span 3;
-    grid-row: 17 / span 3;
+    grid-column: 1 / span 8;
+    grid-row: 46 / span 5;
   }
-  
+
   .item-11 {
-    grid-column: 1 / span 4;
-    grid-row: 20 / span 3;
+    grid-column: 1 / span 8;
+    grid-row: 51 / span 5;
   }
-  
+
   .item-12 {
-    grid-column: 5 / span 4;
-    grid-row: 20 / span 3;
-  }
-  
-  /* Adjust hover scaling for tablet */
-  .grid-item:hover {
-    transform: scale(1.35);
+    grid-column: 1 / span 8;
+    grid-row: 56 / span 5;
   }
 }
 
@@ -219,32 +170,32 @@
   :root {
     --grid-columns: 4;
     --grid-rows: 24;
-    --grid-gap: 3vw; /* Reduced gap for mobile */
-    --grid-margin: 4vw; /* Reduced margin for mobile */
+    --grid-gap: 3vw;
+    --grid-margin: 4vw;
   }
-  
+
   .grid-item {
     grid-column: 1 / span 4 !important;
     grid-row: auto !important;
     margin: 0 !important;
     height: auto;
   }
-  
-  /* Disable hover scaling on mobile */
-  .grid-item:hover {
-    transform: scale(1.15);
-  }
-  
-  .item-1 { grid-row: 1 / span 3 !important; }
-  .item-2 { grid-row: 4 / span 3 !important; }
-  .item-3 { grid-row: 7 / span 3 !important; }
-  .item-4 { grid-row: 10 / span 3 !important; }
-  .item-5 { grid-row: 13 / span 3 !important; }
-  .item-6 { grid-row: 16 / span 3 !important; }
-  .item-7 { grid-row: 19 / span 3 !important; }
-  .item-8 { grid-row: 22 / span 3 !important; }
-  .item-9 { grid-row: 25 / span 3 !important; }
-  .item-10 { grid-row: 28 / span 3 !important; }
-  .item-11 { grid-row: 31 / span 3 !important; }
-  .item-12 { grid-row: 34 / span 3 !important; }
+
+  .item-1 { grid-row: 1 / span 4 !important; }
+  .item-2 { grid-row: 5 / span 4 !important; }
+  .item-3 { grid-row: 9 / span 4 !important; }
+  .item-4 { grid-row: 13 / span 4 !important; }
+  .item-5 { grid-row: 17 / span 4 !important; }
+  .item-6 { grid-row: 21 / span 4 !important; }
+  .item-7 { grid-row: 25 / span 4 !important; }
+  .item-8 { grid-row: 29 / span 4 !important; }
+  .item-9 { grid-row: 33 / span 4 !important; }
+  .item-10 { grid-row: 37 / span 4 !important; }
+  .item-11 { grid-row: 41 / span 4 !important; }
+  .item-12 { grid-row: 45 / span 4 !important; }
+}
+
+/* Ensure aspect ratio is maintained for the container */
+.grid-item {
+  aspect-ratio: attr(data-aspect-ratio);
 }
