@@ -3,8 +3,8 @@
 :root {
   --grid-columns: 12;
   --grid-rows: 12;
-  --grid-gap: 1.8vw; /* Reduced gap to allow larger images */
-  --grid-margin: 3vw; /* Reduced margin to utilize more space */
+  --grid-gap: 3vw; /* Increased gap for more spacing */
+  --grid-margin: 4vw; /* Increased margin for more breathing room */
 }
 
 .grid-container {
@@ -28,10 +28,11 @@
   align-items: center;
   transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), z-index 0s;
   z-index: 1;
+  transform-origin: center; /* Default transform origin */
 }
 
 .grid-item:hover {
-  transform: scale(1.5);
+  transform: scale(1.4); /* Slightly reduced scale factor */
   z-index: 10;
   transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
@@ -50,77 +51,89 @@
   display: block;
 }
 
-/* Specific placements following Swiss design principles - optimized for larger images with consistent spacing */
+/* Specific placements following Swiss design principles - optimized for more spacing */
 .item-1 {
-  grid-column: 1 / span 5;
+  grid-column: 1 / span 4;
   grid-row: 1 / span 4;
   z-index: 2;
+  transform-origin: left top; /* Left edge items scale from left/top */
 }
 
 .item-2 {
-  grid-column: 7 / span 6;
+  grid-column: 8 / span 5;
   grid-row: 1 / span 5;
   z-index: 1;
+  transform-origin: right top; /* Right edge items scale from right/top */
 }
 
 .item-3 {
   grid-column: 1 / span 4;
-  grid-row: 5 / span 4;
+  grid-row: 6 / span 4;
   z-index: 3;
+  transform-origin: left center;
 }
 
 .item-4 {
   grid-column: 6 / span 4;
-  grid-row: 6 / span 4;
+  grid-row: 7 / span 4;
   z-index: 1;
+  transform-origin: center;
 }
 
 .item-5 {
-  grid-column: 5 / span 4;
-  grid-row: 10 / span 3;
+  grid-column: 6 / span 4;
+  grid-row: 11 / span 3;
   z-index: 2;
+  transform-origin: center bottom;
 }
 
 .item-6 {
   grid-column: 1 / span 4;
-  grid-row: 9 / span 4;
+  grid-row: 11 / span 4;
   z-index: 1;
+  transform-origin: left bottom;
 }
 
 .item-7 {
-  grid-column: 9 / span 4;
-  grid-row: 6 / span 4;
+  grid-column: 10 / span 3;
+  grid-row: 7 / span 4;
   z-index: 2;
+  transform-origin: right center;
 }
 
 .item-8 {
-  grid-column: 6 / span 4;
-  grid-row: 1 / span 4;
+  grid-column: 5 / span 3;
+  grid-row: 2 / span 4;
   z-index: 4;
+  transform-origin: center top;
 }
 
 .item-9 {
   grid-column: 10 / span 3;
-  grid-row: 10 / span 3;
+  grid-row: 11 / span 3;
   z-index: 1;
+  transform-origin: right bottom;
 }
 
 .item-10 {
-  grid-column: 1 / span 3;
+  grid-column: 2 / span 3;
   grid-row: 5 / span 3;
   z-index: 3;
+  transform-origin: left center;
 }
 
 .item-11 {
   grid-column: 5 / span 3;
-  grid-row: 5 / span 3;
+  grid-row: 6 / span 3;
   z-index: 4;
+  transform-origin: center;
 }
 
 .item-12 {
-  grid-column: 9 / span 4;
-  grid-row: 2 / span 3;
+  grid-column: 9 / span 3;
+  grid-row: 3 / span 3;
   z-index: 2;
+  transform-origin: right top;
 }
 
 /* Media queries for responsive design */
