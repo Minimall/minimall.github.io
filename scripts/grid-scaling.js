@@ -68,35 +68,37 @@ document.addEventListener('DOMContentLoaded', function() {
   }
   
   function calculateOptimalScale(item) {
-    // Get item dimensions
-    const rect = item.getBoundingClientRect();
-    const itemWidth = rect.width;
-    const itemHeight = rect.height;
+    // Get the container dimensions
+    const containerRect = item.getBoundingClientRect();
+    const containerWidth = containerRect.width;
+    const containerHeight = containerRect.height;
     
-    // Get the image inside the item
+    // Get the image inside the container
     const image = item.querySelector('img') || item.querySelector('video');
     if (!image) return 1;
     
     // Get the natural dimensions of the image/video
-    const naturalWidth = image.naturalWidth || image.videoWidth || itemWidth;
-    const naturalHeight = image.naturalHeight || image.videoHeight || itemHeight;
+    const naturalWidth = image.naturalWidth || image.videoWidth || containerWidth;
+    const naturalHeight = image.naturalHeight || image.videoHeight || containerHeight;
     
-    // Calculate how much we need to scale to reach natural size (100% of image)
-    const naturalScale = Math.max(naturalWidth / itemWidth, naturalHeight / itemHeight);
+    // Calculate how much we need to scale the CONTAINER to show the image at 100% of its natural size
+    const scaleToNaturalWidth = naturalWidth / containerWidth;
+    const scaleToNaturalHeight = naturalHeight / containerHeight;
+    const naturalScale = Math.max(scaleToNaturalWidth, scaleToNaturalHeight);
     
     // Get viewport dimensions with some padding
     const viewportWidth = window.innerWidth * 0.9; // 90% of viewport width
     const viewportHeight = window.innerHeight * 0.9; // 90% of viewport height
     
     // Calculate max scale based on viewport constraints
-    const maxWidthScale = viewportWidth / itemWidth;
-    const maxHeightScale = viewportHeight / itemHeight;
+    const maxWidthScale = viewportWidth / containerWidth;
+    const maxHeightScale = viewportHeight / containerHeight;
     
     // Choose the smallest scale that still fits in the viewport
     const viewportConstrainedScale = Math.min(maxWidthScale, maxHeightScale);
     
     // Choose the smaller of natural scale and viewport constrained scale
-    // This ensures images are shown at 100% of their size but still fit in viewport
+    // This ensures container scales to show image at 100% natural size while fitting in viewport
     return Math.min(naturalScale, viewportConstrainedScale);
   }
   
