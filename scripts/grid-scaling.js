@@ -130,19 +130,33 @@ document.addEventListener('DOMContentLoaded', function() {
         const isWidthLarger = naturalWidth >= naturalHeight;
         debugInfo.isWidthLarger = isWidthLarger;
         
-        // Calculate direct scale from container to 95% of viewport
+        // Calculate direct scale from image's natural dimensions to 95% of viewport
+        // This is the key change - we calculate how much to scale the image to fit 95% of viewport
         if (isWidthLarger) {
-          // Width is the larger dimension, so we need to scale width to 95% of viewport width
+          // Width is the larger dimension, so scale width to 95% of viewport width
           scaleFactor = viewportMaxWidth / naturalWidth;
         } else {
-          // Height is the larger dimension, so we need to scale height to 95% of viewport height
+          // Height is the larger dimension, so scale height to 95% of viewport height
           scaleFactor = viewportMaxHeight / naturalHeight;
         }
         
-        debugInfo.scaleToViewport = scaleFactor.toFixed(3);
+        // For very large viewports, ensure images are scaled at least proportionally
+        // This ensures images don't stay too small in large viewports
+        const containerRect = item.getBoundingClientRect();
+        const containerToNaturalRatio = Math.max(
+          containerRect.width / naturalWidth,
+          containerRect.height / naturalHeight
+        );
         
-        // Apply a minimum scale factor of 1.25 (some minimal zoom effect)
-        scaleFactor = Math.max(1.25, scaleFactor);
+        // Determine an aggressive scaling based on viewport size
+        // For large viewports (>1500px), we want more aggressive scaling
+        const isLargeViewport = Math.max(window.innerWidth, window.innerHeight) > 1500;
+        const minScaleFactor = isLargeViewport ? 2.0 : 1.5;
+        
+        // Use the larger of our calculated scale factors
+        scaleFactor = Math.max(scaleFactor, containerToNaturalRatio * minScaleFactor);
+        
+        debugInfo.scaleToViewport = scaleFactor.toFixed(3);
         
         // Calculate final dimensions
         debugInfo.finalScaleFactor = scaleFactor.toFixed(3);
