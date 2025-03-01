@@ -90,24 +90,49 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // Calculate consistent scale factor for an item, respecting viewport bounds
+  // Calculate consistent scale factor for an item, respecting viewport bounds and image resolution
   function calculateScaleFactor(item) {
     // Get container dimensions and position
     const rect = item.getBoundingClientRect();
-
-    // Target scale - we always want to scale to this if possible
-    const targetScale = 2.0;
-
+    
+    // Find the image inside this container if it exists
+    const image = item.querySelector('img, video');
+    
+    // Default target scale (used when no image or for minimum scale)
+    const baseTargetScale = 2.0;
+    let targetScale = baseTargetScale;
+    
+    // If we have an image, calculate scale based on its natural dimensions
+    if (image) {
+      // Get natural dimensions (for images) or video dimensions
+      const naturalWidth = image.tagName === 'IMG' ? image.naturalWidth : image.videoWidth || 0;
+      const naturalHeight = image.tagName === 'IMG' ? image.naturalHeight : image.videoHeight || 0;
+      
+      // If we have valid natural dimensions, calculate resolution-based scale
+      if (naturalWidth > 0 && naturalHeight > 0) {
+        // Calculate how much we could scale based on original resolution vs current size
+        const resolutionScaleX = naturalWidth / rect.width;
+        const resolutionScaleY = naturalHeight / rect.height;
+        
+        // Use the minimum of width and height to maintain aspect ratio
+        const resolutionScale = Math.min(resolutionScaleX, resolutionScaleY);
+        
+        // Cap the target scale at the resolution scale
+        // (never try to scale more than the image's native resolution would allow)
+        targetScale = Math.min(baseTargetScale, resolutionScale);
+      }
+    }
+    
     // Get viewport dimensions with some padding (95% of available space)
     const viewportWidth = window.innerWidth * 0.95;
     const viewportHeight = window.innerHeight * 0.95;
-
+    
     // Calculate maximum allowed scale based on viewport constraints
     const maxScaleX = viewportWidth / rect.width;
     const maxScaleY = viewportHeight / rect.height;
     const viewportConstrainedScale = Math.min(maxScaleX, maxScaleY);
-
-    // Determine final scale - capped by viewport bounds
+    
+    // Determine final scale - capped by viewport bounds and image resolution
     // but never smaller than 1.25x (some minimal zoom effect)
     return Math.min(Math.max(1.25, targetScale), viewportConstrainedScale);
   }
