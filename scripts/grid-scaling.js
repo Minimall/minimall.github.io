@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // Simple scaling factor calculation according to new rules
+  // Enhanced scaling factor calculation according to rules
   function calculateScaleFactor(item) {
     // Get the image or video inside this container
     const media = item.querySelector('img, video');
@@ -87,13 +87,25 @@ document.addEventListener('DOMContentLoaded', function() {
     let debugInfo = {
       containerWidth: Math.round(item.getBoundingClientRect().width),
       containerHeight: Math.round(item.getBoundingClientRect().height),
-      viewportWidth: window.innerWidth,
-      viewportHeight: window.innerHeight,
+      viewportWidth: Math.round(window.innerWidth),
+      viewportHeight: Math.round(window.innerHeight),
       viewportMaxWidth: Math.round(viewportMaxWidth),
       viewportMaxHeight: Math.round(viewportMaxHeight)
     };
 
     if (media) {
+      // Ensure image is fully loaded before accessing naturalWidth/Height
+      if (media.tagName === 'IMG' && !media.complete) {
+        // For images that aren't loaded yet, add a load event handler
+        media.addEventListener('load', function() {
+          // Recalculate once the image is loaded
+          const newScaleFactor = calculateScaleFactor(item);
+          if (item.matches(':hover')) {
+            item.style.transform = `scale(${newScaleFactor})`;
+          }
+        });
+      }
+
       // 1. Get natural dimensions of the image
       const naturalWidth = media.tagName === 'IMG' ? media.naturalWidth : media.videoWidth || 0;
       const naturalHeight = media.tagName === 'IMG' ? media.naturalHeight : media.videoHeight || 0;
@@ -101,50 +113,58 @@ document.addEventListener('DOMContentLoaded', function() {
       // Add to debug info
       debugInfo.naturalWidth = naturalWidth;
       debugInfo.naturalHeight = naturalHeight;
+      debugInfo.mediaType = media.tagName;
+      debugInfo.mediaSrc = media.src ? media.src.split('/').pop() : 'unknown';
 
+      // Only proceed if we have valid dimensions
       if (naturalWidth > 0 && naturalHeight > 0) {
         // 2. Determine which dimension is bigger
         const isWidthLarger = naturalWidth >= naturalHeight;
         debugInfo.isWidthLarger = isWidthLarger;
 
-        // 3. Check if the largest dimension is bigger than the viewport
+        // Get container dimensions
+        const containerRect = item.getBoundingClientRect();
+
+        // 3. Calculate scale factor based on the rules
         if (isWidthLarger) {
           // Width is the larger dimension
           if (naturalWidth > viewportMaxWidth) {
             // 3.2 If larger than viewport, scale down to 95% of viewport width
             scaleFactor = viewportMaxWidth / naturalWidth;
+            debugInfo.scalingRule = "width > viewport, scale to 95% viewport width";
           } else {
-            // 3.1 If smaller than viewport, show at natural size (or scale up just enough)
-            // Calculate how much we need to scale to reach natural size
-            const containerRect = item.getBoundingClientRect();
+            // 3.1 If smaller than viewport, scale up to natural size
             scaleFactor = naturalWidth / containerRect.width;
+            debugInfo.scalingRule = "width <= viewport, scale to natural size";
           }
         } else {
           // Height is the larger dimension
           if (naturalHeight > viewportMaxHeight) {
             // 3.2 If larger than viewport, scale down to 95% of viewport height
             scaleFactor = viewportMaxHeight / naturalHeight;
+            debugInfo.scalingRule = "height > viewport, scale to 95% viewport height";
           } else {
-            // 3.1 If smaller than viewport, show at natural size (or scale up just enough)
-            // Calculate how much we need to scale to reach natural size
-            const containerRect = item.getBoundingClientRect();
+            // 3.1 If smaller than viewport, scale up to natural size
             scaleFactor = naturalHeight / containerRect.height;
+            debugInfo.scalingRule = "height <= viewport, scale to natural size";
           }
         }
 
-        // Update debug info
+        // Calculate the target dimensions after scaling
         debugInfo.scaleFactor = scaleFactor.toFixed(3);
-        debugInfo.finalWidth = Math.round(debugInfo.containerWidth * scaleFactor);
-        debugInfo.finalHeight = Math.round(debugInfo.containerHeight * scaleFactor);
+        debugInfo.finalWidth = Math.round(containerRect.width * scaleFactor);
+        debugInfo.finalHeight = Math.round(containerRect.height * scaleFactor);
+      } else {
+        debugInfo.scalingIssue = "Invalid natural dimensions";
       }
+    } else {
+      debugInfo.scalingIssue = "No media element found";
     }
 
-    // Debug output for specific test images
+    // Always log all scaling calculations for easier debugging
     if (media && media.src) {
       const filename = media.src.split('/').pop();
-      if (filename === 'heateye-tote.jpg' || filename === 'heateye-graphics.jpg') {
-        console.log(`New scaling calculation for ${filename}:`, debugInfo);
-      }
+      console.log(`Scaling calculation for ${filename}:`, debugInfo);
     }
 
     return scaleFactor;
