@@ -3,6 +3,18 @@
 document.addEventListener('DOMContentLoaded', function() {
   const gridItems = document.querySelectorAll('.grid-item');
   
+  // Ensure all images are fully loaded to get correct natural dimensions
+  const images = document.querySelectorAll('.grid-item img');
+  images.forEach(img => {
+    if (!img.complete) {
+      img.onload = function() {
+        console.log(`Image loaded: ${img.src}, natural size: ${img.naturalWidth}x${img.naturalHeight}`);
+      };
+    } else {
+      console.log(`Image already loaded: ${img.src}, natural size: ${img.naturalWidth}x${img.naturalHeight}`);
+    }
+  });
+  
   // Set initial transform origins and calculate optimal scaling
   updateTransformOrigins();
   adjustInitialPositioning();
@@ -78,28 +90,42 @@ document.addEventListener('DOMContentLoaded', function() {
     if (!image) return 1;
     
     // Get the natural dimensions of the image/video
-    const naturalWidth = image.naturalWidth || image.videoWidth || containerWidth;
-    const naturalHeight = image.naturalHeight || image.videoHeight || containerHeight;
-    
-    // Calculate how much we need to scale the CONTAINER to show the image at 100% of its natural size
-    const scaleToNaturalWidth = naturalWidth / containerWidth;
-    const scaleToNaturalHeight = naturalHeight / containerHeight;
-    const naturalScale = Math.max(scaleToNaturalWidth, scaleToNaturalHeight);
-    
-    // Get viewport dimensions with some padding
-    const viewportWidth = window.innerWidth * 0.9; // 90% of viewport width
-    const viewportHeight = window.innerHeight * 0.9; // 90% of viewport height
-    
-    // Calculate max scale based on viewport constraints
-    const maxWidthScale = viewportWidth / containerWidth;
-    const maxHeightScale = viewportHeight / containerHeight;
-    
-    // Choose the smallest scale that still fits in the viewport
-    const viewportConstrainedScale = Math.min(maxWidthScale, maxHeightScale);
-    
-    // Choose the smaller of natural scale and viewport constrained scale
-    // This ensures container scales to show image at 100% natural size while fitting in viewport
-    return Math.min(naturalScale, viewportConstrainedScale);
+    // Force image to load completely to get correct dimensions
+    if (image.complete) {
+      // Image is already loaded
+      const naturalWidth = image.naturalWidth || image.videoWidth || containerWidth;
+      const naturalHeight = image.naturalHeight || image.videoHeight || containerHeight;
+      
+      console.log(`Image dimensions: ${naturalWidth}x${naturalHeight}, Container: ${containerWidth}x${containerHeight}`);
+      
+      // Calculate how much we need to scale the CONTAINER to show the image at 100% of its natural size
+      const scaleToNaturalWidth = naturalWidth / containerWidth;
+      const scaleToNaturalHeight = naturalHeight / containerHeight;
+      const naturalScale = Math.max(scaleToNaturalWidth, scaleToNaturalHeight);
+      
+      console.log(`Natural scale would be: ${naturalScale}`);
+      
+      // Get viewport dimensions with some padding
+      const viewportWidth = window.innerWidth * 0.9; // 90% of viewport width
+      const viewportHeight = window.innerHeight * 0.9; // 90% of viewport height
+      
+      // Calculate max scale based on viewport constraints
+      const maxWidthScale = viewportWidth / containerWidth;
+      const maxHeightScale = viewportHeight / containerHeight;
+      
+      // Choose the smallest scale that still fits in the viewport
+      const viewportConstrainedScale = Math.min(maxWidthScale, maxHeightScale);
+      
+      console.log(`Viewport constrained scale: ${viewportConstrainedScale}`);
+      
+      // Choose the smaller of natural scale and viewport constrained scale
+      // This ensures container scales to show image at 100% natural size while fitting in viewport
+      // But never scale less than 2x to ensure we see more detail
+      return Math.min(Math.max(naturalScale, 2), viewportConstrainedScale);
+    } else {
+      // If image isn't fully loaded yet, use a fallback large scale
+      return Math.min(4, window.innerHeight / containerHeight);
+    }
   }
   
   // Function to check if scaling would cause too much overlap
