@@ -1,3 +1,4 @@
+
 // Grid scaling script - adds dynamic transform origin and optimal scaling based on viewport
 document.addEventListener('DOMContentLoaded', function() {
   const gridItems = document.querySelectorAll('.grid-item');
@@ -46,31 +47,38 @@ document.addEventListener('DOMContentLoaded', function() {
   // Add hover listeners to calculate optimal scale
   gridItems.forEach(item => {
     item.addEventListener('mouseenter', function() {
-      // Set z-index immediately on hover
+      // Set z-index immediately on hover, before the animation starts
       this.style.zIndex = '10';
-
-      const optimalScale = calculateOptimalScale(this);
-
-      // Check if hovering would cause too much overlap
-      if (checkOverlapConstraints(this, optimalScale)) {
-        this.style.transform = `scale(${optimalScale})`;
-      } else {
-        // Reduce scale until overlap is acceptable
-        let safeScale = findSafeScale(this, optimalScale);
-        this.style.transform = `scale(${safeScale})`;
-      }
+      
+      // Very slight delay to ensure z-index is applied first before animation
+      setTimeout(() => {
+        const optimalScale = calculateOptimalScale(this);
+  
+        // Check if hovering would cause too much overlap
+        if (checkOverlapConstraints(this, optimalScale)) {
+          this.style.transform = `scale(${optimalScale})`;
+        } else {
+          // Reduce scale until overlap is acceptable
+          let safeScale = findSafeScale(this, optimalScale);
+          this.style.transform = `scale(${safeScale})`;
+        }
+      }, 5); // Very minimal delay to ensure proper sequence
     });
 
     item.addEventListener('mouseleave', function() {
+      // Reset transform first, then z-index after animation completes
       this.style.transform = '';
 
-      // Reset z-index with a delay (after animation completes)
+      // Only reset z-index after animation completes
+      const transitionDuration = getComputedStyle(this).transitionDuration;
+      const durationMs = parseFloat(transitionDuration) * 1000 || 500; // Default to 500ms if can't parse
+      
       setTimeout(() => {
         // Only reset if not hovered again
         if (!this.matches(':hover')) {
           this.style.zIndex = '';
         }
-      }, 500); // Match the CSS transition duration
+      }, durationMs); 
     });
   });
 
@@ -125,9 +133,7 @@ document.addEventListener('DOMContentLoaded', function() {
       const naturalWidth = image.naturalWidth || image.videoWidth || containerWidth;
       const naturalHeight = image.naturalHeight || image.videoHeight || containerHeight;
 
-      console.log(`Image dimensions: ${naturalWidth}x${naturalHeight}, Container: ${containerWidth}x${containerHeight}`);
-
-      // Calculate how much we need to scale the CONTAINER to show the image at 100% of its natural size
+      // Calculate how much we need to scale the CONTAINER to show the image at its natural size
       // while preserving the container's aspect ratio
       const containerAspectRatio = parseFloat(item.dataset.aspectRatio) || (containerWidth / containerHeight);
       const imageAspectRatio = parseFloat(item.dataset.imageAspectRatio) || (naturalWidth / naturalHeight);
@@ -142,12 +148,9 @@ document.addEventListener('DOMContentLoaded', function() {
         naturalScale = naturalHeight / containerHeight;
       }
 
-      console.log(`Container aspect ratio: ${containerAspectRatio}, Image aspect ratio: ${imageAspectRatio}`);
-      console.log(`Natural scale would be: ${naturalScale}`);
-
-      // Get viewport dimensions with some padding
-      const viewportWidth = window.innerWidth * 0.9; // 90% of viewport width
-      const viewportHeight = window.innerHeight * 0.9; // 90% of viewport height
+      // Get viewport dimensions with some padding (90% of available space)
+      const viewportWidth = window.innerWidth * 0.9;
+      const viewportHeight = window.innerHeight * 0.9;
 
       // Calculate max scale based on viewport constraints while preserving aspect ratio
       const maxWidthScale = viewportWidth / containerWidth;
@@ -156,15 +159,13 @@ document.addEventListener('DOMContentLoaded', function() {
       // Choose the smallest scale that still fits in the viewport
       const viewportConstrainedScale = Math.min(maxWidthScale, maxHeightScale);
 
-      console.log(`Viewport constrained scale: ${viewportConstrainedScale}`);
-
       // Choose the smaller of natural scale and viewport constrained scale
-      // This ensures container scales to show image at 100% natural size while fitting in viewport
-      // But never scale less than 2x to ensure we see more detail
-      return Math.min(Math.max(naturalScale, 2), viewportConstrainedScale);
+      // Ensures container scales to show image at full resolution while fitting in viewport
+      // But never scale less than 1.5x to ensure we see more detail
+      return Math.min(Math.max(naturalScale, 1.5), viewportConstrainedScale);
     } else {
       // If image isn't fully loaded yet, use a fallback large scale
-      return Math.min(4, window.innerHeight / containerHeight);
+      return Math.min(3, window.innerHeight / containerHeight);
     }
   }
 
