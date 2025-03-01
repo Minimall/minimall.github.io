@@ -3,7 +3,7 @@
 :root {
   --grid-columns: 12;
   --grid-rows: 12;
-  --grid-gap: 2vw;
+  --grid-gap: 3vw; /* Increased gap to reduce overlap */
   --grid-margin: 4vw;
 }
 
@@ -26,6 +26,18 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), z-index 0s;
+  z-index: 1;
+}
+
+.grid-item:hover {
+  transform: scale(1.5);
+  z-index: 10;
+  transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.grid-item:not(:hover) {
+  transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), z-index 0s 0.5s;
 }
 
 .grid-item img, 
@@ -36,23 +48,18 @@
   height: auto;
   object-fit: contain;
   display: block;
-  transition: transform 0.5s ease;
 }
 
-.grid-item:hover img {
-  transform: scale(1.03);
-}
-
-/* Specific placements following Swiss design principles */
+/* Specific placements following Swiss design principles - adjusted to reduce overlap */
 .item-1 {
-  grid-column: 2 / span 4;
+  grid-column: 1 / span 4;
   grid-row: 1 / span 3;
   z-index: 2;
 }
 
 .item-2 {
-  grid-column: 7 / span 5;
-  grid-row: 2 / span 4;
+  grid-column: 8 / span 5;
+  grid-row: 1 / span 4;
   z-index: 1;
 }
 
@@ -60,14 +67,12 @@
   grid-column: 1 / span 3;
   grid-row: 5 / span 4;
   z-index: 3;
-  margin-left: 2vw;
 }
 
 .item-4 {
   grid-column: 5 / span 3;
   grid-row: 6 / span 3;
   z-index: 1;
-  margin-top: -1vw;
 }
 
 .item-5 {
@@ -92,14 +97,12 @@
   grid-column: 4 / span 3;
   grid-row: 4 / span 2;
   z-index: 4;
-  margin-left: -1vw;
 }
 
 .item-9 {
   grid-column: 10 / span 2;
   grid-row: 1 / span 2;
   z-index: 1;
-  transform: translateY(1vw);
 }
 
 .item-10 {
@@ -112,14 +115,12 @@
   grid-column: 6 / span 3;
   grid-row: 8 / span 3;
   z-index: 4;
-  margin-top: 2vw;
 }
 
 .item-12 {
   grid-column: 10 / span 3;
   grid-row: 4 / span 2;
   z-index: 2;
-  margin-left: -2vw;
 }
 
 /* Media queries for responsive design */
@@ -127,6 +128,7 @@
   :root {
     --grid-columns: 8;
     --grid-rows: 16;
+    --grid-gap: 3.5vw; /* Slightly increased gap for tablet */
   }
   
   .item-1 {
@@ -142,13 +144,11 @@
   .item-3 {
     grid-column: 1 / span 4;
     grid-row: 5 / span 3;
-    margin-left: 0;
   }
   
   .item-4 {
     grid-column: 6 / span 3;
     grid-row: 7 / span 3;
-    margin-top: 0;
   }
   
   .item-5 {
@@ -169,13 +169,11 @@
   .item-8 {
     grid-column: 4 / span 3;
     grid-row: 4 / span 2;
-    margin-left: 0;
   }
   
   .item-9 {
     grid-column: 1 / span 2;
     grid-row: 15 / span 2;
-    transform: none;
   }
   
   .item-10 {
@@ -186,13 +184,16 @@
   .item-11 {
     grid-column: 2 / span 3;
     grid-row: 11 / span 2;
-    margin-top: 0;
   }
   
   .item-12 {
     grid-column: 5 / span 3;
     grid-row: 6 / span 2;
-    margin-left: 0;
+  }
+  
+  /* Adjust hover scaling for tablet */
+  .grid-item:hover {
+    transform: scale(1.35);
   }
 }
 
@@ -208,8 +209,12 @@
     grid-column: 1 / span 4 !important;
     grid-row: auto !important;
     margin: 0 !important;
-    transform: none !important;
     height: auto;
+  }
+  
+  /* Disable hover scaling on mobile */
+  .grid-item:hover {
+    transform: scale(1.15);
   }
   
   .item-1 { grid-row: 1 / span 2 !important; }
