@@ -3,9 +3,9 @@
 :root {
   --grid-columns: 12;
   --grid-rows: 12;
-  --grid-gap: 1.5vw;
-  --grid-margin: 5vw;
-  --overlap-amount: 5%; /* Overlap amount for images */
+  --grid-gap: 3vw;
+  --grid-margin: 8vw;
+  --overlap-amount: 3%; /* Reduced overlap for more spacious feel */
 }
 
 .grid-container {
@@ -14,10 +14,10 @@
   grid-template-rows: repeat(var(--grid-rows), minmax(50px, auto));
   gap: var(--grid-gap);
   padding: var(--grid-margin);
-  margin: 0 auto;
-  max-width: 100%;
+  margin: 4vw auto;
+  max-width: 94%;
   position: relative;
-  margin-bottom: 8vw;
+  margin-bottom: 12vw;
 }
 
 .grid-item {
@@ -40,88 +40,79 @@
   display: block;
 }
 
-/* Asymmetric grid layout with intentional visual tension */
+/* Asymmetric grid layout with more spacious visual rhythm */
 .item-1 {
-  grid-column: 1 / span 7;
+  grid-column: 1 / span 6;
   grid-row: 1 / span 6;
   margin-right: calc(-1 * var(--overlap-amount));
   z-index: 2;
 }
 
 .item-2 {
-  grid-column: 7 / span 6;
+  grid-column: 8 / span 5;
   grid-row: 2 / span 6;
-  margin-left: calc(-1 * var(--overlap-amount));
   z-index: 1;
 }
 
 .item-3 {
-  grid-column: 1 / span 6;
-  grid-row: 7 / span 5;
-  margin-right: calc(-1 * var(--overlap-amount));
+  grid-column: 2 / span 5;
+  grid-row: 9 / span 5;
   z-index: 3;
 }
 
 .item-4 {
-  grid-column: 6 / span 7;
-  grid-row: 8 / span 5;
-  margin-left: calc(-1 * var(--overlap-amount));
+  grid-column: 8 / span 5;
+  grid-row: 10 / span 5;
   z-index: 2;
 }
 
 .item-5 {
-  grid-column: 1 / span 7;
-  grid-row: 12 / span 5;
+  grid-column: 1 / span 6;
+  grid-row: 16 / span 5;
   margin-right: calc(-1 * var(--overlap-amount));
   z-index: 2;
 }
 
 .item-6 {
-  grid-column: 6 / span 7;
-  grid-row: 13 / span 5;
-  margin-left: calc(-1 * var(--overlap-amount));
+  grid-column: 8 / span 5;
+  grid-row: 17 / span 5;
   z-index: 1;
 }
 
 .item-7 {
-  grid-column: 2 / span 6;
-  grid-row: 17 / span 5;
-  margin-right: calc(-1 * var(--overlap-amount));
+  grid-column: 2 / span 5;
+  grid-row: 23 / span 5;
   z-index: 2;
 }
 
 .item-8 {
-  grid-column: 7 / span 6;
-  grid-row: 16 / span 5;
-  margin-left: calc(-1 * var(--overlap-amount));
+  grid-column: 8 / span 5;
+  grid-row: 24 / span 5;
   z-index: 1;
 }
 
 .item-9 {
-  grid-column: 1 / span 7;
-  grid-row: 21 / span 5;
+  grid-column: 1 / span 6;
+  grid-row: 30 / span 5;
   margin-right: calc(-1 * var(--overlap-amount));
   z-index: 2;
 }
 
 .item-10 {
-  grid-column: 7 / span 6;
-  grid-row: 20 / span 6;
-  margin-left: calc(-1 * var(--overlap-amount));
+  grid-column: 8 / span 5;
+  grid-row: 31 / span 5;
   z-index: 1;
 }
 
 .item-11 {
-  grid-column: 2 / span 6;
-  grid-row: 26 / span 5;
-  margin-right: calc(-1 * var(--overlap-amount));
+  grid-column: 2 / span 5;
+  grid-row: 37 / span 5;
   z-index: 2;
 }
 
 .item-12 {
-  grid-column: 7 / span 6;
-  grid-row: 26 / span 5;
-  margin-left: calc(-1 * var(--overlap-amount));
+  grid-column: 8 / span 5;
+  grid-row: 38 / span 5;
   z-index: 1;
 }
 
@@ -142,7 +133,8 @@
   :root {
     --grid-columns: 8;
     --grid-rows: 16;
-    --grid-gap: 2.5vw;
+    --grid-gap: 4vw;
+    --grid-margin: 7vw;
   }
 
   .item-1 {
@@ -216,9 +208,9 @@
   :root {
     --grid-columns: 4;
     --grid-rows: 24;
-    --grid-gap: 3vw;
-    --grid-margin: 4vw;
-    --overlap-amount: 3%; /* Slightly reduce overlap on mobile */
+    --grid-gap: 5vw;
+    --grid-margin: 6vw;
+    --overlap-amount: 2%; /* Minimal overlap on mobile for spacious feel */
   }
 
   .grid-item {
