@@ -1,5 +1,4 @@
-
-// Grid scaling script - consistent, predictable image scaling with viewport bounds awareness
+// Grid scaling script - simple viewport-aware scaling mechanism
 document.addEventListener('DOMContentLoaded', function() {
   const gridItems = document.querySelectorAll('.grid-item');
 
@@ -9,24 +8,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const aspectRatio = rect.width / rect.height;
     item.dataset.aspectRatio = aspectRatio;
     item.style.aspectRatio = aspectRatio;
-  });
-
-  // Ensure all images are fully loaded to get correct natural dimensions
-  const images = document.querySelectorAll('.grid-item img');
-  images.forEach(img => {
-    if (!img.complete) {
-      img.onload = function() {
-        const parent = img.closest('.grid-item');
-        if (parent) {
-          parent.dataset.imageAspectRatio = img.naturalWidth / img.naturalHeight;
-        }
-      };
-    } else {
-      const parent = img.closest('.grid-item');
-      if (parent) {
-        parent.dataset.imageAspectRatio = img.naturalWidth / img.naturalHeight;
-      }
-    }
   });
 
   // Set initial transform origins
@@ -90,109 +71,82 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // Calculate scale factor based on consistent rules
+  // Simple scaling factor calculation according to new rules
   function calculateScaleFactor(item) {
     // Get the image or video inside this container
     const media = item.querySelector('img, video');
-    
-    // Get viewport dimensions with 95% constraint
+
+    // Default scale if no media is found (fallback)
+    let scaleFactor = 1.0;
+
+    // Get current viewport dimensions with 5% margin
     const viewportMaxWidth = window.innerWidth * 0.95;
     const viewportMaxHeight = window.innerHeight * 0.95;
-    
-    // Default scale if no media is found (fallback)
-    let scaleFactor = 1.5;
-    
-    // Debug info
+
+    // Debug info object
     let debugInfo = {
       containerWidth: Math.round(item.getBoundingClientRect().width),
       containerHeight: Math.round(item.getBoundingClientRect().height),
+      viewportWidth: window.innerWidth,
+      viewportHeight: window.innerHeight,
       viewportMaxWidth: Math.round(viewportMaxWidth),
-      viewportMaxHeight: Math.round(viewportMaxHeight),
-      naturalWidth: 0,
-      naturalHeight: 0,
-      isWidthLarger: false,
-      scaleToViewport: 0,
-      finalScaleFactor: 0,
-      finalWidth: 0,
-      finalHeight: 0
+      viewportMaxHeight: Math.round(viewportMaxHeight)
     };
-    
+
     if (media) {
-      // Get natural dimensions (for images) or video dimensions
+      // 1. Get natural dimensions of the image
       const naturalWidth = media.tagName === 'IMG' ? media.naturalWidth : media.videoWidth || 0;
       const naturalHeight = media.tagName === 'IMG' ? media.naturalHeight : media.videoHeight || 0;
-      
-      // Get container dimensions
-      const containerRect = item.getBoundingClientRect();
-      const containerWidth = containerRect.width;
-      const containerHeight = containerRect.height;
-      
+
+      // Add to debug info
       debugInfo.naturalWidth = naturalWidth;
       debugInfo.naturalHeight = naturalHeight;
-      
+
       if (naturalWidth > 0 && naturalHeight > 0) {
-        // Determine aspect ratios
-        const naturalAspectRatio = naturalWidth / naturalHeight;
-        const viewportAspectRatio = viewportMaxWidth / viewportMaxHeight;
-        const isWidthLarger = naturalAspectRatio >= 1;
+        // 2. Determine which dimension is bigger
+        const isWidthLarger = naturalWidth >= naturalHeight;
         debugInfo.isWidthLarger = isWidthLarger;
-        
-        // FIRST APPROACH: Scale to make the largest dimension 95% of viewport
-        let viewportScaleFactor;
+
+        // 3. Check if the largest dimension is bigger than the viewport
         if (isWidthLarger) {
-          // For landscape-oriented images, scale to 95% of viewport width
-          viewportScaleFactor = viewportMaxWidth / naturalWidth;
+          // Width is the larger dimension
+          if (naturalWidth > viewportMaxWidth) {
+            // 3.2 If larger than viewport, scale down to 95% of viewport width
+            scaleFactor = viewportMaxWidth / naturalWidth;
+          } else {
+            // 3.1 If smaller than viewport, show at natural size (or scale up just enough)
+            // Calculate how much we need to scale to reach natural size
+            const containerRect = item.getBoundingClientRect();
+            scaleFactor = naturalWidth / containerRect.width;
+          }
         } else {
-          // For portrait-oriented images, scale to 95% of viewport height
-          viewportScaleFactor = viewportMaxHeight / naturalHeight;
+          // Height is the larger dimension
+          if (naturalHeight > viewportMaxHeight) {
+            // 3.2 If larger than viewport, scale down to 95% of viewport height
+            scaleFactor = viewportMaxHeight / naturalHeight;
+          } else {
+            // 3.1 If smaller than viewport, show at natural size (or scale up just enough)
+            // Calculate how much we need to scale to reach natural size
+            const containerRect = item.getBoundingClientRect();
+            scaleFactor = naturalHeight / containerRect.height;
+          }
         }
-        
-        // If image is very small in the container, use a more aggressive scaling
-        // This is a ratio of how much bigger the natural image is compared to its container
-        const containerToNaturalRatio = Math.max(
-          naturalWidth / containerWidth,
-          naturalHeight / containerHeight
-        );
-        
-        // Base minimum scale - always scale at least this much
-        const baseMinScale = 2.5;
-        
-        // Calculate target scale based on the content size
-        // For high-res images (>1000px), we want to ensure they scale significantly
-        const isHighResImage = Math.max(naturalWidth, naturalHeight) > 1000;
-        const minScaleFactor = isHighResImage ? Math.max(3.0, containerToNaturalRatio) : baseMinScale;
-        
-        // Final scale factor - use the larger of our calculated values
-        // This ensures consistent scaling regardless of image size
-        scaleFactor = Math.max(viewportScaleFactor, minScaleFactor);
-        
-        // Ensure images don't get TOO large (beyond viewport)
-        const maxWidthScale = viewportMaxWidth / naturalWidth;
-        const maxHeightScale = viewportMaxHeight / naturalHeight;
-        const maxAllowableScale = Math.min(maxWidthScale, maxHeightScale);
-        
-        // Apply the max constraint
-        scaleFactor = Math.min(scaleFactor, maxAllowableScale);
-        
-        debugInfo.scaleToViewport = viewportScaleFactor.toFixed(3);
-        debugInfo.minScaleFactor = minScaleFactor.toFixed(3);
-        debugInfo.maxAllowableScale = maxAllowableScale.toFixed(3);
-        
-        // Calculate final dimensions
-        debugInfo.finalScaleFactor = scaleFactor.toFixed(3);
-        debugInfo.finalWidth = Math.round(naturalWidth * scaleFactor);
-        debugInfo.finalHeight = Math.round(naturalHeight * scaleFactor);
+
+        // Update debug info
+        debugInfo.scaleFactor = scaleFactor.toFixed(3);
+        debugInfo.finalWidth = Math.round(debugInfo.containerWidth * scaleFactor);
+        debugInfo.finalHeight = Math.round(debugInfo.containerHeight * scaleFactor);
       }
     }
-    
+
     // Debug output for specific test images
     if (media && media.src) {
       const filename = media.src.split('/').pop();
       if (filename === 'heateye-tote.jpg' || filename === 'heateye-graphics.jpg') {
-        console.log(`Scaling calculation for ${filename}:`, debugInfo);
+        console.log(`New scaling calculation for ${filename}:`, debugInfo);
       }
     }
-    
+
     return scaleFactor;
   }
 });
