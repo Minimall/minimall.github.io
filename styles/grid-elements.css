@@ -28,18 +28,18 @@
   align-items: center;
   transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
   z-index: 1;
-  transform-origin: center; /* Default transform origin */
+  /* Transform origin is dynamically set by JS */
 }
 
 .grid-item:hover {
-  transform: scale(1); /* Will be calculated by JS */
-  /* z-index managed in JS to ensure proper sequence */
-  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); /* Match the bounce effect from logos */
+  /* Transform scale is calculated and applied by JS */
+  /* z-index is managed in JS to ensure proper sequence */
+  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .grid-item:not(:hover) {
   transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-  /* z-index managed in JS to ensure proper sequence */
+  /* z-index is managed in JS to ensure proper sequence */
 }
 
 .grid-item img, 
@@ -48,7 +48,7 @@
   height: 100%;
   object-fit: contain;
   display: block;
-  /* Remove transitions from images/videos - animation only applies to container */
+  transition: none; /* Explicitly remove transitions from images/videos */
 }
 
 /* Ensure aspect ratio is maintained for the container */

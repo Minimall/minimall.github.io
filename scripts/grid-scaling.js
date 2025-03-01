@@ -1,14 +1,12 @@
-
-// Grid scaling script - adds dynamic transform origin and optimal scaling based on viewport
+// Grid scaling script - consistent, predictable image scaling with viewport bounds awareness
 document.addEventListener('DOMContentLoaded', function() {
   const gridItems = document.querySelectorAll('.grid-item');
 
-  // Store original aspect ratios of all containers to maintain them during scaling
+  // Store original aspect ratios of all containers
   gridItems.forEach(item => {
     const rect = item.getBoundingClientRect();
     const aspectRatio = rect.width / rect.height;
     item.dataset.aspectRatio = aspectRatio;
-    // Apply the aspect ratio directly to ensure it's maintained
     item.style.aspectRatio = aspectRatio;
   });
 
@@ -17,16 +15,12 @@ document.addEventListener('DOMContentLoaded', function() {
   images.forEach(img => {
     if (!img.complete) {
       img.onload = function() {
-        console.log(`Image loaded: ${img.src}, natural size: ${img.naturalWidth}x${img.naturalHeight}`);
-        // Store image aspect ratio
         const parent = img.closest('.grid-item');
         if (parent) {
           parent.dataset.imageAspectRatio = img.naturalWidth / img.naturalHeight;
         }
       };
     } else {
-      console.log(`Image already loaded: ${img.src}, natural size: ${img.naturalWidth}x${img.naturalHeight}`);
-      // Store image aspect ratio
       const parent = img.closest('.grid-item');
       if (parent) {
         parent.dataset.imageAspectRatio = img.naturalWidth / img.naturalHeight;
@@ -34,273 +28,90 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 
-  // Set initial transform origins and calculate optimal scaling
+  // Set initial transform origins
   updateTransformOrigins();
-  adjustInitialPositioning();
+  window.addEventListener('resize', updateTransformOrigins);
 
-  // Update transform origins and positions when window is resized
-  window.addEventListener('resize', function() {
-    updateTransformOrigins();
-    adjustInitialPositioning();
-  });
-
-  // Add hover listeners to calculate optimal scale
+  // Mouse events for grid items
   gridItems.forEach(item => {
+    // On mouse enter, first change z-index, then apply scale transform
     item.addEventListener('mouseenter', function() {
-      // Set z-index immediately on hover, before the animation starts
+      // Set z-index immediately on hover
       this.style.zIndex = '10';
-      
-      // Very slight delay to ensure z-index is applied first before animation
+
+      // Apply scale transform after a minimal delay to ensure z-index is applied first
       setTimeout(() => {
-        const optimalScale = calculateOptimalScale(this);
-  
-        // Check if hovering would cause too much overlap
-        if (checkOverlapConstraints(this, optimalScale)) {
-          this.style.transform = `scale(${optimalScale})`;
-        } else {
-          // Reduce scale until overlap is acceptable
-          let safeScale = findSafeScale(this, optimalScale);
-          this.style.transform = `scale(${safeScale})`;
-        }
-      }, 5); // Very minimal delay to ensure proper sequence
+        const scaleFactor = calculateScaleFactor(this);
+        this.style.transform = `scale(${scaleFactor})`;
+      }, 5);
     });
 
+    // On mouse leave, first reset scale transform, then reset z-index after animation completes
     item.addEventListener('mouseleave', function() {
-      // Reset transform first, then z-index after animation completes
+      // First reset the transform
       this.style.transform = '';
 
-      // Only reset z-index after animation completes
+      // Get the transition duration from CSS
       const transitionDuration = getComputedStyle(this).transitionDuration;
-      const durationMs = parseFloat(transitionDuration) * 1000 || 500; // Default to 500ms if can't parse
-      
+      const durationMs = parseFloat(transitionDuration) * 1000 || 500;
+
+      // Reset z-index after animation completes
       setTimeout(() => {
-        // Only reset if not hovered again
         if (!this.matches(':hover')) {
           this.style.zIndex = '';
         }
-      }, durationMs); 
+      }, durationMs);
     });
   });
 
+  // Calculate the optimal transform-origin based on item position relative to viewport
   function updateTransformOrigins() {
     const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
 
     gridItems.forEach(item => {
       const rect = item.getBoundingClientRect();
-      const itemCenterX = rect.left + (rect.width / 2);
 
-      // Calculate distance from center of viewport (as percentage)
-      const viewportCenter = viewportWidth / 2;
-      const distanceFromCenter = (itemCenterX - viewportCenter) / viewportCenter;
-
-      // Determine transform origin based on position
-      if (distanceFromCenter < -0.5) {
-        // Item is near left edge
-        item.style.transformOrigin = 'left center';
-      } else if (distanceFromCenter > 0.5) {
-        // Item is near right edge
-        item.style.transformOrigin = 'right center';
-      } else {
-        // Item is near center
-        item.style.transformOrigin = 'center center';
+      // Determine horizontal origin
+      let originX = 'center';
+      if (rect.left < viewportWidth * 0.25) {
+        originX = 'left';
+      } else if (rect.right > viewportWidth * 0.75) {
+        originX = 'right';
       }
 
-      // Add vertical component for items near top or bottom
-      if (rect.top < 200) {
-        // Near top of viewport
-        item.style.transformOrigin = item.style.transformOrigin.replace('center', 'top');
-      } else if (rect.bottom > window.innerHeight - 200) {
-        // Near bottom of viewport
-        item.style.transformOrigin = item.style.transformOrigin.replace('center', 'bottom');
+      // Determine vertical origin
+      let originY = 'center';
+      if (rect.top < viewportHeight * 0.25) {
+        originY = 'top';
+      } else if (rect.bottom > viewportHeight * 0.75) {
+        originY = 'bottom';
       }
+
+      // Set the transform origin
+      item.style.transformOrigin = `${originX} ${originY}`;
     });
   }
 
-  function calculateOptimalScale(item) {
-    // Get the container dimensions
-    const containerRect = item.getBoundingClientRect();
-    const containerWidth = containerRect.width;
-    const containerHeight = containerRect.height;
+  // Calculate consistent scale factor for an item, respecting viewport bounds
+  function calculateScaleFactor(item) {
+    // Get container dimensions and position
+    const rect = item.getBoundingClientRect();
 
-    // Get the image inside the container
-    const image = item.querySelector('img') || item.querySelector('video');
-    if (!image) return 1;
+    // Target scale - we always want to scale to this if possible
+    const targetScale = 2.0;
 
-    // Get the natural dimensions of the image/video
-    // Force image to load completely to get correct dimensions
-    if (image.complete) {
-      // Image is already loaded
-      const naturalWidth = image.naturalWidth || image.videoWidth || containerWidth;
-      const naturalHeight = image.naturalHeight || image.videoHeight || containerHeight;
+    // Get viewport dimensions with some padding (95% of available space)
+    const viewportWidth = window.innerWidth * 0.95;
+    const viewportHeight = window.innerHeight * 0.95;
 
-      // Calculate how much we need to scale the CONTAINER to show the image at its natural size
-      // while preserving the container's aspect ratio
-      const containerAspectRatio = parseFloat(item.dataset.aspectRatio) || (containerWidth / containerHeight);
-      const imageAspectRatio = parseFloat(item.dataset.imageAspectRatio) || (naturalWidth / naturalHeight);
+    // Calculate maximum allowed scale based on viewport constraints
+    const maxScaleX = viewportWidth / rect.width;
+    const maxScaleY = viewportHeight / rect.height;
+    const viewportConstrainedScale = Math.min(maxScaleX, maxScaleY);
 
-      // Determine if the container or image aspect ratio is the limiting factor
-      let naturalScale;
-      if (imageAspectRatio > containerAspectRatio) {
-        // Image is wider relative to its height than the container
-        naturalScale = naturalWidth / containerWidth;
-      } else {
-        // Image is taller relative to its width than the container
-        naturalScale = naturalHeight / containerHeight;
-      }
-
-      // Get viewport dimensions with some padding (90% of available space)
-      const viewportWidth = window.innerWidth * 0.9;
-      const viewportHeight = window.innerHeight * 0.9;
-
-      // Calculate max scale based on viewport constraints while preserving aspect ratio
-      const maxWidthScale = viewportWidth / containerWidth;
-      const maxHeightScale = viewportHeight / containerHeight;
-
-      // Choose the smallest scale that still fits in the viewport
-      const viewportConstrainedScale = Math.min(maxWidthScale, maxHeightScale);
-
-      // Choose the smaller of natural scale and viewport constrained scale
-      // Ensures container scales to show image at full resolution while fitting in viewport
-      // But never scale less than 1.5x to ensure we see more detail
-      return Math.min(Math.max(naturalScale, 1.5), viewportConstrainedScale);
-    } else {
-      // If image isn't fully loaded yet, use a fallback large scale
-      return Math.min(3, window.innerHeight / containerHeight);
-    }
-  }
-
-  // Function to check if scaling would cause too much overlap
-  function checkOverlapConstraints(item, scale) {
-    const MAX_OVERLAP_PERCENTAGE = 0.05; // 5% max overlap allowed
-    const hoveredRect = item.getBoundingClientRect();
-
-    // Calculate what the bounds would be after scaling
-    const scaledWidth = hoveredRect.width * scale;
-    const scaledHeight = hoveredRect.height * scale;
-
-    // Calculate the center point
-    const centerX = hoveredRect.left + hoveredRect.width / 2;
-    const centerY = hoveredRect.top + hoveredRect.height / 2;
-
-    // Calculate the projected bounds after scaling
-    const projectedRect = {
-      left: centerX - scaledWidth / 2,
-      right: centerX + scaledWidth / 2,
-      top: centerY - scaledHeight / 2,
-      bottom: centerY + scaledHeight / 2,
-      width: scaledWidth,
-      height: scaledHeight
-    };
-
-    // Check overlap with all other items
-    for (const otherItem of document.querySelectorAll('.grid-item')) {
-      if (otherItem === item) continue;
-
-      const otherRect = otherItem.getBoundingClientRect();
-
-      // Calculate overlap area
-      const overlapX = Math.max(0, Math.min(projectedRect.right, otherRect.right) - Math.max(projectedRect.left, otherRect.left));
-      const overlapY = Math.max(0, Math.min(projectedRect.bottom, otherRect.bottom) - Math.max(projectedRect.top, otherRect.top));
-      const overlapArea = overlapX * overlapY;
-
-      // Calculate area of the other item
-      const otherArea = otherRect.width * otherRect.height;
-
-      // Check if overlap exceeds threshold
-      if (overlapArea > 0) {
-        const overlapPercentage = overlapArea / otherArea;
-
-        // Check if this item would completely cover another item
-        const isCompleteOverlap = overlapArea >= (otherArea * 0.95); // 95% or more is considered complete overlap
-
-        if (overlapPercentage > MAX_OVERLAP_PERCENTAGE || isCompleteOverlap) {
-          return false;
-        }
-      }
-    }
-
-    return true;
-  }
-
-  // Function to find a safe scale factor that doesn't cause too much overlap
-  function findSafeScale(item, maxScale) {
-    const minScale = 1.2;
-    const step = 0.05;
-
-    // Start from max and decrease until we find a safe scale
-    for (let scale = maxScale; scale >= minScale; scale -= step) {
-      if (checkOverlapConstraints(item, scale)) {
-        return scale;
-      }
-    }
-
-    // If all else fails, return minimum scale
-    return minScale;
-  }
-
-  // Function to adjust initial grid positioning to minimize overlaps
-  function adjustInitialPositioning() {
-    const gridItems = Array.from(document.querySelectorAll('.grid-item'));
-    let hasOverlap = true;
-    let attempts = 0;
-
-    // Do basic overlap check and adjustment
-    while (hasOverlap && attempts < 5) {
-      hasOverlap = false;
-      attempts++;
-
-      for (let i = 0; i < gridItems.length; i++) {
-        const itemA = gridItems[i];
-        const rectA = itemA.getBoundingClientRect();
-
-        for (let j = i + 1; j < gridItems.length; j++) {
-          const itemB = gridItems[j];
-          const rectB = itemB.getBoundingClientRect();
-
-          // Calculate overlap area
-          const overlapX = Math.max(0, Math.min(rectA.right, rectB.right) - Math.max(rectA.left, rectB.left));
-          const overlapY = Math.max(0, Math.min(rectA.bottom, rectB.bottom) - Math.max(rectA.top, rectB.top));
-          const overlapArea = overlapX * overlapY;
-
-          // Calculate area of both items
-          const areaA = rectA.width * rectA.height;
-          const areaB = rectB.width * rectB.height;
-
-          // Calculate overlap percentage relative to each item
-          const overlapPercentageA = overlapArea / areaA;
-          const overlapPercentageB = overlapArea / areaB;
-
-          // If overlap exceeds threshold, adjust positions
-          if (overlapPercentageA > 0.05 || overlapPercentageB > 0.05) {
-            hasOverlap = true;
-
-            // Get current grid values
-            const computedStyleA = window.getComputedStyle(itemA);
-            const computedStyleB = window.getComputedStyle(itemB);
-
-            // Adjust positions based on relative positions
-            if (rectA.left < rectB.left) {
-              // A is to the left of B, move A more left or B more right
-              const currentMarginA = parseFloat(itemA.style.marginRight || '0');
-              itemA.style.marginRight = (currentMarginA + 5) + 'px';
-            } else {
-              // B is to the left of A, move B more left or A more right
-              const currentMarginB = parseFloat(itemB.style.marginRight || '0');
-              itemB.style.marginRight = (currentMarginB + 5) + 'px';
-            }
-
-            if (rectA.top < rectB.top) {
-              // A is above B, move A more up or B more down
-              const currentMarginA = parseFloat(itemA.style.marginBottom || '0');
-              itemA.style.marginBottom = (currentMarginA + 5) + 'px';
-            } else {
-              // B is above A, move B more up or A more down
-              const currentMarginB = parseFloat(itemB.style.marginBottom || '0');
-              itemB.style.marginBottom = (currentMarginB + 5) + 'px';
-            }
-          }
-        }
-      }
-    }
+    // Determine final scale - capped by viewport bounds
+    // but never smaller than 1.25x (some minimal zoom effect)
+    return Math.min(Math.max(1.25, targetScale), viewportConstrainedScale);
   }
 });
