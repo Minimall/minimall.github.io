@@ -1,3 +1,4 @@
+
 // Grid scaling script - consistent, predictable image scaling with viewport bounds awareness
 document.addEventListener('DOMContentLoaded', function() {
   const gridItems = document.querySelectorAll('.grid-item');
@@ -46,21 +47,17 @@ document.addEventListener('DOMContentLoaded', function() {
       }, 5);
     });
 
-    // On mouse leave, first reset scale transform, then reset z-index after animation completes
+    // On mouse leave, first reset z-index, then reset scale transform
     item.addEventListener('mouseleave', function() {
-      // First reset the transform
-      this.style.transform = '';
-
-      // Get the transition duration from CSS
-      const transitionDuration = getComputedStyle(this).transitionDuration;
-      const durationMs = parseFloat(transitionDuration) * 1000 || 500;
-
-      // Reset z-index after animation completes
+      // First reset the z-index
+      this.style.zIndex = '';
+      
+      // Then reset the transform after a minimal delay
       setTimeout(() => {
         if (!this.matches(':hover')) {
-          this.style.zIndex = '';
+          this.style.transform = '';
         }
-      }, durationMs);
+      }, 5);
     });
   });
 
