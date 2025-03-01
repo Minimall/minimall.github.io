@@ -29,11 +29,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Function to set the aspect ratio of the container
   function setAspectRatio(container, media) {
-    const aspectRatio = media.naturalWidth / media.naturalHeight;
+    let aspectRatio;
+    
+    if (media.tagName === 'VIDEO') {
+      // For video elements
+      aspectRatio = media.videoWidth / media.videoHeight;
+    } else {
+      // For image elements
+      aspectRatio = media.naturalWidth / media.naturalHeight;
+    }
 
     // Apply the aspect ratio to the container using CSS custom property
     container.style.setProperty('--aspect-ratio', aspectRatio);
     container.style.aspectRatio = aspectRatio;
+    
+    // For debugging
+    console.log(`Set aspect ratio for ${media.tagName}: ${aspectRatio}`);
   }
 });
 
