@@ -3,15 +3,31 @@
 document.addEventListener('DOMContentLoaded', function() {
   const gridItems = document.querySelectorAll('.grid-item');
   
+  // Store original aspect ratios of all containers to maintain them during scaling
+  gridItems.forEach(item => {
+    const rect = item.getBoundingClientRect();
+    item.dataset.aspectRatio = rect.width / rect.height;
+  });
+  
   // Ensure all images are fully loaded to get correct natural dimensions
   const images = document.querySelectorAll('.grid-item img');
   images.forEach(img => {
     if (!img.complete) {
       img.onload = function() {
         console.log(`Image loaded: ${img.src}, natural size: ${img.naturalWidth}x${img.naturalHeight}`);
+        // Store image aspect ratio
+        const parent = img.closest('.grid-item');
+        if (parent) {
+          parent.dataset.imageAspectRatio = img.naturalWidth / img.naturalHeight;
+        }
       };
     } else {
       console.log(`Image already loaded: ${img.src}, natural size: ${img.naturalWidth}x${img.naturalHeight}`);
+      // Store image aspect ratio
+      const parent = img.closest('.grid-item');
+      if (parent) {
+        parent.dataset.imageAspectRatio = img.naturalWidth / img.naturalHeight;
+      }
     }
   });
   
@@ -28,6 +44,9 @@ document.addEventListener('DOMContentLoaded', function() {
   // Add hover listeners to calculate optimal scale
   gridItems.forEach(item => {
     item.addEventListener('mouseenter', function() {
+      // Set z-index immediately on hover
+      this.style.zIndex = '10';
+      
       const optimalScale = calculateOptimalScale(this);
       
       // Check if hovering would cause too much overlap
@@ -42,6 +61,14 @@ document.addEventListener('DOMContentLoaded', function() {
     
     item.addEventListener('mouseleave', function() {
       this.style.transform = '';
+      
+      // Reset z-index with a delay (after animation completes)
+      setTimeout(() => {
+        // Only reset if not hovered again
+        if (!this.matches(':hover')) {
+          this.style.zIndex = '';
+        }
+      }, 500); // Match the CSS transition duration
     });
   });
   
@@ -99,17 +126,28 @@ document.addEventListener('DOMContentLoaded', function() {
       console.log(`Image dimensions: ${naturalWidth}x${naturalHeight}, Container: ${containerWidth}x${containerHeight}`);
       
       // Calculate how much we need to scale the CONTAINER to show the image at 100% of its natural size
-      const scaleToNaturalWidth = naturalWidth / containerWidth;
-      const scaleToNaturalHeight = naturalHeight / containerHeight;
-      const naturalScale = Math.max(scaleToNaturalWidth, scaleToNaturalHeight);
+      // while preserving the container's aspect ratio
+      const containerAspectRatio = parseFloat(item.dataset.aspectRatio) || (containerWidth / containerHeight);
+      const imageAspectRatio = parseFloat(item.dataset.imageAspectRatio) || (naturalWidth / naturalHeight);
       
+      // Determine if the container or image aspect ratio is the limiting factor
+      let naturalScale;
+      if (imageAspectRatio > containerAspectRatio) {
+        // Image is wider relative to its height than the container
+        naturalScale = naturalWidth / containerWidth;
+      } else {
+        // Image is taller relative to its width than the container
+        naturalScale = naturalHeight / containerHeight;
+      }
+      
+      console.log(`Container aspect ratio: ${containerAspectRatio}, Image aspect ratio: ${imageAspectRatio}`);
       console.log(`Natural scale would be: ${naturalScale}`);
       
       // Get viewport dimensions with some padding
       const viewportWidth = window.innerWidth * 0.9; // 90% of viewport width
       const viewportHeight = window.innerHeight * 0.9; // 90% of viewport height
       
-      // Calculate max scale based on viewport constraints
+      // Calculate max scale based on viewport constraints while preserving aspect ratio
       const maxWidthScale = viewportWidth / containerWidth;
       const maxHeightScale = viewportHeight / containerHeight;
       
