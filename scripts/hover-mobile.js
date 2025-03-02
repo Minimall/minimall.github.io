@@ -642,6 +642,12 @@ class GridCarousel {
                     const pathParts = url.pathname.split('/');
                     filename = pathParts[pathParts.length - 1];
                     
+                    // Skip me.avif images
+                    if (filename === 'me.avif') {
+                        console.log('Skipping me.avif image');
+                        return null;
+                    }
+                    
                     // Check if image is from the drafts directory
                     if (url.pathname.includes('/drafts/')) {
                         filename = 'drafts/' + filename;
@@ -650,6 +656,12 @@ class GridCarousel {
                     // Fallback to simple substring if URL parsing fails
                     console.log('URL parsing failed, using substring method');
                     filename = fullPath.substring(fullPath.lastIndexOf('/') + 1);
+                    
+                    // Skip me.avif images
+                    if (filename === 'me.avif') {
+                        console.log('Skipping me.avif image');
+                        return null;
+                    }
                     
                     // Check if path contains drafts
                     if (fullPath.includes('/drafts/')) {
@@ -664,11 +676,11 @@ class GridCarousel {
                 // For videos, capture a frame from the video as an image
                 const videoSource = video.querySelector('source');
                 if (videoSource) {
-                    // Just return a placeholder filename that we know exists
-                    return 'me.avif'; // Using a known image as fallback for videos
+                    // Skip videos from the carousel
+                    return null;
                 }
-                // Return a default placeholder if no source is found
-                return 'me.avif';
+                // Skip if no source is found
+                return null;
             }
             
             console.log(`Item ${index} has no media`);
