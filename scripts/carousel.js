@@ -1,12 +1,11 @@
 /**
- * Main Carousel Handler
- * Initializes the appropriate carousel based on device type
- * and coordinates interactions with grid items
+ * Desktop Carousel Handler
+ * Only initializes carousel for desktop devices
  */
 
 // Initialize carousel when the DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
-    // Load needed components first
+    // Load needed components
     loadComponents().then(() => {
         initializeCarousel();
     });
@@ -30,15 +29,9 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         };
 
-        // Load necessary components based on device
-        const isMobile = window.matchMedia('(max-width: 788px)').matches;
-
         try {
-            if (isMobile) {
-                await loadScript('scripts/carousel/mobile-carousel.js');
-            } else {
-                await loadScript('scripts/carousel/desktop-carousel.js');
-            }
+            // Only load desktop carousel
+            await loadScript('scripts/carousel/desktop-carousel.js');
             return true;
         } catch (error) {
             console.error('Failed to load carousel components:', error);
@@ -46,49 +39,26 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Initialize the appropriate carousel based on device type
+    // Initialize desktop carousel only
     function initializeCarousel() {
+        // Skip carousel initialization on mobile
         const isMobile = window.matchMedia('(max-width: 788px)').matches;
+        if (isMobile) return;
+        
         const gridItems = document.querySelectorAll('.grid-item');
-
         if (gridItems.length === 0) return;
 
-        if (isMobile) {
-            // Mobile implementation
-            if (window.GridItemCarousel) {
-                const gridCarousel = new window.GridItemCarousel();
-                window.gridCarousel = gridCarousel;
+        // Desktop implementation
+        if (window.DesktopCarousel) {
+            const desktopCarousel = new window.DesktopCarousel();
+            desktopCarousel.setGridItems(gridItems);
+            window.gridCarousel = desktopCarousel;
 
-                // Set up click handlers
-                setupMobileClickHandlers(gridItems);
-            } else {
-                console.error('Mobile carousel component not loaded');
-            }
+            // Set up click handlers
+            setupDesktopClickHandlers(gridItems, desktopCarousel);
         } else {
-            // Desktop implementation
-            if (window.DesktopCarousel) {
-                const desktopCarousel = new window.DesktopCarousel();
-                desktopCarousel.setGridItems(gridItems);
-                window.gridCarousel = desktopCarousel;
-
-                // Set up click handlers
-                setupDesktopClickHandlers(gridItems, desktopCarousel);
-            } else {
-                console.error('Desktop carousel component not loaded');
-            }
+            console.error('Desktop carousel component not loaded');
         }
-    }
-
-    // Setup click handlers for mobile grid items
-    function setupMobileClickHandlers(gridItems) {
-        gridItems.forEach((item, index) => {
-            item.addEventListener('click', function(e) {
-                e.preventDefault();
-                if (window.gridCarousel && window.gridCarousel.open) {
-                    window.gridCarousel.open(gridItems, index);
-                }
-            });
-        });
     }
 
     // Setup click handlers for desktop grid items
