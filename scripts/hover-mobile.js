@@ -178,6 +178,7 @@ class BottomSheet {
         const currentImg = imageContainer.querySelectorAll('img')[currentIndex];
         setTimeout(() => {
             currentImg.style.transform = `rotate(${rotation}deg)`;
+            currentImg.style.opacity = '1'; // Make sure image is visible
         }, 10);
 
         // Add swipe gestures
@@ -233,13 +234,15 @@ class BottomSheet {
 
             // Keep the rotation consistent during transitions
             if (i === newIndex) {
-                img.style.transition = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)';
+                img.style.transition = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease';
                 img.style.transform = `rotate(${rotation}deg) translateX(0%)`;
+                img.style.opacity = '1';
                 img.style.zIndex = '2';
             } else {
                 const direction = i < newIndex ? -1 : 1;
-                img.style.transition = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)';
+                img.style.transition = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease';
                 img.style.transform = `rotate(${rotation}deg) translateX(${direction * 100}%)`;
+                img.style.opacity = '0.5';
                 img.style.zIndex = '1';
             }
         });
@@ -319,8 +322,9 @@ class BottomSheet {
         const animateToIndex = (targetIndex) => {
             // Apply spring-like animation
             imageElements.forEach((img, i) => {
-                img.style.transition = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)';
+                img.style.transition = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease';
                 img.style.transform = `translateX(${(i - targetIndex) * 100}%)`;
+                img.style.opacity = i === targetIndex ? '1' : '0.5';
             });
             
             // Update currentIndex and dots
@@ -418,7 +422,9 @@ class BottomSheet {
         const images = this.carousel.querySelectorAll('img');
 
         images.forEach((img, i) => {
+            img.style.transition = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease';
             img.style.transform = `translateX(${(i - index) * 100}%)`;
+            img.style.opacity = i === index ? '1' : '0.5';
         });
 
         // Update dots only if they exist and there are multiple images
