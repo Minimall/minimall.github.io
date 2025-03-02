@@ -197,7 +197,7 @@ class DesktopCarousel {
         if (currentImg) {
             // Animate image out
             currentImg.style.transition = 'transform 0.5s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.4s ease';
-            currentImg.style.transform = 'rotate(0deg) scale(0)';
+            currentImg.style.transform = 'scale(0)';
             currentImg.style.opacity = '0';
         }
 
@@ -240,7 +240,7 @@ class DesktopCarousel {
         // Animate current image out
         if (currentImg) {
             currentImg.style.transition = 'transform 0.5s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.4s ease';
-            currentImg.style.transform = `translateX(${direction < 0 ? '100%' : '-100%'}) rotate(${this.getRandomRotation()}deg) scale(0.8)`;
+            currentImg.style.transform = `translateX(${direction < 0 ? '100%' : '-100%'}) scale(0.8)`;
             currentImg.style.opacity = '0';
         }
         
@@ -252,13 +252,6 @@ class DesktopCarousel {
             this.imageContainer.innerHTML = '';
             this.loadCurrentImage(true);
         }, 300);
-    }
-
-    getRandomRotation() {
-        // Generate a slight random rotation for natural feel
-        const baseRotation = ((Math.random() > 0.5) ? 1.5 : -1.5);
-        const randomOffset = (Math.random() * 0.5) - 0.25;
-        return baseRotation + randomOffset;
     }
 
     loadCurrentImage(animate = false) {
@@ -273,8 +266,7 @@ class DesktopCarousel {
         const img = currentItem.querySelector('img');
         const video = currentItem.querySelector('video');
         
-        // Generate random rotation for more natural feel
-        const rotation = this.getRandomRotation();
+        // No rotation for the carousel images
 
         if (img) {
             console.log("Loading image:", img.src);
@@ -287,7 +279,7 @@ class DesktopCarousel {
             // Set initial state for animation
             if (animate) {
                 carouselImg.style.opacity = '0';
-                carouselImg.style.transform = `rotate(0deg) scale(0)`;
+                carouselImg.style.transform = `scale(0)`;
             }
 
             // Add to DOM
@@ -300,7 +292,7 @@ class DesktopCarousel {
                 
                 carouselImg.style.transition = 'transform 0.6s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.5s ease';
                 carouselImg.style.opacity = '1';
-                carouselImg.style.transform = `rotate(${rotation}deg) scale(1)`;
+                carouselImg.style.transform = `scale(1)`;
             }
 
             carouselImg.onload = () => {
@@ -326,7 +318,7 @@ class DesktopCarousel {
             // Set initial state for animation
             if (animate) {
                 carouselVideo.style.opacity = '0';
-                carouselVideo.style.transform = `rotate(0deg) scale(0)`;
+                carouselVideo.style.transform = `scale(0)`;
             }
 
             // Copy all source elements
@@ -348,7 +340,7 @@ class DesktopCarousel {
                 
                 carouselVideo.style.transition = 'transform 0.6s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.5s ease';
                 carouselVideo.style.opacity = '1';
-                carouselVideo.style.transform = `rotate(${rotation}deg) scale(1)`;
+                carouselVideo.style.transform = `scale(1)`;
             }
             
             // Mark animation as complete
