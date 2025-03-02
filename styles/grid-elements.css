@@ -33,7 +33,7 @@
 }
 
 .grid-item:hover {
-  transform: scale(1.4);
+  transform: scale(1.03);
 }
 
 .grid-item img, 

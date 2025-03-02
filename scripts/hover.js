@@ -1,65 +1,3 @@
-function setupHoverEffects() {
-    // Create hover image element if it doesn't exist
-    let hoverImg = document.querySelector('.hover-image');
-    if (!hoverImg) {
-        hoverImg = document.createElement('img');
-        hoverImg.className = 'hover-image';
-        document.body.appendChild(hoverImg);
-    }
-
-    // Set up hover effects on data-hover elements
-    document.querySelectorAll('[data-hover="true"]').forEach((element) => {
-        element.addEventListener('mouseenter', (e) => {
-            if (element.dataset.images) {
-                handleImageHover(element, hoverImg);
-            } else {
-                handleWaveEffect(element);
-            }
-        });
-
-        element.addEventListener('mouseleave', () => {
-            if (element._clearImageCycle) {
-                element._clearImageCycle();
-                element._clearImageCycle = null;
-            }
-        });
-
-        // Prevent scroll reset on click for all data-images elements
-        element.addEventListener('click', (e) => {
-            if (element.dataset.images) {
-                // Always prevent default for elements with data-images
-                e.preventDefault();
-            }
-        });
-    });
-}
-
-function handleWaveEffect(element) {
-    // Add wave animation classes
-    element.classList.add('wave-in');
-    element.classList.remove('wave-out');
-
-    element.addEventListener('mouseleave', function waveOut() {
-        element.classList.remove('wave-in');
-        element.classList.add('wave-out');
-        element.removeEventListener('mouseleave', waveOut);
-    }, { once: true });
-}
-
-function handleImageHover(element, img) {
-    if (window.matchMedia('(min-width: 789px)').matches) {
-        img.classList.add('active');
-        img.style.display = 'block';
-        element._clearImageCycle = cycleImages(element, img);
-
-        element.addEventListener('mouseleave', function hideImage() {
-            img.classList.remove('active');
-            img.style.display = 'none';
-            element.removeEventListener('mouseleave', hideImage);
-        }, { once: true });
-    }
-}
-
 
 // Track hovered elements and rotation counter
 const hoveredElements = new Set();
@@ -72,7 +10,7 @@ function setupHoverEffects() {
     hoverableElements.forEach(element => {
         // Skip if already processed
         if (element.hasAttribute('data-processed')) return;
-
+        
         // Skip logo elements - exclude case-logo links from hover effects
         if (element.closest('.case-logo')) return;
 
@@ -221,10 +159,8 @@ function setupMobileHoverImages() {
     if ('ontouchstart' in window) {
         document.querySelectorAll('[data-images]').forEach(element => {
             element.addEventListener('click', (e) => {
-                // Always prevent default to maintain scroll position
-                e.preventDefault();
-
                 if (window.matchMedia('(max-width: 788px)').matches) {
+                    e.preventDefault();
                     const images = element.dataset.images?.split(',') || [];
                     if (images.length > 0 && typeof showCenteredImage === 'function') {
                         showCenteredImage(images[0]);
@@ -242,7 +178,7 @@ function preloadHoverImages() {
         images.forEach(image => {
             const img = new Image();
             img.src = `/images/${image}`;
-
+            
             // Set image type based on extension
             if (image.endsWith('.webp')) {
                 img.type = 'image/webp';
@@ -264,10 +200,10 @@ function preserveLogos() {
         logo.style.display = 'block !important';
         logo.style.visibility = 'visible !important';
         logo.style.opacity = '1 !important';
-
+        
         // Remove any classes that might be causing the issue
         logo.classList.remove('wave-in', 'wave-out');
-
+        
         // Mark logo parents to be excluded from hover effects
         const logoParent = logo.closest('.case-logo');
         if (logoParent) {
@@ -280,19 +216,19 @@ function preserveLogos() {
 document.addEventListener("DOMContentLoaded", () => {
     // Preload hover images
     preloadHoverImages();
-
+    
     // Set up hover effects
     setupHoverEffects();
-
+    
     // Set up mobile hover images
     setupMobileHoverImages();
-
+    
     // Add mouse move handler for desktop
     window.addEventListener("mousemove", updateMousePosition, { passive: true });
-
+    
     // Preserve logos
     preserveLogos();
-
+    
     // Setup periodic logo preservation
     setInterval(preserveLogos, 1000);
 });
