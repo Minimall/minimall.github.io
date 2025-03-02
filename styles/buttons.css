@@ -1,0 +1,55 @@
+
+/* Pill-shaped buttons styling */
+.pill-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.4rem 1.2rem;
+  background-color: white;
+  color: #111;
+  border: 1px solid #e0e0e0;
+  border-radius: 100px;
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-variation-settings: "wght" 500;
+  letter-spacing: -0.01em;
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+  position: relative;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+  line-height: 1.2;
+}
+
+.pill-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.06);
+  border-color: #d0d0d0;
+  font-variation-settings: "wght" 600;
+  background-color: #fcfcfc;
+}
+
+.pill-button:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+.menu .pill-button {
+  margin-right: 0.75rem;
+}
+
+.menu .pill-button:last-child {
+  margin-right: 0;
+}
+
+/* Ensure buttons maintain pill shape on mobile */
+@media (max-width: 788px) {
+  .menu {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  
+  .menu .pill-button {
+    margin-right: 0;
+  }
+}
