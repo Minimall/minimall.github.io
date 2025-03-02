@@ -420,17 +420,17 @@ class BottomSheet {
             img.classList.add('closing');
         });
         
-        // Delay overlay closing until after image animation has started
-        // This ensures images animate first with priority over overlay
+        // Let image animation complete fully before starting overlay fade
+        // This ensures complete visibility of the image animation
         setTimeout(() => {
             this.overlay.classList.remove('visible');
             document.body.classList.remove('no-scroll');
-        }, 200); // Give images a head start before starting overlay fade
+        }, 400); // Wait for image animation to be nearly complete before starting overlay fade
         
         // Match the transition duration of the images plus delay
         setTimeout(() => {
             container.remove();
-        }, 700); // Increased to account for transition time + delay
+        }, 800); // Increased to account for full animation cycle
     }
 
     showImage(index) {
