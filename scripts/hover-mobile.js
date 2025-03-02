@@ -147,15 +147,8 @@ class BottomSheet {
             }
             imgElement.src = imgPath;
             imgElement.className = 'centered-image';
-            
-            // Position offscreen images with iOS-style layout
-            if (index === currentIndex) {
-                imgElement.style.transform = `rotate(${rotation}deg) scale(0.8)`;
-                imgElement.style.opacity = '0';
-            } else {
-                imgElement.style.transform = `translateX(${(index - currentIndex) * 100}%)`;
-                imgElement.style.opacity = '0';
-            }
+            imgElement.style.transform = index === currentIndex ? 
+                `rotate(${rotation}deg) scale(0)` : `translateX(${(index - currentIndex) * 100}%)`;
 
             imageContainer.appendChild(imgElement);
         });
@@ -181,24 +174,10 @@ class BottomSheet {
             }
         }
 
-        // Trigger animation for the current image with iOS-style spring animation
+        // Trigger animation for the current image
         const currentImg = imageContainer.querySelectorAll('img')[currentIndex];
-        
-        // Force browser reflow before animation
-        void currentImg.offsetWidth;
-        
-        // Apply spring animation
-        currentImg.style.transition = 'transform 0.5s cubic-bezier(0.17, 0.67, 0.23, 0.98), opacity 0.3s ease-out';
         setTimeout(() => {
             currentImg.style.transform = `rotate(${rotation}deg) scale(1)`;
-            currentImg.style.opacity = '1';
-            
-            // Make all other images visible but properly positioned
-            const otherImages = imageContainer.querySelectorAll('img:not(:nth-child(' + (currentIndex + 1) + '))');
-            otherImages.forEach(img => {
-                img.style.opacity = '1';
-                img.style.transition = 'transform 0.5s cubic-bezier(0.17, 0.67, 0.23, 0.98), opacity 0.3s ease-out';
-            });
         }, 10);
 
         // Add swipe gestures
@@ -244,13 +223,11 @@ class BottomSheet {
 
         images.forEach((img, i) => {
             if (i === newIndex) {
-                // Center the active image with spring effect
-                img.style.transition = 'transform 0.5s cubic-bezier(0.23, 1, 0.32, 1)';
+                // Center the active image and add rotation/scale
                 img.style.transform = `rotate(${rotation}deg) scale(1)`;
                 img.style.margin = '0 auto'; // Ensure horizontal centering
             } else {
-                // Position non-active images with spring effect
-                img.style.transition = 'transform 0.5s cubic-bezier(0.23, 1, 0.32, 1)';
+                // Position non-active images
                 img.style.transform = `translateX(${(i - newIndex) * 100}%)`;
             }
         });
@@ -258,124 +235,55 @@ class BottomSheet {
 
     setupCenteredImageSwipe(container, centeredContainer, images, startIndex) {
         let startX = 0;
-        let startTime = 0;
-        let currentX = 0;
-        let isDragging = false;
         let currentIndex = startIndex;
-        let lastMoveTime = 0;
-        let lastMoveX = 0;
-        let velocity = 0;
-        const imgElements = container.querySelectorAll('img');
-        
-        // Setup drag tracking variables
-        let dragOffset = 0;
-        let dragThreshold = 0.3; // Threshold to determine swipe direction (30% of screen width)
-        
+
         const onStart = (e) => {
-            if (images.length <= 1) return;
-            
-            isDragging = true;
             startX = e.type === 'mousedown' ? e.clientX : e.touches[0].clientX;
-            currentX = startX;
-            startTime = Date.now();
-            lastMoveTime = startTime;
-            lastMoveX = startX;
-            velocity = 0;
-            
-            // Reset transitions to allow fluid dragging
-            imgElements.forEach(img => {
-                img.style.transition = 'none';
-            });
-            
             document.addEventListener(e.type === 'mousedown' ? 'mousemove' : 'touchmove', onMove, { passive: false });
             document.addEventListener(e.type === 'mousedown' ? 'mouseup' : 'touchend', onEnd);
         };
 
         const onMove = (e) => {
-            if (!isDragging || images.length <= 1) return;
-            
+            if (images.length <= 1) return;
+
             e.preventDefault();
-            const clientX = e.type === 'mousemove' ? e.clientX : e.touches[0].clientX;
-            currentX = clientX;
-            
-            // Calculate drag offset as percentage of container width
-            dragOffset = (currentX - startX) / container.offsetWidth;
-            
-            // Calculate velocity (pixels per ms)
-            const currentTime = Date.now();
-            const timeDiff = currentTime - lastMoveTime;
-            if (timeDiff > 0) {
-                velocity = (currentX - lastMoveX) / timeDiff;
-            }
-            lastMoveTime = currentTime;
-            lastMoveX = currentX;
-            
-            // Update image positions during drag
-            imgElements.forEach((img, i) => {
-                const offset = (i - currentIndex) + dragOffset;
-                const rotation = ((window.rotationCounter % 2 === 0) ? 1.5 : -1.5);
-                
-                if (i === currentIndex) {
-                    img.style.transform = `rotate(${rotation}deg) scale(1) translateX(${dragOffset * 100}%)`;
-                } else {
-                    img.style.transform = `translateX(${offset * 100}%)`;
+            const currentX = e.type === 'mousemove' ? e.clientX : e.touches[0].clientX;
+            const diffX = currentX - startX;
+
+            if (Math.abs(diffX) > 50) {
+                if (diffX > 0 && currentIndex > 0) {
+                    // Swipe right - show previous image
+                    currentIndex--;
+                    this.showImageInContainer(container, currentIndex, currentIndex + 1);
+
+                    // Update dots
+                    const dots = centeredContainer.querySelectorAll('.dot');
+                    dots.forEach((dot, i) => {
+                        dot.classList.toggle('active', i === currentIndex);
+                    });
+
+                    startX = currentX;
+                } else if (diffX < 0 && currentIndex < images.length - 1) {
+                    // Swipe left - show next image
+                    currentIndex++;
+                    this.showImageInContainer(container, currentIndex, currentIndex - 1);
+
+                    // Update dots
+                    const dots = centeredContainer.querySelectorAll('.dot');
+                    dots.forEach((dot, i) => {
+                        dot.classList.toggle('active', i === currentIndex);
+                    });
+
+                    startX = currentX;
                 }
-            });
+            }
         };
 
-        const onEnd = (e) => {
-            if (!isDragging) return;
-            isDragging = false;
-            
+        const onEnd = () => {
             document.removeEventListener('mousemove', onMove);
             document.removeEventListener('touchmove', onMove);
             document.removeEventListener('mouseup', onEnd);
             document.removeEventListener('touchend', onEnd);
-            
-            // Determine whether to change slide based on:
-            // 1. Drag distance threshold OR
-            // 2. Velocity threshold for quick flicks
-            const velocityThreshold = 0.5; // Pixels per ms
-            const dragDuration = Date.now() - startTime;
-            const isQuickFlick = Math.abs(velocity) > velocityThreshold && dragDuration < 300;
-            
-            let shouldChangePage = false;
-            let direction = 0;
-            
-            if (isQuickFlick) {
-                // For quick flicks, determine direction based on velocity
-                direction = velocity < 0 ? 1 : -1;
-                shouldChangePage = true;
-            } else if (Math.abs(dragOffset) > dragThreshold) {
-                // For slower drags, determine direction based on drag distance
-                direction = dragOffset < 0 ? 1 : -1;
-                shouldChangePage = true;
-            }
-            
-            // Change page if conditions are met and valid direction
-            if (shouldChangePage) {
-                if (direction < 0 && currentIndex > 0) {
-                    // Previous image
-                    currentIndex--;
-                } else if (direction > 0 && currentIndex < images.length - 1) {
-                    // Next image
-                    currentIndex++;
-                }
-            }
-            
-            // Apply spring effect for transitions
-            imgElements.forEach(img => {
-                img.style.transition = `transform 0.5s cubic-bezier(0.23, 1, 0.32, 1)`;
-            });
-            
-            // Show final position
-            this.showImageInContainer(container, currentIndex, currentIndex);
-            
-            // Update dots
-            const dots = centeredContainer.querySelectorAll('.dot');
-            dots.forEach((dot, i) => {
-                dot.classList.toggle('active', i === currentIndex);
-            });
         };
 
         container.addEventListener('mousedown', onStart);
@@ -384,39 +292,19 @@ class BottomSheet {
 
     closeCenteredImage(container) {
         const images = container.querySelectorAll('.centered-image');
-        const activeImage = container.querySelector('.centered-image[style*="scale(1)"]');
-        
-        // iOS-style closing animation with physics
-        if (activeImage) {
-            // Apply spring-based close animation to active image
-            activeImage.style.transition = 'transform 0.45s cubic-bezier(0.32, 0.72, 0.18, 1.12), opacity 0.3s ease-out';
-            activeImage.style.transform = 'rotate(0deg) scale(0.8)';
-            activeImage.style.opacity = '0';
-            
-            // Animate other images with slight delay
-            const otherImages = Array.from(images).filter(img => img !== activeImage);
-            otherImages.forEach(img => {
-                img.style.transition = 'transform 0.4s cubic-bezier(0.32, 0.72, 0.18, 1.12), opacity 0.25s ease-out';
-                img.style.opacity = '0';
-            });
-        } else {
-            // Fallback animation if active image can't be determined
-            images.forEach(img => {
-                img.style.transition = 'transform 0.4s cubic-bezier(0.32, 0.72, 0.18, 1.12), opacity 0.25s ease-out';
-                img.style.transform = 'rotate(0deg) scale(0.8)';
-                img.style.opacity = '0';
-            });
-        }
 
-        // Fade out overlay with timing that matches the animation
-        this.overlay.style.transition = 'opacity 0.35s ease-out';
+        // Animate all images
+        images.forEach(img => {
+            img.style.transform = 'rotate(0deg) scale(0)';
+        });
+
+        // Simply remove overlay and no-scroll class without modifying scroll position
         this.overlay.classList.remove('visible');
         document.body.classList.remove('no-scroll');
 
-        // Match removal timing with animation duration
         setTimeout(() => {
             container.remove();
-        }, 450);
+        }, 300);
     }
 
     showImage(index) {
