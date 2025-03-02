@@ -323,15 +323,21 @@ class IOSStyleSwiper {
         // Determine if we should change slide based on velocity and distance
         const minVelocityToSlide = 0.5; // pixels per ms
         const minDistanceToSlide = this.containerWidth * 0.3; // 30% of container width
+        const totalImages = this.imageElements.length;
 
         if (Math.abs(velocity) > minVelocityToSlide || Math.abs(deltaX) > minDistanceToSlide) {
             // Direction is based on delta
             const goNext = deltaX < 0;
 
-            // Calculate target index
-            const targetIndex = goNext 
-                ? Math.min(this.imageElements.length - 1, this.currentIndex + 1)
-                : Math.max(0, this.currentIndex - 1);
+            // Calculate target index with looping
+            let targetIndex;
+            if (goNext) {
+                targetIndex = this.currentIndex + 1;
+                if (targetIndex >= totalImages) targetIndex = 0; // Loop to first image
+            } else {
+                targetIndex = this.currentIndex - 1;
+                if (targetIndex < 0) targetIndex = totalImages - 1; // Loop to last image
+            }
 
             // Only change if different
             if (targetIndex !== this.currentIndex) {
@@ -347,21 +353,24 @@ class IOSStyleSwiper {
     }
 
     updateImagesPosition(deltaX) {
+        const totalImages = this.imageElements.length;
+        if (totalImages <= 1) return;
+        
         this.imageElements.forEach((img, index) => {
             if (index === this.currentIndex) {
                 // Current image follows finger with rotation
                 const rotationAdjustment = deltaX * 0.02; // Slight rotation based on movement
                 img.style.transform = `translateX(${deltaX}px) rotate(${this.rotation + rotationAdjustment}deg) scale(1)`;
-            } else if (index === this.currentIndex - 1 && deltaX > 0) {
-                // Previous image slides in from left
+            } else if ((index === this.currentIndex - 1 || (this.currentIndex === 0 && index === totalImages - 1)) && deltaX > 0) {
+                // Previous image slides in from left (with looping support)
                 const progress = Math.min(1, deltaX / this.containerWidth);
                 const slideInX = -this.containerWidth + (deltaX * 1.1); // Slightly faster than finger
                 const scale = 0.8 + (progress * 0.2);
                 const opacity = Math.min(1, progress * 1.2);
                 img.style.transform = `translateX(${slideInX}px) rotate(${this.rotation}deg) scale(${scale})`;
                 img.style.opacity = opacity.toString();
-            } else if (index === this.currentIndex + 1 && deltaX < 0) {
-                // Next image slides in from right
+            } else if ((index === this.currentIndex + 1 || (this.currentIndex === totalImages - 1 && index === 0)) && deltaX < 0) {
+                // Next image slides in from right (with looping support)
                 const progress = Math.min(1, Math.abs(deltaX) / this.containerWidth);
                 const slideInX = this.containerWidth + (deltaX * 1.1); // Slightly faster than finger
                 const scale = 0.8 + (progress * 0.2);
@@ -403,12 +412,26 @@ class IOSStyleSwiper {
     }
 
     goToSlide(index, velocity = 0) {
-        if (index < 0 || index >= this.imageElements.length || index === this.currentIndex) return;
+        if (index === this.currentIndex) return;
+        if (index < 0 || index >= this.imageElements.length) {
+            // Handle out of bounds indexes for looping
+            index = index < 0 ? this.imageElements.length - 1 : 0;
+        }
 
         this.isAnimating = true;
 
-        // Determine direction for nicer animation
-        const goingRight = index > this.currentIndex;
+        // For looping animation, we need to determine if we're going from
+        // first to last or last to first for special case handling
+        const totalImages = this.imageElements.length;
+        const isLoopingForward = this.currentIndex === totalImages - 1 && index === 0;
+        const isLoopingBackward = this.currentIndex === 0 && index === totalImages - 1;
+        
+        // Standard case: determine direction based on index comparison
+        let goingRight = index > this.currentIndex;
+        
+        // Special cases for looping
+        if (isLoopingForward) goingRight = true;
+        if (isLoopingBackward) goingRight = false;
 
         // Calculate spring tension based on velocity
         const baseDuration = 0.5; // base duration in seconds
@@ -546,13 +569,19 @@ class GridCarousel {
             const video = item.querySelector('video');
             
             if (img) {
-                // Get relative path from src
-                const srcPath = img.src.split('/').slice(-1)[0];
-                return srcPath;
+                // Extract just the filename from the full path
+                const fullPath = img.src;
+                const filename = fullPath.substring(fullPath.lastIndexOf('/') + 1);
+                return filename;
             } else if (video) {
-                // For videos, use a placeholder or thumbnail
-                const srcPath = video.poster || 'video-placeholder.jpg';
-                return srcPath;
+                // For videos, use a poster if available or create a placeholder
+                if (video.poster) {
+                    const posterPath = video.poster;
+                    const filename = posterPath.substring(posterPath.lastIndexOf('/') + 1);
+                    return filename;
+                }
+                // Return a default placeholder if no poster is set
+                return 'video-placeholder.jpg';
             }
             
             return null;
