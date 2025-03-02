@@ -61,12 +61,6 @@ class BottomSheet {
         centeredContainer.className = 'centered-image-container';
         document.body.appendChild(centeredContainer);
 
-        // Create tap instruction hint
-        const tapHint = document.createElement('div');
-        tapHint.className = 'tap-anywhere-hint';
-        tapHint.textContent = 'Tap anywhere to close';
-        centeredContainer.appendChild(tapHint);
-
         // Create the swiper container
         const swiperContainer = document.createElement('div');
         swiperContainer.className = 'ios-swiper';
@@ -94,13 +88,6 @@ class BottomSheet {
         });
 
         this.centeredContainer = centeredContainer;
-        
-        // Hide tap hint after a few seconds
-        setTimeout(() => {
-            if (tapHint && tapHint.parentNode) {
-                tapHint.style.opacity = '0';
-            }
-        }, 2000);
     }
 
     close() {
