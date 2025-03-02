@@ -100,13 +100,12 @@ class BottomSheet {
         const rotation = ((window.rotationCounter % 2 === 0) ? 1.5 : -1.5);
         window.rotationCounter++;
         
-        // Store current scroll position
+        // Store current scroll position without changing the page position
         this.scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
         
-        // Create overlay and prevent scrolling, but maintain position
+        // Create overlay and prevent scrolling without changing page position
         this.overlay.classList.add('visible');
         document.body.classList.add('no-scroll');
-        document.body.style.top = `-${this.scrollPosition}px`;
         
         // Get all images if this is part of an image set
         let images = [];
@@ -299,21 +298,9 @@ class BottomSheet {
             img.style.transform = 'rotate(0deg) scale(0)';
         });
         
-        // Store the scrollPosition before we modify any styles
-        const savedScrollPosition = this.scrollPosition;
-        
-        // First remove classes and reset styles
+        // Simply remove overlay and no-scroll class without modifying scroll position
         this.overlay.classList.remove('visible');
         document.body.classList.remove('no-scroll');
-        document.body.style.top = '';
-        
-        // Restore scroll position immediately without any visible reset
-        if (savedScrollPosition !== undefined) {
-            window.scrollTo({
-                top: savedScrollPosition,
-                behavior: 'auto' // Use 'auto' instead of 'smooth' to avoid visible resetting
-            });
-        }
         
         setTimeout(() => {
             container.remove();
@@ -366,22 +353,10 @@ class BottomSheet {
     }
 
     close() {
-        // Store the scrollPosition before we modify any styles
-        const savedScrollPosition = this.scrollPosition;
-        
         this.sheet.classList.remove('open');
         this.overlay.classList.remove('visible');
         document.body.classList.remove('no-scroll');
-        document.body.style.top = '';
         this.isClosing = false;
-        
-        // Restore scroll position immediately without any visible reset
-        if (savedScrollPosition !== undefined) {
-            window.scrollTo({
-                top: savedScrollPosition,
-                behavior: 'auto' // Use 'auto' instead of 'smooth' to avoid visible resetting
-            });
-        }
         
         setTimeout(() => {
             this.carousel.innerHTML = '';

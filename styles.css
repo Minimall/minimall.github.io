@@ -839,14 +839,15 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
     visibility: visible;
   }
   
-  /* Prevent scrolling class added to body while preserving scroll position */
+  /* Prevent scrolling without changing scroll position */
   body.no-scroll {
     overflow: hidden;
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    left: 0;
-    right: 0;
+    pointer-events: none;
+  }
+  
+  /* Allow interaction with modal content when body has no-scroll */
+  .overlay, .centered-image-container, .bottom-sheet {
+    pointer-events: auto;
   }
 
   .bottom-sheet {
