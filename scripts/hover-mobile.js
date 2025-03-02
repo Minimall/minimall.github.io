@@ -179,13 +179,24 @@ class BottomSheet {
             }
         }
 
-        // Trigger animation for the current image
-        // The delay for the image is now handled by CSS
-        const currentImg = imageContainer.querySelectorAll('img')[currentIndex];
-        // Short delay to ensure DOM is ready
+        // Apply consistent animation for all images (single or multiple)
+        const allImages = imageContainer.querySelectorAll('img');
+        
+        // Start with all images ready but hidden
+        allImages.forEach(img => {
+            img.style.opacity = '0';
+            img.style.transform = 'rotate(0deg) scale(0)';
+        });
+        
+        // Trigger animation for the current image with a slight delay after overlay appears
         setTimeout(() => {
+            // Only animate the current image
+            const currentImg = allImages[currentIndex];
+            currentImg.style.transition = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease';
+            currentImg.style.transform = `rotate(${rotation}deg) scale(1)`;
+            currentImg.style.opacity = '1';
             currentImg.classList.add('active');
-        }, 10);
+        }, 200); // Consistent delay matching the overlay appearance timing
 
         // Add swipe gestures
         this.setupCenteredImageSwipe(imageContainer, centeredContainer, images, currentIndex);
@@ -203,6 +214,7 @@ class BottomSheet {
 
     showImageInContainer(container, newIndex, oldIndex) {
         const images = container.querySelectorAll('img');
+        const rotation = parseFloat(images[0].style.getPropertyValue('--rotation') || '1.5deg');
 
         // Ensure container is set up for proper centering
         container.style.display = 'flex';
@@ -229,30 +241,43 @@ class BottomSheet {
             container.appendChild(wrapper);
         }
 
-        images.forEach((img, i) => {
-            // Prepare for animation
-            img.style.position = 'absolute';
-            img.style.margin = '0 auto';
-            img.style.left = '0';
-            img.style.right = '0';
-            img.style.maxWidth = '90%';
-            
-            // Apply transitions without changing rotation
-            if (i === newIndex) {
-                img.style.transition = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease';
-                img.style.transform = `translateX(0%)`;
-                img.style.opacity = '1';
-                img.style.zIndex = '2';
-                img.classList.add('active');
-            } else {
-                const direction = i < newIndex ? -1 : 1;
-                img.style.transition = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease';
-                img.style.transform = `translateX(${direction * 100}%)`;
-                img.style.opacity = '0.5';
-                img.style.zIndex = '1';
-                img.classList.remove('active');
-            }
-        });
+        // First hide the previously active image with scale animation
+        const oldActiveImg = images[oldIndex];
+        if (oldActiveImg && oldActiveImg.classList.contains('active')) {
+            oldActiveImg.style.transition = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease';
+            oldActiveImg.style.transform = 'rotate(0deg) scale(0)';
+            oldActiveImg.style.opacity = '0';
+            oldActiveImg.classList.remove('active');
+        }
+
+        // Short timeout to animate images sequentially
+        setTimeout(() => {
+            images.forEach((img, i) => {
+                // Prepare for animation
+                img.style.position = 'absolute';
+                img.style.margin = '0 auto';
+                img.style.left = '0';
+                img.style.right = '0';
+                img.style.maxWidth = '90%';
+                
+                // Apply transitions with consistent animation
+                if (i === newIndex) {
+                    img.style.transition = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease';
+                    img.style.transform = `rotate(${rotation}) scale(1)`;
+                    img.style.opacity = '1';
+                    img.style.zIndex = '2';
+                    img.classList.add('active');
+                } else {
+                    // Position non-active images for swiping
+                    const direction = i < newIndex ? -1 : 1;
+                    img.style.transition = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease';
+                    img.style.transform = `translateX(${direction * 100}%)`;
+                    img.style.opacity = '0';
+                    img.style.zIndex = '1';
+                    img.classList.remove('active');
+                }
+            });
+        }, 100); // Small delay to ensure sequential animation
     }
 
     setupCenteredImageSwipe(container, centeredContainer, images, startIndex) {
@@ -414,14 +439,37 @@ class BottomSheet {
     closeCenteredImage(container) {
         const images = container.querySelectorAll('.centered-image');
         
-        // Add closing class to trigger symmetrical closing animation
-        images.forEach(img => {
-            img.classList.remove('active');
-            img.classList.add('closing');
-        });
+        // Get the currently active image
+        const activeImage = container.querySelector('.centered-image.active');
+        
+        if (activeImage) {
+            // First start the image closing animation (reverse of opening)
+            activeImage.style.transition = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease';
+            activeImage.style.transform = 'rotate(0deg) scale(0)';
+            activeImage.style.opacity = '0';
+            
+            // Remove active class and add closing for CSS transitions
+            activeImage.classList.remove('active');
+            activeImage.classList.add('closing');
+            
+            // Make sure all other images also fade out properly
+            images.forEach(img => {
+                if (img !== activeImage) {
+                    img.style.opacity = '0';
+                    img.classList.add('closing');
+                }
+            });
+        } else {
+            // Fallback if no active image found
+            images.forEach(img => {
+                img.style.transition = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease';
+                img.style.transform = 'rotate(0deg) scale(0)';
+                img.style.opacity = '0';
+                img.classList.add('closing');
+            });
+        }
         
         // Let image animation complete fully before starting overlay fade
-        // This ensures complete visibility of the image animation
         setTimeout(() => {
             this.overlay.classList.remove('visible');
             document.body.classList.remove('no-scroll');
