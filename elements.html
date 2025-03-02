@@ -111,5 +111,18 @@
     <script src="scripts/scroll-color.js" defer></script>
     <script src="scripts/footer-animation.js" defer></script>
     <script src="scripts/carousel.js" defer></script>
+    
+    <script>
+        // Additional handling for grid items on mobile
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.matchMedia('(max-width: 788px)').matches) {
+                const gridItems = document.querySelectorAll('.grid-item');
+                gridItems.forEach((item, index) => {
+                    item.setAttribute('data-index', index);
+                    item.style.cursor = 'pointer';
+                });
+            }
+        });
+    </script>
 </body>
 </html>

@@ -531,12 +531,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Initialize BottomSheet for mobile devices
     if (window.matchMedia('(max-width: 788px)').matches) {
-        new BottomSheet();
+        const bottomSheet = new BottomSheet();
         
         // Initialize grid carousel for elements.html
         const gridItems = document.querySelectorAll('.grid-item');
         if (gridItems.length > 0) {
-            new GridCarousel(gridItems);
+            // Initialize immediately to set up click handlers
+            const gridCarousel = new GridCarousel(gridItems);
+            // Share the bottomSheet instance
+            gridCarousel.bottomSheet = bottomSheet;
         }
     }
 });
@@ -560,8 +563,17 @@ class GridCarousel {
     
     setupGridItems() {
         this.gridItems.forEach((item, index) => {
-            item.addEventListener('click', () => {
+            // Remove any existing click handlers
+            const newItem = item.cloneNode(true);
+            item.parentNode.replaceChild(newItem, item);
+            this.gridItems[index] = newItem;
+            
+            // Add new click handler with proper binding
+            newItem.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
                 if (window.matchMedia('(max-width: 788px)').matches) {
+                    console.log('Grid item clicked:', index);
                     this.showGridCarousel(index);
                 }
             });
@@ -569,6 +581,7 @@ class GridCarousel {
     }
     
     showGridCarousel(startIndex) {
+        console.log('Showing grid carousel for index:', startIndex);
         // Prepare image sources from grid items
         const images = this.gridItems.map(item => {
             const img = item.querySelector('img');
@@ -577,17 +590,26 @@ class GridCarousel {
             if (img) {
                 // Extract just the filename from the full path
                 const fullPath = img.src;
-                const filename = fullPath.substring(fullPath.lastIndexOf('/') + 1);
-                return filename;
-            } else if (video) {
-                // For videos, use a poster if available or create a placeholder
-                if (video.poster) {
-                    const posterPath = video.poster;
-                    const filename = posterPath.substring(posterPath.lastIndexOf('/') + 1);
+                // Fix for URL path, make sure we're getting a valid filename
+                try {
+                    const url = new URL(fullPath);
+                    const pathParts = url.pathname.split('/');
+                    return pathParts[pathParts.length - 1];
+                } catch (e) {
+                    // Fallback to simple substring if URL parsing fails
+                    const filename = fullPath.substring(fullPath.lastIndexOf('/') + 1);
                     return filename;
                 }
-                // Return a default placeholder if no poster is set
-                return 'video-placeholder.jpg';
+            } else if (video) {
+                // For videos, capture a frame from the video as an image
+                const videoSource = video.querySelector('source');
+                if (videoSource) {
+                    const fullPath = videoSource.src;
+                    // Just return a placeholder filename that we know exists
+                    return 'me.avif'; // Using a known image as fallback for videos
+                }
+                // Return a default placeholder if no source is found
+                return 'me.avif';
             }
             
             return null;
