@@ -893,6 +893,12 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
     left: 0;
     object-fit: contain;
     will-change: transform;
+    transform-origin: center;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    -webkit-perspective: 1000;
+    perspective: 1000;
+    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
   }
 
   .carousel-dots {
@@ -916,11 +922,12 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
     height: 8px;
     border-radius: 50%;
     background: rgba(0, 0, 0, 0.2);
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, transform 0.3s ease;
   }
 
   .dot.active {
     background: rgba(0, 0, 0, 1);
+    transform: scale(1.2);
   }
 
   .hover-image {
