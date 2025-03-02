@@ -1,0 +1,72 @@
+
+/* Carousel Styles */
+.carousel-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.85);
+    z-index: 9999;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    justify-content: center;
+    align-items: center;
+}
+
+.carousel-container {
+    position: relative;
+    width: 98vw;
+    height: 97vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.carousel-image-container {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.carousel-image {
+    max-width: 98%;
+    max-height: 97%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+}
+
+.carousel-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: none;
+    padding: 16px 12px;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 10000;
+    border-radius: 4px;
+    transition: background 0.2s ease;
+}
+
+.carousel-nav:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.carousel-nav.prev {
+    left: 20px;
+}
+
+.carousel-nav.next {
+    right: 20px;
+}
+
+.grid-item {
+    cursor: pointer;
+}
