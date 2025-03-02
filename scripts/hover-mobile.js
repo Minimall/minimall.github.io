@@ -533,7 +533,22 @@ document.addEventListener("DOMContentLoaded", () => {
     // Initialize BottomSheet for mobile devices
     if (window.matchMedia('(max-width: 788px)').matches) {
         console.log("Mobile detected");
+        
+        // Create overlay if it doesn't exist
+        let overlay = document.querySelector('.overlay');
+        if (!overlay) {
+            overlay = document.createElement('div');
+            overlay.className = 'overlay';
+            document.body.appendChild(overlay);
+        }
+        
+        // Create and initialize bottom sheet
         const bottomSheet = new BottomSheet();
+        
+        // Make sure bottomSheet.overlay is set
+        if (bottomSheet && !bottomSheet.overlay) {
+            bottomSheet.overlay = overlay;
+        }
         
         // Initialize grid carousel for elements.html
         const gridItems = document.querySelectorAll('.grid-item');
@@ -544,20 +559,32 @@ document.addEventListener("DOMContentLoaded", () => {
             
             // Make sure grid items are clickable
             gridItems.forEach((item, index) => {
-                item.style.cursor = 'pointer';
-                item.style.webkitTapHighlightColor = 'transparent';
-                
-                // Force remove any existing listeners by cloning
-                const newItem = item.cloneNode(true);
-                item.parentNode.replaceChild(newItem, item);
-                
-                // Add click event directly
-                newItem.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    console.log("Grid item clicked:", index);
-                    window.gridCarousel.showGridCarousel(index);
-                }, false);
+                try {
+                    item.style.cursor = 'pointer';
+                    item.style.webkitTapHighlightColor = 'transparent';
+                    
+                    // Force remove any existing listeners by cloning
+                    const newItem = item.cloneNode(true);
+                    item.parentNode.replaceChild(newItem, item);
+                    
+                    // Add click event directly with error handling
+                    newItem.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        console.log("Grid item clicked:", index);
+                        try {
+                            if (window.gridCarousel) {
+                                window.gridCarousel.showGridCarousel(index);
+                            } else {
+                                console.error("Grid carousel not initialized");
+                            }
+                        } catch (err) {
+                            console.error("Error showing grid carousel:", err);
+                        }
+                    }, false);
+                } catch (err) {
+                    console.error("Error setting up grid item:", err);
+                }
             });
         }
     }
@@ -577,6 +604,11 @@ class GridCarousel {
             this.overlay = document.createElement('div');
             this.overlay.className = 'overlay';
             document.body.appendChild(this.overlay);
+        }
+        
+        // Make sure bottomSheet.overlay is set properly
+        if (this.bottomSheet && !this.bottomSheet.overlay) {
+            this.bottomSheet.overlay = this.overlay;
         }
         
         console.log("GridCarousel initialized with", this.gridItems.length, "items");
@@ -650,7 +682,8 @@ class GridCarousel {
     
     // Modified method specifically for elements.html to enable looping
     showLoopedImageGallery(images, startIndex) {
-        if (this.bottomSheet.isOpen) return;
+        // Check if we have a valid bottomSheet and it's not already open
+        if (!this.bottomSheet || this.bottomSheet.isOpen) return;
         this.bottomSheet.isOpen = true;
 
         // Store current scroll position without changing the page position
@@ -664,6 +697,18 @@ class GridCarousel {
 
         // Create overlay and prevent scrolling
         document.body.classList.add('no-scroll');
+        
+        // Make sure overlay exists before trying to use it
+        if (!this.bottomSheet.overlay) {
+            this.bottomSheet.overlay = document.querySelector('.overlay');
+            // If overlay still doesn't exist, create it
+            if (!this.bottomSheet.overlay) {
+                this.bottomSheet.overlay = document.createElement('div');
+                this.bottomSheet.overlay.className = 'overlay';
+                document.body.appendChild(this.bottomSheet.overlay);
+            }
+        }
+        
         this.bottomSheet.overlay.classList.add('visible');
 
         // Create centered container for our gallery
