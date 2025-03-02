@@ -177,7 +177,8 @@ class BottomSheet {
         // Trigger animation for the current image
         const currentImg = imageContainer.querySelectorAll('img')[currentIndex];
         setTimeout(() => {
-            currentImg.style.transform = `rotate(${rotation}deg)`;
+            currentImg.style.transition = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease';
+            currentImg.style.transform = `rotate(${rotation}deg) scale(1)`;
             currentImg.style.opacity = '1'; // Make sure image is visible
         }, 10);
 
@@ -399,20 +400,43 @@ class BottomSheet {
 
     closeCenteredImage(container) {
         const images = container.querySelectorAll('.centered-image');
+        const currentImage = Array.from(images).find(img => parseFloat(img.style.opacity) === 1);
+        
+        if (currentImage) {
+            // Get the current rotation value from the transform
+            const currentTransform = currentImage.style.transform;
+            const rotationMatch = currentTransform.match(/rotate\(([^)]+)\)/);
+            const currentRotation = rotationMatch ? rotationMatch[1] : '0deg';
+            
+            // Animate out with the same rotation (no change in rotation)
+            images.forEach(img => {
+                img.style.transition = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease';
+                
+                if (img === currentImage) {
+                    // Keep rotation the same but scale back to 0
+                    img.style.transform = `rotate(${currentRotation}) scale(0)`;
+                    img.style.opacity = '0';
+                } else {
+                    img.style.opacity = '0';
+                }
+            });
+        } else {
+            // Fallback if no current image is found
+            images.forEach(img => {
+                img.style.transition = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease';
+                img.style.opacity = '0';
+                img.style.transform = `${img.style.transform.replace(/rotate\([^)]+\)/, '')} scale(0)`;
+            });
+        }
 
-        // Animate all images
-        images.forEach(img => {
-            img.style.opacity = '0';
-            img.style.transform = 'rotate(0deg)';
-        });
-
-        // Simply remove overlay and no-scroll class without modifying scroll position
+        // Remove overlay and no-scroll class
         this.overlay.classList.remove('visible');
         document.body.classList.remove('no-scroll');
 
+        // Match the transition duration of the images
         setTimeout(() => {
             container.remove();
-        }, 300);
+        }, 400);
     }
 
     showImage(index) {
