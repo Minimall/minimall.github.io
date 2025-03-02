@@ -1,84 +1,30 @@
-// Mobile-specific functionality for image viewing
+// Mobile-specific functionality for image viewing with iOS-style animations
 class BottomSheet {
     constructor() {
-        this.sheet = document.querySelector('.bottom-sheet');
         this.overlay = document.querySelector('.overlay');
+        this.isOpen = false;
+        this.centeredContainer = null;
+        this.activeSwiper = null;
 
-        // Early return if elements don't exist
-        if (!this.sheet || !this.overlay) {
+        // Early return if overlay doesn't exist
+        if (!this.overlay) {
             console.log('BottomSheet elements not found in DOM');
             return;
         }
 
-        this.carousel = this.sheet.querySelector('.carousel');
-        this.currentImageIndex = 0;
-        this.setupGestures();
         this.setupTriggers();
-        this.totalImages = 0;
-        this.viewMode = 'drawer'; // 'drawer' or 'fullscreen'
+
+        // Initialize global rotation counter if not exists
+        if (typeof window.rotationCounter === 'undefined') {
+            window.rotationCounter = 0;
+        }
 
         this.overlay.addEventListener('click', () => this.close());
     }
 
-    setupGestures() {
-        // Safety check - if sheet doesn't exist, don't set up gestures
-        if (!this.sheet) return;
-
-        let startY = 0;
-        let startX = 0;
-        this.isClosing = false;
-        let isSwiping = false;
-
-        const onStart = (e) => {
-            this.isClosing = false;
-            isSwiping = false;
-            startY = e.type === 'mousedown' ? e.clientY : e.touches[0].clientY;
-            startX = e.type === 'mousedown' ? e.clientX : e.touches[0].clientX;
-            document.addEventListener(e.type === 'mousedown' ? 'mousemove' : 'touchmove', onMove, { passive: false });
-            document.addEventListener(e.type === 'mousedown' ? 'mouseup' : 'touchend', onEnd);
-        };
-
-        const onMove = (e) => {
-            e.preventDefault(); // Prevent scrolling during swipe
-            const currentY = e.type === 'mousemove' ? e.clientY : e.touches[0].clientY;
-            const currentX = e.type === 'mousemove' ? e.clientX : e.touches[0].clientX;
-            const diffY = currentY - startY;
-            const diffX = currentX - startX;
-
-            // Determine if the swipe is more horizontal or vertical
-            if (Math.abs(diffX) > Math.abs(diffY) && this.totalImages > 1) {
-                // Horizontal swipe for carousel
-                isSwiping = true;
-                if (Math.abs(diffX) > 30) { // Lower threshold for better response
-                    if (diffX > 0 && this.currentImageIndex > 0) {
-                        this.showImage(this.currentImageIndex - 1);
-                        startX = currentX; // Reset for continuous swiping
-                    } else if (diffX < 0 && this.currentImageIndex < this.totalImages - 1) {
-                        this.showImage(this.currentImageIndex + 1);
-                        startX = currentX; // Reset for continuous swiping
-                    }
-                }
-            } else if (diffY > 70 && !this.isClosing && !isSwiping) {
-                // Vertical swipe to close
-                this.isClosing = true;
-                this.close();
-            }
-        };
-
-        const onEnd = () => {
-            document.removeEventListener('mousemove', onMove);
-            document.removeEventListener('touchmove', onMove);
-            document.removeEventListener('mouseup', onEnd);
-            document.removeEventListener('touchend', onEnd);
-        };
-
-        this.sheet.addEventListener('mousedown', onStart);
-        this.sheet.addEventListener('touchstart', onStart, { passive: false }); // Changed to non-passive for preventDefault
-    }
-
     setupTriggers() {
-        // Safety check - if sheet or overlay don't exist, don't set up triggers
-        if (!this.sheet || !this.overlay) return;
+        // Safety check - if overlay doesn't exist, don't set up triggers
+        if (!this.overlay) return;
 
         document.querySelectorAll('[data-images]').forEach(element => {
             element.addEventListener('click', (e) => {
@@ -86,496 +32,456 @@ class BottomSheet {
                     e.preventDefault();
                     const images = element.dataset.images?.split(',') || [];
                     if (images.length > 0) {
-                        // Show image directly in center of screen
-                        this.showCenteredImage(images[0]);
+                        this.showImageGallery(images);
                     }
                 }
             });
         });
     }
 
-    showCenteredImage(image) {
-        // Get rotation similar to desktop but half the amount
-        const rotation = ((window.rotationCounter % 2 === 0) ? 1.5 : -1.5);
-        window.rotationCounter++;
+    showImageGallery(images) {
+        if (this.isOpen) return;
+        this.isOpen = true;
 
         // Store current scroll position without changing the page position
         this.scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
 
-        // Create overlay and prevent scrolling without changing page position
-        this.overlay.classList.add('visible');
+        // Get rotation with slight randomness for natural feel
+        const baseRotation = ((window.rotationCounter % 2 === 0) ? 1.5 : -1.5);
+        const randomOffset = (Math.random() * 0.5) - 0.25; // Random value between -0.25 and 0.25
+        const rotation = baseRotation + randomOffset;
+        window.rotationCounter++;
+
+        // Create overlay and prevent scrolling
         document.body.classList.add('no-scroll');
+        this.overlay.classList.add('visible');
 
-        // Get all images if this is part of an image set
-        let images = [];
-        let currentIndex = 0;
-
-        // Check if image is from a set (data-images attribute)
-        const triggerElements = document.querySelectorAll('[data-images]');
-        for (const element of triggerElements) {
-            const elementImages = element.dataset.images?.split(',') || [];
-            if (elementImages.includes(image)) {
-                images = elementImages;
-                currentIndex = elementImages.indexOf(image);
-                break;
-            }
-        }
-
-        // If no set was found, use just this image
-        if (images.length === 0) {
-            images = [image];
-        }
-
-        // Create centered container
+        // Create centered container for our gallery
         const centeredContainer = document.createElement('div');
         centeredContainer.className = 'centered-image-container';
         document.body.appendChild(centeredContainer);
 
-        // Create the image container to hold all images
-        const imageContainer = document.createElement('div');
-        imageContainer.className = 'carousel';
-        centeredContainer.appendChild(imageContainer);
+        // Create the swiper container
+        const swiperContainer = document.createElement('div');
+        swiperContainer.className = 'ios-swiper';
+        centeredContainer.appendChild(swiperContainer);
 
-        // Add all images to the container
-        images.forEach((img, index) => {
-            const imgElement = document.createElement('img');
-            const imgPath = `/images/${img}`;
-            if (img.endsWith('.webp')) {
-                imgElement.type = 'image/webp';
-            } else if (img.endsWith('.avif')) {
-                imgElement.type = 'image/avif';
-            }
-            imgElement.src = imgPath;
-            imgElement.className = 'centered-image';
-            
-            // Set the rotation as a CSS variable
-            imgElement.style.setProperty('--rotation', `${rotation}deg`);
-            
-            if (index !== currentIndex) {
-                imgElement.style.transform = `translateX(${(index - currentIndex) * 100}%)`;
-            }
+        // Create dots container
+        const dotsContainer = document.createElement('div');
+        dotsContainer.className = 'carousel-dots sticky-dots';
+        centeredContainer.appendChild(dotsContainer);
 
-            imageContainer.appendChild(imgElement);
-        });
+        // Create swiper instance
+        const swiper = new IOSStyleSwiper(swiperContainer, images, rotation, dotsContainer);
+        this.activeSwiper = swiper;
 
-        // Setup dots for navigation if multiple images
-        if (images.length > 1) {
-            const dotsContainer = document.createElement('div');
-            dotsContainer.className = 'carousel-dots sticky-dots';
-            centeredContainer.appendChild(dotsContainer);
-
-            for (let i = 0; i < images.length; i++) {
-                const dot = document.createElement('div');
-                dot.className = 'dot';
-                if (i === currentIndex) dot.classList.add('active');
-                dot.addEventListener('click', () => {
-                    this.showImageInContainer(imageContainer, i, currentIndex);
-                    currentIndex = i;
-                    dotsContainer.querySelectorAll('.dot').forEach((dot, idx) => {
-                        dot.classList.toggle('active', idx === i);
-                    });
-                });
-                dotsContainer.appendChild(dot);
-            }
-        }
-
-        // Apply consistent animation for all images (single or multiple)
-        const allImages = imageContainer.querySelectorAll('img');
-        
-        // Start with all images ready but hidden
-        allImages.forEach(img => {
-            img.style.opacity = '0';
-            img.style.transform = 'rotate(0deg) scale(0)';
-        });
-        
-        // Trigger animation for the current image with a slight delay after overlay appears
-        setTimeout(() => {
-            // Only animate the current image
-            const currentImg = allImages[currentIndex];
-            currentImg.style.transition = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease';
-            currentImg.style.transform = `rotate(${rotation}deg) scale(1)`;
-            currentImg.style.opacity = '1';
-            currentImg.classList.add('active');
-        }, 200); // Consistent delay matching the overlay appearance timing
-
-        // Add swipe gestures
-        this.setupCenteredImageSwipe(imageContainer, centeredContainer, images, currentIndex);
-
-        // Add tap handler to close
-        centeredContainer.addEventListener('click', () => {
-            this.closeCenteredImage(centeredContainer);
-        });
-
-        this.overlay.addEventListener('click', () => {
-            this.closeCenteredImage(centeredContainer);
-        });
-        this.centeredContainer = centeredContainer; //Store for later removal
-    }
-
-    showImageInContainer(container, newIndex, oldIndex) {
-        const images = container.querySelectorAll('img');
-        const rotation = parseFloat(images[0].style.getPropertyValue('--rotation') || '1.5deg');
-
-        // Ensure container is set up for proper centering
-        container.style.display = 'flex';
-        container.style.alignItems = 'center';
-        container.style.justifyContent = 'center';
-        container.style.height = '100%';
-        container.style.overflow = 'hidden'; // Ensure images don't overflow
-
-        // Set up a wrapper for the images to ensure proper horizontal centering
-        if (!container.querySelector('.image-wrapper')) {
-            const wrapper = document.createElement('div');
-            wrapper.className = 'image-wrapper';
-            wrapper.style.width = '100%';
-            wrapper.style.height = '100%';
-            wrapper.style.display = 'flex';
-            wrapper.style.alignItems = 'center';
-            wrapper.style.justifyContent = 'center';
-            wrapper.style.position = 'relative';
-
-            // Move all images into the wrapper
-            while (container.firstChild) {
-                wrapper.appendChild(container.firstChild);
-            }
-            container.appendChild(wrapper);
-        }
-
-        // First hide the previously active image with scale animation
-        const oldActiveImg = images[oldIndex];
-        if (oldActiveImg && oldActiveImg.classList.contains('active')) {
-            oldActiveImg.style.transition = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease';
-            oldActiveImg.style.transform = 'rotate(0deg) scale(0)';
-            oldActiveImg.style.opacity = '0';
-            oldActiveImg.classList.remove('active');
-        }
-
-        // Short timeout to animate images sequentially
-        setTimeout(() => {
-            images.forEach((img, i) => {
-                // Prepare for animation
-                img.style.position = 'absolute';
-                img.style.margin = '0 auto';
-                img.style.left = '0';
-                img.style.right = '0';
-                img.style.maxWidth = '90%';
-                
-                // Apply transitions with consistent animation
-                if (i === newIndex) {
-                    img.style.transition = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease';
-                    img.style.transform = `rotate(${rotation}deg) scale(1)`;
-                    img.style.opacity = '1';
-                    img.style.zIndex = '2';
-                    img.classList.add('active');
-                } else {
-                    // Position non-active images for swiping
-                    const direction = i < newIndex ? -1 : 1;
-                    img.style.transition = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease';
-                    img.style.transform = `translateX(${direction * 100}%) rotate(0deg) scale(0)`;
-                    img.style.opacity = '0';
-                    img.style.zIndex = '1';
-                    img.classList.remove('active');
-                }
-            });
-        }, 100); // Small delay to ensure sequential animation
-    }
-
-    setupCenteredImageSwipe(container, centeredContainer, images, startIndex) {
-        if (images.length <= 1) return;
-
-        let currentIndex = startIndex;
-        let startX = 0;
-        let currentX = 0;
-        let isDragging = false;
-        let startTime = 0;
-        let animationFrame = null;
-        
-        // Get all image elements
-        const imageElements = container.querySelectorAll('img');
-        const containerWidth = container.clientWidth;
-        
-        // Set initial positions
-        imageElements.forEach((img, i) => {
-            const translateX = (i - currentIndex) * 100;
-            img.style.transform = `translateX(${translateX}%)`;
-            img.style.transition = 'none';
-        });
-
-        const updateDotsIndicator = (index) => {
-            const dots = centeredContainer.querySelectorAll('.dot');
-            dots.forEach((dot, i) => {
-                dot.classList.toggle('active', i === index);
-            });
-        };
-
-        const animateImages = (progress) => {
-            imageElements.forEach((img, i) => {
-                const basePosition = (i - currentIndex) * 100;
-                const offset = progress;
-                
-                // Preserve the existing rotation while only changing the translateX
-                // If image is active (visible), maintain its scale=1, otherwise use the default scale
-                if (img.classList.contains('active')) {
-                    img.style.transform = `translateX(${basePosition + offset}%)`;
-                } else {
-                    img.style.transform = `translateX(${basePosition + offset}%)`;
-                }
-            });
-        };
-
-        const snapToClosest = (velocity) => {
-            const progress = (currentX - startX) / containerWidth * 100;
-            const threshold = 20; // % of screen width
-            const velocityThreshold = 0.5; // Pixels per millisecond
-            
-            let targetIndex = currentIndex;
-            
-            // Determine direction based on velocity and progress
-            if (Math.abs(velocity) > velocityThreshold) {
-                // Fast swipe - use velocity direction
-                targetIndex = velocity < 0 ? currentIndex + 1 : currentIndex - 1;
-            } else if (Math.abs(progress) > threshold) {
-                // Slow swipe but past threshold - use progress direction
-                targetIndex = progress > 0 ? currentIndex - 1 : currentIndex + 1;
-            }
-            
-            // Ensure target is within bounds
-            targetIndex = Math.max(0, Math.min(images.length - 1, targetIndex));
-            
-            // If target changed, animate to it
-            if (targetIndex !== currentIndex) {
-                animateToIndex(targetIndex);
-            } else {
-                // Otherwise snap back to current
-                resetPositions();
-            }
-        };
-        
-        const resetPositions = () => {
-            imageElements.forEach((img, i) => {
-                img.style.transition = 'transform 0.3s cubic-bezier(0.25, 1, 0.5, 1)';
-                img.style.transform = `translateX(${(i - currentIndex) * 100}%)`;
-            });
-        };
-        
-        const animateToIndex = (targetIndex) => {
-            // Get rotation from CSS variable
-            const rotation = parseFloat(imageElements[0].style.getPropertyValue('--rotation') || '1.5deg');
-            
-            // Apply spring-like animation
-            imageElements.forEach((img, i) => {
-                img.style.transition = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease';
-                if (i === targetIndex) {
-                    img.style.transform = `translateX(0) rotate(${rotation}deg) scale(1)`;
-                    img.style.opacity = '1';
-                } else {
-                    const direction = i < targetIndex ? -1 : 1;
-                    img.style.transform = `translateX(${direction * 100}%) rotate(0deg) scale(0)`;
-                    img.style.opacity = '0';
-                }
-            });
-            
-            // Update currentIndex and dots
-            currentIndex = targetIndex;
-            updateDotsIndicator(currentIndex);
-        };
-
-        const onStart = (e) => {
-            // Cancel any ongoing animations
-            if (animationFrame) {
-                cancelAnimationFrame(animationFrame);
-                animationFrame = null;
-            }
-            
-            isDragging = true;
-            startX = e.type === 'mousedown' ? e.clientX : e.touches[0].clientX;
-            currentX = startX;
-            startTime = Date.now();
-            
-            // Remove transitions for direct manipulation
-            imageElements.forEach(img => {
-                img.style.transition = 'none';
-            });
-            
-            document.addEventListener(e.type === 'mousedown' ? 'mousemove' : 'touchmove', onMove, { passive: false });
-            document.addEventListener(e.type === 'mousedown' ? 'mouseup' : 'touchend', onEnd);
-        };
-
-        const onMove = (e) => {
-            if (!isDragging) return;
-            
-            e.preventDefault();
-            currentX = e.type === 'mousemove' ? e.clientX : e.touches[0].clientX;
-            const diffX = currentX - startX;
-            
-            // Calculate how far we've moved as a percentage of container width
-            const progressPercent = diffX / containerWidth * 100;
-            
-            // Apply resistance at edges
-            let effectiveProgress = progressPercent;
-            if ((currentIndex === 0 && progressPercent > 0) || 
-                (currentIndex === images.length - 1 && progressPercent < 0)) {
-                effectiveProgress = progressPercent * 0.3; // Stronger resistance at edges
-            }
-            
-            animateImages(effectiveProgress);
-        };
-
-        const onEnd = (e) => {
-            if (!isDragging) return;
-            isDragging = false;
-            
-            const endTime = Date.now();
-            const duration = endTime - startTime;
-            const distance = currentX - startX;
-            
-            // Calculate velocity in pixels per millisecond
-            const velocity = distance / duration;
-            
-            // Snap to the closest index based on position and velocity
-            snapToClosest(velocity);
-            
-            document.removeEventListener('mousemove', onMove);
-            document.removeEventListener('touchmove', onMove);
-            document.removeEventListener('mouseup', onEnd);
-            document.removeEventListener('touchend', onEnd);
-        };
-
-        container.addEventListener('mousedown', onStart);
-        container.addEventListener('touchstart', onStart, { passive: false });
-    }
-
-    closeCenteredImage(container) {
-        const images = container.querySelectorAll('.centered-image');
-        
-        // Get the currently active image
-        const activeImage = container.querySelector('.centered-image.active');
-        
-        if (activeImage) {
-            // First start the image closing animation (reverse of opening)
-            activeImage.style.transition = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease';
-            activeImage.style.transform = 'rotate(0deg) scale(0)';
-            activeImage.style.opacity = '0';
-            
-            // Remove active class and add closing for CSS transitions
-            activeImage.classList.remove('active');
-            activeImage.classList.add('closing');
-            
-            // Make sure all other images also fade out properly
-            images.forEach(img => {
-                if (img !== activeImage) {
-                    img.style.opacity = '0';
-                    img.classList.add('closing');
-                }
-            });
-        } else {
-            // Fallback if no active image found
-            images.forEach(img => {
-                img.style.transition = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease';
-                img.style.transform = 'rotate(0deg) scale(0)';
-                img.style.opacity = '0';
-                img.classList.add('closing');
-            });
-        }
-        
-        // Let image animation complete fully before starting overlay fade
-        setTimeout(() => {
-            this.overlay.classList.remove('visible');
-            document.body.classList.remove('no-scroll');
-        }, 400); // Wait for image animation to be nearly complete before starting overlay fade
-        
-        // Match the transition duration of the images plus delay
-        setTimeout(() => {
-            container.remove();
-        }, 800); // Increased to account for full animation cycle
-    }
-
-    showImage(index) {
-        if (index < 0 || index >= this.totalImages) return;
-
-        this.currentImageIndex = index;
-        const images = this.carousel.querySelectorAll('img');
-        
-        // Get rotation from the first image or use default
-        const firstImg = images[0];
-        const rotation = firstImg ? parseFloat(firstImg.style.getPropertyValue('--rotation') || '1.5deg') : 1.5;
-
-        images.forEach((img, i) => {
-            img.style.transition = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease';
-            if (i === index) {
-                img.style.transform = `translateX(0) rotate(${rotation}deg) scale(1)`;
-                img.style.opacity = '1';
-                img.classList.add('active');
-            } else {
-                const direction = i < index ? -1 : 1;
-                img.style.transform = `translateX(${direction * 100}%) rotate(0deg) scale(0)`;
-                img.style.opacity = '0';
-                img.classList.remove('active');
+        // Add tap handler to close when tapping outside image
+        centeredContainer.addEventListener('click', (e) => {
+            if (e.target === centeredContainer) {
+                this.close();
             }
         });
 
-        // Update dots only if they exist and there are multiple images
-        if (this.totalImages > 1) {
-            const dots = document.querySelectorAll('.dot');
-            dots.forEach((dot, i) => {
-                dot.classList.toggle('active', i === index);
-            });
-        }
-    }
-
-    setupDots(count) {
-        // Only set up dots if there are multiple images
-        if (count <= 1) {
-            const dotsContainer = document.querySelector('.carousel-dots');
-            if (dotsContainer) dotsContainer.innerHTML = '';
-            return;
-        }
-
-        const dotsContainer = document.querySelector('.carousel-dots');
-        dotsContainer.innerHTML = '';
-        dotsContainer.classList.add('sticky-dots');
-
-        for (let i = 0; i < count; i++) {
-            const dot = document.createElement('div');
-            dot.classList.add('dot');
-            if (i === 0) dot.classList.add('active');
-            dot.addEventListener('click', () => this.showImage(i));
-            dotsContainer.appendChild(dot);
-        }
-    }
-
-    open() {
-        this.sheet.classList.add('open');
-        this.overlay.classList.add('visible');
+        this.centeredContainer = centeredContainer;
     }
 
     close() {
+        if (!this.isOpen) return;
+        this.isOpen = false;
+
         document.body.classList.remove('no-scroll');
-        this.overlay.classList.remove('visible');
 
-        // Fade out images before removing
-        if (this.centeredContainer) {
-            const images = this.centeredContainer.querySelectorAll('.centered-image');
-            images.forEach(img => {
-                img.style.opacity = '0';
-                img.style.transform = 'rotate(0deg)';
+        // Begin smooth animated closing sequence
+        if (this.activeSwiper) {
+            this.activeSwiper.animateClose(() => {
+                // After image animation completes, fade out overlay
+                this.overlay.classList.remove('visible');
+
+                // Remove container after all animations complete
+                setTimeout(() => {
+                    if (this.centeredContainer) {
+                        this.centeredContainer.remove();
+                        this.centeredContainer = null;
+                    }
+                    this.activeSwiper = null;
+                }, 300);
             });
-        }
-
-        // Use setTimeout to match the transition duration
-        setTimeout(() => {
-            if (this.bottomSheet) {
-                this.bottomSheet.classList.remove('open');
-            }
-
+        } else {
+            // Fallback if swiper isn't available
+            this.overlay.classList.remove('visible');
             if (this.centeredContainer) {
-                document.body.removeChild(this.centeredContainer);
+                this.centeredContainer.remove();
                 this.centeredContainer = null;
             }
+        }
+    }
+}
 
-            this.isOpen = false;
-            this.isClosing = false;
-        }, 300);
+// iOS-style swiper with spring physics and momentum
+class IOSStyleSwiper {
+    constructor(container, imageUrls, rotation, dotsContainer) {
+        this.container = container;
+        this.imageUrls = imageUrls;
+        this.rotation = rotation;
+        this.dotsContainer = dotsContainer;
+        this.currentIndex = 0;
+        this.imageElements = [];
+        this.panStartX = 0;
+        this.currentX = 0;
+        this.startTime = 0;
+        this.isAnimating = false;
+        this.isSwiping = false;
+        this.containerWidth = this.container.clientWidth || window.innerWidth;
+
+        this.setupImages();
+        this.setupDots();
+        this.setupTouchEvents();
+        this.animateInitialImage();
+    }
+
+    setupImages() {
+        // Create wrapper for better positioning
+        this.wrapper = document.createElement('div');
+        this.wrapper.className = 'ios-swiper-wrapper';
+        this.container.appendChild(this.wrapper);
+
+        // Set container style for proper layout
+        this.container.style.position = 'relative';
+        this.container.style.width = '100%';
+        this.container.style.height = '70vh';
+        this.container.style.overflow = 'hidden';
+
+        // Set wrapper style
+        this.wrapper.style.display = 'flex';
+        this.wrapper.style.height = '100%';
+        this.wrapper.style.width = '100%';
+        this.wrapper.style.position = 'relative';
+        this.wrapper.style.alignItems = 'center';
+        this.wrapper.style.justifyContent = 'center';
+
+        // Create all image elements
+        this.imageUrls.forEach((url, index) => {
+            const img = document.createElement('img');
+            img.className = 'ios-swiper-image';
+            const imgPath = `/images/${url}`;
+
+            // Set image type
+            if (url.endsWith('.webp')) {
+                img.type = 'image/webp';
+            } else if (url.endsWith('.avif')) {
+                img.type = 'image/avif';
+            }
+
+            img.src = imgPath;
+            img.setAttribute('data-index', index);
+            img.style.setProperty('--rotation', `${this.rotation}deg`);
+
+            // Initial state - scaled down and hidden
+            img.style.opacity = '0';
+            img.style.transform = 'rotate(0deg) scale(0)';
+            img.style.position = 'absolute';
+            img.style.maxWidth = '90%';
+            img.style.maxHeight = '90%';
+            img.style.transition = 'transform 0s, opacity 0s';
+            img.style.willChange = 'transform, opacity';
+            img.style.transformOrigin = 'center center';
+            img.style.pointerEvents = 'none';
+
+            this.wrapper.appendChild(img);
+            this.imageElements.push(img);
+        });
+    }
+
+    setupDots() {
+        // Don't show dots for a single image
+        if (this.imageUrls.length <= 1) {
+            this.dotsContainer.style.display = 'none';
+            return;
+        }
+
+        this.dotsContainer.innerHTML = '';
+
+        // Create dot for each image
+        this.imageUrls.forEach((_, index) => {
+            const dot = document.createElement('div');
+            dot.className = 'dot' + (index === 0 ? ' active' : '');
+            dot.addEventListener('click', () => {
+                this.goToSlide(index);
+            });
+            this.dotsContainer.appendChild(dot);
+        });
+    }
+
+    animateInitialImage() {
+        // Delayed to ensure overlay is visible first
+        setTimeout(() => {
+            const img = this.imageElements[0];
+            if (!img) return;
+
+            // Apply smooth transition for initial appearance
+            img.style.transition = 'transform 0.6s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.5s ease';
+            img.style.opacity = '1';
+            img.style.transform = `rotate(${this.rotation}deg) scale(1)`;
+            img.classList.add('active');
+        }, 100);
+    }
+
+    setupTouchEvents() {
+        // Touch start
+        this.container.addEventListener('touchstart', (e) => {
+            if (this.isAnimating) return;
+            this.handleTouchStart(e.touches[0].clientX);
+        }, { passive: true });
+
+        // Mouse down (for testing on desktop)
+        this.container.addEventListener('mousedown', (e) => {
+            if (this.isAnimating) return;
+            this.handleTouchStart(e.clientX);
+
+            // Add mouse move/up listeners
+            document.addEventListener('mousemove', this.handleMouseMove);
+            document.addEventListener('mouseup', this.handleMouseUp);
+        });
+
+        // Touch move
+        this.container.addEventListener('touchmove', (e) => {
+            if (!this.isSwiping) return;
+            this.handleTouchMove(e.touches[0].clientX);
+        }, { passive: true });
+
+        // Touch end
+        this.container.addEventListener('touchend', () => {
+            if (!this.isSwiping) return;
+            this.handleTouchEnd();
+        });
+
+        // Mouse move
+        this.handleMouseMove = (e) => {
+            if (!this.isSwiping) return;
+            this.handleTouchMove(e.clientX);
+        };
+
+        // Mouse up
+        this.handleMouseUp = () => {
+            if (!this.isSwiping) return;
+            this.handleTouchEnd();
+
+            // Remove mouse listeners
+            document.removeEventListener('mousemove', this.handleMouseMove);
+            document.removeEventListener('mouseup', this.handleMouseUp);
+        };
+    }
+
+    handleTouchStart(clientX) {
+        this.isSwiping = true;
+        this.panStartX = clientX;
+        this.currentX = clientX;
+        this.startTime = Date.now();
+
+        // Stop any ongoing CSS transitions
+        this.imageElements.forEach(img => {
+            img.style.transition = 'none';
+        });
+    }
+
+    handleTouchMove(clientX) {
+        if (!this.isSwiping) return;
+
+        this.currentX = clientX;
+        const deltaX = this.currentX - this.panStartX;
+
+        // Should we allow movement in this direction?
+        const allowMovement = !(
+            (this.currentIndex === 0 && deltaX > 0) || 
+            (this.currentIndex === this.imageElements.length - 1 && deltaX < 0)
+        );
+
+        // Calculate effective delta with resistance at edges
+        const effectiveDelta = allowMovement 
+            ? deltaX 
+            : deltaX * 0.2; // Add resistance at edges
+
+        this.updateImagesPosition(effectiveDelta);
+    }
+
+    handleTouchEnd() {
+        if (!this.isSwiping) return;
+        this.isSwiping = false;
+
+        const deltaX = this.currentX - this.panStartX;
+        const duration = Date.now() - this.startTime;
+        const velocity = deltaX / duration; // pixels per ms
+
+        // Determine if we should change slide based on velocity and distance
+        const minVelocityToSlide = 0.5; // pixels per ms
+        const minDistanceToSlide = this.containerWidth * 0.3; // 30% of container width
+
+        if (Math.abs(velocity) > minVelocityToSlide || Math.abs(deltaX) > minDistanceToSlide) {
+            // Direction is based on delta
+            const goNext = deltaX < 0;
+
+            // Calculate target index
+            const targetIndex = goNext 
+                ? Math.min(this.imageElements.length - 1, this.currentIndex + 1)
+                : Math.max(0, this.currentIndex - 1);
+
+            // Only change if different
+            if (targetIndex !== this.currentIndex) {
+                this.goToSlide(targetIndex, Math.abs(velocity));
+            } else {
+                // Snap back to current slide
+                this.resetPosition();
+            }
+        } else {
+            // Small movement, snap back
+            this.resetPosition();
+        }
+    }
+
+    updateImagesPosition(deltaX) {
+        this.imageElements.forEach((img, index) => {
+            if (index === this.currentIndex) {
+                // Current image follows finger with rotation
+                const rotationAdjustment = deltaX * 0.02; // Slight rotation based on movement
+                img.style.transform = `translateX(${deltaX}px) rotate(${this.rotation + rotationAdjustment}deg) scale(1)`;
+            } else if (index === this.currentIndex - 1 && deltaX > 0) {
+                // Previous image slides in from left
+                const progress = Math.min(1, deltaX / this.containerWidth);
+                const slideInX = -this.containerWidth + (deltaX * 1.1); // Slightly faster than finger
+                const scale = 0.8 + (progress * 0.2);
+                const opacity = Math.min(1, progress * 1.2);
+                img.style.transform = `translateX(${slideInX}px) rotate(${this.rotation}deg) scale(${scale})`;
+                img.style.opacity = opacity.toString();
+            } else if (index === this.currentIndex + 1 && deltaX < 0) {
+                // Next image slides in from right
+                const progress = Math.min(1, Math.abs(deltaX) / this.containerWidth);
+                const slideInX = this.containerWidth + (deltaX * 1.1); // Slightly faster than finger
+                const scale = 0.8 + (progress * 0.2);
+                const opacity = Math.min(1, progress * 1.2);
+                img.style.transform = `translateX(${slideInX}px) rotate(${this.rotation}deg) scale(${scale})`;
+                img.style.opacity = opacity.toString();
+            } else {
+                // Hide other images
+                img.style.opacity = '0';
+                img.style.transform = `translateX(${index < this.currentIndex ? -this.containerWidth : this.containerWidth}px) rotate(0deg) scale(0.8)`;
+            }
+        });
+    }
+
+    resetPosition() {
+        this.isAnimating = true;
+
+        // Apply spring-like animation for current image
+        const currentImg = this.imageElements[this.currentIndex];
+        if (currentImg) {
+            currentImg.style.transition = 'transform 0.5s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.4s ease';
+            currentImg.style.opacity = '1';
+            currentImg.style.transform = `rotate(${this.rotation}deg) scale(1)`;
+        }
+
+        // Hide other images with animation
+        this.imageElements.forEach((img, index) => {
+            if (index !== this.currentIndex) {
+                img.style.transition = 'transform 0.5s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.4s ease';
+                img.style.opacity = '0';
+                img.style.transform = `translateX(${index < this.currentIndex ? -this.containerWidth : this.containerWidth}px) rotate(0deg) scale(0.8)`;
+            }
+        });
+
+        // Reset after animation completes
+        setTimeout(() => {
+            this.isAnimating = false;
+        }, 500);
+    }
+
+    goToSlide(index, velocity = 0) {
+        if (index < 0 || index >= this.imageElements.length || index === this.currentIndex) return;
+
+        this.isAnimating = true;
+
+        // Determine direction for nicer animation
+        const goingRight = index > this.currentIndex;
+
+        // Calculate spring tension based on velocity
+        const baseDuration = 0.5; // base duration in seconds
+        const velocityFactor = Math.min(0.3, velocity * 0.1); // cap the velocity influence
+        const duration = Math.max(0.3, baseDuration - velocityFactor); // faster for higher velocity, min 0.3s
+
+        // Move current image out
+        const currentImg = this.imageElements[this.currentIndex];
+        if (currentImg) {
+            currentImg.style.transition = `transform ${duration}s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.4s ease`;
+            currentImg.style.opacity = '0';
+            currentImg.style.transform = `translateX(${goingRight ? -this.containerWidth : this.containerWidth}px) rotate(${this.rotation}deg) scale(0.8)`;
+            currentImg.classList.remove('active');
+        }
+
+        // Move new image in
+        const newImg = this.imageElements[index];
+        if (newImg) {
+            // Start position
+            newImg.style.transition = 'none';
+            newImg.style.opacity = '0';
+            newImg.style.transform = `translateX(${goingRight ? this.containerWidth : -this.containerWidth}px) rotate(${this.rotation}deg) scale(0.8)`;
+
+            // Force reflow to ensure the starting position is applied
+            void newImg.offsetWidth;
+
+            // Animate to center
+            newImg.style.transition = `transform ${duration}s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.4s ease`;
+            newImg.style.opacity = '1';
+            newImg.style.transform = `rotate(${this.rotation}deg) scale(1)`;
+            newImg.classList.add('active');
+        }
+
+        // Update index and dots
+        this.currentIndex = index;
+        this.updateDots();
+
+        // Reset after animation completes
+        setTimeout(() => {
+            this.isAnimating = false;
+        }, duration * 1000);
+    }
+
+    updateDots() {
+        // Update dots to match current index
+        const dots = this.dotsContainer.querySelectorAll('.dot');
+        dots.forEach((dot, index) => {
+            dot.classList.toggle('active', index === this.currentIndex);
+        });
+    }
+
+    animateClose(callback) {
+        // Find the currently visible/active image
+        const activeImage = this.imageElements.find(img => img.classList.contains('active')) || this.imageElements[this.currentIndex];
+
+        if (activeImage) {
+            // Animate the active image to close
+            activeImage.style.transition = 'transform 0.5s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.4s ease';
+            activeImage.style.transform = 'rotate(0deg) scale(0)';
+            activeImage.style.opacity = '0';
+
+            // Hide all other images immediately
+            this.imageElements.forEach(img => {
+                if (img !== activeImage) {
+                    img.style.transition = 'opacity 0.25s ease';
+                    img.style.opacity = '0';
+                }
+            });
+
+            // Execute callback after animation completes
+            setTimeout(callback, 500);
+        } else {
+            // Fallback if no active image is found
+            this.imageElements.forEach(img => {
+                img.style.transition = 'transform 0.5s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.4s ease';
+                img.style.transform = 'rotate(0deg) scale(0)';
+                img.style.opacity = '0';
+            });
+
+            setTimeout(callback, 500);
+        }
     }
 }
 
@@ -588,9 +494,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Initialize BottomSheet for mobile devices
     if (window.matchMedia('(max-width: 788px)').matches) {
-        if (document.querySelector('.bottom-sheet') && document.querySelector('.overlay')) {
-            new BottomSheet();
-        }
+        new BottomSheet();
     }
 });
 
