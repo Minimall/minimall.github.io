@@ -1,5 +1,5 @@
 // Mobile-specific functionality for image viewing with iOS-style animations
-class BottomSheet {
+class FullscreenViewer {
     constructor() {
         this.overlay = document.querySelector('.overlay');
         this.isOpen = false;
@@ -8,7 +8,7 @@ class BottomSheet {
 
         // Early return if overlay doesn't exist
         if (!this.overlay) {
-            console.log('BottomSheet elements not found in DOM');
+            console.log('FullscreenViewer elements not found in DOM');
             return;
         }
 
@@ -530,7 +530,7 @@ document.addEventListener("DOMContentLoaded", () => {
         window.rotationCounter = 0;
     }
 
-    // Initialize BottomSheet for mobile devices
+    // Initialize FullscreenViewer for mobile devices
     if (window.matchMedia('(max-width: 788px)').matches) {
         console.log("Mobile detected");
 
@@ -542,12 +542,12 @@ document.addEventListener("DOMContentLoaded", () => {
             document.body.appendChild(overlay);
         }
 
-        // Create and initialize bottom sheet
-        const bottomSheet = new BottomSheet();
+        // Create and initialize fullscreen viewer
+        const viewer = new FullscreenViewer();
 
-        // Make sure bottomSheet.overlay is set
-        if (bottomSheet && !bottomSheet.overlay) {
-            bottomSheet.overlay = overlay;
+        // Make sure viewer.overlay is set
+        if (viewer && !viewer.overlay) {
+            viewer.overlay = overlay;
         }
 
         // Initialize grid carousel for elements.html
@@ -555,7 +555,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (gridItems.length > 0) {
             console.log("Grid items found:", gridItems.length);
             // Initialize immediately to set up click handlers
-            window.gridCarousel = new GridCarousel(gridItems, bottomSheet);
+            window.gridCarousel = new GridCarousel(gridItems, viewer);
 
             // Make sure grid items are clickable
             gridItems.forEach((item, index) => {
@@ -592,12 +592,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // GridCarousel for elements.html on mobile
 class GridCarousel {
-    constructor(gridItems, bottomSheet = null) {
+    constructor(gridItems, viewer = null) {
         this.gridItems = Array.from(gridItems);
         this.overlay = document.querySelector('.overlay');
 
-        // Use provided bottomSheet or create a new one
-        this.bottomSheet = bottomSheet || new BottomSheet();
+        // Use provided viewer or create a new one
+        this.viewer = viewer || new FullscreenViewer();
 
         // If overlay doesn't exist, create it
         if (!this.overlay) {
@@ -606,9 +606,9 @@ class GridCarousel {
             document.body.appendChild(this.overlay);
         }
 
-        // Make sure bottomSheet.overlay is set properly
-        if (this.bottomSheet && !this.bottomSheet.overlay) {
-            this.bottomSheet.overlay = this.overlay;
+        // Make sure viewer.overlay is set properly
+        if (this.viewer && !this.viewer.overlay) {
+            this.viewer.overlay = this.overlay;
         }
 
         console.log("GridCarousel initialized with", this.gridItems.length, "items");
@@ -621,7 +621,7 @@ class GridCarousel {
         console.log('Showing grid carousel for index:', startIndex);
 
         // Debug the elements we're working with
-        console.log('Bottom sheet available:', !!this.bottomSheet);
+        console.log('Viewer available:', !!this.viewer);
         console.log('Grid items count:', this.gridItems.length);
 
         // Get all images from clicked item for context
@@ -735,26 +735,26 @@ class GridCarousel {
             }
         }
         
-        // Use the BottomSheet to show the carousel
+        // Use the viewer to show the carousel
         if (isElementsPage) {
             // For elements.html, we want to use looped carousel with all drafts content
             this.showLoopedImageGallery(draftsItems, actualStartIndex);
         } else {
             // For other pages, use the regular gallery
-            this.bottomSheet.showImageGallery(draftsItems, actualStartIndex);
+            this.viewer.showImageGallery(draftsItems, actualStartIndex);
         }
     }
 
     // Modified method specifically for elements.html to enable looping
     showLoopedImageGallery(images, startIndex) {
-        // Check if we have a valid bottomSheet and it's not already open
-        if (!this.bottomSheet || this.bottomSheet.isOpen) return;
-        this.bottomSheet.isOpen = true;
+        // Check if we have a valid viewer and it's not already open
+        if (!this.viewer || this.viewer.isOpen) return;
+        this.viewer.isOpen = true;
 
         console.log(`Showing looped image gallery with ${images.length} items, starting at index ${startIndex}`);
 
         // Store current scroll position without changing the page position
-        this.bottomSheet.scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+        this.viewer.scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
 
         // Get rotation with slight randomness for natural feel
         const baseRotation = ((window.rotationCounter % 2 === 0) ? 1.5 : -1.5);
@@ -766,17 +766,17 @@ class GridCarousel {
         document.body.classList.add('no-scroll');
 
         // Make sure overlay exists before trying to use it
-        if (!this.bottomSheet.overlay) {
-            this.bottomSheet.overlay = document.querySelector('.overlay');
+        if (!this.viewer.overlay) {
+            this.viewer.overlay = document.querySelector('.overlay');
             // If overlay still doesn't exist, create it
-            if (!this.bottomSheet.overlay) {
-                this.bottomSheet.overlay = document.createElement('div');
-                this.bottomSheet.overlay.className = 'overlay';
-                document.body.appendChild(this.bottomSheet.overlay);
+            if (!this.viewer.overlay) {
+                this.viewer.overlay = document.createElement('div');
+                this.viewer.overlay.className = 'overlay';
+                document.body.appendChild(this.viewer.overlay);
             }
         }
 
-        this.bottomSheet.overlay.classList.add('visible');
+        this.viewer.overlay.classList.add('visible');
 
         // Create centered container for our gallery
         const centeredContainer = document.createElement('div');
@@ -807,7 +807,7 @@ class GridCarousel {
         // Create swiper instance with optional startIndex and enable looping
         const swiper = new IOSStyleSwiper(swiperContainer, images, rotation, dotsContainer, startIndex);
         swiper.enableLooping = true; // Enable looping for elements.html
-        this.bottomSheet.activeSwiper = swiper;
+        this.viewer.activeSwiper = swiper;
 
         // Add tap handler to close when tapping anywhere (except on active image and dots)
         centeredContainer.addEventListener('click', (e) => {
@@ -817,16 +817,16 @@ class GridCarousel {
             const isOnDot = e.target.closest('.dot');
 
             if (!isOnImage && !isOnDot) {
-                this.bottomSheet.close();
+                this.viewer.close();
             }
         });
 
-        this.bottomSheet.centeredContainer = centeredContainer;
+        this.viewer.centeredContainer = centeredContainer;
     }
 }
 
 // Export functionality
 window.hoverMobile = {
-    BottomSheet,
+    FullscreenViewer,
     GridCarousel
 };

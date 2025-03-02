@@ -966,32 +966,7 @@ video.ios-swiper-image::-webkit-media-controls-panel {
     pointer-events: auto;
   }
 
-  .bottom-sheet {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: rgba(255, 255, 255, 0.2); /* White with 20% opacity */
-    border-radius: 12px 12px 0 0;
-    transform: translateY(100%);
-    z-index: 999;
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    touch-action: none;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    max-height: 90vh;
-    z-index: 1000;
-  }
-
-  .bottom-sheet.open {
-    transform: translateY(0);
-  }
-
-  /* Remove bottom sheet indicator */
-  .bottom-sheet-indicator {
-    display: none;
-  }
-
+  /* Carousel styles */
   .carousel {
     width: 100%;
     height: 70vh;

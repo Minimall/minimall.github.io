@@ -6,10 +6,11 @@
 class GridItemCarousel {
     constructor() {
         this.currentIndex = 0;
-        this.carousel = document.querySelector('.carousel');
-        this.carouselDots = document.querySelector('.carousel-dots');
+        this.carousel = document.createElement('div');
+        this.carousel.className = 'carousel';
+        this.carouselDots = document.createElement('div');
+        this.carouselDots.className = 'carousel-dots';
         this.overlay = document.querySelector('.overlay');
-        this.bottomSheet = document.querySelector('.bottom-sheet');
         this.items = [];
         this.itemsData = [];
         this.isOpen = false;
@@ -54,12 +55,21 @@ class GridItemCarousel {
         document.body.classList.add('no-scroll');
         this.overlay.classList.add('visible');
 
+        // Create centered container for our gallery
+        const centeredContainer = document.createElement('div');
+        centeredContainer.className = 'centered-image-container';
+        document.body.appendChild(centeredContainer);
+        
+        // Add the carousel and dots to the container
+        centeredContainer.appendChild(this.carousel);
+        centeredContainer.appendChild(this.carouselDots);
+        
+        // Store the container for cleanup
+        this.centeredContainer = centeredContainer;
+
         // Setup carousel
         this.setupCarousel();
         this.setupDots();
-
-        // Show the bottom sheet
-        this.bottomSheet.classList.add('open');
 
         // Go to the start index
         this.goToSlide(startIndex);
@@ -211,9 +221,13 @@ class GridItemCarousel {
     }
 
     close() {
-        // Hide the overlay and bottom sheet
+        // Hide the overlay
         this.overlay.classList.remove('visible');
-        this.bottomSheet.classList.remove('open');
+
+        // Remove the centered container if it exists
+        if (this.centeredContainer) {
+            this.centeredContainer.remove();
+        }
 
         // Allow scrolling again
         document.body.classList.remove('no-scroll');
