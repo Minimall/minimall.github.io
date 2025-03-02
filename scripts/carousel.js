@@ -8,8 +8,22 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log("DOM loaded, checking for desktop");
     // Only initialize on desktop
     if (window.matchMedia('(min-width: 789px)').matches) {
-        console.log("Desktop detected, initializing carousel");
-        initializeDesktopCarousel();
+        console.log("Desktop detected, waiting for grid items to load");
+        
+        // Wait for grid-loader.js to create grid items
+        const checkGridItems = function() {
+            const gridItems = document.querySelectorAll('.grid-item');
+            if (gridItems.length > 0) {
+                console.log("Grid items found:", gridItems.length);
+                initializeDesktopCarousel();
+            } else {
+                console.log("Waiting for grid items...");
+                setTimeout(checkGridItems, 100); // Check again in 100ms
+            }
+        };
+        
+        // Start checking for grid items
+        setTimeout(checkGridItems, 300); // Give grid-loader.js a head start
     } else {
         console.log("Mobile detected, skipping desktop carousel initialization");
     }
