@@ -1,0 +1,194 @@
+
+/**
+ * Grid Loader Script
+ * Dynamically loads and arranges items in a Swiss typographic grid design
+ */
+document.addEventListener('DOMContentLoaded', function() {
+    // Function to fetch directory contents
+    async function fetchDraftsContents() {
+        try {
+            // We'll simulate directory listing since we can't directly list directories in browser
+            // This is where you would normally fetch the directory listing from a server endpoint
+            
+            // Known image formats
+            const imageFormats = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.avif'];
+            const videoFormats = ['.mp4', '.webm', '.mov'];
+            
+            // Fixed list of items in the drafts directory
+            // In a real implementation, this would come from the server
+            const draftItems = [
+                '2-week-sprint.avif',
+                'design-skillset.avif',
+                'healthcare.avif',
+                'innomatix.avif',
+                'medavante.avif',
+                'monte.avif',
+                'wcg.webp',
+                'heateye-graphics.jpg',
+                'heateye-logos.jpg',
+                'heateye-tote.jpg',
+                'fWmeF2yLAY3rQQK9TitgCWJ6c0.avif',
+                'graphic.mp4'
+            ];
+            
+            // Add any additional items that might be in the directory but not in our fixed list
+            // This would be handled by the server in a real implementation
+            
+            return draftItems;
+        } catch (error) {
+            console.error('Error fetching drafts directory contents:', error);
+            return [];
+        }
+    }
+    
+    // Function to create grid items
+    function createGridItem(file, index) {
+        // Check if the file is a supported format
+        const isVideo = file.endsWith('.mp4') || file.endsWith('.webm') || file.endsWith('.mov');
+        const isImage = !isVideo;
+        
+        const gridItem = document.createElement('div');
+        gridItem.className = `grid-item item-${index + 1}`;
+        gridItem.setAttribute('data-index', index);
+        
+        if (isVideo) {
+            const video = document.createElement('video');
+            video.autoplay = true;
+            video.loop = true;
+            video.muted = true;
+            video.playsInline = true;
+            
+            const source = document.createElement('source');
+            source.src = `images/drafts/${file}`;
+            source.type = file.endsWith('.mp4') ? 'video/mp4' : 
+                          file.endsWith('.webm') ? 'video/webm' : 'video/quicktime';
+            
+            video.appendChild(source);
+            gridItem.appendChild(video);
+        } else {
+            const img = document.createElement('img');
+            img.src = `images/drafts/${file}`;
+            img.alt = file.split('.')[0].replace(/-/g, ' ');
+            gridItem.appendChild(img);
+        }
+        
+        // Add click event for mobile
+        gridItem.addEventListener('click', function(e) {
+            if (window.matchMedia('(max-width: 788px)').matches) {
+                e.preventDefault();
+                if (window.gridCarousel) {
+                    window.gridCarousel.showGridCarousel(index);
+                }
+            }
+        });
+        
+        return gridItem;
+    }
+    
+    // Main function to load and display grid items
+    async function loadDraftsGrid() {
+        const gridContainer = document.getElementById('dynamic-grid');
+        if (!gridContainer) return;
+        
+        // Clear existing items
+        gridContainer.innerHTML = '';
+        
+        // Get files from drafts directory
+        const files = await fetchDraftsContents();
+        
+        // If there are no files, show a message
+        if (!files || files.length === 0) {
+            const message = document.createElement('p');
+            message.textContent = 'No images found in the drafts folder.';
+            message.style.textAlign = 'center';
+            message.style.gridColumn = '1 / -1';
+            gridContainer.appendChild(message);
+            return;
+        }
+        
+        // Create grid items for each file
+        files.forEach((file, index) => {
+            const gridItem = createGridItem(file, index);
+            gridContainer.appendChild(gridItem);
+        });
+        
+        // Apply Swiss design principles - positioning, overlaps, etc.
+        applySwissDesignPrinciples(gridContainer, files.length);
+        
+        // Set up mobile interaction
+        if (window.matchMedia('(max-width: 788px)').matches) {
+            console.log("Mobile view detected for elements page");
+            setupMobileInteractions();
+        }
+    }
+    
+    // Apply Swiss design principles to the grid
+    function applySwissDesignPrinciples(gridContainer, itemCount) {
+        // Set custom grid properties based on number of items
+        // This helps maintain the proper density and spatial distribution
+        
+        // Adjust grid properties based on screen size
+        const isDesktop = window.matchMedia('(min-width: 1201px)').matches;
+        const isTablet = window.matchMedia('(min-width: 789px) and (max-width: 1200px)').matches;
+        const isMobile = window.matchMedia('(max-width: 788px)').matches;
+        
+        if (isDesktop) {
+            gridContainer.style.setProperty('--grid-columns', '12');
+            gridContainer.style.setProperty('--grid-rows', Math.max(12, Math.ceil(itemCount / 2)));
+        } else if (isTablet) {
+            gridContainer.style.setProperty('--grid-columns', '8');
+            gridContainer.style.setProperty('--grid-rows', Math.max(16, Math.ceil(itemCount / 1.5)));
+        } else {
+            // Mobile layout is a single column
+            gridContainer.style.setProperty('--grid-columns', '4');
+            gridContainer.style.setProperty('--grid-rows', itemCount * 2);
+        }
+        
+        // Apply some random overlaps for desktop and tablet views
+        if (!isMobile) {
+            const gridItems = gridContainer.querySelectorAll('.grid-item');
+            
+            gridItems.forEach((item, i) => {
+                if (i % 3 === 0) {
+                    // Create slight overlap for every third item
+                    const marginDirection = Math.random() > 0.5 ? 'Left' : 'Top';
+                    const marginValue = (Math.random() * 2 + 0.5) * -1; // -0.5 to -2.5 vw
+                    item.style[`margin${marginDirection}`] = `${marginValue}vw`;
+                }
+                
+                // Randomize z-index for overlapping effect
+                item.style.zIndex = Math.floor(Math.random() * 5) + 1;
+            });
+        }
+    }
+    
+    // Set up mobile-specific interactions
+    function setupMobileInteractions() {
+        const gridItems = document.querySelectorAll('.grid-item');
+        gridItems.forEach((item) => {
+            item.style.cursor = 'pointer';
+            item.style.webkitTapHighlightColor = 'rgba(0, 0, 0, 0.1)';
+            
+            // Add a subtle tap effect
+            item.addEventListener('touchstart', function() {
+                this.style.opacity = '0.9';
+                this.style.transform = 'scale(0.98)';
+            });
+            
+            item.addEventListener('touchend', function() {
+                this.style.opacity = '1';
+                this.style.transform = 'scale(1)';
+            });
+        });
+    }
+    
+    // Start the grid loading process
+    loadDraftsGrid();
+    
+    // Reload grid on resize to ensure proper layout
+    let resizeTimer;
+    window.addEventListener('resize', function() {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(loadDraftsGrid, 250);
+    });
+});
