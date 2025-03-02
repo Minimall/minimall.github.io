@@ -39,7 +39,7 @@ class BottomSheet {
         });
     }
 
-    showImageGallery(images) {
+    showImageGallery(images, startIndex = 0) {
         if (this.isOpen) return;
         this.isOpen = true;
 
@@ -71,8 +71,8 @@ class BottomSheet {
         dotsContainer.className = 'carousel-dots sticky-dots';
         centeredContainer.appendChild(dotsContainer);
 
-        // Create swiper instance
-        const swiper = new IOSStyleSwiper(swiperContainer, images, rotation, dotsContainer);
+        // Create swiper instance with optional startIndex
+        const swiper = new IOSStyleSwiper(swiperContainer, images, rotation, dotsContainer, startIndex);
         this.activeSwiper = swiper;
 
         // Add tap handler to close when tapping anywhere (except on active image and dots)
@@ -124,12 +124,12 @@ class BottomSheet {
 
 // iOS-style swiper with spring physics and momentum
 class IOSStyleSwiper {
-    constructor(container, imageUrls, rotation, dotsContainer) {
+    constructor(container, imageUrls, rotation, dotsContainer, startIndex = 0) {
         this.container = container;
         this.imageUrls = imageUrls;
         this.rotation = rotation;
         this.dotsContainer = dotsContainer;
-        this.currentIndex = 0;
+        this.currentIndex = startIndex;
         this.imageElements = [];
         this.panStartX = 0;
         this.currentX = 0;
@@ -220,7 +220,7 @@ class IOSStyleSwiper {
     animateInitialImage() {
         // Delayed to ensure overlay is visible first
         setTimeout(() => {
-            const img = this.imageElements[0];
+            const img = this.imageElements[this.currentIndex];
             if (!img) return;
 
             // Apply smooth transition for initial appearance
@@ -228,6 +228,9 @@ class IOSStyleSwiper {
             img.style.opacity = '1';
             img.style.transform = `rotate(${this.rotation}deg) scale(1)`;
             img.classList.add('active');
+            
+            // Update dots to match initial image
+            this.updateDots();
         }, 100);
     }
 
@@ -500,10 +503,68 @@ document.addEventListener("DOMContentLoaded", () => {
     // Initialize BottomSheet for mobile devices
     if (window.matchMedia('(max-width: 788px)').matches) {
         new BottomSheet();
+        
+        // Initialize grid carousel for elements.html
+        const gridItems = document.querySelectorAll('.grid-item');
+        if (gridItems.length > 0) {
+            new GridCarousel(gridItems);
+        }
     }
 });
 
+// GridCarousel for elements.html on mobile
+class GridCarousel {
+    constructor(gridItems) {
+        this.gridItems = Array.from(gridItems);
+        this.overlay = document.querySelector('.overlay');
+        this.bottomSheet = new BottomSheet(); // Reuse the BottomSheet class
+        
+        // If overlay doesn't exist, create it
+        if (!this.overlay) {
+            this.overlay = document.createElement('div');
+            this.overlay.className = 'overlay';
+            document.body.appendChild(this.overlay);
+        }
+        
+        this.setupGridItems();
+    }
+    
+    setupGridItems() {
+        this.gridItems.forEach((item, index) => {
+            item.addEventListener('click', () => {
+                if (window.matchMedia('(max-width: 788px)').matches) {
+                    this.showGridCarousel(index);
+                }
+            });
+        });
+    }
+    
+    showGridCarousel(startIndex) {
+        // Prepare image sources from grid items
+        const images = this.gridItems.map(item => {
+            const img = item.querySelector('img');
+            const video = item.querySelector('video');
+            
+            if (img) {
+                // Get relative path from src
+                const srcPath = img.src.split('/').slice(-1)[0];
+                return srcPath;
+            } else if (video) {
+                // For videos, use a placeholder or thumbnail
+                const srcPath = video.poster || 'video-placeholder.jpg';
+                return srcPath;
+            }
+            
+            return null;
+        }).filter(src => src !== null);
+        
+        // Use the BottomSheet to show the carousel
+        this.bottomSheet.showImageGallery(images, startIndex);
+    }
+}
+
 // Export functionality
 window.hoverMobile = {
-    BottomSheet
+    BottomSheet,
+    GridCarousel
 };
