@@ -14,9 +14,9 @@ document.addEventListener('DOMContentLoaded', function() {
             const imageFormats = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.avif'];
             const videoFormats = ['.mp4', '.webm', '.mov'];
             
-            // Fixed list of items in the drafts directory
+            // Fixed list of potential items in the drafts directory
             // In a real implementation, this would come from the server
-            const draftItems = [
+            const potentialItems = [
                 '2-week-sprint.avif',
                 'design-skillset.avif',
                 'healthcare.avif',
@@ -27,12 +27,41 @@ document.addEventListener('DOMContentLoaded', function() {
                 'heateye-graphics.jpg',
                 'heateye-logos.jpg',
                 'heateye-tote.jpg',
-                'fWmeF2yLAY3rQQK9TitgCWJ6c0.avif',
                 'graphic.mp4'
             ];
             
-            // Add any additional items that might be in the directory but not in our fixed list
-            // This would be handled by the server in a real implementation
+            // Filter items to make sure they exist
+            const draftItems = [];
+            
+            // Check each file exists before adding it to the list
+            for (const item of potentialItems) {
+                try {
+                    // Create a test image to see if the file can be loaded
+                    const img = new Image();
+                    img.src = `images/drafts/${item}`;
+                    
+                    // Wait to see if the image loads
+                    await new Promise((resolve) => {
+                        img.onload = () => resolve(true);
+                        img.onerror = () => resolve(false);
+                        // Set a timeout in case the image takes too long
+                        setTimeout(() => resolve(false), 1000);
+                    }).then((exists) => {
+                        if (exists) {
+                            draftItems.push(item);
+                        } else {
+                            console.log(`File not found: images/drafts/${item}`);
+                        }
+                    });
+                } catch (e) {
+                    console.error(`Error checking file: images/drafts/${item}`, e);
+                }
+            }
+            
+            // If no items were found, try to load any images from the directory
+            if (draftItems.length === 0) {
+                console.warn('No draft items found from the predefined list. Please make sure files exist in images/drafts/ directory.');
+            }
             
             return draftItems;
         } catch (error) {
@@ -63,12 +92,25 @@ document.addEventListener('DOMContentLoaded', function() {
             source.type = file.endsWith('.mp4') ? 'video/mp4' : 
                           file.endsWith('.webm') ? 'video/webm' : 'video/quicktime';
             
+            // Add error handling for videos
+            video.addEventListener('error', function() {
+                console.error(`Failed to load video: images/drafts/${file}`);
+                handleMediaLoadError(gridItem, file);
+            });
+            
             video.appendChild(source);
             gridItem.appendChild(video);
         } else {
             const img = document.createElement('img');
             img.src = `images/drafts/${file}`;
             img.alt = file.split('.')[0].replace(/-/g, ' ');
+            
+            // Add error handling for images
+            img.addEventListener('error', function() {
+                console.error(`Failed to load image: images/drafts/${file}`);
+                handleMediaLoadError(gridItem, file);
+            });
+            
             gridItem.appendChild(img);
         }
         
@@ -83,6 +125,27 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         
         return gridItem;
+    }
+    
+    // Handle media load errors
+    function handleMediaLoadError(gridItem, file) {
+        // Remove any existing content
+        gridItem.innerHTML = '';
+        
+        // Create a placeholder or error indicator
+        const placeholder = document.createElement('div');
+        placeholder.className = 'media-error-placeholder';
+        placeholder.textContent = 'Media not found';
+        placeholder.style.width = '100%';
+        placeholder.style.height = '100%';
+        placeholder.style.display = 'flex';
+        placeholder.style.alignItems = 'center';
+        placeholder.style.justifyContent = 'center';
+        placeholder.style.backgroundColor = '#f0f0f0';
+        placeholder.style.color = '#999';
+        placeholder.style.fontSize = '14px';
+        
+        gridItem.appendChild(placeholder);
     }
     
     // Main function to load and display grid items
