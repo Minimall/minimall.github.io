@@ -830,7 +830,7 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
     background: rgba(255, 255, 255, 0.7);
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.4s ease, visibility 0.4s ease;
     z-index: 998;
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
@@ -964,6 +964,13 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
   .centered-image.active {
     opacity: 1;
     transform: rotate(var(--rotation)) scale(1);
+    transition-delay: 0.2s; /* Delay image appearance after overlay */
+  }
+  
+  .centered-image.closing {
+    opacity: 0;
+    transform: rotate(0deg) scale(0);
+    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease;
   }
   
   .centered-image-container {

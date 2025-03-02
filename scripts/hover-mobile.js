@@ -179,8 +179,10 @@ class BottomSheet {
             }
         }
 
-        // Trigger animation for the current image using CSS classes instead of inline styles
+        // Trigger animation for the current image
+        // The delay for the image is now handled by CSS
         const currentImg = imageContainer.querySelectorAll('img')[currentIndex];
+        // Short delay to ensure DOM is ready
         setTimeout(() => {
             currentImg.classList.add('active');
         }, 10);
@@ -412,19 +414,23 @@ class BottomSheet {
     closeCenteredImage(container) {
         const images = container.querySelectorAll('.centered-image');
         
-        // Simply remove the active class to trigger the CSS transition in reverse
+        // Add closing class to trigger symmetrical closing animation
         images.forEach(img => {
             img.classList.remove('active');
+            img.classList.add('closing');
         });
         
-        // Animate overlay with same dynamics as appearance (keep the same transition)
-        this.overlay.classList.remove('visible');
-        document.body.classList.remove('no-scroll');
-
-        // Match the transition duration of the images
+        // Animate overlay with same dynamics as appearance
+        // Delay overlay closing to match image animation timing
+        setTimeout(() => {
+            this.overlay.classList.remove('visible');
+            document.body.classList.remove('no-scroll');
+        }, 0); // Start at the same time but CSS will handle the visual timing
+        
+        // Match the transition duration of the images plus delay
         setTimeout(() => {
             container.remove();
-        }, 400);
+        }, 600); // Increased to account for transition time + delay
     }
 
     showImage(index) {
