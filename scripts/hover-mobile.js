@@ -420,17 +420,17 @@ class BottomSheet {
             img.classList.add('closing');
         });
         
-        // Animate overlay with same dynamics as appearance
-        // Delay overlay closing to match image animation timing
+        // Delay overlay closing until after image animation has started
+        // This ensures images animate first with priority over overlay
         setTimeout(() => {
             this.overlay.classList.remove('visible');
             document.body.classList.remove('no-scroll');
-        }, 0); // Start at the same time but CSS will handle the visual timing
+        }, 200); // Give images a head start before starting overlay fade
         
         // Match the transition duration of the images plus delay
         setTimeout(() => {
             container.remove();
-        }, 600); // Increased to account for transition time + delay
+        }, 700); // Increased to account for transition time + delay
     }
 
     showImage(index) {
