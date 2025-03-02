@@ -916,6 +916,28 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
   justify-content: center;
 }
 
+.tap-anywhere-hint {
+  position: absolute;
+  top: 16px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  color: rgba(0, 0, 0, 0.6);
+  font-size: 14px;
+  padding: 8px;
+  background-color: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border-radius: 20px;
+  width: max-content;
+  margin: 0 auto;
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
+  z-index: 1200;
+  pointer-events: none;
+  font-variation-settings: "wght" 500;
+}
+
   .overlay {
     position: fixed;
     top: 0;
