@@ -898,13 +898,7 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
     -webkit-backface-visibility: hidden;
     -webkit-perspective: 1000;
     perspective: 1000;
-    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease;
-    transform: translateX(0%) scale(0.95);
-  }
-  
-  .carousel img.active {
-    transform: translateX(0%) rotate(var(--rotation, 0deg));
-    z-index: 1;
+    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
   }
 
   .carousel-dots {
