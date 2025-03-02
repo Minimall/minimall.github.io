@@ -1,13 +1,17 @@
 /**
- * Desktop Carousel Handler for elements.html
- * A custom image viewer optimized for desktop devices
+ * Carousel Handler for elements.html
+ * A custom image viewer optimized for both desktop and mobile devices
  */
 
 // Initialize carousel when the DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
-    // Only initialize on desktop
+    // Check if we're on desktop or mobile
     if (window.matchMedia('(min-width: 789px)').matches) {
+        // Desktop implementation
         initializeDesktopCarousel();
+    } else {
+        // Mobile implementation
+        initializeMobileCarousel();
     }
 });
 
@@ -27,6 +31,39 @@ function initializeDesktopCarousel() {
         // Add cursor pointer to make clickable items more obvious
         item.style.cursor = 'pointer';
     });
+}
+
+function initializeMobileCarousel() {
+    const gridItems = document.querySelectorAll('.grid-item');
+    if (gridItems.length === 0) return;
+    
+    console.log('Mobile carousel initialization with', gridItems.length, 'items');
+    
+    // Create viewer for mobile
+    const viewer = new FullscreenViewer();
+    const gridCarousel = new GridCarousel(gridItems, viewer);
+    
+    // Make grid items tappable on mobile
+    gridItems.forEach((item, index) => {
+        // Add visual indicators for touch
+        item.style.cursor = 'pointer';
+        item.style.webkitTapHighlightColor = 'transparent';
+        
+        // Clear and recreate tap handler to avoid conflicts
+        const newItem = item.cloneNode(true);
+        item.parentNode.replaceChild(newItem, item);
+        
+        // Add new tap handler
+        newItem.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Grid item tapped:', index);
+            gridCarousel.showGridCarousel(index);
+        });
+    });
+    
+    // Store for global access
+    window.gridCarousel = gridCarousel;
 }
 
 class DesktopCarousel {
@@ -198,6 +235,15 @@ class DesktopCarousel {
             carouselImg.className = 'carousel-image';
             carouselImg.src = img.src;
             carouselImg.alt = img.alt || 'Image';
+            
+            // Ensure the image is loaded before showing
+            carouselImg.onload = () => {
+                console.log('Carousel image loaded');
+            };
+            
+            carouselImg.onerror = (e) => {
+                console.error('Error loading carousel image:', e);
+            };
 
             this.imageContainer.appendChild(carouselImg);
         } else if (video) {
@@ -208,6 +254,7 @@ class DesktopCarousel {
             carouselVideo.autoplay = true;
             carouselVideo.loop = true;
             carouselVideo.muted = true;
+            carouselVideo.playsInline = true;
 
             // Copy all source elements
             const sources = video.querySelectorAll('source');
@@ -219,6 +266,8 @@ class DesktopCarousel {
             });
 
             this.imageContainer.appendChild(carouselVideo);
+        } else {
+            console.warn('No media found in grid item at index', this.currentIndex);
         }
     }
 }
