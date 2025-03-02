@@ -839,12 +839,14 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
     visibility: visible;
   }
   
-  /* Prevent scrolling class added to body */
+  /* Prevent scrolling class added to body while preserving scroll position */
   body.no-scroll {
     overflow: hidden;
-    height: 100%;
-    width: 100%;
     position: fixed;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    right: 0;
   }
 
   .bottom-sheet {

@@ -100,9 +100,13 @@ class BottomSheet {
         const rotation = ((window.rotationCounter % 2 === 0) ? 1.5 : -1.5);
         window.rotationCounter++;
         
-        // Create overlay and prevent scrolling
+        // Store current scroll position
+        this.scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+        
+        // Create overlay and prevent scrolling, but maintain position
         this.overlay.classList.add('visible');
         document.body.classList.add('no-scroll');
+        document.body.style.top = `-${this.scrollPosition}px`;
         
         // Get all images if this is part of an image set
         let images = [];
@@ -297,6 +301,12 @@ class BottomSheet {
         
         this.overlay.classList.remove('visible');
         document.body.classList.remove('no-scroll');
+        document.body.style.top = '';
+        
+        // Restore scroll position
+        if (this.scrollPosition !== undefined) {
+            window.scrollTo(0, this.scrollPosition);
+        }
         
         setTimeout(() => {
             container.remove();
@@ -352,7 +362,14 @@ class BottomSheet {
         this.sheet.classList.remove('open');
         this.overlay.classList.remove('visible');
         document.body.classList.remove('no-scroll');
+        document.body.style.top = '';
         this.isClosing = false;
+        
+        // Restore scroll position
+        if (this.scrollPosition !== undefined) {
+            window.scrollTo(0, this.scrollPosition);
+        }
+        
         setTimeout(() => {
             this.carousel.innerHTML = '';
             const dotsContainer = document.querySelector('.carousel-dots');
