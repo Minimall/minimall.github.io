@@ -1,3 +1,4 @@
+
 /**
  * Desktop Carousel Handler for elements.html
  * A custom image viewer optimized for desktop devices only
@@ -64,6 +65,7 @@ class DesktopCarousel {
         this.nextArrow = null;
         this.gridItemsArray = [];
         this.isOpen = false;
+        this.animationInProgress = false;
 
         this.createCarouselElements();
         this.setupEventListeners();
@@ -182,15 +184,24 @@ class DesktopCarousel {
             this.overlay.style.opacity = '1';
         }, 10);
 
-        // Load current image
-        this.loadCurrentImage();
+        // Load current image with animation
+        this.loadCurrentImage(true);
     }
 
     close() {
         if (!this.isOpen) return;
         console.log("Closing carousel");
 
-        // Fade out
+        // Get the current image for animation
+        const currentImg = this.imageContainer.querySelector('.carousel-image');
+        if (currentImg) {
+            // Animate image out
+            currentImg.style.transition = 'transform 0.5s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.4s ease';
+            currentImg.style.transform = 'rotate(0deg) scale(0)';
+            currentImg.style.opacity = '0';
+        }
+
+        // Fade out overlay
         this.overlay.style.opacity = '0';
 
         // Wait for animation to complete
@@ -205,10 +216,14 @@ class DesktopCarousel {
             document.body.style.overflow = '';
 
             this.isOpen = false;
-        }, 300);
+            this.animationInProgress = false;
+        }, 500);
     }
 
     navigate(direction) {
+        if (this.animationInProgress) return;
+        this.animationInProgress = true;
+
         // Calculate new index with wrapping
         const totalItems = this.gridItemsArray.length;
         let newIndex = this.currentIndex + direction;
@@ -218,23 +233,48 @@ class DesktopCarousel {
         if (newIndex >= totalItems) newIndex = 0;
 
         console.log("Navigating from", this.currentIndex, "to", newIndex);
+        
+        // Get the current image element
+        const currentImg = this.imageContainer.querySelector('.carousel-image');
+        
+        // Animate current image out
+        if (currentImg) {
+            currentImg.style.transition = 'transform 0.5s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.4s ease';
+            currentImg.style.transform = `translateX(${direction < 0 ? '100%' : '-100%'}) rotate(${this.getRandomRotation()}deg) scale(0.8)`;
+            currentImg.style.opacity = '0';
+        }
+        
+        // Update current index
         this.currentIndex = newIndex;
-        this.loadCurrentImage();
+        
+        // Load new image after animation completes
+        setTimeout(() => {
+            this.imageContainer.innerHTML = '';
+            this.loadCurrentImage(true);
+        }, 300);
     }
 
-    loadCurrentImage() {
+    getRandomRotation() {
+        // Generate a slight random rotation for natural feel
+        const baseRotation = ((Math.random() > 0.5) ? 1.5 : -1.5);
+        const randomOffset = (Math.random() * 0.5) - 0.25;
+        return baseRotation + randomOffset;
+    }
+
+    loadCurrentImage(animate = false) {
         const currentItem = this.gridItemsArray[this.currentIndex];
         if (!currentItem) {
             console.error("No item found at index", this.currentIndex);
+            this.animationInProgress = false;
             return;
         }
-
-        // Clear previous content
-        this.imageContainer.innerHTML = '';
 
         // Check if the grid item contains an image or video
         const img = currentItem.querySelector('img');
         const video = currentItem.querySelector('video');
+        
+        // Generate random rotation for more natural feel
+        const rotation = this.getRandomRotation();
 
         if (img) {
             console.log("Loading image:", img.src);
@@ -243,17 +283,35 @@ class DesktopCarousel {
             carouselImg.className = 'carousel-image';
             carouselImg.src = img.src;
             carouselImg.alt = img.alt || 'Image';
+            
+            // Set initial state for animation
+            if (animate) {
+                carouselImg.style.opacity = '0';
+                carouselImg.style.transform = `rotate(0deg) scale(0)`;
+            }
 
-            // Ensure the image is loaded before showing
+            // Add to DOM
+            this.imageContainer.appendChild(carouselImg);
+            
+            // Trigger enter animation
+            if (animate) {
+                // Force reflow to ensure starting position is applied
+                void carouselImg.offsetWidth;
+                
+                carouselImg.style.transition = 'transform 0.6s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.5s ease';
+                carouselImg.style.opacity = '1';
+                carouselImg.style.transform = `rotate(${rotation}deg) scale(1)`;
+            }
+
             carouselImg.onload = () => {
                 console.log('Carousel image loaded');
+                this.animationInProgress = false;
             };
 
             carouselImg.onerror = (e) => {
                 console.error('Error loading carousel image:', e);
+                this.animationInProgress = false;
             };
-
-            this.imageContainer.appendChild(carouselImg);
         } else if (video) {
             console.log("Loading video");
             // Create a new video to show in carousel
@@ -264,6 +322,12 @@ class DesktopCarousel {
             carouselVideo.loop = true;
             carouselVideo.muted = true;
             carouselVideo.playsInline = true;
+            
+            // Set initial state for animation
+            if (animate) {
+                carouselVideo.style.opacity = '0';
+                carouselVideo.style.transform = `rotate(0deg) scale(0)`;
+            }
 
             // Copy all source elements
             const sources = video.querySelectorAll('source');
@@ -274,9 +338,26 @@ class DesktopCarousel {
                 carouselVideo.appendChild(newSource);
             });
 
+            // Add to DOM
             this.imageContainer.appendChild(carouselVideo);
+            
+            // Trigger enter animation
+            if (animate) {
+                // Force reflow to ensure starting position is applied
+                void carouselVideo.offsetWidth;
+                
+                carouselVideo.style.transition = 'transform 0.6s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.5s ease';
+                carouselVideo.style.opacity = '1';
+                carouselVideo.style.transform = `rotate(${rotation}deg) scale(1)`;
+            }
+            
+            // Mark animation as complete
+            setTimeout(() => {
+                this.animationInProgress = false;
+            }, 600);
         } else {
             console.warn('No media found in grid item at index', this.currentIndex);
+            this.animationInProgress = false;
         }
     }
 }
