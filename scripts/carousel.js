@@ -7,28 +7,28 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Only initialize on desktop
     if (window.matchMedia('(min-width: 789px)').matches) {
-        initializeCarousel();
-    }
-
-    function initializeCarousel() {
-        const gridItems = document.querySelectorAll('.grid-item');
-        if (gridItems.length === 0) return;
-
-        // Create the carousel instance
-        const desktopCarousel = new DesktopCarousel();
-        desktopCarousel.setGridItems(gridItems);
-        window.gridCarousel = desktopCarousel;
-
-        // Set up click handlers for grid items
-        gridItems.forEach((item, index) => {
-            item.addEventListener('click', () => {
-                desktopCarousel.open(index);
-            });
-        });
+        initializeDesktopCarousel();
     }
 });
 
-// Desktop Carousel implementation
+function initializeDesktopCarousel() {
+    const gridItems = document.querySelectorAll('.grid-item');
+    if (gridItems.length === 0) return;
+
+    // Create carousel instance for desktop
+    const carousel = new DesktopCarousel();
+
+    // Add click handlers to grid items
+    gridItems.forEach((item, index) => {
+        item.addEventListener('click', () => {
+            carousel.open(index);
+        });
+
+        // Add cursor pointer to make clickable items more obvious
+        item.style.cursor = 'pointer';
+    });
+}
+
 class DesktopCarousel {
     constructor() {
         this.currentIndex = 0;
@@ -42,6 +42,7 @@ class DesktopCarousel {
 
         this.createCarouselElements();
         this.setupEventListeners();
+        this.updateGridItems();
     }
 
     createCarouselElements() {
@@ -116,18 +117,24 @@ class DesktopCarousel {
         });
     }
 
-    setGridItems(items) {
+    updateGridItems() {
+        // Get all grid items
+        const items = document.querySelectorAll('.grid-item');
         this.gridItemsArray = Array.from(items);
     }
 
     open(index) {
         if (this.isOpen) return;
-        this.isOpen = true;
 
-        // Set current index
+        // Make sure we have the latest grid items
+        this.updateGridItems();
+
+        if (this.gridItemsArray.length === 0) return;
+
+        this.isOpen = true;
         this.currentIndex = index;
 
-        // Prevent scrolling
+        // Prevent page scrolling
         document.body.style.overflow = 'hidden';
 
         // Show overlay with fade-in
