@@ -263,7 +263,7 @@ class BottomSheet {
                 // Apply transitions with consistent animation
                 if (i === newIndex) {
                     img.style.transition = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease';
-                    img.style.transform = `rotate(${rotation}) scale(1)`;
+                    img.style.transform = `rotate(${rotation}deg) scale(1)`;
                     img.style.opacity = '1';
                     img.style.zIndex = '2';
                     img.classList.add('active');
@@ -271,7 +271,7 @@ class BottomSheet {
                     // Position non-active images for swiping
                     const direction = i < newIndex ? -1 : 1;
                     img.style.transition = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease';
-                    img.style.transform = `translateX(${direction * 100}%)`;
+                    img.style.transform = `translateX(${direction * 100}%) rotate(0deg) scale(0)`;
                     img.style.opacity = '0';
                     img.style.zIndex = '1';
                     img.classList.remove('active');
@@ -359,11 +359,20 @@ class BottomSheet {
         };
         
         const animateToIndex = (targetIndex) => {
+            // Get rotation from CSS variable
+            const rotation = parseFloat(imageElements[0].style.getPropertyValue('--rotation') || '1.5deg');
+            
             // Apply spring-like animation
             imageElements.forEach((img, i) => {
                 img.style.transition = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease';
-                img.style.transform = `translateX(${(i - targetIndex) * 100}%)`;
-                img.style.opacity = i === targetIndex ? '1' : '0.5';
+                if (i === targetIndex) {
+                    img.style.transform = `translateX(0) rotate(${rotation}deg) scale(1)`;
+                    img.style.opacity = '1';
+                } else {
+                    const direction = i < targetIndex ? -1 : 1;
+                    img.style.transform = `translateX(${direction * 100}%) rotate(0deg) scale(0)`;
+                    img.style.opacity = '0';
+                }
             });
             
             // Update currentIndex and dots
@@ -486,11 +495,23 @@ class BottomSheet {
 
         this.currentImageIndex = index;
         const images = this.carousel.querySelectorAll('img');
+        
+        // Get rotation from the first image or use default
+        const firstImg = images[0];
+        const rotation = firstImg ? parseFloat(firstImg.style.getPropertyValue('--rotation') || '1.5deg') : 1.5;
 
         images.forEach((img, i) => {
             img.style.transition = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease';
-            img.style.transform = `translateX(${(i - index) * 100}%)`;
-            img.style.opacity = i === index ? '1' : '0.5';
+            if (i === index) {
+                img.style.transform = `translateX(0) rotate(${rotation}deg) scale(1)`;
+                img.style.opacity = '1';
+                img.classList.add('active');
+            } else {
+                const direction = i < index ? -1 : 1;
+                img.style.transform = `translateX(${direction * 100}%) rotate(0deg) scale(0)`;
+                img.style.opacity = '0';
+                img.classList.remove('active');
+            }
         });
 
         // Update dots only if they exist and there are multiple images
