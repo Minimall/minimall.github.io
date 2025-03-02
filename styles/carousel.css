@@ -47,16 +47,28 @@
     background: rgba(255, 255, 255, 0.1);
     color: white;
     border: none;
-    padding: 16px 12px;
-    font-size: 24px;
+    padding: 16px;
     cursor: pointer;
     z-index: 10000;
-    border-radius: 4px;
-    transition: background 0.2s ease;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
 }
 
 .carousel-nav:hover {
     background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-50%) scale(1.05);
+}
+
+.carousel-nav svg {
+    stroke: white;
+    stroke-width: 2;
+    width: 28px;
+    height: 28px;
 }
 
 .carousel-nav.prev {

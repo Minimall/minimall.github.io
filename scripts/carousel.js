@@ -28,7 +28,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // Create navigation arrows
     const prevArrow = document.createElement('button');
     prevArrow.className = 'carousel-nav prev';
-    prevArrow.innerHTML = '&larr;';
+    prevArrow.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 12H5"></path>
+            <path d="M12 19l-7-7 7-7"></path>
+        </svg>
+    `;
     prevArrow.addEventListener('click', (e) => {
         e.stopPropagation();
         showPreviousImage();
@@ -36,7 +41,12 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const nextArrow = document.createElement('button');
     nextArrow.className = 'carousel-nav next';
-    nextArrow.innerHTML = '&rarr;';
+    nextArrow.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14"></path>
+            <path d="M12 5l7 7-7 7"></path>
+        </svg>
+    `;
     nextArrow.addEventListener('click', (e) => {
         e.stopPropagation();
         showNextImage();
