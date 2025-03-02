@@ -830,7 +830,7 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
     background: rgba(255, 255, 255, 0.7);
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.4s ease, visibility 0.4s ease;
     z-index: 998;
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
@@ -893,6 +893,12 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
     left: 0;
     object-fit: contain;
     will-change: transform;
+    transform-origin: center;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    -webkit-perspective: 1000;
+    perspective: 1000;
+    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
   }
 
   .carousel-dots {
@@ -907,7 +913,6 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
     bottom: 0;
     left: 0;
     right: 0;
-    background: rgba(0, 0, 0, 0.3);
     padding: 12px 12px 32px 12px; /* Increased bottom padding for iOS home indicator */
     z-index: 1001;
   }
@@ -916,12 +921,13 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: #e0e0e0;
-    transition: background-color 0.3s ease;
+    background: rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease, transform 0.3s ease;
   }
 
   .dot.active {
-    background: #000;
+    background: rgba(0, 0, 0, 1);
+    transform: scale(1.2);
   }
 
   .hover-image {
@@ -945,13 +951,28 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
     max-width: 90%;
     max-height: 90%;
     object-fit: contain;
-    transform: scale(0) rotate(0deg);
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    will-change: transform;
+    opacity: 0;
+    transform: rotate(0deg) scale(0);
+    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease;
+    will-change: transform, opacity;
     margin: 0 auto; /* Ensure horizontal centering */
     position: relative;
     left: 0;
     right: 0;
+  }
+  
+  .centered-image.active {
+    opacity: 1;
+    transform: rotate(var(--rotation)) scale(1);
+    transition-delay: 0.2s; /* Delay image appearance after overlay */
+  }
+  
+  .centered-image.closing {
+    opacity: 0;
+    transform: rotate(0deg) scale(0);
+    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease;
+    will-change: transform, opacity;
+    z-index: 1200; /* Ensure image stays above overlay during animation */
   }
   
   .centered-image-container {
