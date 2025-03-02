@@ -641,10 +641,20 @@ class GridCarousel {
                     const url = new URL(fullPath);
                     const pathParts = url.pathname.split('/');
                     filename = pathParts[pathParts.length - 1];
+                    
+                    // Check if image is from the drafts directory
+                    if (url.pathname.includes('/drafts/')) {
+                        filename = 'drafts/' + filename;
+                    }
                 } catch (e) {
                     // Fallback to simple substring if URL parsing fails
                     console.log('URL parsing failed, using substring method');
                     filename = fullPath.substring(fullPath.lastIndexOf('/') + 1);
+                    
+                    // Check if path contains drafts
+                    if (fullPath.includes('/drafts/')) {
+                        filename = 'drafts/' + filename;
+                    }
                 }
                 
                 console.log(`Extracted filename: ${filename}`);
