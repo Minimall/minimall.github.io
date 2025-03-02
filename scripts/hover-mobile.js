@@ -673,7 +673,7 @@ class GridCarousel {
                 return filename;
             } else if (video) {
                 console.log(`Item ${index} has video`);
-                // For videos, use a special identifier to mark this as a video slide
+                // For videos, extract the file path for display in carousel
                 const videoSource = video.querySelector('source');
                 if (videoSource) {
                     // Create a special filename marker for videos
@@ -682,8 +682,13 @@ class GridCarousel {
                     const videoPath = videoSource.src;
                     let videoFilename = videoPath.substring(videoPath.lastIndexOf('/') + 1);
 
-                    // Use a placeholder image instead of a video (videos will be skipped)
-                    return null;
+                    // Check if video is from the drafts directory
+                    if (videoPath.includes('/drafts/')) {
+                        videoFilename = 'drafts/' + videoFilename;
+                    }
+
+                    // Return with special video: prefix to mark as video
+                    return 'video:' + videoFilename;
                 }
                 // Skip if no source is found
                 return null;
