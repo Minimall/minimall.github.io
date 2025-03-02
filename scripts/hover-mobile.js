@@ -147,10 +147,10 @@ class BottomSheet {
             }
             imgElement.src = imgPath;
             imgElement.className = 'centered-image';
-            
+
             // Set the rotation as a CSS variable
             imgElement.style.setProperty('--rotation', `${rotation}deg`);
-            
+
             if (index !== currentIndex) {
                 imgElement.style.transform = `translateX(${(index - currentIndex) * 100}%)`;
             }
@@ -236,7 +236,7 @@ class BottomSheet {
             img.style.left = '0';
             img.style.right = '0';
             img.style.maxWidth = '90%';
-            
+
             // Apply transitions without changing rotation
             if (i === newIndex) {
                 img.style.transition = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease';
@@ -264,11 +264,11 @@ class BottomSheet {
         let isDragging = false;
         let startTime = 0;
         let animationFrame = null;
-        
+
         // Get all image elements
         const imageElements = container.querySelectorAll('img');
         const containerWidth = container.clientWidth;
-        
+
         // Set initial positions
         imageElements.forEach((img, i) => {
             const translateX = (i - currentIndex) * 100;
@@ -287,7 +287,7 @@ class BottomSheet {
             imageElements.forEach((img, i) => {
                 const basePosition = (i - currentIndex) * 100;
                 const offset = progress;
-                
+
                 // Preserve the existing rotation while only changing the translateX
                 // If image is active (visible), maintain its scale=1, otherwise use the default scale
                 if (img.classList.contains('active')) {
@@ -302,9 +302,9 @@ class BottomSheet {
             const progress = (currentX - startX) / containerWidth * 100;
             const threshold = 20; // % of screen width
             const velocityThreshold = 0.5; // Pixels per millisecond
-            
+
             let targetIndex = currentIndex;
-            
+
             // Determine direction based on velocity and progress
             if (Math.abs(velocity) > velocityThreshold) {
                 // Fast swipe - use velocity direction
@@ -313,10 +313,10 @@ class BottomSheet {
                 // Slow swipe but past threshold - use progress direction
                 targetIndex = progress > 0 ? currentIndex - 1 : currentIndex + 1;
             }
-            
+
             // Ensure target is within bounds
             targetIndex = Math.max(0, Math.min(images.length - 1, targetIndex));
-            
+
             // If target changed, animate to it
             if (targetIndex !== currentIndex) {
                 animateToIndex(targetIndex);
@@ -325,14 +325,14 @@ class BottomSheet {
                 resetPositions();
             }
         };
-        
+
         const resetPositions = () => {
             imageElements.forEach((img, i) => {
                 img.style.transition = 'transform 0.3s cubic-bezier(0.25, 1, 0.5, 1)';
                 img.style.transform = `translateX(${(i - currentIndex) * 100}%)`;
             });
         };
-        
+
         const animateToIndex = (targetIndex) => {
             // Apply spring-like animation
             imageElements.forEach((img, i) => {
@@ -340,7 +340,7 @@ class BottomSheet {
                 img.style.transform = `translateX(${(i - targetIndex) * 100}%)`;
                 img.style.opacity = i === targetIndex ? '1' : '0.5';
             });
-            
+
             // Update currentIndex and dots
             currentIndex = targetIndex;
             updateDotsIndicator(currentIndex);
@@ -352,55 +352,55 @@ class BottomSheet {
                 cancelAnimationFrame(animationFrame);
                 animationFrame = null;
             }
-            
+
             isDragging = true;
             startX = e.type === 'mousedown' ? e.clientX : e.touches[0].clientX;
             currentX = startX;
             startTime = Date.now();
-            
+
             // Remove transitions for direct manipulation
             imageElements.forEach(img => {
                 img.style.transition = 'none';
             });
-            
+
             document.addEventListener(e.type === 'mousedown' ? 'mousemove' : 'touchmove', onMove, { passive: false });
             document.addEventListener(e.type === 'mousedown' ? 'mouseup' : 'touchend', onEnd);
         };
 
         const onMove = (e) => {
             if (!isDragging) return;
-            
+
             e.preventDefault();
             currentX = e.type === 'mousemove' ? e.clientX : e.touches[0].clientX;
             const diffX = currentX - startX;
-            
+
             // Calculate how far we've moved as a percentage of container width
             const progressPercent = diffX / containerWidth * 100;
-            
+
             // Apply resistance at edges
             let effectiveProgress = progressPercent;
             if ((currentIndex === 0 && progressPercent > 0) || 
                 (currentIndex === images.length - 1 && progressPercent < 0)) {
                 effectiveProgress = progressPercent * 0.3; // Stronger resistance at edges
             }
-            
+
             animateImages(effectiveProgress);
         };
 
         const onEnd = (e) => {
             if (!isDragging) return;
             isDragging = false;
-            
+
             const endTime = Date.now();
             const duration = endTime - startTime;
             const distance = currentX - startX;
-            
+
             // Calculate velocity in pixels per millisecond
             const velocity = distance / duration;
-            
+
             // Snap to the closest index based on position and velocity
             snapToClosest(velocity);
-            
+
             document.removeEventListener('mousemove', onMove);
             document.removeEventListener('touchmove', onMove);
             document.removeEventListener('mouseup', onEnd);
@@ -413,20 +413,20 @@ class BottomSheet {
 
     closeCenteredImage(container) {
         const images = container.querySelectorAll('.centered-image');
-        
+
         // Add closing class to trigger symmetrical closing animation
         images.forEach(img => {
             img.classList.remove('active');
             img.classList.add('closing');
         });
-        
+
         // Let image animation complete fully before starting overlay fade
         // This ensures complete visibility of the image animation
         setTimeout(() => {
             this.overlay.classList.remove('visible');
             document.body.classList.remove('no-scroll');
         }, 400); // Wait for image animation to be nearly complete before starting overlay fade
-        
+
         // Match the transition duration of the images plus delay
         setTimeout(() => {
             container.remove();
@@ -523,6 +523,328 @@ document.addEventListener("DOMContentLoaded", () => {
             new BottomSheet();
         }
     }
+    // Only run on mobile/touch devices (width < 788px)
+    if (window.innerWidth > 788) return;
+
+    const overlay = document.querySelector('.overlay');
+    const bottomSheet = document.querySelector('.bottom-sheet');
+    const carouselEl = bottomSheet.querySelector('.carousel');
+    const carouselDotsEl = bottomSheet.querySelector('.carousel-dots');
+    let isDragging = false;
+    let startX = 0;
+    let currentX = 0;
+    let currentIndex = 0;
+    let imageElements = [];
+    let animationFrame = null;
+    let startTime = 0;
+    let sheetDragStartY = 0;
+    let sheetCurrentY = 0;
+    let isSheetDragging = false;
+    let canCloseSheet = false;
+    let lastTranslateY = 0;
+    let rotationCounterMobile = 0;
+
+    const setupHoverElements = () => {
+        const hoverElements = document.querySelectorAll('[data-hover="true"][data-images]');
+
+        hoverElements.forEach(el => {
+            el.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                openBottomSheet(el);
+            });
+        });
+    };
+
+    const openBottomSheet = (el) => {
+        // Get images from data-images attribute
+        const imagesList = el.getAttribute('data-images').split(',');
+        if (!imagesList || imagesList.length === 0) return;
+
+        // Clear existing content
+        carouselEl.innerHTML = '';
+        carouselDotsEl.innerHTML = '';
+
+        // Create images in carousel with same animation as desktop version
+        imagesList.forEach((imgSrc, i) => {
+            const imgElement = document.createElement('img');
+            imgSrc = imgSrc.trim();
+
+            // Check if the path is absolute or needs to be prefixed
+            if (imgSrc.startsWith('http')) {
+                imgElement.src = imgSrc;
+            } else {
+                imgElement.src = `images/${imgSrc}`;
+            }
+
+            imgElement.alt = `Image ${i+1}`;
+
+            // Apply rotation similar to desktop hover effect
+            const rotation = (rotationCounterMobile % 2 === 0) ? 3 : -3;
+            rotationCounterMobile++;
+            imgElement.style.setProperty('--rotation', `${rotation}deg`);
+
+            // Apply initial transform - position and scale (initially scaled down)
+            imgElement.style.transform = `translateX(${(i) * 100}%) scale(${i === 0 ? 1 : 0.95})`;
+            imgElement.style.opacity = i === 0 ? '1' : '0.5';
+            imgElement.classList.add(i === 0 ? 'active' : '');
+            carouselEl.appendChild(imgElement);
+
+            // Create dot indicator
+            const dot = document.createElement('div');
+            dot.className = `dot ${i === 0 ? 'active' : ''}`;
+            dot.addEventListener('click', () => {
+                animateToIndex(i);
+            });
+            carouselDotsEl.appendChild(dot);
+        });
+
+        // Store references to all images
+        imageElements = Array.from(carouselEl.querySelectorAll('img'));
+        currentIndex = 0;
+
+        // Show overlay and bottom sheet
+        overlay.classList.add('visible');
+        document.body.classList.add('no-scroll');
+        bottomSheet.classList.add('open');
+
+        // Apply entrance animation to first image
+        if (imageElements.length > 0) {
+            // Use setTimeout to ensure the animation runs after the sheet is open
+            setTimeout(() => {
+                imageElements[0].style.transition = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease';
+                imageElements[0].style.transform = `translateX(0%) rotate(${imageElements[0].style.getPropertyValue('--rotation')})`;
+                imageElements[0].classList.add('active');
+            }, 100);
+        }
+
+        setupCarouselInteractions();
+    };
+
+    const setupCarouselInteractions = () => {
+        // Reset event listeners
+        carouselEl.removeEventListener('mousedown', onStart);
+        carouselEl.removeEventListener('touchstart', onStart);
+        bottomSheet.removeEventListener('mousedown', onSheetDragStart);
+        bottomSheet.removeEventListener('touchstart', onSheetDragStart);
+
+        // Add event listeners for swiping images
+        carouselEl.addEventListener('mousedown', onStart);
+        carouselEl.addEventListener('touchstart', onStart, { passive: true });
+
+        // Add event listeners for dragging bottom sheet
+        bottomSheet.addEventListener('mousedown', onSheetDragStart);
+        bottomSheet.addEventListener('touchstart', onSheetDragStart, { passive: true });
+    };
+
+    const closeBottomSheet = () => {
+        overlay.classList.remove('visible');
+        bottomSheet.classList.remove('open');
+        document.body.classList.remove('no-scroll');
+
+        // Reset state
+        carouselEl.innerHTML = '';
+        carouselDotsEl.innerHTML = '';
+        imageElements = [];
+        currentIndex = 0;
+
+        // Remove event listeners
+        carouselEl.removeEventListener('mousedown', onStart);
+        carouselEl.removeEventListener('touchstart', onStart);
+    };
+
+    const updateDotsIndicator = (index) => {
+        const dots = carouselDotsEl.querySelectorAll('.dot');
+        dots.forEach((dot, i) => {
+            dot.classList.toggle('active', i === index);
+        });
+    };
+
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) {
+            closeBottomSheet();
+        }
+    });
+
+    const onSheetDragStart = (e) => {
+        if (e.target.closest('.carousel') || e.target.closest('.carousel-dots')) {
+            return; // Don't handle drag events from carousel elements
+        }
+
+        isSheetDragging = true;
+        sheetDragStartY = e.type === 'mousedown' ? e.clientY : e.touches[0].clientY;
+        sheetCurrentY = sheetDragStartY;
+        lastTranslateY = 0;
+        canCloseSheet = false;
+
+        bottomSheet.style.transition = 'none';
+
+        document.addEventListener(e.type === 'mousedown' ? 'mousemove' : 'touchmove', onSheetDragMove, { passive: false });
+        document.addEventListener(e.type === 'mousedown' ? 'mouseup' : 'touchend', onSheetDragEnd);
+
+        // Prevent default behavior only for mouse events
+        if (e.type === 'mousedown') {
+            e.preventDefault();
+        }
+    };
+
+    const onSheetDragMove = (e) => {
+        if (!isSheetDragging) return;
+
+        const currentY = e.type === 'mousemove' ? e.clientY : e.touches[0].clientY;
+        const deltaY = currentY - sheetDragStartY;
+
+        if (deltaY < 0) return; // Only allow dragging down
+
+        // Update position
+        sheetCurrentY = currentY;
+        lastTranslateY = deltaY;
+
+        bottomSheet.style.transform = `translateY(${deltaY}px)`;
+
+        // Check if we're dragging enough to close
+        canCloseSheet = deltaY > 150;
+
+        // Prevent default to avoid scrolling while dragging
+        e.preventDefault();
+    };
+
+    const onSheetDragEnd = () => {
+        if (!isSheetDragging) return;
+
+        isSheetDragging = false;
+        bottomSheet.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+
+        if (canCloseSheet) {
+            closeBottomSheet();
+        } else {
+            // Snap back to original position
+            bottomSheet.style.transform = 'translateY(0)';
+        }
+
+        // Clean up event listeners
+        document.removeEventListener('mousemove', onSheetDragMove);
+        document.removeEventListener('touchmove', onSheetDragMove);
+        document.removeEventListener('mouseup', onSheetDragEnd);
+        document.removeEventListener('touchend', onSheetDragEnd);
+    };
+
+    const onStart = (e) => {
+        // Cancel any ongoing animations
+        if (animationFrame) {
+            cancelAnimationFrame(animationFrame);
+            animationFrame = null;
+        }
+
+        isDragging = true;
+        startX = e.type === 'mousedown' ? e.clientX : e.touches[0].clientX;
+        currentX = startX;
+        startTime = Date.now();
+
+        // Remove transitions for direct manipulation
+        imageElements.forEach(img => {
+            img.style.transition = 'none';
+        });
+
+        document.addEventListener(e.type === 'mousedown' ? 'mousemove' : 'touchmove', onMove, { passive: false });
+        document.addEventListener(e.type === 'mousedown' ? 'mouseup' : 'touchend', onEnd);
+    };
+
+    const onMove = (e) => {
+        if (!isDragging) return;
+
+        const pageX = e.type === 'mousemove' ? e.clientX : e.touches[0].clientX;
+        const deltaX = pageX - startX;
+        currentX = pageX;
+
+        // Calculate progress as percentage of carousel width
+        const progress = (deltaX / carouselEl.offsetWidth) * 100;
+
+        animateImages(progress);
+
+        // Prevent default to avoid scrolling while swiping
+        e.preventDefault();
+    };
+
+    const animateImages = (progress) => {
+        imageElements.forEach((img, i) => {
+            const basePosition = (i - currentIndex) * 100;
+            const offset = progress;
+            const rotation = img.style.getPropertyValue('--rotation') || '0deg';
+
+            // Apply transform with both translation and rotation
+            if (i === currentIndex) {
+                img.style.transform = `translateX(${basePosition + offset}%) rotate(${rotation})`;
+            } else {
+                img.style.transform = `translateX(${basePosition + offset}%) scale(0.95)`;
+            }
+        });
+    };
+
+    const onEnd = (e) => {
+        if (!isDragging) return;
+        isDragging = false;
+
+        const endX = e.type === 'mouseup' ? e.clientX : e.changedTouches[0].clientX;
+        const deltaX = endX - startX;
+        const timeDelta = Date.now() - startTime;
+
+        // Calculate velocity (pixels per ms)
+        const velocity = Math.abs(deltaX) / timeDelta;
+
+        // Threshold for swipe vs. tap (higher velocity or significant drag distance)
+        const isSignificantSwipe = Math.abs(deltaX) > carouselEl.offsetWidth * 0.2 || (velocity > 0.5 && Math.abs(deltaX) > 30);
+
+        if (isSignificantSwipe) {
+            // Determine direction and update index
+            if (deltaX > 0 && currentIndex > 0) {
+                animateToIndex(currentIndex - 1);
+            } else if (deltaX < 0 && currentIndex < imageElements.length - 1) {
+                animateToIndex(currentIndex + 1);
+            } else {
+                // Snap back to current index if we can't move further
+                animateToIndex(currentIndex);
+            }
+        } else {
+            // Not a significant swipe, snap back to current index
+            animateToIndex(currentIndex);
+        }
+
+        // Clean up event listeners
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('touchmove', onMove);
+        document.removeEventListener('mouseup', onEnd);
+        document.removeEventListener('touchend', onEnd);
+    };
+
+    const animateToIndex = (targetIndex) => {
+        // Remove active class from all images
+        imageElements.forEach(img => img.classList.remove('active'));
+
+        // Apply appropriate animation to each image
+        imageElements.forEach((img, i) => {
+            const rotation = img.style.getPropertyValue('--rotation') || '0deg';
+
+            img.style.transition = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease';
+
+            if (i === targetIndex) {
+                // Target image gets rotation and full opacity
+                img.style.transform = `translateX(${(i - targetIndex) * 100}%) rotate(${rotation})`;
+                img.style.opacity = '1';
+                img.classList.add('active');
+            } else {
+                // Other images get scaled down and reduced opacity
+                img.style.transform = `translateX(${(i - targetIndex) * 100}%) scale(0.95)`;
+                img.style.opacity = '0.5';
+            }
+        });
+
+        // Update currentIndex and dots
+        currentIndex = targetIndex;
+        updateDotsIndicator(currentIndex);
+    };
+
+    setupHoverElements();
 });
 
 // Export functionality
