@@ -81,7 +81,7 @@ class BottomSheet {
             // but not on the active image or dots
             const isOnImage = e.target.closest('.ios-swiper-image.active');
             const isOnDot = e.target.closest('.dot');
-            
+
             if (!isOnImage && !isOnDot) {
                 this.close();
             }
@@ -229,7 +229,7 @@ class IOSStyleSwiper {
             img.style.opacity = '1';
             img.style.transform = `rotate(${this.rotation}deg) scale(1)`;
             img.classList.add('active');
-            
+
             // Update dots to match initial image
             this.updateDots();
         }, 100);
@@ -301,7 +301,7 @@ class IOSStyleSwiper {
 
         // Determine if we should allow full movement or add resistance
         let allowMovement = true;
-        
+
         // If looping is not enabled, add resistance at edges
         if (!this.enableLooping) {
             allowMovement = !(
@@ -361,7 +361,7 @@ class IOSStyleSwiper {
     updateImagesPosition(deltaX) {
         const totalImages = this.imageElements.length;
         if (totalImages <= 1) return;
-        
+
         this.imageElements.forEach((img, index) => {
             if (index === this.currentIndex) {
                 // Current image follows finger with rotation
@@ -431,10 +431,10 @@ class IOSStyleSwiper {
         const totalImages = this.imageElements.length;
         const isLoopingForward = this.currentIndex === totalImages - 1 && index === 0;
         const isLoopingBackward = this.currentIndex === 0 && index === totalImages - 1;
-        
+
         // Standard case: determine direction based on index comparison
         let goingRight = index > this.currentIndex;
-        
+
         // Special cases for looping
         if (isLoopingForward) goingRight = true;
         if (isLoopingBackward) goingRight = false;
@@ -533,7 +533,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Initialize BottomSheet for mobile devices
     if (window.matchMedia('(max-width: 788px)').matches) {
         console.log("Mobile detected");
-        
+
         // Create overlay if it doesn't exist
         let overlay = document.querySelector('.overlay');
         if (!overlay) {
@@ -541,32 +541,32 @@ document.addEventListener("DOMContentLoaded", () => {
             overlay.className = 'overlay';
             document.body.appendChild(overlay);
         }
-        
+
         // Create and initialize bottom sheet
         const bottomSheet = new BottomSheet();
-        
+
         // Make sure bottomSheet.overlay is set
         if (bottomSheet && !bottomSheet.overlay) {
             bottomSheet.overlay = overlay;
         }
-        
+
         // Initialize grid carousel for elements.html
         const gridItems = document.querySelectorAll('.grid-item');
         if (gridItems.length > 0) {
             console.log("Grid items found:", gridItems.length);
             // Initialize immediately to set up click handlers
             window.gridCarousel = new GridCarousel(gridItems, bottomSheet);
-            
+
             // Make sure grid items are clickable
             gridItems.forEach((item, index) => {
                 try {
                     item.style.cursor = 'pointer';
                     item.style.webkitTapHighlightColor = 'transparent';
-                    
+
                     // Force remove any existing listeners by cloning
                     const newItem = item.cloneNode(true);
                     item.parentNode.replaceChild(newItem, item);
-                    
+
                     // Add click event directly with error handling
                     newItem.addEventListener('click', function(e) {
                         e.preventDefault();
@@ -595,59 +595,59 @@ class GridCarousel {
     constructor(gridItems, bottomSheet = null) {
         this.gridItems = Array.from(gridItems);
         this.overlay = document.querySelector('.overlay');
-        
+
         // Use provided bottomSheet or create a new one
         this.bottomSheet = bottomSheet || new BottomSheet();
-        
+
         // If overlay doesn't exist, create it
         if (!this.overlay) {
             this.overlay = document.createElement('div');
             this.overlay.className = 'overlay';
             document.body.appendChild(this.overlay);
         }
-        
+
         // Make sure bottomSheet.overlay is set properly
         if (this.bottomSheet && !this.bottomSheet.overlay) {
             this.bottomSheet.overlay = this.overlay;
         }
-        
+
         console.log("GridCarousel initialized with", this.gridItems.length, "items");
     }
-    
+
     // We now handle this directly in the document.DOMContentLoaded
     // to avoid issues with event binding
-    
+
     showGridCarousel(startIndex) {
         console.log('Showing grid carousel for index:', startIndex);
-        
+
         // Debug the elements we're working with
         console.log('Bottom sheet available:', !!this.bottomSheet);
         console.log('Grid items count:', this.gridItems.length);
-        
+
         // Prepare image sources from grid items
         const images = this.gridItems.map((item, index) => {
             console.log(`Processing grid item ${index}`);
             const img = item.querySelector('img');
             const video = item.querySelector('video');
-            
+
             if (img) {
                 console.log(`Item ${index} has image:`, img.src);
                 // Extract just the filename from the full path
                 const fullPath = img.src;
                 let filename;
-                
+
                 // Fix for URL path, make sure we're getting a valid filename
                 try {
                     const url = new URL(fullPath);
                     const pathParts = url.pathname.split('/');
                     filename = pathParts[pathParts.length - 1];
-                    
+
                     // Skip me.avif images
                     if (filename === 'me.avif') {
                         console.log('Skipping me.avif image');
                         return null;
                     }
-                    
+
                     // Check if image is from the drafts directory
                     if (url.pathname.includes('/drafts/')) {
                         filename = 'drafts/' + filename;
@@ -656,42 +656,48 @@ class GridCarousel {
                     // Fallback to simple substring if URL parsing fails
                     console.log('URL parsing failed, using substring method');
                     filename = fullPath.substring(fullPath.lastIndexOf('/') + 1);
-                    
+
                     // Skip me.avif images
                     if (filename === 'me.avif') {
                         console.log('Skipping me.avif image');
                         return null;
                     }
-                    
+
                     // Check if path contains drafts
                     if (fullPath.includes('/drafts/')) {
                         filename = 'drafts/' + filename;
                     }
                 }
-                
+
                 console.log(`Extracted filename: ${filename}`);
                 return filename;
             } else if (video) {
                 console.log(`Item ${index} has video`);
-                // For videos, capture a frame from the video as an image
+                // For videos, use a special identifier to mark this as a video slide
                 const videoSource = video.querySelector('source');
                 if (videoSource) {
-                    // Skip videos from the carousel
+                    // Create a special filename marker for videos
+                    console.log('Found video source:', videoSource.src);
+                    // Extract just the filename for videos
+                    const videoPath = videoSource.src;
+                    let videoFilename = videoPath.substring(videoPath.lastIndexOf('/') + 1);
+
+                    // Use a placeholder image instead of a video (videos will be skipped)
                     return null;
                 }
                 // Skip if no source is found
                 return null;
             }
-            
+
             console.log(`Item ${index} has no media`);
             return null;
         }).filter(src => src !== null);
-        
+
         console.log('Collected image sources:', images);
-        
+
         // Check if we're on elements.html to enable looping
         const isElementsPage = window.location.pathname.includes('elements.html');
-        
+
         // Use the BottomSheet to show the carousel
         if (isElementsPage) {
             // For elements.html, we want to use looped carousel
@@ -701,7 +707,7 @@ class GridCarousel {
             this.bottomSheet.showImageGallery(images, startIndex);
         }
     }
-    
+
     // Modified method specifically for elements.html to enable looping
     showLoopedImageGallery(images, startIndex) {
         // Check if we have a valid bottomSheet and it's not already open
@@ -719,7 +725,7 @@ class GridCarousel {
 
         // Create overlay and prevent scrolling
         document.body.classList.add('no-scroll');
-        
+
         // Make sure overlay exists before trying to use it
         if (!this.bottomSheet.overlay) {
             this.bottomSheet.overlay = document.querySelector('.overlay');
@@ -730,7 +736,7 @@ class GridCarousel {
                 document.body.appendChild(this.bottomSheet.overlay);
             }
         }
-        
+
         this.bottomSheet.overlay.classList.add('visible');
 
         // Create centered container for our gallery
@@ -759,7 +765,7 @@ class GridCarousel {
             // but not on the active image or dots
             const isOnImage = e.target.closest('.ios-swiper-image.active');
             const isOnDot = e.target.closest('.dot');
-            
+
             if (!isOnImage && !isOnDot) {
                 this.bottomSheet.close();
             }
