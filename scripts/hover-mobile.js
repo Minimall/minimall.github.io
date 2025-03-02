@@ -299,13 +299,20 @@ class BottomSheet {
             img.style.transform = 'rotate(0deg) scale(0)';
         });
         
+        // Store the scrollPosition before we modify any styles
+        const savedScrollPosition = this.scrollPosition;
+        
+        // First remove classes and reset styles
         this.overlay.classList.remove('visible');
         document.body.classList.remove('no-scroll');
         document.body.style.top = '';
         
-        // Restore scroll position
-        if (this.scrollPosition !== undefined) {
-            window.scrollTo(0, this.scrollPosition);
+        // Restore scroll position immediately without any visible reset
+        if (savedScrollPosition !== undefined) {
+            window.scrollTo({
+                top: savedScrollPosition,
+                behavior: 'auto' // Use 'auto' instead of 'smooth' to avoid visible resetting
+            });
         }
         
         setTimeout(() => {
@@ -359,15 +366,21 @@ class BottomSheet {
     }
 
     close() {
+        // Store the scrollPosition before we modify any styles
+        const savedScrollPosition = this.scrollPosition;
+        
         this.sheet.classList.remove('open');
         this.overlay.classList.remove('visible');
         document.body.classList.remove('no-scroll');
         document.body.style.top = '';
         this.isClosing = false;
         
-        // Restore scroll position
-        if (this.scrollPosition !== undefined) {
-            window.scrollTo(0, this.scrollPosition);
+        // Restore scroll position immediately without any visible reset
+        if (savedScrollPosition !== undefined) {
+            window.scrollTo({
+                top: savedScrollPosition,
+                behavior: 'auto' // Use 'auto' instead of 'smooth' to avoid visible resetting
+            });
         }
         
         setTimeout(() => {
