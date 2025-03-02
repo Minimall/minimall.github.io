@@ -112,6 +112,37 @@
     <script src="scripts/footer-animation.js" defer></script>
     <script src="scripts/carousel.js" defer></script>
     
+
+<script>
+    // Additional mobile-specific initialization
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log("Elements page loaded");
+        
+        if (window.matchMedia('(max-width: 788px)').matches) {
+            console.log("Mobile view detected for elements page");
+            
+            // Make grid items explicitly clickable on mobile
+            const gridItems = document.querySelectorAll('.grid-item');
+            gridItems.forEach((item, index) => {
+                item.setAttribute('data-index', index);
+                item.style.cursor = 'pointer';
+                item.style.webkitTapHighlightColor = 'rgba(0, 0, 0, 0.1)';
+                
+                // Add a subtle tap effect to make it more responsive
+                item.addEventListener('touchstart', function() {
+                    this.style.opacity = '0.9';
+                    this.style.transform = 'scale(0.98)';
+                });
+                
+                item.addEventListener('touchend', function() {
+                    this.style.opacity = '1';
+                    this.style.transform = 'scale(1)';
+                });
+            });
+        }
+    });
+</script>
+
     <script>
         // Additional handling for grid items on mobile
         document.addEventListener('DOMContentLoaded', function() {

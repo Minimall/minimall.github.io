@@ -524,6 +524,7 @@ class IOSStyleSwiper {
 
 // Initialize mobile functionality
 document.addEventListener("DOMContentLoaded", () => {
+    console.log("Mobile init started");
     // Global rotation counter for image animations
     if (typeof window.rotationCounter === 'undefined') {
         window.rotationCounter = 0;
@@ -531,25 +532,45 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Initialize BottomSheet for mobile devices
     if (window.matchMedia('(max-width: 788px)').matches) {
+        console.log("Mobile detected");
         const bottomSheet = new BottomSheet();
         
         // Initialize grid carousel for elements.html
         const gridItems = document.querySelectorAll('.grid-item');
         if (gridItems.length > 0) {
+            console.log("Grid items found:", gridItems.length);
             // Initialize immediately to set up click handlers
-            const gridCarousel = new GridCarousel(gridItems);
-            // Share the bottomSheet instance
-            gridCarousel.bottomSheet = bottomSheet;
+            window.gridCarousel = new GridCarousel(gridItems, bottomSheet);
+            
+            // Make sure grid items are clickable
+            gridItems.forEach((item, index) => {
+                item.style.cursor = 'pointer';
+                item.style.webkitTapHighlightColor = 'transparent';
+                
+                // Force remove any existing listeners by cloning
+                const newItem = item.cloneNode(true);
+                item.parentNode.replaceChild(newItem, item);
+                
+                // Add click event directly
+                newItem.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log("Grid item clicked:", index);
+                    window.gridCarousel.showGridCarousel(index);
+                }, false);
+            });
         }
     }
 });
 
 // GridCarousel for elements.html on mobile
 class GridCarousel {
-    constructor(gridItems) {
+    constructor(gridItems, bottomSheet = null) {
         this.gridItems = Array.from(gridItems);
         this.overlay = document.querySelector('.overlay');
-        this.bottomSheet = new BottomSheet(); // Reuse the BottomSheet class
+        
+        // Use provided bottomSheet or create a new one
+        this.bottomSheet = bottomSheet || new BottomSheet();
         
         // If overlay doesn't exist, create it
         if (!this.overlay) {
@@ -558,53 +579,49 @@ class GridCarousel {
             document.body.appendChild(this.overlay);
         }
         
-        this.setupGridItems();
+        console.log("GridCarousel initialized with", this.gridItems.length, "items");
     }
     
-    setupGridItems() {
-        this.gridItems.forEach((item, index) => {
-            // Remove any existing click handlers
-            const newItem = item.cloneNode(true);
-            item.parentNode.replaceChild(newItem, item);
-            this.gridItems[index] = newItem;
-            
-            // Add new click handler with proper binding
-            newItem.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                if (window.matchMedia('(max-width: 788px)').matches) {
-                    console.log('Grid item clicked:', index);
-                    this.showGridCarousel(index);
-                }
-            });
-        });
-    }
+    // We now handle this directly in the document.DOMContentLoaded
+    // to avoid issues with event binding
     
     showGridCarousel(startIndex) {
         console.log('Showing grid carousel for index:', startIndex);
+        
+        // Debug the elements we're working with
+        console.log('Bottom sheet available:', !!this.bottomSheet);
+        console.log('Grid items count:', this.gridItems.length);
+        
         // Prepare image sources from grid items
-        const images = this.gridItems.map(item => {
+        const images = this.gridItems.map((item, index) => {
+            console.log(`Processing grid item ${index}`);
             const img = item.querySelector('img');
             const video = item.querySelector('video');
             
             if (img) {
+                console.log(`Item ${index} has image:`, img.src);
                 // Extract just the filename from the full path
                 const fullPath = img.src;
+                let filename;
+                
                 // Fix for URL path, make sure we're getting a valid filename
                 try {
                     const url = new URL(fullPath);
                     const pathParts = url.pathname.split('/');
-                    return pathParts[pathParts.length - 1];
+                    filename = pathParts[pathParts.length - 1];
                 } catch (e) {
                     // Fallback to simple substring if URL parsing fails
-                    const filename = fullPath.substring(fullPath.lastIndexOf('/') + 1);
-                    return filename;
+                    console.log('URL parsing failed, using substring method');
+                    filename = fullPath.substring(fullPath.lastIndexOf('/') + 1);
                 }
+                
+                console.log(`Extracted filename: ${filename}`);
+                return filename;
             } else if (video) {
+                console.log(`Item ${index} has video`);
                 // For videos, capture a frame from the video as an image
                 const videoSource = video.querySelector('source');
                 if (videoSource) {
-                    const fullPath = videoSource.src;
                     // Just return a placeholder filename that we know exists
                     return 'me.avif'; // Using a known image as fallback for videos
                 }
@@ -612,8 +629,11 @@ class GridCarousel {
                 return 'me.avif';
             }
             
+            console.log(`Item ${index} has no media`);
             return null;
         }).filter(src => src !== null);
+        
+        console.log('Collected image sources:', images);
         
         // Check if we're on elements.html to enable looping
         const isElementsPage = window.location.pathname.includes('elements.html');

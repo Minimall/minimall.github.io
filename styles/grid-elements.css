@@ -229,3 +229,27 @@
   .item-11 { grid-row: 21 / span 2 !important; }
   .item-12 { grid-row: 23 / span 2 !important; }
 }
+/* Mobile-specific enhancements for grid items */
+@media (max-width: 788px) {
+    .grid-item {
+        position: relative;
+        transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+    
+    .grid-item:active {
+        opacity: 0.9;
+        transform: scale(0.98);
+    }
+    
+    /* Add a subtle overlay to indicate touchability */
+    .grid-item::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: transparent;
+        z-index: 1;
+    }
+}
