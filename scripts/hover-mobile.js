@@ -147,8 +147,13 @@ class BottomSheet {
             }
             imgElement.src = imgPath;
             imgElement.className = 'centered-image';
-            imgElement.style.transform = index === currentIndex ? 
-                `rotate(${rotation}deg) scale(0)` : `translateX(${(index - currentIndex) * 100}%)`;
+            
+            // Set the rotation as a CSS variable
+            imgElement.style.setProperty('--rotation', `${rotation}deg`);
+            
+            if (index !== currentIndex) {
+                imgElement.style.transform = `translateX(${(index - currentIndex) * 100}%)`;
+            }
 
             imageContainer.appendChild(imgElement);
         });
@@ -174,12 +179,10 @@ class BottomSheet {
             }
         }
 
-        // Trigger animation for the current image
+        // Trigger animation for the current image using CSS classes instead of inline styles
         const currentImg = imageContainer.querySelectorAll('img')[currentIndex];
         setTimeout(() => {
-            currentImg.style.transition = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease';
-            currentImg.style.transform = `rotate(${rotation}deg) scale(1)`;
-            currentImg.style.opacity = '1'; // Make sure image is visible
+            currentImg.classList.add('active');
         }, 10);
 
         // Add swipe gestures
@@ -198,7 +201,6 @@ class BottomSheet {
 
     showImageInContainer(container, newIndex, oldIndex) {
         const images = container.querySelectorAll('img');
-        const rotation = ((window.rotationCounter % 2 === 0) ? 1.5 : -1.5);
 
         // Ensure container is set up for proper centering
         container.style.display = 'flex';
@@ -232,19 +234,21 @@ class BottomSheet {
             img.style.left = '0';
             img.style.right = '0';
             img.style.maxWidth = '90%';
-
-            // Keep the rotation consistent during transitions
+            
+            // Apply transitions without changing rotation
             if (i === newIndex) {
                 img.style.transition = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease';
-                img.style.transform = `rotate(${rotation}deg) translateX(0%)`;
+                img.style.transform = `translateX(0%)`;
                 img.style.opacity = '1';
                 img.style.zIndex = '2';
+                img.classList.add('active');
             } else {
                 const direction = i < newIndex ? -1 : 1;
                 img.style.transition = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease';
-                img.style.transform = `rotate(${rotation}deg) translateX(${direction * 100}%)`;
+                img.style.transform = `translateX(${direction * 100}%)`;
                 img.style.opacity = '0.5';
                 img.style.zIndex = '1';
+                img.classList.remove('active');
             }
         });
     }
@@ -281,7 +285,14 @@ class BottomSheet {
             imageElements.forEach((img, i) => {
                 const basePosition = (i - currentIndex) * 100;
                 const offset = progress;
-                img.style.transform = `translateX(${basePosition + offset}%)`;
+                
+                // Preserve the existing rotation while only changing the translateX
+                // If image is active (visible), maintain its scale=1, otherwise use the default scale
+                if (img.classList.contains('active')) {
+                    img.style.transform = `translateX(${basePosition + offset}%)`;
+                } else {
+                    img.style.transform = `translateX(${basePosition + offset}%)`;
+                }
             });
         };
 
@@ -400,29 +411,13 @@ class BottomSheet {
 
     closeCenteredImage(container) {
         const images = container.querySelectorAll('.centered-image');
-        const currentImage = Array.from(images).find(img => parseFloat(img.style.opacity) === 1);
         
-        if (currentImage) {
-            // Get the current transform to maintain it (no scale to 0, no rotation change)
-            const currentTransform = currentImage.style.transform;
-            
-            // Simply fade out the image without changing scale or rotation
-            images.forEach(img => {
-                img.style.transition = 'opacity 0.4s cubic-bezier(0.25, 1, 0.5, 1)';
-                img.style.opacity = '0';
-                // Keep the current transform unchanged
-            });
-        } else {
-            // Fallback if no current image is found
-            images.forEach(img => {
-                img.style.transition = 'opacity 0.4s cubic-bezier(0.25, 1, 0.5, 1)';
-                img.style.opacity = '0';
-                // Keep the current transform unchanged
-            });
-        }
-
+        // Simply remove the active class to trigger the CSS transition in reverse
+        images.forEach(img => {
+            img.classList.remove('active');
+        });
+        
         // Animate overlay with same dynamics as appearance (keep the same transition)
-        // The overlay already has transition: opacity 0.3s ease; from CSS
         this.overlay.classList.remove('visible');
         document.body.classList.remove('no-scroll');
 
