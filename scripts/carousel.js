@@ -5,23 +5,33 @@
 
 // Initialize carousel when the DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
+    console.log("DOM loaded, checking for desktop");
     // Only initialize on desktop
     if (window.matchMedia('(min-width: 789px)').matches) {
+        console.log("Desktop detected, initializing carousel");
         initializeDesktopCarousel();
+    } else {
+        console.log("Mobile detected, skipping desktop carousel initialization");
     }
     // We intentionally skip mobile initialization for elements.html
 });
 
 function initializeDesktopCarousel() {
     const gridItems = document.querySelectorAll('.grid-item');
-    if (gridItems.length === 0) return;
+    if (gridItems.length === 0) {
+        console.log("No grid items found");
+        return;
+    }
+
+    console.log("Found", gridItems.length, "grid items, initializing desktop carousel");
 
     // Create carousel instance for desktop
     const carousel = new DesktopCarousel();
 
     // Add click handlers to grid items
     gridItems.forEach((item, index) => {
-        item.addEventListener('click', () => {
+        item.addEventListener('click', (e) => {
+            console.log("Grid item clicked:", index);
             carousel.open(index);
         });
 
@@ -44,6 +54,8 @@ class DesktopCarousel {
         this.createCarouselElements();
         this.setupEventListeners();
         this.updateGridItems();
+
+        console.log("Desktop carousel created");
     }
 
     createCarouselElements() {
@@ -90,8 +102,15 @@ class DesktopCarousel {
 
     setupEventListeners() {
         // Navigation
-        this.prevArrow.addEventListener('click', () => this.navigate(-1));
-        this.nextArrow.addEventListener('click', () => this.navigate(1));
+        this.prevArrow.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.navigate(-1);
+        });
+
+        this.nextArrow.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.navigate(1);
+        });
 
         // Close on overlay click
         this.overlay.addEventListener('click', (e) => {
@@ -122,6 +141,7 @@ class DesktopCarousel {
         // Get all grid items
         const items = document.querySelectorAll('.grid-item');
         this.gridItemsArray = Array.from(items);
+        console.log("Updated grid items array with", this.gridItemsArray.length, "items");
     }
 
     open(index) {
@@ -130,10 +150,14 @@ class DesktopCarousel {
         // Make sure we have the latest grid items
         this.updateGridItems();
 
-        if (this.gridItemsArray.length === 0) return;
+        if (this.gridItemsArray.length === 0) {
+            console.warn("No grid items to show in carousel");
+            return;
+        }
 
         this.isOpen = true;
         this.currentIndex = index;
+        console.log("Opening carousel at index", index);
 
         // Prevent page scrolling
         document.body.style.overflow = 'hidden';
@@ -150,6 +174,7 @@ class DesktopCarousel {
 
     close() {
         if (!this.isOpen) return;
+        console.log("Closing carousel");
 
         // Fade out
         this.overlay.style.opacity = '0';
@@ -178,13 +203,17 @@ class DesktopCarousel {
         if (newIndex < 0) newIndex = totalItems - 1;
         if (newIndex >= totalItems) newIndex = 0;
 
+        console.log("Navigating from", this.currentIndex, "to", newIndex);
         this.currentIndex = newIndex;
         this.loadCurrentImage();
     }
 
     loadCurrentImage() {
         const currentItem = this.gridItemsArray[this.currentIndex];
-        if (!currentItem) return;
+        if (!currentItem) {
+            console.error("No item found at index", this.currentIndex);
+            return;
+        }
 
         // Clear previous content
         this.imageContainer.innerHTML = '';
@@ -194,6 +223,7 @@ class DesktopCarousel {
         const video = currentItem.querySelector('video');
 
         if (img) {
+            console.log("Loading image:", img.src);
             // Create a new image to show in carousel
             const carouselImg = document.createElement('img');
             carouselImg.className = 'carousel-image';
@@ -211,6 +241,7 @@ class DesktopCarousel {
 
             this.imageContainer.appendChild(carouselImg);
         } else if (video) {
+            console.log("Loading video");
             // Create a new video to show in carousel
             const carouselVideo = document.createElement('video');
             carouselVideo.className = 'carousel-image';
