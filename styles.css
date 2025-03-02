@@ -951,9 +951,10 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
     max-width: 90%;
     max-height: 90%;
     object-fit: contain;
-    transform: scale(0) rotate(0deg);
-    transition: transform 0.3s cubic-bezier(0.18, 1.3, 0.4, 1);
-    will-change: transform;
+    opacity: 0;
+    transform: rotate(0deg);
+    transition: transform 0.3s cubic-bezier(0.18, 1.3, 0.4, 1), opacity 0.3s ease;
+    will-change: transform, opacity;
     margin: 0 auto; /* Ensure horizontal centering */
     position: relative;
     left: 0;

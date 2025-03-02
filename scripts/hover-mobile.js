@@ -177,7 +177,7 @@ class BottomSheet {
         // Trigger animation for the current image
         const currentImg = imageContainer.querySelectorAll('img')[currentIndex];
         setTimeout(() => {
-            currentImg.style.transform = `rotate(${rotation}deg) scale(1)`;
+            currentImg.style.transform = `rotate(${rotation}deg)`;
         }, 10);
 
         // Add swipe gestures
@@ -234,12 +234,12 @@ class BottomSheet {
             // Keep the rotation consistent during transitions
             if (i === newIndex) {
                 img.style.transition = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)';
-                img.style.transform = `rotate(${rotation}deg) scale(1) translateX(0%)`;
+                img.style.transform = `rotate(${rotation}deg) translateX(0%)`;
                 img.style.zIndex = '2';
             } else {
                 const direction = i < newIndex ? -1 : 1;
                 img.style.transition = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)';
-                img.style.transform = `rotate(${rotation}deg) scale(0.85) translateX(${direction * 100}%)`;
+                img.style.transform = `rotate(${rotation}deg) translateX(${direction * 100}%)`;
                 img.style.zIndex = '1';
             }
         });
@@ -398,7 +398,8 @@ class BottomSheet {
 
         // Animate all images
         images.forEach(img => {
-            img.style.transform = 'rotate(0deg) scale(0)';
+            img.style.opacity = '0';
+            img.style.transform = 'rotate(0deg)';
         });
 
         // Simply remove overlay and no-scroll class without modifying scroll position
@@ -459,11 +460,12 @@ class BottomSheet {
         document.body.classList.remove('no-scroll');
         this.overlay.classList.remove('visible');
 
-        // Scale out images before removing
+        // Fade out images before removing
         if (this.centeredContainer) {
             const images = this.centeredContainer.querySelectorAll('.centered-image');
             images.forEach(img => {
-                img.style.transform = 'scale(0) rotate(0deg)';
+                img.style.opacity = '0';
+                img.style.transform = 'rotate(0deg)';
             });
         }
 
