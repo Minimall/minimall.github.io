@@ -1,4 +1,70 @@
 
+function setupHoverEffects() {
+    // Create hover image element if it doesn't exist
+    let hoverImg = document.querySelector('.hover-image');
+    if (!hoverImg) {
+        hoverImg = document.createElement('img');
+        hoverImg.className = 'hover-image';
+        document.body.appendChild(hoverImg);
+    }
+
+    // Set up hover effects on data-hover elements
+    document.querySelectorAll('[data-hover="true"]').forEach((element) => {
+        element.addEventListener('mouseenter', (e) => {
+            if (element.dataset.images) {
+                handleImageHover(element, hoverImg);
+            } else {
+                handleWaveEffect(element);
+            }
+        });
+
+        element.addEventListener('mouseleave', () => {
+            if (element._clearImageCycle) {
+                element._clearImageCycle();
+                element._clearImageCycle = null;
+            }
+        });
+        
+        // Prevent scroll reset on click
+        element.addEventListener('click', (e) => {
+            if (element.dataset.images) {
+                // Only prevent default if it has images and is not an anchor to another page
+                const href = element.getAttribute('href');
+                if (!href || href.startsWith('#')) {
+                    e.preventDefault();
+                }
+            }
+        });
+    });
+}
+
+function handleWaveEffect(element) {
+    // Add wave animation classes
+    element.classList.add('wave-in');
+    element.classList.remove('wave-out');
+    
+    element.addEventListener('mouseleave', function waveOut() {
+        element.classList.remove('wave-in');
+        element.classList.add('wave-out');
+        element.removeEventListener('mouseleave', waveOut);
+    }, { once: true });
+}
+
+function handleImageHover(element, img) {
+    if (window.matchMedia('(min-width: 789px)').matches) {
+        img.classList.add('active');
+        img.style.display = 'block';
+        element._clearImageCycle = cycleImages(element, img);
+        
+        element.addEventListener('mouseleave', function hideImage() {
+            img.classList.remove('active');
+            img.style.display = 'none';
+            element.removeEventListener('mouseleave', hideImage);
+        }, { once: true });
+    }
+}
+
+
 // Track hovered elements and rotation counter
 const hoveredElements = new Set();
 let rotationCounter = 0;
@@ -159,8 +225,10 @@ function setupMobileHoverImages() {
     if ('ontouchstart' in window) {
         document.querySelectorAll('[data-images]').forEach(element => {
             element.addEventListener('click', (e) => {
+                // Always prevent default to maintain scroll position
+                e.preventDefault();
+                
                 if (window.matchMedia('(max-width: 788px)').matches) {
-                    e.preventDefault();
                     const images = element.dataset.images?.split(',') || [];
                     if (images.length > 0 && typeof showCenteredImage === 'function') {
                         showCenteredImage(images[0]);
