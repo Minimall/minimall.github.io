@@ -403,33 +403,26 @@ class BottomSheet {
         const currentImage = Array.from(images).find(img => parseFloat(img.style.opacity) === 1);
         
         if (currentImage) {
-            // Get the current rotation value from the transform
+            // Get the current transform to maintain it (no scale to 0, no rotation change)
             const currentTransform = currentImage.style.transform;
-            const rotationMatch = currentTransform.match(/rotate\(([^)]+)\)/);
-            const currentRotation = rotationMatch ? rotationMatch[1] : '0deg';
             
-            // Animate out with the same rotation (no change in rotation)
+            // Simply fade out the image without changing scale or rotation
             images.forEach(img => {
-                img.style.transition = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease';
-                
-                if (img === currentImage) {
-                    // Keep rotation the same but scale back to 0
-                    img.style.transform = `rotate(${currentRotation}) scale(0)`;
-                    img.style.opacity = '0';
-                } else {
-                    img.style.opacity = '0';
-                }
+                img.style.transition = 'opacity 0.4s cubic-bezier(0.25, 1, 0.5, 1)';
+                img.style.opacity = '0';
+                // Keep the current transform unchanged
             });
         } else {
             // Fallback if no current image is found
             images.forEach(img => {
-                img.style.transition = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease';
+                img.style.transition = 'opacity 0.4s cubic-bezier(0.25, 1, 0.5, 1)';
                 img.style.opacity = '0';
-                img.style.transform = `${img.style.transform.replace(/rotate\([^)]+\)/, '')} scale(0)`;
+                // Keep the current transform unchanged
             });
         }
 
-        // Remove overlay and no-scroll class
+        // Animate overlay with same dynamics as appearance (keep the same transition)
+        // The overlay already has transition: opacity 0.3s ease; from CSS
         this.overlay.classList.remove('visible');
         document.body.classList.remove('no-scroll');
 
