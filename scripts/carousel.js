@@ -1,5 +1,14 @@
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Check if we're on mobile
+    const isMobile = window.matchMedia('(max-width: 788px)').matches;
+    
+    // If on mobile, we'll let hover-mobile.js handle the grid carousel
+    if (isMobile) {
+        return; // Exit early, mobile carousel is handled by GridCarousel in hover-mobile.js
+    }
+    
+    // Desktop implementation - only runs on larger screens
     // Set up click handlers for grid items
     const gridItems = document.querySelectorAll('.grid-item');
     

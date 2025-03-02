@@ -137,6 +137,7 @@ class IOSStyleSwiper {
         this.isAnimating = false;
         this.isSwiping = false;
         this.containerWidth = this.container.clientWidth || window.innerWidth;
+        this.enableLooping = false; // Will be set to true for elements.html
 
         this.setupImages();
         this.setupDots();
@@ -298,16 +299,21 @@ class IOSStyleSwiper {
         this.currentX = clientX;
         const deltaX = this.currentX - this.panStartX;
 
-        // Should we allow movement in this direction?
-        const allowMovement = !(
-            (this.currentIndex === 0 && deltaX > 0) || 
-            (this.currentIndex === this.imageElements.length - 1 && deltaX < 0)
-        );
+        // Determine if we should allow full movement or add resistance
+        let allowMovement = true;
+        
+        // If looping is not enabled, add resistance at edges
+        if (!this.enableLooping) {
+            allowMovement = !(
+                (this.currentIndex === 0 && deltaX > 0) || 
+                (this.currentIndex === this.imageElements.length - 1 && deltaX < 0)
+            );
+        }
 
-        // Calculate effective delta with resistance at edges
+        // Calculate effective delta with resistance at edges if needed
         const effectiveDelta = allowMovement 
             ? deltaX 
-            : deltaX * 0.2; // Add resistance at edges
+            : deltaX * 0.2; // Add resistance at edges when not looping
 
         this.updateImagesPosition(effectiveDelta);
     }
@@ -587,8 +593,70 @@ class GridCarousel {
             return null;
         }).filter(src => src !== null);
         
+        // Check if we're on elements.html to enable looping
+        const isElementsPage = window.location.pathname.includes('elements.html');
+        
         // Use the BottomSheet to show the carousel
-        this.bottomSheet.showImageGallery(images, startIndex);
+        if (isElementsPage) {
+            // For elements.html, we want to use looped carousel
+            this.showLoopedImageGallery(images, startIndex);
+        } else {
+            // For other pages, use the regular gallery
+            this.bottomSheet.showImageGallery(images, startIndex);
+        }
+    }
+    
+    // Modified method specifically for elements.html to enable looping
+    showLoopedImageGallery(images, startIndex) {
+        if (this.bottomSheet.isOpen) return;
+        this.bottomSheet.isOpen = true;
+
+        // Store current scroll position without changing the page position
+        this.bottomSheet.scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+
+        // Get rotation with slight randomness for natural feel
+        const baseRotation = ((window.rotationCounter % 2 === 0) ? 1.5 : -1.5);
+        const randomOffset = (Math.random() * 0.5) - 0.25; // Random value between -0.25 and 0.25
+        const rotation = baseRotation + randomOffset;
+        window.rotationCounter++;
+
+        // Create overlay and prevent scrolling
+        document.body.classList.add('no-scroll');
+        this.bottomSheet.overlay.classList.add('visible');
+
+        // Create centered container for our gallery
+        const centeredContainer = document.createElement('div');
+        centeredContainer.className = 'centered-image-container';
+        document.body.appendChild(centeredContainer);
+
+        // Create the swiper container
+        const swiperContainer = document.createElement('div');
+        swiperContainer.className = 'ios-swiper';
+        centeredContainer.appendChild(swiperContainer);
+
+        // Create dots container
+        const dotsContainer = document.createElement('div');
+        dotsContainer.className = 'carousel-dots sticky-dots';
+        centeredContainer.appendChild(dotsContainer);
+
+        // Create swiper instance with optional startIndex and enable looping
+        const swiper = new IOSStyleSwiper(swiperContainer, images, rotation, dotsContainer, startIndex);
+        swiper.enableLooping = true; // Enable looping for elements.html
+        this.bottomSheet.activeSwiper = swiper;
+
+        // Add tap handler to close when tapping anywhere (except on active image and dots)
+        centeredContainer.addEventListener('click', (e) => {
+            // Check if the click is directly on the container or overlay elements
+            // but not on the active image or dots
+            const isOnImage = e.target.closest('.ios-swiper-image.active');
+            const isOnDot = e.target.closest('.dot');
+            
+            if (!isOnImage && !isOnDot) {
+                this.bottomSheet.close();
+            }
+        });
+
+        this.bottomSheet.centeredContainer = centeredContainer;
     }
 }
 
