@@ -84,8 +84,13 @@ class BottomSheet {
             element.addEventListener('click', (e) => {
                 if (window.matchMedia('(max-width: 788px)').matches) {
                     e.preventDefault();
+                    e.stopPropagation(); // Prevent event bubbling to other handlers
                     const images = element.dataset.images?.split(',') || [];
                     if (images.length > 0) {
+                        // Close any existing image viewers first
+                        const existingContainers = document.querySelectorAll('.centered-image-container');
+                        existingContainers.forEach(container => container.remove());
+                        
                         // Show image directly in center of screen
                         const scrollPosition = window.scrollY;
                         this.showCenteredImage(images[0], scrollPosition);
@@ -96,6 +101,9 @@ class BottomSheet {
     }
 
     showCenteredImage(image, savedScrollPosition) {
+        // Store scroll position before doing anything
+        const initialScrollPosition = window.scrollY;
+        
         // Get rotation similar to desktop but half the amount
         const rotation = ((window.rotationCounter % 2 === 0) ? 1.5 : -1.5);
         window.rotationCounter++;
@@ -123,6 +131,10 @@ class BottomSheet {
         if (images.length === 0) {
             images = [image];
         }
+
+        // First, remove any existing centered containers to prevent duplication
+        const existingContainers = document.querySelectorAll('.centered-image-container');
+        existingContainers.forEach(container => container.remove());
 
         // Create centered container
         const centeredContainer = document.createElement('div');
@@ -182,7 +194,7 @@ class BottomSheet {
         this.setupCenteredImageSwipe(imageContainer, centeredContainer, images, currentIndex);
 
         // Add tap handler to close and store scroll position
-        centeredContainer.dataset.scrollPosition = savedScrollPosition;
+        centeredContainer.dataset.scrollPosition = initialScrollPosition;
         centeredContainer.addEventListener('click', () => {
             this.closeCenteredImage(centeredContainer);
         });
@@ -299,12 +311,15 @@ class BottomSheet {
         this.overlay.classList.remove('visible');
         document.body.classList.remove('no-scroll');
 
+        // Get the saved scroll position and ensure it's a valid number
         const savedScrollPosition = parseInt(container.dataset.scrollPosition || '0', 10);
+        
         setTimeout(() => {
             container.remove();
+            // Restore scroll position
             window.scrollTo({
                 top: savedScrollPosition,
-                behavior: 'auto'
+                behavior: 'auto' // Using 'auto' to avoid animation conflicts
             });
         }, 300);
     }
