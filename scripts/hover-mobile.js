@@ -624,92 +624,124 @@ class GridCarousel {
         console.log('Bottom sheet available:', !!this.bottomSheet);
         console.log('Grid items count:', this.gridItems.length);
 
-        // Prepare image sources from grid items
-        const images = this.gridItems.map((item, index) => {
-            console.log(`Processing grid item ${index}`);
-            const img = item.querySelector('img');
-            const video = item.querySelector('video');
-
+        // Get all images from clicked item for context
+        const clickedItem = this.gridItems[startIndex];
+        let initialMedia = null;
+        let initialIsVideo = false;
+        
+        if (clickedItem) {
+            const img = clickedItem.querySelector('img');
+            const video = clickedItem.querySelector('video');
+            
             if (img) {
-                console.log(`Item ${index} has image:`, img.src);
-                // Extract just the filename from the full path
                 const fullPath = img.src;
-                let filename;
-
-                // Fix for URL path, make sure we're getting a valid filename
                 try {
                     const url = new URL(fullPath);
                     const pathParts = url.pathname.split('/');
-                    filename = pathParts[pathParts.length - 1];
-
-                    // Skip me.avif images
-                    if (filename === 'me.avif') {
-                        console.log('Skipping me.avif image');
-                        return null;
-                    }
-
-                    // Check if image is from the drafts directory
-                    if (url.pathname.includes('/drafts/')) {
-                        filename = 'drafts/' + filename;
-                    }
+                    initialMedia = pathParts[pathParts.length - 1];
                 } catch (e) {
-                    // Fallback to simple substring if URL parsing fails
-                    console.log('URL parsing failed, using substring method');
-                    filename = fullPath.substring(fullPath.lastIndexOf('/') + 1);
-
-                    // Skip me.avif images
-                    if (filename === 'me.avif') {
-                        console.log('Skipping me.avif image');
-                        return null;
-                    }
-
-                    // Check if path contains drafts
-                    if (fullPath.includes('/drafts/')) {
-                        filename = 'drafts/' + filename;
-                    }
+                    initialMedia = fullPath.substring(fullPath.lastIndexOf('/') + 1);
                 }
-
-                console.log(`Extracted filename: ${filename}`);
-                return filename;
             } else if (video) {
-                console.log(`Item ${index} has video`);
-                // For videos, extract the file path for display in carousel
                 const videoSource = video.querySelector('source');
                 if (videoSource) {
-                    // Create a special filename marker for videos
-                    console.log('Found video source:', videoSource.src);
-                    // Extract just the filename for videos
                     const videoPath = videoSource.src;
-                    let videoFilename = videoPath.substring(videoPath.lastIndexOf('/') + 1);
-
-                    // Check if video is from the drafts directory
-                    if (videoPath.includes('/drafts/')) {
-                        videoFilename = 'drafts/' + videoFilename;
-                    }
-
-                    // Return with special video: prefix to mark as video
-                    return 'video:' + videoFilename;
+                    initialMedia = videoPath.substring(videoPath.lastIndexOf('/') + 1);
+                    initialIsVideo = true;
                 }
-                // Skip if no source is found
-                return null;
             }
+        }
 
-            console.log(`Item ${index} has no media`);
-            return null;
-        }).filter(src => src !== null);
-
-        console.log('Collected image sources:', images);
-
-        // Check if we're on elements.html to enable looping
+        // Instead of mapping from grid items, we'll dynamically prepare all drafts content
+        // Gather all media items from the grid to ensure we capture all formats
+        const mediaTypes = new Set();
+        this.gridItems.forEach(item => {
+            const img = item.querySelector('img');
+            const video = item.querySelector('video');
+            
+            if (img && img.src) {
+                const extension = img.src.split('.').pop().toLowerCase();
+                mediaTypes.add(extension);
+            } else if (video) {
+                const videoSource = video.querySelector('source');
+                if (videoSource && videoSource.src) {
+                    const extension = videoSource.src.split('.').pop().toLowerCase();
+                    mediaTypes.add(extension);
+                }
+            }
+        });
+        
+        console.log('Detected media types:', Array.from(mediaTypes));
+        
+        // Get all items from the drafts directory
+        const draftsItems = this.gridItems
+            .map(item => {
+                const img = item.querySelector('img');
+                const video = item.querySelector('video');
+                
+                if (img) {
+                    const fullPath = img.src;
+                    if (fullPath.includes('/drafts/')) {
+                        try {
+                            const url = new URL(fullPath);
+                            const pathParts = url.pathname.split('/');
+                            const filename = pathParts[pathParts.length - 1];
+                            
+                            // Skip me.avif images
+                            if (filename === 'me.avif') {
+                                console.log('Skipping me.avif image');
+                                return null;
+                            }
+                            
+                            return 'drafts/' + filename;
+                        } catch (e) {
+                            const filename = fullPath.substring(fullPath.lastIndexOf('/') + 1);
+                            
+                            // Skip me.avif images
+                            if (filename === 'me.avif') {
+                                console.log('Skipping me.avif image');
+                                return null;
+                            }
+                            
+                            return 'drafts/' + filename;
+                        }
+                    }
+                } else if (video) {
+                    const videoSource = video.querySelector('source');
+                    if (videoSource && videoSource.src.includes('/drafts/')) {
+                        const videoPath = videoSource.src;
+                        const videoFilename = videoPath.substring(videoPath.lastIndexOf('/') + 1);
+                        return 'video:drafts/' + videoFilename;
+                    }
+                }
+                return null;
+            })
+            .filter(item => item !== null);
+        
+        console.log('Drafts items:', draftsItems);
+        
+        // If we're on the elements page, and we should show all drafts content
         const isElementsPage = window.location.pathname.includes('elements.html');
-
+        
+        // Determine actual start index if we need to match with initialMedia
+        let actualStartIndex = startIndex;
+        if (initialMedia && draftsItems.length > 0) {
+            // Find matching item in draftsItems
+            const prefix = initialIsVideo ? 'video:' : '';
+            const searchValue = prefix + 'drafts/' + initialMedia;
+            const foundIndex = draftsItems.findIndex(item => item === searchValue);
+            if (foundIndex !== -1) {
+                actualStartIndex = foundIndex;
+            }
+        }
+        
         // Use the BottomSheet to show the carousel
         if (isElementsPage) {
-            // For elements.html, we want to use looped carousel
-            this.showLoopedImageGallery(images, startIndex);
+            // For elements.html, we want to use looped carousel with all drafts content
+            this.showLoopedImageGallery(draftsItems, actualStartIndex);
         } else {
             // For other pages, use the regular gallery
-            this.bottomSheet.showImageGallery(images, startIndex);
+            this.bottomSheet.showImageGallery(draftsItems, actualStartIndex);
         }
     }
 
@@ -718,6 +750,8 @@ class GridCarousel {
         // Check if we have a valid bottomSheet and it's not already open
         if (!this.bottomSheet || this.bottomSheet.isOpen) return;
         this.bottomSheet.isOpen = true;
+
+        console.log(`Showing looped image gallery with ${images.length} items, starting at index ${startIndex}`);
 
         // Store current scroll position without changing the page position
         this.bottomSheet.scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
@@ -758,6 +792,17 @@ class GridCarousel {
         const dotsContainer = document.createElement('div');
         dotsContainer.className = 'carousel-dots sticky-dots';
         centeredContainer.appendChild(dotsContainer);
+
+        // Add status info for debugging if needed
+        if (images.length === 0) {
+            console.warn('Warning: No images to display in looped gallery');
+            const statusInfo = document.createElement('div');
+            statusInfo.textContent = 'Loading gallery...';
+            statusInfo.style.color = '#666';
+            statusInfo.style.padding = '20px';
+            statusInfo.style.textAlign = 'center';
+            swiperContainer.appendChild(statusInfo);
+        }
 
         // Create swiper instance with optional startIndex and enable looping
         const swiper = new IOSStyleSwiper(swiperContainer, images, rotation, dotsContainer, startIndex);
