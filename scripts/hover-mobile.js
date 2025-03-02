@@ -82,11 +82,12 @@ class BottomSheet {
 
         document.querySelectorAll('[data-images]').forEach(element => {
             element.addEventListener('click', (e) => {
+                e.preventDefault(); // Always prevent default to maintain scroll position
+
                 if (window.matchMedia('(max-width: 788px)').matches) {
-                    e.preventDefault(); // Prevent default behavior to maintain scroll position
                     const images = element.dataset.images?.split(',') || [];
                     if (images.length > 0) {
-                        this.showCenteredImage(images[0]); // Call the updated method
+                        this.showCenteredImage(images[0]);
                     }
                 }
             });
@@ -94,6 +95,9 @@ class BottomSheet {
     }
 
     showCenteredImage(imageName) {
+        // Store current scroll position
+        const scrollPosition = window.scrollY;
+
         // Create container
         const container = document.createElement('div');
         container.className = 'centered-image-container';
@@ -118,6 +122,8 @@ class BottomSheet {
             img.style.transform = 'scale(0) rotate(0deg)';
             setTimeout(() => {
                 document.body.removeChild(container);
+                // Restore scroll position when image is closed
+                window.scrollTo(0, scrollPosition);
             }, 300);
         });
     }
