@@ -250,23 +250,28 @@ function initializeAnimation() {
     return;
   }
   
-  console.log("Initializing animation from footer-animation.js");
-  const container = document.getElementById('footer-animation-container');
-  if (container && typeof createGridAnimation === 'function') {
-    console.log("Animation container found, starting initialization");
-    
-    // Add visible class to wrapper
-    const wrapper = document.querySelector('.animation-wrapper');
-    if (wrapper) {
-      console.log("Adding visible class to animation wrapper");
-      wrapper.classList.add('visible');
+  // Use a timeout to ensure DOM is fully rendered
+  setTimeout(() => {
+    console.log("Initializing animation from footer-animation.js");
+    const container = document.getElementById('footer-animation-container');
+    if (container && typeof createGridAnimation === 'function') {
+      console.log("Animation container found, starting initialization");
+      
+      // Add visible class to wrapper
+      const wrapper = document.querySelector('.animation-wrapper');
+      if (wrapper) {
+        console.log("Adding visible class to animation wrapper");
+        wrapper.classList.add('visible');
+      }
+      
+      // Wait a moment before initializing the animation
+      setTimeout(() => {
+        console.log("Calling createGridAnimation directly");
+        createGridAnimation(container);
+        animationInitialized = true;
+      }, 100);
+    } else {
+      console.error("Animation container or function not found");
     }
-    
-    // Force immediate initialization
-    console.log("Calling createGridAnimation directly");
-    createGridAnimation(container);
-    animationInitialized = true;
-  } else {
-    console.error("Animation container or function not found");
-  }
+  }, 300);
 }

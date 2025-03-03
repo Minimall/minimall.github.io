@@ -23,8 +23,11 @@ window.addEventListener('load', function() {
       
       // Check if the function is available and call it directly
       if (typeof window.createGridAnimation === 'function') {
-        console.log("Creating grid animation from scripts.js");
-        window.createGridAnimation(footerAnimationContainer);
+        // Wait a moment before initializing
+        setTimeout(() => {
+          console.log("Creating grid animation from scripts.js");
+          window.createGridAnimation(footerAnimationContainer);
+        }, 500);
       } else {
         console.error("createGridAnimation function not found in global scope");
         
