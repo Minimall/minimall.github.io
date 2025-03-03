@@ -18,6 +18,7 @@
   line-height: 1.2;
   overflow: hidden;
   z-index: 1;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 .pill-button:before {
@@ -37,7 +38,7 @@
 .pill-button:hover {
   border-color: #eaeaea;
   background-color: #fdfdfd;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 .pill-button:not(.book-call):hover {
