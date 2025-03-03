@@ -11,13 +11,14 @@
   transition: font-family 0.1s ease-out;
 }
 
-/* Ensure clean fallbacks when Recursive font is unavailable */
+/* Ensure clean fallbacks when Host Grotesk font is unavailable */
 body {
   /* System fonts fallback chain */
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
-/* Let the browser handle Recursive font properly through Google Fonts */
+/* Let the browser handle Host Grotesk font properly through Google Fonts */
 .fonts-loaded body {
-  font-family: 'Recursive', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-family: 'Host Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-feature-settings: "liga" 1, "calt" 1, "dlig" 1, "ss01" 1, "ss02" A;
 }

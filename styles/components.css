@@ -49,17 +49,17 @@ li {
 }
 
 .headline {
-  font-family: 'Recursive', sans-serif;
+  font-family: 'Host Grotesk', sans-serif;
   font-weight: 500;
   font-size: 4.2rem;
   line-height: 1.2;
   letter-spacing: -0.06em;
   margin-bottom: calc(var(--spacing));
-  font-variation-settings: "slnt" 0, "CASL" 0.55, "CRSV" 1, "MONO" 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
   color: #111111;
+  font-feature-settings: "liga" 1, "calt" 1, "dlig" 1, "ss01" 1, "ss02" 1;
 }
 
 .headline .wave-text .word {
