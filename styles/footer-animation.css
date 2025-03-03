@@ -1,24 +1,33 @@
 
 /* ==========================================================================
-   Footer Animation and Styles
+   Footer Styles
    ========================================================================== */
 
-/* Footer structure and layout */
-.container .footer2,
-.footer2 {
+/* 
+ * 1. Core Footer Structure
+ * 2. Footer Content Styling
+ * 3. Animation Container and Elements
+ * 4. Animation Cells
+ * 5. Media Queries
+ */
+
+/* 1. Core Footer Structure
+   ========================================================================== */
+.footer2,
+.container .footer2 {
   position: relative;
   z-index: 2;
-  clear: both;
-  float: none;
   display: block;
-  margin-top: 2vw;
   width: 100%;
   max-width: 100vw;
+  height: 85vh;
+  margin-top: 2vw;
   margin-left: 0;
   margin-right: 0;
+  clear: both;
+  float: none;
   overflow: hidden;
   background: transparent !important;
-  height: 85vh;
 }
 
 /* Prevent grid from affecting footer position */
@@ -30,42 +39,42 @@
   position: relative;
 }
 
+/* 2. Footer Content Styling
+   ========================================================================== */
 .footer-content {
-  max-width: var(--max-width);
-  height: 100%;
-  margin: 0 auto;
-  padding-top: 2vw;
-  padding-right: 5vw;
-  padding-left: 5vw;
-  padding-bottom: 15vw;
   display: flex;
   flex-direction: column;
   justify-content: center;
   position: relative;
-  z-index: 4; /* Ensure content stays on top */
+  z-index: 4;
+  max-width: var(--max-width);
+  height: 100%;
+  margin: 0 auto;
+  padding: 2vw 5vw 15vw;
 }
 
 .footer2 .main-text {
   position: relative;
-  z-index: 5; /* Higher z-index to ensure content stays on top */
+  z-index: 5;
 }
 
-/* Animation container and wrapper */
+/* 3. Animation Container and Elements
+   ========================================================================== */
 .animation-wrapper {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  opacity: 0.01; /* Start with a tiny bit of opacity to ensure rendering */
-  transition: opacity 800ms ease;
+  width: 100%;
+  height: 100%;
   z-index: 0;
   overflow: hidden;
-  height: 100%;
-  width: 100%;
+  opacity: 0.01; /* Start with a tiny bit of opacity to ensure rendering */
   background: #ffffff;
   will-change: opacity;
-  transform: none; /* Remove transform that might be causing issues */
+  transform: none;
+  transition: opacity 800ms ease;
 }
 
 .animation-wrapper.visible {
@@ -78,49 +87,49 @@
   left: 0;
   right: 0;
   bottom: 0;
+  z-index: 1;
+  pointer-events: none;
+  will-change: auto;
+  transform: none;
   background: linear-gradient(
     to bottom,
     rgba(255, 255, 255, 1) 0%,
     rgba(255, 255, 255, 0.5) 60%,
     rgba(255, 255, 255, 0) 100%
   );
-  pointer-events: none;
-  z-index: 1;
-  will-change: auto;
-  transform: none; /* Remove transform that might be causing issues */
 }
 
 #footer-animation-container {
-  width: 100%;
-  height: 100vh;
   position: absolute;
   top: 0;
   left: 0;
   z-index: 0;
+  width: 100%;
+  height: 100vh;
   overflow: hidden;
 }
 
-/* Animation elements */
 .line {
-  background-color: #4ECDC4;
-  opacity: 0.5;
   width: 1px;
   height: 40px;
   margin: auto;
+  background-color: #4ECDC4;
+  opacity: 0.5;
   transform-origin: center;
   transition: background-color 0.5s ease;
 }
 
-/* Footer animation grid */
+/* 4. Animation Cells
+   ========================================================================== */
 .footer-animation {
   display: grid;
   gap: 0px 6px;
-  font-size: 10px;
-  font-family: monospace;
-  padding: 2rem;
-  --t: 0;
   width: fit-content;
   margin: 0 auto;
+  padding: 2rem;
+  font-size: 10px;
+  font-family: monospace;
+  --t: 0;
 }
 
 .footer-animation:hover {
@@ -133,11 +142,11 @@
 }
 
 .animation-cell {
-  width: 1em;
-  height: 1em;
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 1em;
+  height: 1em;
   color: #000;
 }
 
@@ -145,7 +154,8 @@
   color: var(--color-calc);
 }
 
-/* Media queries for responsive footer */
+/* 5. Media Queries
+   ========================================================================== */
 @media (max-width: 788px) {
   .footer2 {
     height: 70vh;
