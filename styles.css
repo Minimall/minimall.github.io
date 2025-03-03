@@ -351,11 +351,11 @@ li, .tag {
   .container {
     padding-top: 6vw;
   }
-  
+
   .case-logo {
     margin-bottom: 6vw;
   }
-  
+
   .case-study-content {
     max-width: var(--max-width);
     margin: 0 auto;
@@ -363,11 +363,11 @@ li, .tag {
     padding-right: 5vw;
     padding-left: 5vw;
   }
-  
+
   .case-study-container {
     padding-bottom: 12vw;
   }
-  
+
   .collapsible-content {
     max-height: 0;
     overflow: hidden;
@@ -378,7 +378,7 @@ li, .tag {
     padding: 5vw;
     border-radius: 6px;
   }
-  
+
   .collapsible-content.active {
     max-height: fit-content !important;
     padding: 5vw 5vw 0 5vw !important;
@@ -387,7 +387,7 @@ li, .tag {
     opacity: 1;
     transform: translateY(0);
   }
-  
+
   .menu {
     display: flex;
     flex-direction: column !important;
@@ -395,44 +395,44 @@ li, .tag {
     gap: calc(var(--spacing) / 2);
     margin: 0 0 var(--spacing) 0;
   }
-  
+
   .headline {
     font-size: 2.54rem;
     letter-spacing: -0.055em;
     max-width: 100%;
   }
-  
+
   nav {
     flex-direction: column;
     gap: 0.2rem;
   }
-  
+
   nav a:first-child {
     margin-left: 0;
   }
-  
+
   .services-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .case-gallery {
     flex-direction: column;
     grid-template-columns: 1fr;
     padding: 3vw 5vw 0vw 5vw;
   }
-  
+
   .case-gallery:has(.case-image-portrait) {
     flex-direction: column;
   }
-  
+
   .case-title {
     font-size: 1.8rem;
   }
-  
+
   .case-text {
     font-size: 1.1rem;
   }
-  
+
   .case-image-portrait,
   .case-image-landscape {
     width: var(--max-width) !important;
@@ -441,16 +441,16 @@ li, .tag {
     margin: 0 !important;
     border-radius: 2px;
   }
-  
+
   .case-gallery:has(.case-image-portrait:only-child) .case-image-portrait,
   .case-gallery:has(.case-image-portrait:nth-last-child(2)) .case-image-portrait {
     width: 100% !important;
   }
-  
+
   .hover-image {
     display: none;
   }
-  
+
   .bottom-sheet {
       position: fixed;
       bottom: 0;
@@ -464,7 +464,7 @@ li, .tag {
       z-index: 1000;
       max-height: 90vh;
   }
-  
+
   .bottom-sheet.open {
       transform: translateY(0);
   }
@@ -571,7 +571,7 @@ a span, .collapsible span {
     flex-direction: column;
     gap: 1rem;
   }
-  
+
   .left-container {
     margin-bottom: 0.5rem;
   }
@@ -885,6 +885,7 @@ body.no-scroll {
   position: relative;
   height: 85vh;
   overflow: hidden;
+  z-index: 0; /* Added z-index for better control */
 }
 
 .animation-wrapper.visible {
@@ -916,5 +917,5 @@ body.no-scroll {
 
 .footer2 .main-text {
   position: relative;
-  z-index: 3;
+  z-index: 5; /* Consistent z-index with footer-animation.css */
 }

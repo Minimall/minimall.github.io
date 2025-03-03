@@ -132,12 +132,7 @@ li, .tag {
   align-items: center;
 }
 
-.footer2 {
-  background: transparent !important;
-  position: relative;
-  height: 85vh;
-  overflow: hidden;
-}
+/* Footer styles moved to footer-animation.css for consolidation */
 
 /* Media queries */
 @media (max-width: 788px) {

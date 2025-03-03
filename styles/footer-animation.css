@@ -57,11 +57,13 @@
   position: absolute;
   top: 0;
   left: 0;
+  z-index: 0;
+  overflow: hidden;
 }
 
 .footer2 .main-text {
   position: relative;
-  z-index: 2;
+  z-index: 5; /* Higher z-index to ensure content stays on top */
 }
 
 /* Ensure footer is separated from grid and spans full width */
@@ -81,7 +83,9 @@
 }
 
 /* Prevent grid from affecting footer position */
-.grid-container + .container {
+.grid-container + .container,
+.grid-container + .footer2,
+.grid-container + .case-study-container {
   display: block;
   clear: both;
   position: relative;
@@ -98,6 +102,8 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+  position: relative;
+  z-index: 4; /* Ensure content stays on top */
 }
 
 .footer2 {
