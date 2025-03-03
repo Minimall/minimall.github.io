@@ -1,4 +1,19 @@
 
+@media (max-width: 788px) {
+  .name .subheadline {
+    display: none;
+  }
+  
+  .nav-left {
+    flex-direction: column;
+  }
+  
+  .nav-right {
+    margin-top: 0.75rem;
+  }
+}
+
+
 /* Header Styles */
 .main-nav {
   display: flex;
