@@ -16,35 +16,13 @@
 @import 'styles/components.css';
 @import 'styles/responsive.css';
 
-/* Root variables */
-:root {
-  --spacing: 2rem;
-  --max-width: 64rem;
-  --mouse-x: 0;
-  --mouse-y: 0;
-}
-
-/* Base styles */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-html {
-  scroll-behavior: smooth;
-  scroll-duration: 1.5s;
-  scroll-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-}
-
+/* Typography-specific styles kept here, base styles moved to layout.css */
 body {
   font-family: 'Recursive', -apple-system, BlinkMacSystemFont, "Bahnschrift", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   font-size: 1.2rem;
   line-height: 1.6;
-  transition: background-color 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   letter-spacing: -0.02em;
   color: #111;
-  background: #ffffff;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -56,11 +34,6 @@ h2 {
   letter-spacing: 0.02em;
   color: #111;
   margin-bottom: 1rem;
-}
-
-p {
-  margin: 0 0 var(--spacing) 0;
-  max-width: var(--max-width);
 }
 
 /* Overlay for mobile interactions */
@@ -79,6 +52,7 @@ p {
   -webkit-backdrop-filter: blur(8px);
 }
 
+/* Headline styles kept in styles.css as they're typography-specific */
 .headline {
   font-family: 'Recursive', sans-serif;
   font-weight: 500;
@@ -134,100 +108,17 @@ p {
   color: #888;
 }
 
-.container {
-  width: 100vw;
-  padding-top: 3vw;
-  margin-left: calc(-50vw + 50%);
-  margin-right: calc(-50vw + 50%);
-}
-
-.container > * {
-  max-width: var(--max-width);
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: 5vw;
-  padding-right: 5vw;
-  box-sizing: border-box;
-}
-
+/* Header styles specific to this file */
 .header {
   max-width: var(--max-width);
   margin-top: calc(var(--spacing) * 3);
   margin-bottom: calc(var(--spacing) * 3);
 }
 
-.main-text {
-  max-width: var(--max-width);
-  padding-bottom: 2vw;
-}
-
-nav {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: calc(var(--spacing) * 3);
-  font-size: 1.2rem;
-  padding: 0;
-  width: 100%;
-}
-
-.name {
-  display: flex;
-  flex-direction: column;
-  font-variation-settings: "wght" 400;
-  gap: 0.25rem;
-}
-
-.menu {
-  display: flex;
-  flex-direction: row;
-  gap: calc(var(--spacing) / 3);
-  margin: 0 0 var(--spacing) 0;
-}
+/* Nav styles moved to header.css */
 
 
-.case-study-container {
-  width: 100vw;
-  margin-left: calc(-50vw + 50%);
-  margin-right: calc(-50vw + 50%);
-  background: var(--case-background);
-}
-
-.case-study-content {
-  max-width: var(--max-width);
-  margin: 0 auto;
-  padding-top: 4vw;
-  padding-right: 5vw;
-  padding-left: 5vw;
-  padding-bottom: 4vw;
-}
-
-/* Footer content styling moved to footer-animation.css */
-
-.case-content {
-  width: 100%;
-}
-
-.case-gallery {
-  width: 100vw;
-  display: flex;
-  justify-content: center;
-  gap: 5vw;
-  padding: 3vw 8vw 8vw 8vw;
-  background: var(--case-background);
-  margin: 0;
-  flex-wrap: nowrap;
-}
-
-.case-gallery:has(.case-image-portrait) {
-  flex-direction: row;
-}
-
-.case-gallery:has(.case-image-landscape) {
-  flex-direction: column;
-  gap: 6vw;
-  padding: 3vw 8vw 8vw 8vw;
-  align-items: center;
-}
+/* Case study styles moved to case-studies.css */
 
 .case-title {
   font-size: 2.25rem;
@@ -279,22 +170,7 @@ nav {
   letter-spacing: -0.035em;
 }
 
-ul {
-  list-style: none;
-  padding: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  padding-bottom: 1rem;
-}
-
-li, .tag {
-  border: 1px solid #e0e0e0;
-  border-radius: 100px;
-  padding: 0.25rem 0.75rem;
-  font-size: 0.9rem;
-  color: #292e3d;
-}
+/* List styles moved to layout.css */
 
 .hover-image {
   opacity: 0;
@@ -337,52 +213,9 @@ li, .tag {
 }
 
 @media (max-width: 788px) {
-  .container {
-    padding-top: 6vw;
-  }
-
+  /* Mobile styles specific to this file */
   .case-logo {
     margin-bottom: 6vw;
-  }
-
-  .case-study-content {
-    max-width: var(--max-width);
-    margin: 0 auto;
-    padding-top: 16vw;
-    padding-right: 5vw;
-    padding-left: 5vw;
-  }
-
-  .case-study-container {
-    padding-bottom: 12vw;
-  }
-
-  .collapsible-content {
-    max-height: 0;
-    overflow: hidden;
-    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    opacity: 0;
-    transform: translateY(-10px);
-    background: #f7f7f3;
-    padding: 5vw;
-    border-radius: 6px;
-  }
-
-  .collapsible-content.active {
-    max-height: fit-content !important;
-    padding: 5vw 5vw 0 5vw !important;
-    margin-bottom: 6vw;
-    padding-bottom: 3vw;
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  .menu {
-    display: flex;
-    flex-direction: column !important;
-    flex-wrap: nowrap !important;
-    gap: calc(var(--spacing) / 2);
-    margin: 0 0 var(--spacing) 0;
   }
 
   .headline {
@@ -391,27 +224,8 @@ li, .tag {
     max-width: 100%;
   }
 
-  nav {
-    flex-direction: column;
-    gap: 0.2rem;
-  }
-
-  nav a:first-child {
-    margin-left: 0;
-  }
-
   .services-grid {
     grid-template-columns: 1fr;
-  }
-
-  .case-gallery {
-    flex-direction: column;
-    grid-template-columns: 1fr;
-    padding: 3vw 5vw 0vw 5vw;
-  }
-
-  .case-gallery:has(.case-image-portrait) {
-    flex-direction: column;
   }
 
   .case-title {
@@ -439,6 +253,7 @@ li, .tag {
   .hover-image {
     display: none;
   }
+}
 
   .bottom-sheet {
       position: fixed;
@@ -501,43 +316,7 @@ a span, .collapsible span {
 	white-space: pre;
 }
 
-.collapsible {
-	cursor: pointer;
-	position: relative;
-	display: inline-block;
-	color: inherit;
-	text-decoration: none;
-	transition: all 0.3s ease;
-	font-variation-settings: "wght" 500;
-}
-
-.collapsible:hover {
-	font-variation-settings: "wght" 900;
-	animation: colorWave 0.8s ease-in-out forwards;
-}
-
-.collapsible-content {
-	max-height: 0;
-	overflow: hidden;
-	transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-	opacity: 0;
-	transform: translateY(-10px);
-  background: #f7f7f3;
-  border-radius: 8px;
-}
-
-.collapsible-content.active {
-  max-height: fit-content;
-  padding: 2vw !important;
-  margin-bottom: 2vw;
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.collapsible-link {
-	color: inherit;
-	cursor: pointer;
-}
+/* Collapsible styles moved to components.css */
 
 .services-grid {
   width: 100%;
@@ -547,13 +326,7 @@ a span, .collapsible span {
   column-gap: 3rem;
 }
 
-.principle-container {
-  display: flex;
-  padding-top: 2.5rem;
-  align-items: flex-start;
-  gap: 2rem;
-  flex-direction: row;
-}
+/* Principle container styles moved to components.css */
 
 @media (max-width: 788px) {
   .principle-container {
@@ -564,18 +337,6 @@ a span, .collapsible span {
   .left-container {
     margin-bottom: 0.5rem;
   }
-}
-
-.left-container {
-  flex: 0 0 auto;
-}
-
-.right-container {
-  flex: 1 1 auto;
-}
-
-.service {
-  margin-bottom: calc(var(--spacing));
 }
 
 .original-text {
