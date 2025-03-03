@@ -54,27 +54,7 @@ body {
   margin: 0 0 var(--spacing) 0;
 }
 
-/* List styles */
-ul {
-  list-style: none;
-  padding: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  padding-bottom: 1rem;
-}
-
-li, .tag {
-  background-color: rgba(0, 0, 0, 0.04);
-  border-radius: 100px;
-  padding: 0.4rem 0.8rem;
-  margin-bottom: 0.5rem;
-  display: inline-block;
-  margin-right: 0.5rem;
-  font-size: 0.9rem;
-  color: #292e3d;
-  border: none;
-}
+/* Layout containers and wrappers only */
 
 /* Case study container */
 .case-study-container {

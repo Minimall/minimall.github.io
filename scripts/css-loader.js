@@ -83,3 +83,39 @@ window.cssLoader = {
     loadCss,
     loadRequiredCss
 };
+// CSS Loader script
+// This script ensures CSS files are loaded in the correct order
+document.addEventListener('DOMContentLoaded', function() {
+  // Check if all styles are loaded
+  function checkStylesLoaded() {
+    const styleSheets = document.styleSheets;
+    for (let i = 0; i < styleSheets.length; i++) {
+      try {
+        // If we can access cssRules, the stylesheet is loaded
+        const rules = styleSheets[i].cssRules;
+      } catch (e) {
+        // If there's a security error or the stylesheet isn't loaded yet
+        if (e.name === 'SecurityError') continue;
+        return false;
+      }
+    }
+    return true;
+  }
+
+  // Initialize page when styles are loaded
+  function initWhenStylesLoaded() {
+    if (checkStylesLoaded()) {
+      // All styles loaded - trigger any waiting functions
+      document.body.classList.add('styles-loaded');
+      
+      // Dispatch custom event for other scripts that depend on CSS
+      document.dispatchEvent(new CustomEvent('stylesLoaded'));
+    } else {
+      // Check again in a moment
+      setTimeout(initWhenStylesLoaded, 50);
+    }
+  }
+
+  // Start the initialization process
+  initWhenStylesLoaded();
+});
