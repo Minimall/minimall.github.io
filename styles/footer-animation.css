@@ -64,14 +64,18 @@
   z-index: 2;
 }
 
-/* Ensure footer is separated from grid */
-.container .footer2 {
+/* Ensure footer is separated from grid and spans full width */
+.container .footer2,
+.footer2 {
   position: relative;
   z-index: 2;
   clear: both;
   float: none;
   display: block;
   margin-top: 2vw;
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  margin-right: calc(-50vw + 50%);
 }
 
 /* Prevent grid from affecting footer position */
