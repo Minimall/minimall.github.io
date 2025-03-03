@@ -173,4 +173,24 @@
   .footer-content {
     padding-bottom: 10vw;
   }
+  
+  /* Mobile-specific footer styles */
+  .centered-image-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1100;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  
+  .overlay.visible {
+    opacity: 1;
+    visibility: visible;
+  }
 }
