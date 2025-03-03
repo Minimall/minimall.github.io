@@ -41,7 +41,7 @@
 }
 
 .pill-button:not(.book-call):hover {
-  color: #000000;
+  color: #000000 !important;
 }
 
 .pill-button:hover:before {
@@ -122,10 +122,17 @@
   background-color: white;
 }
 
+/* Styling for button spans in default state */
 .pill-button.chat span,
 .pill-button.linkedin span,
 .pill-button:not(.book-call) span {
-  color: #55595E !important;
+  color: #55595E;
+  transition: color 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+/* Change color of spans inside buttons on hover */
+.pill-button:not(.book-call):hover span {
+  color: #000000 !important;
 }
 
 .pill-button.chat:before,
