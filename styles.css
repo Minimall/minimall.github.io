@@ -195,11 +195,16 @@ nav a:hover {
 nav a.active {
   color: #111 !important;
   animation: none !important;
+  font-variation-settings: "wght" 500 !important;
+  opacity: 1 !important;
+  border-color: transparent !important;
 }
 
 nav a.active:hover {
   color: #111 !important;
   animation: none !important;
+  font-variation-settings: "wght" 500 !important;
+  opacity: 1 !important;
 }
 
 /* ==========================================================================

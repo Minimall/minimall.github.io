@@ -48,16 +48,23 @@
 }
 
 .nav-right .nav-link.active,
-.nav-left .nav-link.active {
+.nav-left .nav-link.active,
+.main-nav .nav-link.active {
   color: #111 !important;
   cursor: default;
   pointer-events: none;
+  animation: none !important;
+  font-variation-settings: "wght" 500 !important;
+  opacity: 1;
 }
 
 .nav-right .nav-link.active:hover,
-.nav-left .nav-link.active:hover {
+.nav-left .nav-link.active:hover,
+.main-nav .nav-link.active:hover {
   animation: none !important;
   color: #111 !important;
+  font-variation-settings: "wght" 500 !important;
+  opacity: 1;
 }
 
 /* Mobile adjustments */
