@@ -326,14 +326,10 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
   transform: scale(1.15);
 }
 
-/* Prevent hover effects for Wombi logo */
-.case-logo img[src$="wombi.svg"] {
-  transition: none !important;
-  transform: none !important;
-}
-
+/* WOMBI logo styling */
 .case-logo img[src$="wombi.svg"] {
   height: 24px !important;
+  transition: transform 0.3s cubic-bezier(0.18, 1.3, 0.4, 1) !important;
 }
 
 .case-logo img[src$="datrics.svg"] {
