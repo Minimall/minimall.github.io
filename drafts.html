@@ -83,7 +83,7 @@
     <div class="overlay"></div>
     
     <script src="scripts/hover.js" defer></script>
-    <!-- Mobile hover script removed -->
+    <script src="scripts/hover-mobile.js" defer></script>
     <script src="scripts/scripts.js" defer></script>
     <script src="scripts/scroll-color.js" defer></script>
     <script src="scripts/footer-animation.js" defer></script>
@@ -91,5 +91,21 @@
     
     <!-- Load grid scripts -->
     <script src="scripts/grid-loader.js" defer></script>
+    
+    <script>
+      // Initialize footer animation when the page is loaded
+      document.addEventListener('DOMContentLoaded', function() {
+        const footerAnimationContainer = document.getElementById('footer-animation-container');
+        if (footerAnimationContainer) {
+          createGridAnimation(footerAnimationContainer);
+          
+          // Make animation wrapper visible
+          const animationWrapper = document.querySelector('.animation-wrapper');
+          if (animationWrapper) {
+            animationWrapper.classList.add('visible');
+          }
+        }
+      });
+    </script>
 </body>
 </html>
