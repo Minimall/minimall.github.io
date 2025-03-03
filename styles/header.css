@@ -66,4 +66,8 @@
     justify-content: flex-start;
     gap: 1rem;
   }
+  
+  .subheadline {
+    display: none;
+  }
 }
