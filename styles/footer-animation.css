@@ -69,6 +69,16 @@
   position: relative;
   z-index: 2;
   clear: both;
+  float: none;
+  display: block;
+  margin-top: 2vw;
+}
+
+/* Prevent grid from affecting footer position */
+.grid-container + .container {
+  display: block;
+  clear: both;
+  position: relative;
 }
 
 .footer-content {
