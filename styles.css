@@ -181,7 +181,7 @@ a:hover {
 nav a {
   opacity: 1;
   font-variation-settings: "wght" 500;
-  color: #003c8a;
+  color: #005FCB;
   transition: all 0.3s ease, font-variation-settings 0.3s ease;
 }
 
@@ -760,7 +760,7 @@ a span, .collapsible span {
 }
 
 [data-hover="true"] span {
-  color: #003c8a;
+  color: #005FCB;
   font-variation-settings: "wght" 500;
   transition: color 0.3s ease, font-variation-settings 0.3s ease;
 

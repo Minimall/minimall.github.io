@@ -37,6 +37,11 @@
 .pill-button:hover {
   border-color: #eaeaea;
   background-color: #fdfdfd;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.pill-button:not(.book-call):hover {
+  color: #000000;
 }
 
 .pill-button:hover:before {
