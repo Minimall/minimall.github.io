@@ -9,7 +9,7 @@
   }
   
   .nav-right {
-    margin-top: 0.75rem;
+
   }
 }
 
@@ -60,7 +60,6 @@
 @media (max-width: 788px) {
   .main-nav {
     flex-direction: column;
-    gap: 1.5rem;
   }
   
   .nav-right {
