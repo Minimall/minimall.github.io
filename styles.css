@@ -621,26 +621,6 @@ li {
   padding-right: 2em;
 }
 
-/* ==========================================================================
-   Collapsible Components
-   ========================================================================== */
-.collapsible-content {
-  max-height: 0;
-  overflow: hidden;
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  opacity: 0;
-  transform: translateY(-10px);
-  background: #f7f7f3;
-  border-radius: 8px;
-}
-
-.collapsible-content.active {
-  max-height: fit-content;
-  padding: 2vw !important;
-  margin-bottom: 2vw;
-  opacity: 1;
-  transform: translateY(0);
-}
 
 /* ==========================================================================
    Animation Keyframes
