@@ -145,15 +145,6 @@
         object-fit: contain;
         background: #000;
     }
-
-    .dot {
-        margin: 0 4px;
-    }
-
-    /* Safe area inset for iOS devices */
-    @supports (padding-bottom: env(safe-area-inset-bottom)) {
-        .carousel-dots {
-            padding-bottom: env(safe-area-inset-bottom);
-        }
-    }
+    
+    /* Note: dot styles and padding-bottom for iOS devices are defined in styles.css */
 }

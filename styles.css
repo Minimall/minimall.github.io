@@ -210,30 +210,19 @@ a:hover {
 
 nav a {
   opacity: 1;
-  font-variation-settings: "wght" 500;
   color: #005FCB;
-  transition: all 0.3s ease, font-variation-settings 0.3s ease;
+  /* Inherits base link transition and font-variation-settings */
 }
 
-nav a:hover {
-  opacity: 1;
-  font-variation-settings: "wght" 500;
-  animation: colorWave 0.8s ease-in-out forwards;
-}
+/* nav a:hover inherits base a:hover styles */
 
-nav a.active {
-  color: #111 !important;
-  animation: none !important;
-  font-variation-settings: "wght" 500 !important;
-  opacity: 1 !important;
-  border-color: transparent !important;
-}
-
+nav a.active, 
 nav a.active:hover {
   color: #111 !important;
   animation: none !important;
   font-variation-settings: "wght" 500 !important;
   opacity: 1 !important;
+  border-color: transparent !important;
 }
 
 a span, .collapsible span {
@@ -489,7 +478,8 @@ ul {
   padding-bottom: 1rem;
 }
 
-li, .tag {
+/* Consolidated tag and list item styling */
+.tag {
   border: 1px solid #e0e0e0;
   border-radius: 100px;
   padding: 0.25rem 0.75rem;
@@ -497,7 +487,6 @@ li, .tag {
   color: #292e3d;
 }
 
-/* Updated list item styling */
 li {
   list-style: none;
   background-color: rgba(0, 0, 0, 0.04);
@@ -506,7 +495,9 @@ li {
   margin-bottom: 0.5rem;
   display: inline-block;
   margin-right: 0.5rem;
-  border: none; /* Remove any existing stroke */
+  border: none;
+  font-size: 0.9rem;
+  color: #292e3d;
 }
 
 /* ==========================================================================
@@ -669,12 +660,7 @@ li {
   100% { color: #111; }
 }
 
-@keyframes randomColorWave {
-  0% { color: #1a4ce0; }
-  33% { color: #c12f78; }
-  88% { color: #540a99; }
-  100% { color: #111; }
-}
+/* Removed duplicate randomColorWave animation that was identical to colorWave */
 
 @keyframes marquee {
   0% { transform: translate3d(0, 0, 0); }

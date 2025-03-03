@@ -1,17 +1,5 @@
 
-@media (max-width: 788px) {
-  .name .subheadline {
-    display: none;
-  }
-  
-  .nav-left {
-    flex-direction: column;
-  }
-  
-  .nav-right {
-
-  }
-}
+/* Mobile header styles are consolidated at the bottom of this file */
 
 
 /* Header Styles */
