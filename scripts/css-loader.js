@@ -17,8 +17,9 @@ const cssModules = [
     { path: 'styles/components.css', always: true },
     { path: 'styles/footer-animation.css', condition: () => document.querySelector('.footer2') !== null },
     { path: 'styles/marquee.css', condition: () => document.querySelector('.marquee-container') !== null },
-    { path: 'styles/responsive.css', condition: () => window.matchMedia('(max-width: 788px)').matches },
-    { path: 'styles/grid-elements.css', condition: () => document.querySelector('.grid-container') !== null }
+    { path: 'styles/responsive.css', always: true },
+    { path: 'styles/grid-elements.css', condition: () => document.querySelector('.grid-container') !== null },
+    { path: 'styles/carousel.css', condition: () => document.querySelector('.carousel') !== null || document.querySelector('.carousel-container') !== null }
 ];
 
 // Function to check if CSS file is already loaded

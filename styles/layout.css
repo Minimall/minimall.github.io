@@ -54,6 +54,15 @@ body {
   margin: 0 0 var(--spacing) 0;
 }
 
+nav {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: calc(var(--spacing) * 3);
+  font-size: 1.2rem;
+  padding: 0;
+  width: 100%;
+}
+
 /* List styles */
 ul {
   list-style: none;

@@ -16,51 +16,16 @@
 @import 'styles/components.css';
 @import 'styles/responsive.css';
 
-/* Root variables */
-:root {
-  --spacing: 2rem;
-  --max-width: 64rem;
-  --mouse-x: 0;
-  --mouse-y: 0;
-}
-
 /* Base styles */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-html {
-  scroll-behavior: smooth;
-  scroll-duration: 1.5s;
-  scroll-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-}
-
 body {
+  background: #ffffff;
+  transition: background-color 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   font-family: 'Recursive', -apple-system, BlinkMacSystemFont, "Bahnschrift", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   font-size: 1.2rem;
   line-height: 1.6;
-  transition: background-color 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   letter-spacing: -0.02em;
   color: #111;
-  background: #ffffff;
   -webkit-font-smoothing: antialiased;
-}
-
-/* Basic typography */
-h2 {
-  font-size: 1.5rem;
-  line-height: 1.3;
-  font-variation-settings: "wght" 800;
-  letter-spacing: 0.02em;
-  color: #111;
-  margin-bottom: 1rem;
-}
-
-p {
-  margin: 0 0 var(--spacing) 0;
-  max-width: var(--max-width);
 }
 
 /* Overlay for mobile interactions */
@@ -77,6 +42,67 @@ p {
   z-index: 998;
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
+}
+
+/* Case study title styles not duplicated in other files */
+.case-title {
+  font-size: 2.25rem;
+  line-height: 1.45;
+  letter-spacing: -0.035em;
+  font-variation-settings: "wght" 400;
+  color: var(--case-title-color);
+  max-width: var(--max-width);
+  padding-bottom: 1rem;
+}
+
+.case-item h3 {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.case-tags {
+  display: flex;
+  gap: 1rem;
+  margin: 3rem 0;
+  margin-top: 1rem;
+}
+
+.text-repeater {
+    white-space: nowrap;
+    overflow: hidden;
+    position: relative;
+    padding: 1rem 0;
+}
+
+.text-repeater:before {
+    content: attr(data-content);
+}
+
+.text-repeater:after {
+    content: attr(data-content);
+}
+
+/* Root variables */
+:root {
+  --spacing: 2rem;
+  --max-width: 64rem;
+  --mouse-x: 0;
+  --mouse-y: 0;
+}
+
+/* Basic typography */
+h2 {
+  font-size: 1.5rem;
+  line-height: 1.3;
+  font-variation-settings: "wght" 800;
+  letter-spacing: 0.02em;
+  color: #111;
+  margin-bottom: 1rem;
+}
+
+p {
+  margin: 0 0 var(--spacing) 0;
+  max-width: var(--max-width);
 }
 
 .headline {
@@ -240,49 +266,6 @@ nav {
   align-items: center;
 }
 
-.case-title {
-  font-size: 2.25rem;
-  line-height: 1.45;
-  letter-spacing: -0.035em;
-  font-variation-settings: "wght" 400;
-  color: var(--case-title-color);
-  max-width: var(--max-width);
-  padding-bottom: 1rem;
-}
-
-.case-title .wave-text .word {
-  display: inline;
-  font-variation-settings: "wght" 400;
-  opacity: 1;
-  transform: translateY(0);
-  white-space: pre-wrap;
-  letter-spacing: -0.035em;
-}
-
-.case-title .wave-text span.shimmer-in {
-  opacity: 1;
-  transform: translateY(0);
-  animation: caseTitleWave 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-}
-
-@keyframes caseTitleWave {
-  0% { 
-    font-variation-settings: "wght" 400;
-    color: #1a4ce0;
-  }
-  33% { 
-    font-variation-settings: "wght" 700;
-    color: #c12f78;
-  }
-  88% { 
-    font-variation-settings: "wght" 700;
-    color: #540a99;
-  }
-  100% { 
-    font-variation-settings: "wght" 400;
-    color: var(--case-title-color);
-  }
-}
 
 .company-name {
   font-variation-settings: "wght" 400;
@@ -470,36 +453,10 @@ li, .tag {
   }
 }
 
-.case-item h3 {
-  font-size: 1.2rem;
-  margin-bottom: 0.5rem;
-}
-
-.case-tags {
-  display: flex;
-  gap: 1rem;
-  margin: 3rem 0;
-  margin-top: 1rem;
-}
-
 .no-margin {
 	margin: 0 !important;
 }
 
-.text-repeater {
-    white-space: nowrap;
-    overflow: hidden;
-    position: relative;
-    padding: 1rem 0;
-}
-
-.text-repeater:before {
-    content: attr(data-content);
-}
-
-.text-repeater:after {
-    content: attr(data-content);
-}
 
 .service p {
   font-weight: 400;
@@ -694,6 +651,8 @@ video.ios-swiper-image::-webkit-media-controls-panel {
 
 .ios-swiper-image.active {
   z-index: 10;
+}
+
 }
 
 @supports (backdrop-filter: blur(8px)) {
