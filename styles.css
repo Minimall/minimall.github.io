@@ -26,8 +26,6 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Footer styles moved to footer-animation.css */
-
 /* Basic typography */
 h2 {
   font-size: 1.5rem;
@@ -505,21 +503,6 @@ video.ios-swiper-image::-webkit-media-controls-panel {
 }
 
 
-.overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(255, 255, 255, 0.7);
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.4s ease, visibility 0.4s ease;
-  z-index: 998;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-}
-
 .overlay.visible {
   opacity: 1;
   visibility: visible;
@@ -630,6 +613,4 @@ body.no-scroll {
   will-change: transform, opacity;
   z-index: 1200;
 }
-
-
-/* Footer styling moved to footer-animation.css */
+}

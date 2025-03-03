@@ -323,6 +323,4 @@
     will-change: transform, opacity;
     z-index: 1200;
   }
-
-  /* Footer animation styling moved to footer-animation.css */
 }

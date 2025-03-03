@@ -8,7 +8,8 @@
  * 2. Footer Content Styling
  * 3. Animation Container and Elements
  * 4. Animation Cells
- * 5. Media Queries
+ * 5. Animation Keyframes
+ * 6. Media Queries
  */
 
 /* 1. Core Footer Structure
@@ -19,7 +20,7 @@
   z-index: 2;
   display: block;
   width: 100%;
-  max-width: 100vw;
+  max-width: none;
   height: 85vh;
   margin-top: 2vw;
   margin-left: 0;
@@ -136,11 +137,6 @@
   animation: tick 86400000ms linear infinite;
 }
 
-@keyframes tick {
-  from { --t: 0 }
-  to { --t: 86400000 }
-}
-
 .animation-cell {
   display: flex;
   align-items: center;
@@ -154,7 +150,20 @@
   color: var(--color-calc);
 }
 
-/* 5. Media Queries
+/* 5. Animation Keyframes
+   ========================================================================== */
+@property --t {
+  syntax: "<integer>";
+  initial-value: 0;
+  inherits: true;
+}
+
+@keyframes tick {
+  from { --t: 0 }
+  to { --t: 86400000 }
+}
+
+/* 6. Media Queries
    ========================================================================== */
 @media (max-width: 788px) {
   .footer2 {
