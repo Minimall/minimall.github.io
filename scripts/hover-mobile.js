@@ -591,6 +591,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // GridCarousel for elements.html on mobile
+// This uses the unified dot styles from styles.css
 class GridCarousel {
     constructor(gridItems, viewer = null) {
         this.gridItems = Array.from(gridItems);
