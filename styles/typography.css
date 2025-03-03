@@ -3,13 +3,12 @@
    Typography
    ========================================================================== */
 body {
-  font-family: 'Host Grotesk', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: 'Recursive', -apple-system, BlinkMacSystemFont, "Bahnschrift", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   font-size: 1.2rem;
   line-height: 1.6;
   letter-spacing: -0.02em;
   color: #111;
   -webkit-font-smoothing: antialiased;
-  font-feature-settings: "liga" 1, "calt" 1, "dlig" 1, "ss01" 1, "ss02" 1;
 }
 
 h2 {
@@ -22,22 +21,22 @@ h2 {
 }
 
 .headline {
-  font-family: 'Host Grotesk', sans-serif;
+  font-family: 'Recursive', sans-serif;
   font-weight: 500;
   font-size: 4.2rem;
   line-height: 1.2;
   letter-spacing: -0.06em;
   margin-bottom: calc(var(--spacing));
+  font-variation-settings: "slnt" 0, "CASL" 0.55, "CRSV" 1, "MONO" 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
   color: #111111;
-  font-feature-settings: "liga" 1, "calt" 1, "dlig" 1, "ss01" 1, "ss02" 1;
 }
 
 .headline .wave-text .word {
   display: inline;
-  font-weight: 500;
+  font-variation-settings: "wght" 500, "CASL" 0.55;
   color: #111111;
   opacity: 1;
   transform: translateY(0);
@@ -53,19 +52,19 @@ h2 {
 
 @keyframes shimmerWave {
   0% { 
-    font-weight: 500;
+    font-variation-settings: "wght" 500;
     color: #1a4ce0; 
   }
   33% { 
-    font-weight: 800;
+    font-variation-settings: "wght" 840;
     color: #c12f78; 
   }
   88% { 
-    font-weight: 800;
+    font-variation-settings: "wght" 840;
     color: #540a99; 
   }
   100% { 
-    font-weight: 500;
+    font-variation-settings: "wght" 500;
     color: #111; 
   }
 }
