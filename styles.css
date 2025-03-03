@@ -192,6 +192,16 @@ nav a:hover {
   animation: colorWave 0.8s ease-in-out forwards;
 }
 
+nav a.active {
+  color: #111 !important;
+  animation: none !important;
+}
+
+nav a.active:hover {
+  color: #111 !important;
+  animation: none !important;
+}
+
 /* ==========================================================================
    Case Study Components
    ========================================================================== */

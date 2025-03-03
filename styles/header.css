@@ -47,14 +47,16 @@
   animation: colorWave 0.8s ease-in-out forwards;
 }
 
-.nav-link.active {
+.nav-right .nav-link.active,
+.nav-left .nav-link.active {
   color: #111 !important;
   cursor: default;
   pointer-events: none;
 }
 
-.nav-link.active:hover {
-  animation: none;
+.nav-right .nav-link.active:hover,
+.nav-left .nav-link.active:hover {
+  animation: none !important;
   color: #111 !important;
 }
 
