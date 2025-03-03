@@ -3,47 +3,6 @@
    Component Styles
    ========================================================================== */
 
-/* Wave text styling for case titles */
-.case-title .wave-text .word {
-  display: inline;
-  font-variation-settings: "wght" 400;
-  opacity: 1;
-  transform: translateY(0);
-  white-space: pre-wrap;
-  letter-spacing: -0.035em;
-}
-
-.case-title .wave-text span.shimmer-in {
-  opacity: 1;
-  transform: translateY(0);
-  animation: caseTitleWave 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-}
-
-@keyframes caseTitleWave {
-  0% { 
-    font-variation-settings: "wght" 400;
-    color: #1a4ce0;
-  }
-  33% { 
-    font-variation-settings: "wght" 700;
-    color: #c12f78;
-  }
-  88% { 
-    font-variation-settings: "wght" 700;
-    color: #540a99;
-  }
-  100% { 
-    font-variation-settings: "wght" 400;
-    color: var(--case-title-color);
-  }
-}
-
-.company-name {
-  font-variation-settings: "wght" 400;
-  color: var(--company-name-color);
-  letter-spacing: -0.035em;
-}
-
 /* List styles */
 ul {
   list-style: none;
