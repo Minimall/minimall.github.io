@@ -128,10 +128,6 @@
   background: linear-gradient(120deg, transparent 0%, transparent 80%, rgba(85, 89, 94, 0.05) 95%, rgba(85, 89, 94, 0) 100%);
 }
 
-.menu .pill-button {
-  margin-right: 0.75rem;
-}
-
 .menu .pill-button:last-child {
   margin-right: 0;
 }
