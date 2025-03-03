@@ -1033,14 +1033,7 @@ body.no-scroll {
     transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
   }
 
-  .carousel-dots {
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-    padding: 16px;
-  }
-
-  /* Dots are defined in the unified styles section */
+  /* Using carousel-dots from unified styles section at bottom of file */
 
   /* Centered image view */
   .centered-image-container {
