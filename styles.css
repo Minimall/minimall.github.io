@@ -997,34 +997,10 @@ body.no-scroll {
     z-index: 10;
   }
 
-  .carousel-dots {
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-    padding: 16px;
-    transition: opacity 0.3s ease;
-  }
-
-  .dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: rgba(0, 0, 0, 0.2);
-    transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
-  }
-
-  .dot.active {
-    background: rgba(0, 0, 0, 0.9);
-    transform: scale(1.2);
-  }
-
+  /* Using the unified dot styles defined at the bottom of this file */
+  
   .sticky-dots {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
     padding: 16px 16px 48px 16px; /* Extra padding for home indicator */
-    z-index: 1001;
   }
 
   @supports (padding-bottom: env(safe-area-inset-bottom)) {
@@ -1123,12 +1099,15 @@ body.no-scroll {
   }
 }
 
-/* Carousel dots - unified styles */
+/* ==========================================================================
+   Carousel Dots - Unified Styles
+   ========================================================================== */
 .carousel-dots {
   display: flex;
   justify-content: center;
   gap: 8px;
   padding: 16px;
+  transition: opacity 0.3s ease;
 }
 
 .sticky-dots {
@@ -1145,11 +1124,11 @@ body.no-scroll {
   height: 8px;
   border-radius: 50%;
   background: rgba(0, 0, 0, 0.2);
-  transition: background-color 0.3s ease, transform 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 .dot.active {
-  background: rgba(0, 0, 0, 1);
+  background: rgba(0, 0, 0, 0.9);
   transform: scale(1.2);
 }
 
