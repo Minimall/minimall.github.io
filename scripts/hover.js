@@ -13,7 +13,7 @@ function setupHoverEffects() {
         document.head.appendChild(linkCss);
     }
     
-    const hoverableElements = document.querySelectorAll('a, [data-hover="true"]');
+    const hoverableElements = document.querySelectorAll('a, button, [data-hover="true"]');
 
     hoverableElements.forEach(element => {
         // Skip if already processed

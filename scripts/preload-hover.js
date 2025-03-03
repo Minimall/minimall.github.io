@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", function() {
   document.head.appendChild(hoverScript);
   
   // Initialize basic hover effect early
-  const hoverableElements = document.querySelectorAll('a, [data-hover="true"]');
+  const hoverableElements = document.querySelectorAll('a, button, [data-hover="true"]');
   hoverableElements.forEach(element => {
     if (element.hasAttribute('data-processed')) return;
     
