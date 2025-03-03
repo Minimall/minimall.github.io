@@ -430,16 +430,56 @@ li, .tag {
 /* ==========================================================================
    Responsive Design
    ========================================================================== */
+/* Animation properties and styles from animation.css */
+@property --t {
+  syntax: "<integer>";
+  initial-value: 0;
+  inherits: true;
+}
+
+.footer-animation {
+  display: grid;
+  gap: 0px 6px;
+  font-size: 10px;
+  font-family: monospace;
+  padding: 2rem;
+  --t: 0;
+  width: fit-content;
+  margin: 0 auto;
+}
+
+.footer-animation:hover {
+  animation: tick 86400000ms linear infinite;
+}
+
+@keyframes tick {
+  from { --t: 0 }
+  to { --t: 86400000 }
+}
+
+.animation-cell {
+  width: 1em;
+  height: 1em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000;
+}
+
+.footer-animation:hover .animation-cell {
+  color: var(--color-calc);
+}
+
 @media (max-width: 788px) {
 
   .container {
     padding-top: 6vw;
   }
-  
+
   .case-logo {
     margin-bottom: 6vw;
   }
-  
+
   .case-study-content {
     max-width: var(--max-width);
     margin: 0 auto;
@@ -823,8 +863,6 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
     transform-origin: center;
     transition: background-color 0.5s ease;
 }
-@media (max-width: 788px) {
-
 /* iOS-style carousel and swiper */
 .ios-swiper {
   width: 100%;
@@ -957,13 +995,13 @@ video.ios-swiper-image::-webkit-media-controls-panel {
     opacity: 1;
     visibility: visible;
   }
-  
+
   /* Prevent scrolling without changing scroll position */
   body.no-scroll {
     overflow: hidden;
     pointer-events: none;
   }
-  
+
   /* Allow interaction with modal content when body has no-scroll */
   .overlay, .centered-image-container, .bottom-sheet {
     pointer-events: auto;
@@ -1052,13 +1090,13 @@ video.ios-swiper-image::-webkit-media-controls-panel {
     left: 0;
     right: 0;
   }
-  
+
   .centered-image.active {
     opacity: 1;
     transform: rotate(var(--rotation)) scale(1);
     transition-delay: 0.2s; /* Delay image appearance after overlay */
   }
-  
+
   .centered-image.closing {
     opacity: 0;
     transform: rotate(0deg) scale(0);
@@ -1066,7 +1104,7 @@ video.ios-swiper-image::-webkit-media-controls-panel {
     will-change: transform, opacity;
     z-index: 1200; /* Ensure image stays above overlay during animation */
   }
-  
+
   .centered-image-container {
     position: fixed;
     top: 0;
