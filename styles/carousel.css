@@ -1,0 +1,32 @@
+.carousel-nav svg {
+    stroke: #000;
+    stroke-width: 2;
+    width: 28px;
+    height: 28px;
+}
+
+.carousel-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.8);
+    color: #000;
+    border: none;
+    padding: 16px;
+    cursor: pointer;
+    z-index: 10000;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.carousel-nav:hover {
+    background: rgba(255, 255, 255, 0.95);
+    transform: translateY(-50%) scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
