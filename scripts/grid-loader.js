@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function() {
             video.playsInline = true;
 
             const source = document.createElement('source');
-            source.src = `images/drafts/${file}`;
+            source.src = `images/lab/${file}`;
             source.type = file.endsWith('.mp4') ? 'video/mp4' : 
                           file.endsWith('.webm') ? 'video/webm' : 'video/quicktime';
 
@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function() {
             gridItem.appendChild(video);
         } else {
             const img = document.createElement('img');
-            img.src = `images/drafts/${file}`;
+            img.src = `images/lab/${file}`;
             img.alt = file.split('.')[0].replace(/-/g, ' ');
 
             gridItem.appendChild(img);
@@ -39,14 +39,14 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Main function to load and display grid items
-    function loadDraftsGrid() {
+    function loadLabGrid() {
         const gridContainer = document.getElementById('dynamic-grid');
         if (!gridContainer) return;
 
         // Clear existing items
         gridContainer.innerHTML = '';
 
-        // Hardcoded list of files in the drafts directory
+        // Hardcoded list of files in the lab directory
         const files = [
             '2-week-sprint.avif',
             'design-skillset.avif',
@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // If there are no files, show a message
         if (!files || files.length === 0) {
             const message = document.createElement('p');
-            message.textContent = 'No images found in the drafts folder.';
+            message.textContent = 'No images found in the lab folder.';
             message.style.textAlign = 'center';
             message.style.gridColumn = '1 / -1';
             gridContainer.appendChild(message);
@@ -122,12 +122,12 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Start the grid loading process
-    loadDraftsGrid();
+    loadLabGrid();
 
     // Reload grid on resize to ensure proper layout
     let resizeTimer;
     window.addEventListener('resize', function() {
         clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(loadDraftsGrid, 250);
+        resizeTimer = setTimeout(loadLabGrid, 250);
     });
 });

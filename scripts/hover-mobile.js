@@ -653,7 +653,7 @@ class GridCarousel {
             }
         }
 
-        // Instead of mapping from grid items, we'll dynamically prepare all drafts content
+        // Instead of mapping from grid items, we'll dynamically prepare all lab content
         // Gather all media items from the grid to ensure we capture all formats
         const mediaTypes = new Set();
         this.gridItems.forEach(item => {
@@ -674,15 +674,15 @@ class GridCarousel {
         
         console.log('Detected media types:', Array.from(mediaTypes));
         
-        // Get all items from the drafts directory
-        const draftsItems = this.gridItems
+        // Get all items from the lab directory
+        const labItems = this.gridItems
             .map(item => {
                 const img = item.querySelector('img');
                 const video = item.querySelector('video');
                 
                 if (img) {
                     const fullPath = img.src;
-                    if (fullPath.includes('/drafts/')) {
+                    if (fullPath.includes('/lab/')) {
                         try {
                             const url = new URL(fullPath);
                             const pathParts = url.pathname.split('/');
@@ -694,7 +694,7 @@ class GridCarousel {
                                 return null;
                             }
                             
-                            return 'drafts/' + filename;
+                            return 'lab/' + filename;
                         } catch (e) {
                             const filename = fullPath.substring(fullPath.lastIndexOf('/') + 1);
                             
@@ -704,33 +704,33 @@ class GridCarousel {
                                 return null;
                             }
                             
-                            return 'drafts/' + filename;
+                            return 'lab/' + filename;
                         }
                     }
                 } else if (video) {
                     const videoSource = video.querySelector('source');
-                    if (videoSource && videoSource.src.includes('/drafts/')) {
+                    if (videoSource && videoSource.src.includes('/lab/')) {
                         const videoPath = videoSource.src;
                         const videoFilename = videoPath.substring(videoPath.lastIndexOf('/') + 1);
-                        return 'video:drafts/' + videoFilename;
+                        return 'video:lab/' + videoFilename;
                     }
                 }
                 return null;
             })
             .filter(item => item !== null);
         
-        console.log('Drafts items:', draftsItems);
+        console.log('lab items:', labItems);
         
-        // If we're on the elements page, and we should show all drafts content
+        // If we're on the elements page, and we should show all lab content
         const isElementsPage = window.location.pathname.includes('elements.html');
         
         // Determine actual start index if we need to match with initialMedia
         let actualStartIndex = startIndex;
-        if (initialMedia && draftsItems.length > 0) {
-            // Find matching item in draftsItems
+        if (initialMedia && labItems.length > 0) {
+            // Find matching item in labItems
             const prefix = initialIsVideo ? 'video:' : '';
-            const searchValue = prefix + 'drafts/' + initialMedia;
-            const foundIndex = draftsItems.findIndex(item => item === searchValue);
+            const searchValue = prefix + 'lab/' + initialMedia;
+            const foundIndex = labItems.findIndex(item => item === searchValue);
             if (foundIndex !== -1) {
                 actualStartIndex = foundIndex;
             }
@@ -738,11 +738,11 @@ class GridCarousel {
         
         // Use the viewer to show the carousel
         if (isElementsPage) {
-            // For elements.html, we want to use looped carousel with all drafts content
-            this.showLoopedImageGallery(draftsItems, actualStartIndex);
+            // For elements.html, we want to use looped carousel with all lab content
+            this.showLoopedImageGallery(labItems, actualStartIndex);
         } else {
             // For other pages, use the regular gallery
-            this.viewer.showImageGallery(draftsItems, actualStartIndex);
+            this.viewer.showImageGallery(labItems, actualStartIndex);
         }
     }
 
