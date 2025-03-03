@@ -101,6 +101,7 @@ function createGridAnimation(gridElement) {
         grid-template-columns: repeat(${columns}, 1fr);
         grid-template-rows: repeat(${rows}, 1fr);
         overflow: hidden;
+        z-index: -1;
     `;
     initializeLines();
 
