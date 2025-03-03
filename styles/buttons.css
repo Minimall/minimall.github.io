@@ -7,7 +7,7 @@
   padding: 0.4rem 1.2rem;
   background-color: white;
   color: #111;
-  border: 1px solid #e0e0e0;
+  border: 1px solid #e9e9e9;
   border-radius: 100px;
   text-decoration: none;
   font-size: 1.1rem;
@@ -15,7 +15,6 @@
   letter-spacing: -0.01em;
   transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
   position: relative;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
   line-height: 1.2;
   overflow: hidden;
   z-index: 1;
@@ -36,9 +35,7 @@
 }
 
 .pill-button:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.06);
-  border-color: #d0d0d0;
+  border-color: #e0e0e0;
   background-color: #fcfcfc;
 }
 
@@ -49,7 +46,6 @@
 
 .pill-button:active {
   transform: translateY(1px);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
 }
 
 /* Button with icon styling */
@@ -78,11 +74,12 @@
 }
 
 .pill-button.book-call:before {
-  background: linear-gradient(120deg, transparent 0%, transparent 80%, rgba(255, 255, 255, 0.1) 95%, rgba(255, 255, 255, 0) 100%);
+  background: linear-gradient(120deg, transparent 0%, transparent 70%, rgba(255, 255, 255, 0.2) 90%, rgba(255, 255, 255, 0) 100%);
 }
 
 .pill-button.book-call:hover {
-  background-color: #222;
+  background-color: #000;
+  color: white;
 }
 
 .pill-button.mail {
