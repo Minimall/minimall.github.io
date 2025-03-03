@@ -111,4 +111,5 @@
   position: relative;
   height: 85vh;
   overflow: hidden;
+  z-index: 0; /* Added z-index for better control */
 }

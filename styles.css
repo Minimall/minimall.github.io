@@ -201,18 +201,7 @@ nav {
   padding-bottom: 4vw;
 }
 
-.footer-content {
-  max-width: var(--max-width);
-  height: 100%;
-  margin: 0 auto;
-  padding-top: 2vw;
-  padding-right: 5vw;
-  padding-left: 5vw;
-  padding-bottom: 15vw;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
+/* Footer content styling moved to footer-animation.css */
 
 .case-content {
   width: 100%;
@@ -880,42 +869,4 @@ body.no-scroll {
 }
 
 
-.footer2 {
-  background: transparent !important;
-  position: relative;
-  height: 85vh;
-  overflow: hidden;
-  z-index: 0; /* Added z-index for better control */
-}
-
-.animation-wrapper.visible {
-  opacity: 1;
-}
-
-.line {
-  background-color: #4ECDC4;
-  opacity: 0.5;
-  width: 1px;
-  height: 40px;
-  margin: auto;
-  transform-origin: center;
-  transition: background-color 0.5s ease;
-}
-
-.animation-wrapper.visible {
-  opacity: 1;
-}
-
-#footer-animation-container {
-  width: 100%;
-  height: 100vh;
-  position: absolute;
-  top: 0;
-  left: 0;
-  overflow: hidden;
-}
-
-.footer2 .main-text {
-  position: relative;
-  z-index: 5; /* Consistent z-index with footer-animation.css */
-}
+/* Footer styling moved to footer-animation.css */
