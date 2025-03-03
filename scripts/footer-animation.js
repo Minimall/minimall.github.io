@@ -5,12 +5,13 @@ function createGridAnimation(gridElement) {
         return;
     }
     
-    // Ensure the document is fully loaded before starting animation
-    if (document.readyState !== 'complete') {
-        console.log("Waiting for page to fully load before starting footer animation");
-        window.addEventListener('load', () => createGridAnimation(gridElement));
-        return;
+    // Clear any existing content in the grid element
+    while (gridElement.firstChild) {
+        gridElement.removeChild(gridElement.firstChild);
     }
+    
+    // Always proceed with animation setup regardless of document.readyState
+    console.log("Document ready state:", document.readyState);
     const lines = [];
     const colors = [
         "#FF6B6B", "#4ECDC4", "#45B7D1", "#FFA07A", "#98D8C8", 
@@ -235,17 +236,37 @@ function createGridAnimation(gridElement) {
 // Make sure function is globally available
 window.createGridAnimation = createGridAnimation;
 
-// Auto-initialize when script loads as a fallback
-document.addEventListener('DOMContentLoaded', function() {
+// Force initialization on both DOMContentLoaded and window load events
+document.addEventListener('DOMContentLoaded', initializeAnimation);
+window.addEventListener('load', initializeAnimation);
+
+// One-time initialization flag
+let animationInitialized = false;
+
+function initializeAnimation() {
+  // Only initialize once
+  if (animationInitialized) {
+    console.log("Animation already initialized, skipping");
+    return;
+  }
+  
+  console.log("Initializing animation from footer-animation.js");
   const container = document.getElementById('footer-animation-container');
   if (container && typeof createGridAnimation === 'function') {
+    console.log("Animation container found, starting initialization");
+    
     // Add visible class to wrapper
     const wrapper = document.querySelector('.animation-wrapper');
-    if (wrapper) wrapper.classList.add('visible');
+    if (wrapper) {
+      console.log("Adding visible class to animation wrapper");
+      wrapper.classList.add('visible');
+    }
     
-    // Small delay to ensure DOM is ready
-    setTimeout(() => {
-      createGridAnimation(container);
-    }, 100);
+    // Force immediate initialization
+    console.log("Calling createGridAnimation directly");
+    createGridAnimation(container);
+    animationInitialized = true;
+  } else {
+    console.error("Animation container or function not found");
   }
-});
+}

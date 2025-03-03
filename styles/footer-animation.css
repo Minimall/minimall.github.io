@@ -8,14 +8,15 @@
   left: 0;
   right: 0;
   bottom: 0;
-  opacity: 0;
+  opacity: 0.01; /* Start with a tiny bit of opacity to ensure rendering */
   transition: opacity 800ms ease;
   z-index: 0;
   overflow: hidden;
   height: 100%;
   width: 100%;
   background: #ffffff;
-  will-change: opacity;
+  will-change: opacity, transform;
+  transform: translateZ(0); /* Force hardware acceleration */
 }
 
 .animation-wrapper.visible {
