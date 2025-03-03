@@ -207,7 +207,7 @@ class IOSStyleSwiper {
 
         this.dotsContainer.innerHTML = '';
 
-        // Create dot for each image
+        // Create dot for each image using unified dot styles
         this.imageUrls.forEach((_, index) => {
             const dot = document.createElement('div');
             dot.className = 'dot' + (index === 0 ? ' active' : '');

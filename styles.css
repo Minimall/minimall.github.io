@@ -1078,7 +1078,7 @@ body.no-scroll {
     padding: 16px;
   }
 
-  /* Mobile dot styles are now unified in the main section above */
+  /* Dots are defined in the unified styles section */
 
   /* Centered image view */
   .centered-image-container {
