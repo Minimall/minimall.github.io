@@ -3,46 +3,45 @@
    Typography
    ========================================================================== */
 body {
-  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: 'Recursive', -apple-system, BlinkMacSystemFont, "Bahnschrift", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   font-size: 1.2rem;
   line-height: 1.6;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
   color: #111;
   -webkit-font-smoothing: antialiased;
-  font-feature-settings: "liga" 1, "calt" 1, "dlig" 1, "ss01" 1, "ss02" 1;
 }
 
 h2 {
   font-size: 1.5rem;
   line-height: 1.3;
-  font-weight: 800;
-  letter-spacing: 0.01em;
+  font-variation-settings: "wght" 800;
+  letter-spacing: 0.02em;
   color: #111;
   margin-bottom: 1rem;
 }
 
 .headline {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Recursive', sans-serif;
   font-weight: 500;
   font-size: 4.2rem;
   line-height: 1.2;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.06em;
   margin-bottom: calc(var(--spacing));
+  font-variation-settings: "slnt" 0, "CASL" 0.55, "CRSV" 1, "MONO" 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
   color: #111111;
-  font-feature-settings: "liga" 1, "calt" 1, "dlig" 1, "ss01" 1, "ss02" 1;
 }
 
 .headline .wave-text .word {
   display: inline;
-  font-weight: 500;
+  font-variation-settings: "wght" 500, "CASL" 0.55;
   color: #111111;
   opacity: 1;
   transform: translateY(0);
   white-space: pre-wrap;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.06em;
 }
 
 .headline .wave-text span.shimmer-in {
@@ -53,19 +52,19 @@ h2 {
 
 @keyframes shimmerWave {
   0% { 
-    font-weight: 500;
+    font-variation-settings: "wght" 500;
     color: #1a4ce0; 
   }
   33% { 
-    font-weight: 800;
+    font-variation-settings: "wght" 840;
     color: #c12f78; 
   }
   88% { 
-    font-weight: 800;
+    font-variation-settings: "wght" 840;
     color: #540a99; 
   }
   100% { 
-    font-weight: 500;
+    font-variation-settings: "wght" 500;
     color: #111; 
   }
 }
@@ -84,8 +83,8 @@ p {
 .case-title {
   font-size: 2.25rem;
   line-height: 1.45;
-  letter-spacing: -0.025em;
-  font-weight: 400;
+  letter-spacing: -0.035em;
+  font-variation-settings: "wght" 400;
   color: var(--case-title-color);
   max-width: var(--max-width);
   padding-bottom: 1rem;
@@ -93,11 +92,11 @@ p {
 
 .case-title .wave-text .word {
   display: inline;
-  font-weight: 400;
+  font-variation-settings: "wght" 400;
   opacity: 1;
   transform: translateY(0);
   white-space: pre-wrap;
-  letter-spacing: -0.025em;
+  letter-spacing: -0.035em;
 }
 
 .case-title .wave-text span.shimmer-in {
@@ -108,19 +107,19 @@ p {
 
 @keyframes caseTitleWave {
   0% { 
-    font-weight: 400;
+    font-variation-settings: "wght" 400;
     color: #1a4ce0;
   }
   33% { 
-    font-weight: 700;
+    font-variation-settings: "wght" 700;
     color: #c12f78;
   }
   88% { 
-    font-weight: 700;
+    font-variation-settings: "wght" 700;
     color: #540a99;
   }
   100% { 
-    font-weight: 400;
+    font-variation-settings: "wght" 400;
     color: var(--case-title-color);
   }
 }
