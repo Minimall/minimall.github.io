@@ -1,4 +1,3 @@
-
 /**
  * CSS Loader Utility
  * Handles dynamic loading of CSS files based on viewport and features
@@ -30,15 +29,15 @@ function isCssLoaded(path) {
 // Function to dynamically load a CSS file
 function loadCss(path) {
     if (isCssLoaded(path)) return Promise.resolve();
-    
+
     return new Promise((resolve, reject) => {
         const link = document.createElement('link');
         link.rel = 'stylesheet';
         link.href = path;
-        
+
         link.onload = () => resolve();
         link.onerror = () => reject(new Error(`Failed to load CSS: ${path}`));
-        
+
         document.head.appendChild(link);
     });
 }
@@ -46,7 +45,7 @@ function loadCss(path) {
 // Function to load all required CSS files
 function loadRequiredCss() {
     const promises = [];
-    
+
     cssModules.forEach(module => {
         // Load if it's always required or its condition is met
         if (module.always || (module.condition && module.condition())) {
@@ -56,7 +55,7 @@ function loadRequiredCss() {
             }
         }
     });
-    
+
     return Promise.all(promises);
 }
 
@@ -67,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }).catch(error => {
         console.error('Error loading CSS modules:', error);
     });
-    
+
     // Also check on resize for responsive modules
     let resizeTimer;
     window.addEventListener('resize', () => {
