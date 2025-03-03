@@ -97,30 +97,30 @@
   background: linear-gradient(120deg, transparent 0%, transparent 80%, rgba(234, 67, 53, 0.05) 95%, rgba(234, 67, 53, 0) 100%);
 }
 
-.pill-button.chat {
-  color: #0088cc;
+.pill-button.chat,
+.pill-button.linkedin,
+.pill-button:not(.book-call) {
+  color: #55595E;
+  border-color: #F3F6FA;
 }
 
-.pill-button.chat:hover {
-  box-shadow: 0 0 6px rgba(0, 136, 204, 0.1);
-  background-color: rgba(0, 136, 204, 0.01);
+.pill-button.chat:hover,
+.pill-button.linkedin:hover,
+.pill-button:not(.book-call):hover {
+  border-color: #EDF1F7;
+  background-color: white;
 }
 
-.pill-button.chat:before {
-  background: linear-gradient(120deg, transparent 0%, transparent 80%, rgba(0, 136, 204, 0.05) 95%, rgba(0, 136, 204, 0) 100%);
+.pill-button.chat span,
+.pill-button.linkedin span,
+.pill-button:not(.book-call) span {
+  color: #55595E !important;
 }
 
-.pill-button.linkedin {
-  color: #0077B5;
-}
-
-.pill-button.linkedin:hover {
-  box-shadow: 0 0 6px rgba(0, 119, 181, 0.1);
-  background-color: rgba(0, 119, 181, 0.01);
-}
-
-.pill-button.linkedin:before {
-  background: linear-gradient(120deg, transparent 0%, transparent 80%, rgba(0, 119, 181, 0.05) 95%, rgba(0, 119, 181, 0) 100%);
+.pill-button.chat:before,
+.pill-button.linkedin:before,
+.pill-button:not(.book-call):before {
+  background: linear-gradient(120deg, transparent 0%, transparent 80%, rgba(85, 89, 94, 0.05) 95%, rgba(85, 89, 94, 0) 100%);
 }
 
 .menu .pill-button {
