@@ -236,9 +236,9 @@ nav a.active:hover {
   padding-bottom: 15vw;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: start;
   align-items: center;
-  text-align: center;
+
 }
 
 .case-content {
