@@ -11,8 +11,29 @@ function setupHoverEffects() {
         // Skip if already processed
         if (element.hasAttribute('data-processed')) return;
         
-        // Skip logo elements - exclude case-logo links from hover effects
-        if (element.closest('.case-logo')) return;
+        // Skip elements that should be excluded from wave effects
+        if (element.closest('.case-logo') || element.hasAttribute('data-exclude-wave')) return;
+        
+        // Skip elements that are pill buttons with icons - preserve their structure
+        if (element.classList.contains('pill-button') && element.querySelector('.button-icon')) {
+            // For pill buttons with icons, only apply wave effect to the text part, not the icon
+            const textContent = element.childNodes[element.childNodes.length - 1];
+            if (textContent && textContent.nodeType === Node.TEXT_NODE) {
+                const text = textContent.textContent.trim();
+                const waveSpan = document.createElement('span');
+                waveSpan.className = 'wave-text';
+                waveSpan.innerHTML = text.split('').map(char => 
+                    char === ' ' ? `<span>&nbsp;</span>` : `<span>${char}</span>`
+                ).join('');
+                element.replaceChild(waveSpan, textContent);
+            }
+            
+            // Add hover event listeners for the button
+            element.addEventListener('mouseenter', () => handleWaveEffect(element, true));
+            element.addEventListener('mouseleave', () => handleWaveEffect(element, false));
+            element.setAttribute('data-processed', 'true');
+            return;
+        }
 
         // Check if it's a direct image hover element
         const hasDirectImageHover = element.dataset.images && !element.querySelector('.wave-text');
@@ -193,21 +214,26 @@ function preloadHoverImages() {
 
 // Make sure logos are preserved and not affected by hover effects
 function preserveLogos() {
-    // Find all case logos and ensure they're visible
-    const caseLogos = document.querySelectorAll('.case-logo img');
-    caseLogos.forEach(logo => {
-        // Force logo visibility and prevent any CSS that might hide it
-        logo.style.display = 'block !important';
-        logo.style.visibility = 'visible !important';
-        logo.style.opacity = '1 !important';
+    // Find all case logos and button icons and ensure they're visible
+    const logosAndIcons = document.querySelectorAll('.case-logo img, .button-icon');
+    
+    logosAndIcons.forEach(element => {
+        // Remove any wave classes that might be causing the issue
+        element.classList.remove('wave-in', 'wave-out');
         
-        // Remove any classes that might be causing the issue
-        logo.classList.remove('wave-in', 'wave-out');
-        
-        // Mark logo parents to be excluded from hover effects
-        const logoParent = logo.closest('.case-logo');
-        if (logoParent) {
-            logoParent.setAttribute('data-logo-container', 'true');
+        // Mark parent to be excluded from hover effects
+        const parent = element.closest('.case-logo, .pill-button');
+        if (parent) {
+            parent.setAttribute('data-exclude-wave', 'true');
+            
+            // Remove any wave-text wrappers from icons
+            const waveTexts = parent.querySelectorAll('.wave-text');
+            waveTexts.forEach(waveText => {
+                if (waveText.closest('.button-icon')) {
+                    const originalContent = waveText.innerHTML;
+                    waveText.outerHTML = originalContent;
+                }
+            });
         }
     });
 }
