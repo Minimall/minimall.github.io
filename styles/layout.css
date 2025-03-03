@@ -41,6 +41,8 @@ body {
   padding-right: 5vw;
 }
 
+/* Footer styles moved to footer-animation.css */
+
 .main-text {
   max-width: var(--max-width);
   padding-bottom: 2vw;

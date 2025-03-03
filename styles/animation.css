@@ -5,35 +5,4 @@
   inherits: true;
 }
 
-.footer-animation {
-  display: grid;
-  gap: 0px 6px;
-  font-size: 10px;
-  font-family: monospace;
-  padding: 2rem;
-  --t: 0;
-  width: fit-content;
-  margin: 0 auto;
-}
-
-.footer-animation:hover {
-  animation: tick 86400000ms linear infinite;
-}
-
-@keyframes tick {
-  from { --t: 0 }
-  to { --t: 86400000 }
-}
-
-.animation-cell {
-  width: 1em;
-  height: 1em;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #000;
-}
-
-.footer-animation:hover .animation-cell {
-  color: var(--color-calc);
-}
+/* Footer animation styles moved to footer-animation.css */

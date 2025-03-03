@@ -1,7 +1,56 @@
 
 /* ==========================================================================
-   Footer Animation
+   Footer Animation and Styles
    ========================================================================== */
+
+/* Footer structure and layout */
+.container .footer2,
+.footer2 {
+  position: relative;
+  z-index: 2;
+  clear: both;
+  float: none;
+  display: block;
+  margin-top: 2vw;
+  width: 100%;
+  max-width: 100vw;
+  margin-left: 0;
+  margin-right: 0;
+  overflow: hidden;
+  background: transparent !important;
+  height: 85vh;
+}
+
+/* Prevent grid from affecting footer position */
+.grid-container + .container,
+.grid-container + .footer2,
+.grid-container + .case-study-container {
+  display: block;
+  clear: both;
+  position: relative;
+}
+
+.footer-content {
+  max-width: var(--max-width);
+  height: 100%;
+  margin: 0 auto;
+  padding-top: 2vw;
+  padding-right: 5vw;
+  padding-left: 5vw;
+  padding-bottom: 15vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  z-index: 4; /* Ensure content stays on top */
+}
+
+.footer2 .main-text {
+  position: relative;
+  z-index: 5; /* Higher z-index to ensure content stays on top */
+}
+
+/* Animation container and wrapper */
 .animation-wrapper {
   position: absolute;
   top: 0;
@@ -41,16 +90,6 @@
   transform: none; /* Remove transform that might be causing issues */
 }
 
-.line {
-  background-color: #4ECDC4;
-  opacity: 0.5;
-  width: 1px;
-  height: 40px;
-  margin: auto;
-  transform-origin: center;
-  transition: background-color 0.5s ease;
-}
-
 #footer-animation-container {
   width: 100%;
   height: 100vh;
@@ -61,55 +100,58 @@
   overflow: hidden;
 }
 
-.footer2 .main-text {
-  position: relative;
-  z-index: 5; /* Higher z-index to ensure content stays on top */
+/* Animation elements */
+.line {
+  background-color: #4ECDC4;
+  opacity: 0.5;
+  width: 1px;
+  height: 40px;
+  margin: auto;
+  transform-origin: center;
+  transition: background-color 0.5s ease;
 }
 
-/* Ensure footer is separated from grid and spans full width */
-.container .footer2,
-.footer2 {
-  position: relative;
-  z-index: 2;
-  clear: both;
-  float: none;
-  display: block;
-  margin-top: 2vw;
-  width: 100%;
-  max-width: 100vw;
-  margin-left: 0;
-  margin-right: 0;
-  overflow: hidden;
-}
-
-/* Prevent grid from affecting footer position */
-.grid-container + .container,
-.grid-container + .footer2,
-.grid-container + .case-study-container {
-  display: block;
-  clear: both;
-  position: relative;
-}
-
-.footer-content {
-  max-width: var(--max-width);
-  height: 100%;
+/* Footer animation grid */
+.footer-animation {
+  display: grid;
+  gap: 0px 6px;
+  font-size: 10px;
+  font-family: monospace;
+  padding: 2rem;
+  --t: 0;
+  width: fit-content;
   margin: 0 auto;
-  padding-top: 2vw;
-  padding-right: 5vw;
-  padding-left: 5vw;
-  padding-bottom: 15vw;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  position: relative;
-  z-index: 4; /* Ensure content stays on top */
 }
 
-.footer2 {
-  background: transparent !important;
-  position: relative;
-  height: 85vh;
-  overflow: hidden;
-  z-index: 0; /* Added z-index for better control */
+.footer-animation:hover {
+  animation: tick 86400000ms linear infinite;
+}
+
+@keyframes tick {
+  from { --t: 0 }
+  to { --t: 86400000 }
+}
+
+.animation-cell {
+  width: 1em;
+  height: 1em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000;
+}
+
+.footer-animation:hover .animation-cell {
+  color: var(--color-calc);
+}
+
+/* Media queries for responsive footer */
+@media (max-width: 788px) {
+  .footer2 {
+    height: 70vh;
+  }
+  
+  .footer-content {
+    padding-bottom: 10vw;
+  }
 }

@@ -26,21 +26,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Footer styles for full width containment */
-.container .footer2,
-.footer2 {
-  position: relative;
-  z-index: 2;
-  clear: both;
-  float: none;
-  display: block;
-  margin-top: 2vw;
-  width: 100%;
-  max-width: none; /* Remove max-width constraint */
-  margin-left: 0;
-  margin-right: 0;
-  overflow: hidden;
-}
+/* Footer styles moved to footer-animation.css */
 
 /* Basic typography */
 h2 {
