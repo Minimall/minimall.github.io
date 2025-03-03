@@ -65,7 +65,7 @@
 /* Specific button styles */
 .pill-button.book-call {
   background-color: #111;
-  color: white;
+  color: white !important; /* Force white text color always */
   font-variation-settings: "wght" 600;
 }
 
@@ -76,6 +76,12 @@
 .pill-button.book-call:hover {
   background-color: #000;
   border-color: #000;
+}
+
+/* Ensure text and spans inside book-call button stay white */
+.pill-button.book-call span,
+.pill-button.book-call .wave-text span {
+  color: white !important;
 }
 
 .pill-button.mail {
