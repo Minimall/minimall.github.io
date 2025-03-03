@@ -14,7 +14,7 @@ a:hover {
   animation: colorWave 0.8s ease-in-out forwards;
 }
 
-/* Hover effect animations */
+/* Hover effect animations - optimized for performance */
 @keyframes colorWave {
   0% { color: #1a4ce0; }
   33% { color: #c12f78; }
@@ -22,12 +22,19 @@ a:hover {
   100% { color: #111; }
 }
 
+/* Add will-change to optimize animation performance */
 [data-hover="true"] span {
   color: #005FCB;
   font-variation-settings: "wght" 500;
   transition: color 0.3s ease, font-variation-settings 0.3s ease;
   width: auto;
   display: inline;
+  will-change: color, font-variation-settings;
+}
+
+/* Pre-initialize hover states for better performance */
+a, [data-hover="true"] {
+  will-change: font-variation-settings;
 }
 
 .name [data-hover="true"] span {

@@ -248,24 +248,31 @@ function preserveLogos() {
 
 // Initialize hover effects on DOM content loaded
 document.addEventListener("DOMContentLoaded", () => {
-    // Preload hover images
-    preloadHoverImages();
-    
-    // Set up hover effects
+    // Priority 1: Set up core hover effects first
     setupHoverEffects();
     
-    // Set up mobile hover images
-    setupMobileHoverImages();
-    
-    // Add mouse move handler for desktop
+    // Priority 2: Add mouse move handler for desktop (with passive flag for performance)
     window.addEventListener("mousemove", updateMousePosition, { passive: true });
     
-    // Preserve logos
+    // Priority 3: Preserve logos
     preserveLogos();
     
-    // Setup periodic logo preservation
-    setInterval(preserveLogos, 1000);
+    // Less critical operations - run after a small delay to prioritize UI responsiveness
+    setTimeout(() => {
+        // Preload hover images for future use
+        preloadHoverImages();
+        
+        // Set up mobile hover images
+        setupMobileHoverImages();
+        
+        // Setup periodic logo preservation
+        setInterval(preserveLogos, 1000);
+    }, 100); // Very short delay to prioritize critical visual effects
 });
+
+// Pre-initialize critical CSS variables for hover effects
+document.documentElement.style.setProperty('--mouse-x', '0');
+document.documentElement.style.setProperty('--mouse-y', '0');
 
 // Export functions for use in other scripts
 window.hoverJS = {
