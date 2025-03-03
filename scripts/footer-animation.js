@@ -233,3 +233,20 @@ function createGridAnimation(gridElement) {
 };
 
 window.createGridAnimation = createGridAnimation;
+
+// Initialize the footer animation when the DOM content is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    const footerAnimationContainer = document.getElementById('footer-animation-container');
+    if (footerAnimationContainer) {
+        console.log("Found footer animation container, initializing animation");
+        createGridAnimation(footerAnimationContainer);
+        
+        // Make the animation wrapper visible
+        const animationWrapper = document.querySelector('.animation-wrapper');
+        if (animationWrapper) {
+            animationWrapper.classList.add('visible');
+        }
+    } else {
+        console.warn("Footer animation container not found");
+    }
+});
