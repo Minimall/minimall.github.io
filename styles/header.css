@@ -48,14 +48,14 @@
 }
 
 .nav-link.active {
-  color: #111;
+  color: #111 !important;
   cursor: default;
   pointer-events: none;
 }
 
 .nav-link.active:hover {
   animation: none;
-  color: #111;
+  color: #111 !important;
 }
 
 /* Mobile adjustments */
