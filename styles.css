@@ -230,13 +230,13 @@ nav a.active:hover {
   max-width: var(--max-width);
   height: 100%;
   margin: 0 auto;
-  padding-top: 2vw;
+  padding-top: 6vw;
   padding-right: 5vw;
   padding-left: 5vw;
   padding-bottom: 15vw;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: start;
   align-items: center;
 }
 
