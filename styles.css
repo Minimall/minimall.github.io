@@ -1071,7 +1071,8 @@ body.no-scroll {
 }
 
 /* ==========================================================================
-   Carousel Dots - Unified Styles
+   Carousel Dots - CENTRALIZED UNIFIED STYLES
+   All dot styles should be defined here, not in carousel.css or other files
    ========================================================================== */
 .carousel-dots {
   display: flex;

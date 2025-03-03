@@ -146,5 +146,5 @@
         background: #000;
     }
     
-    /* Note: dot styles and padding-bottom for iOS devices are defined in styles.css */
+    /* All dot styles including carousel-dots, sticky-dots and .dot are fully defined in styles.css */
 }
