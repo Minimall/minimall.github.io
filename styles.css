@@ -474,7 +474,8 @@ li, .tag {
 
   .menu {
     display: flex;
-    flex-direction: column;
+    flex-direction: column !important;
+    flex-wrap: nowrap !important;
     gap: calc(var(--spacing) / 2);
     margin: 0 0 var(--spacing) 0;
   }

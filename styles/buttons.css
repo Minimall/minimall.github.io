@@ -153,12 +153,13 @@
 @media (max-width: 788px) {
   .menu {
     display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
+    flex-direction: column !important;
+    flex-wrap: nowrap !important;
     gap: 0.75rem;
   }
 
   .menu .pill-button {
     margin-right: 0;
+    width: 100%; /* Make buttons full width on mobile */
   }
 }
