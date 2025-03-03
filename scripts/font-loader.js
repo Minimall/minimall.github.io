@@ -10,33 +10,33 @@
     return;
   }
   
-  // Create a simpler font loading detector that doesn't trigger CORS issues
-  if ('fonts' in document) {
-    // Simple timeout-based approach
-    const fontLoadingTimeout = setTimeout(function() {
-      console.log('Font loading timeout - using fallbacks');
-      document.documentElement.classList.remove('fonts-loading');
-      document.documentElement.classList.add('fonts-loaded');
-    }, 2000);
-    
-    // Use a simpler check that doesn't send extra headers
-    const fontLoaded = () => {
-      clearTimeout(fontLoadingTimeout);
+  // Use the native FontFace API for better font loading control
+  if (typeof FontFace !== 'undefined' && 'fonts' in document) {
+    // We'll let Google Fonts handle the actual font loading
+    // This just monitors the process
+    document.fonts.ready.then(function() {
       console.log('Google fonts loaded successfully');
       document.documentElement.classList.remove('fonts-loading');
       document.documentElement.classList.add('fonts-loaded');
       // Cache the font loading status for future page views
       sessionStorage.setItem('fonts-loaded', 'true');
-    };
-    
-    // Check if the font is already loaded
-    document.fonts.ready.then(fontLoaded).catch(function() {
-      // Fallback if the promise is rejected
+    }).catch(function(error) {
+      console.warn('Error with font loading:', error);
+      // Still show content with fallback fonts
       document.documentElement.classList.remove('fonts-loading');
       document.documentElement.classList.add('fonts-loaded');
     });
+    
+    // Set a timeout to ensure content displays even if font loading stalls
+    setTimeout(function() {
+      if (!document.documentElement.classList.contains('fonts-loaded')) {
+        console.log('Font loading timeout - using fallbacks');
+        document.documentElement.classList.remove('fonts-loading');
+        document.documentElement.classList.add('fonts-loaded');
+      }
+    }, 2000);
   } else {
-    // For browsers without font API support
+    // For browsers without FontFace API support
     document.documentElement.classList.remove('fonts-loading');
     document.documentElement.classList.add('fonts-loaded');
   }
