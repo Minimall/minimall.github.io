@@ -45,13 +45,13 @@
 .footer-content {
   display: flex;
   flex-direction: column;
-  justify-content: start;
-  align-content: center;
+  justify-content: center;
+  align-items: center;
   position: relative;
   z-index: 4;
   height: 100%;
   margin: 0 auto;
-  padding: 2vw 5vw 15vw;
+  padding: 0 5vw;
 }
 
 .footer2 .main-text {
