@@ -80,6 +80,10 @@
   font-variation-settings: "wght" 600;
 }
 
+.pill-button.book-call .button-icon {
+  color: white !important; /* Force white icon color always */
+}
+
 .pill-button.book-call:before {
   background: linear-gradient(120deg, transparent 0%, transparent 50%, rgba(255, 255, 255, 0.3) 80%, rgba(255, 255, 255, 0) 100%);
 }
