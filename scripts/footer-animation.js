@@ -1,3 +1,4 @@
+
 function createGridAnimation(gridElement) {
     console.log("Starting grid animation");
     if (!gridElement) {
@@ -236,42 +237,74 @@ function createGridAnimation(gridElement) {
 // Make sure function is globally available
 window.createGridAnimation = createGridAnimation;
 
-// Force initialization on both DOMContentLoaded and window load events
-document.addEventListener('DOMContentLoaded', initializeAnimation);
-window.addEventListener('load', initializeAnimation);
-
-// One-time initialization flag
-let animationInitialized = false;
-
-function initializeAnimation() {
-  // Only initialize once
-  if (animationInitialized) {
-    console.log("Animation already initialized, skipping");
-    return;
-  }
-  
-  // Use a timeout to ensure DOM is fully rendered
-  setTimeout(() => {
-    console.log("Initializing animation from footer-animation.js");
-    const container = document.getElementById('footer-animation-container');
-    if (container && typeof createGridAnimation === 'function') {
-      console.log("Animation container found, starting initialization");
-      
-      // Add visible class to wrapper
-      const wrapper = document.querySelector('.animation-wrapper');
-      if (wrapper) {
-        console.log("Adding visible class to animation wrapper");
+// More reliable initialization - try multiple approaches
+function initializeFooterAnimation() {
+    console.log("Initializing footer animation");
+    
+    // Make animation wrapper visible immediately
+    const wrapper = document.querySelector('.animation-wrapper');
+    if (wrapper) {
         wrapper.classList.add('visible');
-      }
-      
-      // Wait a moment before initializing the animation
-      setTimeout(() => {
-        console.log("Calling createGridAnimation directly");
-        createGridAnimation(container);
-        animationInitialized = true;
-      }, 100);
-    } else {
-      console.error("Animation container or function not found");
+        // Force reflow
+        void wrapper.offsetWidth;
     }
-  }, 300);
+    
+    const container = document.getElementById('footer-animation-container');
+    if (!container) {
+        console.error("Footer animation container not found");
+        return;
+    }
+    
+    // Clear any existing animation
+    while (container.firstChild) {
+        container.removeChild(container.firstChild);
+    }
+    
+    // Start the animation
+    if (typeof window.createGridAnimation === 'function') {
+        console.log("Starting footer grid animation");
+        window.createGridAnimation(container);
+    } else {
+        console.error("createGridAnimation function not available");
+    }
 }
+
+// Initialize on both events to ensure it works everywhere
+document.addEventListener('DOMContentLoaded', function() {
+    console.log("DOMContentLoaded triggered");
+    
+    // Small delay to ensure DOM is ready
+    setTimeout(initializeFooterAnimation, 300);
+});
+
+window.addEventListener('load', function() {
+    console.log("Window load triggered");
+    
+    // Ensure initialization happens
+    setTimeout(initializeFooterAnimation, 500);
+    
+    // Second attempt after a longer delay as a fallback
+    setTimeout(function() {
+        const container = document.getElementById('footer-animation-container');
+        const wrapper = document.querySelector('.animation-wrapper');
+        
+        if (container && !container.children.length && wrapper) {
+            console.log("Fallback initialization");
+            wrapper.classList.add('visible');
+            window.createGridAnimation(container);
+        }
+    }, 1500);
+});
+
+// Handle page visibility changes
+document.addEventListener('visibilitychange', function() {
+    if (!document.hidden) {
+        console.log("Page became visible, checking animation");
+        const container = document.getElementById('footer-animation-container');
+        
+        if (container && (!container.children.length || container.children.length < 10)) {
+            console.log("Reinitializing animation after visibility change");
+            initializeFooterAnimation();
+        }
+    }
+});

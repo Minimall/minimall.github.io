@@ -27,7 +27,7 @@ window.addEventListener('load', function() {
         setTimeout(() => {
           console.log("Creating grid animation from scripts.js");
           window.createGridAnimation(footerAnimationContainer);
-        }, 500);
+        }, 200);
       } else {
         console.error("createGridAnimation function not found in global scope");
         
@@ -37,9 +37,17 @@ window.addEventListener('load', function() {
           const script = document.createElement('script');
           script.src = "scripts/footer-animation.js";
           script.onload = () => {
-            if (typeof window.createGridAnimation === 'function') {
-              window.createGridAnimation(footerAnimationContainer);
-            }
+            // Ensure wrapper is visible
+            const animationWrapper = document.querySelector('.animation-wrapper');
+            if (animationWrapper) animationWrapper.classList.add('visible');
+            
+            // Small delay to ensure function is available after script load
+            setTimeout(() => {
+              if (typeof window.createGridAnimation === 'function') {
+                console.log("Running animation after dynamic script load");
+                window.createGridAnimation(footerAnimationContainer);
+              }
+            }, 100);
           };
           document.body.appendChild(script);
         }
@@ -48,4 +56,19 @@ window.addEventListener('load', function() {
       console.error("Footer animation container not found");
     }
   }, 300); // Small delay to ensure everything is ready
+  
+  // Fallback initialization in case the first attempt fails
+  setTimeout(() => {
+    const footerAnimationContainer = document.getElementById('footer-animation-container');
+    const animationWrapper = document.querySelector('.animation-wrapper');
+    
+    if (footerAnimationContainer && (!footerAnimationContainer.children.length || footerAnimationContainer.children.length < 10)) {
+      console.log("Running fallback animation initialization");
+      if (animationWrapper) animationWrapper.classList.add('visible');
+      
+      if (typeof window.createGridAnimation === 'function') {
+        window.createGridAnimation(footerAnimationContainer);
+      }
+    }
+  }, 2000);
 });

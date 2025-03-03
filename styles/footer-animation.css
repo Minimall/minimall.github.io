@@ -82,6 +82,7 @@
 
 .animation-wrapper.visible {
   opacity: 1;
+  visibility: visible;
 }
 
 .animation-overlay {
