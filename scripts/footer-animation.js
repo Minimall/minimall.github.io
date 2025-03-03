@@ -232,4 +232,20 @@ function createGridAnimation(gridElement) {
     requestAnimationFrame(animateLines);
 };
 
+// Make sure function is globally available
 window.createGridAnimation = createGridAnimation;
+
+// Auto-initialize when script loads as a fallback
+document.addEventListener('DOMContentLoaded', function() {
+  const container = document.getElementById('footer-animation-container');
+  if (container && typeof createGridAnimation === 'function') {
+    // Add visible class to wrapper
+    const wrapper = document.querySelector('.animation-wrapper');
+    if (wrapper) wrapper.classList.add('visible');
+    
+    // Small delay to ensure DOM is ready
+    setTimeout(() => {
+      createGridAnimation(container);
+    }, 100);
+  }
+});
