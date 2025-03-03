@@ -132,7 +132,6 @@
     flex-direction: column;
   }
 
-  @media (max-width: 788px) {
   .case-title {
     font-size: 1.8rem;
   }
