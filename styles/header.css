@@ -8,6 +8,7 @@
   justify-content: space-between;
   align-items: flex-start;
   width: 100%;
+  max-width: var(--max-width);
   margin-bottom: calc(var(--spacing) * 3);
   font-size: 1.2rem;
   padding: 0;
