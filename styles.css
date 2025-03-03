@@ -1109,3 +1109,128 @@ body.no-scroll {
     padding-bottom: calc(12px + env(safe-area-inset-bottom));
   }
 }
+
+/* ==========================================================================
+   Desktop Carousel Styles (from carousel.css)
+   ========================================================================== */
+.carousel-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 9999;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    justify-content: center;
+    align-items: center;
+}
+
+.carousel-container {
+    position: relative;
+    width: 98vw;
+    height: 97vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.carousel-image-container {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.carousel-image {
+    max-width: 98%;
+    max-height: 97%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    transform-origin: center center;
+    will-change: transform, opacity;
+    box-shadow: 0 12px 24px rgba(0,0,0,0.08);
+    transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.5s ease;
+    border-radius: 4px;
+}
+
+.carousel-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: none;
+    padding: 16px;
+    cursor: pointer;
+    z-index: 10000;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+}
+
+.carousel-nav:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-50%) scale(1.05);
+}
+
+.carousel-nav svg {
+    stroke: white;
+    stroke-width: 2;
+    width: 28px;
+    height: 28px;
+}
+
+.carousel-nav.prev {
+    left: 20px;
+}
+
+.carousel-nav.next {
+    right: 20px;
+}
+
+.grid-item {
+    cursor: pointer;
+}
+
+/* Additional mobile carousel styles */
+@media (max-width: 788px) {
+    .grid-container {
+        padding: 4vw;
+    }
+
+    .grid-item {
+        cursor: pointer;
+        transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .grid-item:active {
+        opacity: 0.8;
+        transform: scale(0.97);
+    }
+
+    /* Carousel enhancements for mobile */
+    .carousel {
+        background-color: #000;
+    }
+
+    .carousel-item {
+        transition: opacity 0.3s ease;
+    }
+
+    /* Optimize videos for mobile carousel */
+    video.carousel-item {
+        object-fit: contain;
+        background: #000;
+    }
+}
