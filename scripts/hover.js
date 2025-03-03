@@ -5,6 +5,14 @@ let rotationCounter = 0;
 
 // Set up hover effects for elements
 function setupHoverEffects() {
+    // Ensure CSS for hover effects is loaded
+    if (!document.querySelector('link[href*="links.css"]')) {
+        const linkCss = document.createElement('link');
+        linkCss.rel = 'stylesheet';
+        linkCss.href = 'styles/links.css';
+        document.head.appendChild(linkCss);
+    }
+    
     const hoverableElements = document.querySelectorAll('a, [data-hover="true"]');
 
     hoverableElements.forEach(element => {

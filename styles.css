@@ -8,311 +8,15 @@
 @import 'styles/buttons.css';
 @import 'styles/header.css';
 @import 'styles/animation.css';
+@import 'styles/links.css';
+@import 'styles/case-studies.css';
+@import 'styles/images.css';
+@import 'styles/footer-animation.css';
+@import 'styles/marquee.css';
+@import 'styles/components.css';
+@import 'styles/responsive.css';
 
-/* ==========================================================================
-   Links & Hover Effects
-   ========================================================================== */
-a {
-  color: inherit;
-  text-decoration: none;
-  transition: all 0.3s ease, font-variation-settings 0.3s ease;
-  font-variation-settings: "wght" 500;
-}
-
-a:hover {
-  font-variation-settings: "wght" 500;
-  animation: colorWave 0.8s ease-in-out forwards;
-}
-
-/* Hover effect animations */
-@keyframes colorWave {
-  0% { color: #1a4ce0; }
-  33% { color: #c12f78; }
-  88% { color: #540a99; }
-  100% { color: #111; }
-}
-
-[data-hover="true"] span {
-  color: #005FCB;
-  font-variation-settings: "wght" 500;
-  transition: color 0.3s ease, font-variation-settings 0.3s ease;
-  width: auto;
-  display: inline;
-}
-
-.name [data-hover="true"] span {
-  color: #111;
-}
-
-[data-hover="true"] span.wave-in {
-  font-variation-settings: "wght" 840;
-  animation: colorWave 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-  transition: font-variation-settings 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-[data-hover="true"] span.wave-out {
-  font-variation-settings: "wght" 500;
-  transition: all 0.75s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* Wave animation timing */
-a:hover span:nth-child(1n) { animation-delay: 0.05s; }
-a:hover span:nth-child(2n) { animation-delay: 0.1s; }
-a:hover span:nth-child(3n) { animation-delay: 0.15s; }
-a:hover span:nth-child(4n) { animation-delay: 0.2s; }
-a:hover span:nth-child(5n) { animation-delay: 0.25s; }
-
-a:not(:hover) span:nth-child(1n) { animation-delay: 0.015s; }
-a:not(:hover) span:nth-child(2n) { animation-delay: 0.030s; }
-a:not(:hover) span:nth-child(3n) { animation-delay: 0.045s; }
-a:not(:hover) span:nth-child(4n) { animation-delay: 0.06s; }
-a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
-
-/* ==========================================================================
-   Case Study Components
-   ========================================================================== */
-
-/* Logo styles */
-.case-logo img {
-  height: 32px !important;
-  width: auto !important;
-  display: block !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-  transition: transform 0.3s cubic-bezier(0.18, 1.3, 0.4, 1) !important;
-}
-
-.case-logo {
-  margin-bottom: 3vw;
-}
-
-.case-logo a:hover img {
-  transform: scale(1.15);
-}
-
-/* Special cases for specific logos */
-.case-logo img[src$="wombi.svg"] {
-  transition: none !important;
-  transform: none !important;
-  height: 24px !important;
-}
-
-.case-logo img[src$="datrics.svg"] {
-  height: 44px !important;
-}
-
-/* Case study text content */
-.case-text {
-  padding-top: 1rem;
-  margin-bottom: var(--spacing);
-}
-
-/* ==========================================================================
-   Image Components
-   ========================================================================== */
-.profile-image {
-  width: 100%;
-  height: auto;
-  border-radius: 8px;
-  margin-bottom: var(--spacing);
-  border: 1px solid #dbdbdb;
-  box-sizing: border-box;
-  object-position: center;
-  object-fit: cover;
-  image-rendering: auto;
-  box-shadow: 0 .8021873017743928px 2.0474388280329358px -.8333333333333333px #0000001a,
-              0 2.288533303243457px 7.781013231027754px -1.8888888888888885px #0000001a,
-              0 10px 34px -2.5px #0000001a;
-}
-
-.case-image-portrait {
-  position: relative;
-  aspect-ratio: 9/16;
-  overflow: hidden;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  width: min(calc((100vw - 20vw) / 4), calc((var(--max-width) - 10vw) / 4));
-  height: auto;
-  max-height: 910px;
-  max-width: calc(910px * 9/16);
-  flex: 1;
-}
-
-.case-image-landscape {
-  position: relative;
-  aspect-ratio: 16/10;
-  overflow: hidden;
-  border-radius: 6px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  width: 100%;
-  max-width: 1680px;
-  margin: 0 auto;
-}
-
-.case-gallery:has(.case-image-portrait:only-child) .case-image-portrait {
-  width: 66.666%;
-  margin: 0 auto;
-  flex: none;
-}
-
-.case-gallery:has(.case-image-portrait:nth-last-child(2)) .case-image-portrait {
-  width: 33.333%;
-  flex: none;
-}
-
-.case-image-portrait img,
-.case-image-landscape img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 6px;
-  box-shadow: 0px 60px 36px 0px rgba(0, 0, 0, 0.03), 0px 27px 27px 0px rgba(0, 0, 0, 0.04), 0px 7px 15px 0px rgba(0, 0, 0, 0.05);
-}
-
-/* ==========================================================================
-   Footer Animation
-   ========================================================================== */
-.animation-wrapper {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  opacity: 0;
-  transition: opacity 800ms ease;
-  z-index: 0;
-  overflow: hidden;
-  height: 100%;
-  width: 100%;
-  background: #ffffff;
-}
-
-.animation-wrapper.visible {
-  opacity: 1;
-}
-
-.animation-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(
-    to bottom,
-    rgba(255, 255, 255, 1) 0%,
-    rgba(255, 255, 255, 0.5) 60%,
-    rgba(255, 255, 255, 0) 100%
-  );
-  pointer-events: none;
-  z-index: 1;
-  will-change: backdrop-filter;
-  transform: translateZ(0);
-}
-
-.line {
-  background-color: #4ECDC4;
-  opacity: 0.5;
-  width: 1px;
-  height: 40px;
-  margin: auto;
-  transform-origin: center;
-  transition: background-color 0.5s ease;
-}
-
-#footer-animation-container {
-  width: 100%;
-  height: 100vh;
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-
-.footer2 .main-text {
-  position: relative;
-  z-index: 1;
-}
-
-/* ==========================================================================
-   Marquee Animation
-   ========================================================================== */
-@keyframes marquee {
-  0% { transform: translate3d(0, 0, 0); }
-  100% { transform: translate3d(-50%, 0, 0); }
-}
-
-.marquee-container {
-  width: 100%;
-  overflow: hidden;
-  white-space: nowrap;
-  margin: 1rem 0;
-}
-
-.marquee {
-  display: inline-block;
-  animation: marquee 15s linear infinite;
-  will-change: transform;
-  transform: translate3d(0, 0, 0);
-  white-space: nowrap;
-  padding-right: 2em;
-}
-
-/* ==========================================================================
-   Responsive Design - Mobile
-   ========================================================================== */
-@media (max-width: 788px) {
-  /* Mobile image styles */
-  .case-image-portrait,
-  .case-image-landscape {
-    width: var(--max-width) !important;
-    max-width: 100% !important;
-    height: auto !important;
-    margin: 0 !important;
-    border-radius: 2px;
-  }
-
-  .case-gallery:has(.case-image-portrait:only-child) .case-image-portrait,
-  .case-gallery:has(.case-image-portrait:nth-last-child(2)) .case-image-portrait {
-    width: 100% !important;
-  }
-
-  /* Hide hover images on mobile */
-  .hover-image {
-    display: none;
-  }
-
-  /* Overlay for mobile viewing */
-  .overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(255, 255, 255, 0.7);
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.4s ease, visibility 0.4s ease;
-    z-index: 998;
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-  }
-
-  .overlay.visible {
-    opacity: 1;
-    visibility: visible;
-  }
-
-  /* Prevent scrolling */
-  body.no-scroll {
-    overflow: hidden;
-    pointer-events: none;
-  }
-
-  /* Mobile interaction elements */
-  .overlay, .centered-image-container, .bottom-sheet {
-    pointer-events: auto;
-  }
-}
-
+/* Root variables */
 :root {
   --spacing: 2rem;
   --max-width: 64rem;
@@ -320,6 +24,7 @@ a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }
   --mouse-y: 0;
 }
 
+/* Base styles */
 * {
   margin: 0;
   padding: 0;
@@ -343,6 +48,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* Basic typography */
 h2 {
   font-size: 1.5rem;
   line-height: 1.3;
@@ -352,6 +58,26 @@ h2 {
   margin-bottom: 1rem;
 }
 
+p {
+  margin: 0 0 var(--spacing) 0;
+  max-width: var(--max-width);
+}
+
+/* Overlay for mobile interactions */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.7);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+  z-index: 998;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
 
 .headline {
   font-family: 'Recursive', sans-serif;
@@ -406,11 +132,6 @@ h2 {
   font-variation-settings: "wght" 400;
   line-height: 1.1;
   color: #888;
-}
-
-p {
-  margin: 0 0 var(--spacing) 0;
-  max-width: var(--max-width);
 }
 
 .container {
@@ -517,7 +238,6 @@ nav {
   padding: 3vw 8vw 8vw 8vw;
   align-items: center;
 }
-
 
 .case-title {
   font-size: 2.25rem;
@@ -627,7 +347,6 @@ li, .tag {
 }
 
 @media (max-width: 788px) {
-
   .container {
     padding-top: 6vw;
   }
@@ -643,11 +362,11 @@ li, .tag {
     padding-right: 5vw;
     padding-left: 5vw;
   }
-
+  
   .case-study-container {
     padding-bottom: 12vw;
   }
-
+  
   .collapsible-content {
     max-height: 0;
     overflow: hidden;
@@ -658,7 +377,7 @@ li, .tag {
     padding: 5vw;
     border-radius: 6px;
   }
-
+  
   .collapsible-content.active {
     max-height: fit-content !important;
     padding: 5vw 5vw 0 5vw !important;
@@ -667,7 +386,7 @@ li, .tag {
     opacity: 1;
     transform: translateY(0);
   }
-
+  
   .menu {
     display: flex;
     flex-direction: column !important;
@@ -675,44 +394,44 @@ li, .tag {
     gap: calc(var(--spacing) / 2);
     margin: 0 0 var(--spacing) 0;
   }
-
+  
   .headline {
     font-size: 2.54rem;
     letter-spacing: -0.055em;
     max-width: 100%;
   }
-
+  
   nav {
     flex-direction: column;
     gap: 0.2rem;
   }
-
+  
   nav a:first-child {
     margin-left: 0;
   }
-
+  
   .services-grid {
     grid-template-columns: 1fr;
   }
-
+  
   .case-gallery {
     flex-direction: column;
     grid-template-columns: 1fr;
     padding: 3vw 5vw 0vw 5vw;
   }
-
+  
   .case-gallery:has(.case-image-portrait) {
     flex-direction: column;
   }
-
+  
   .case-title {
     font-size: 1.8rem;
   }
-
+  
   .case-text {
     font-size: 1.1rem;
   }
-
+  
   .case-image-portrait,
   .case-image-landscape {
     width: var(--max-width) !important;
@@ -721,33 +440,33 @@ li, .tag {
     margin: 0 !important;
     border-radius: 2px;
   }
-
+  
   .case-gallery:has(.case-image-portrait:only-child) .case-image-portrait,
   .case-gallery:has(.case-image-portrait:nth-last-child(2)) .case-image-portrait {
     width: 100% !important;
   }
-
+  
   .hover-image {
     display: none;
   }
-
+  
   .bottom-sheet {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background: rgba(173, 183, 196, 0.2); /* Gray-blue with 20% opacity */
-        border-radius: 12px 12px 0 0;
-        transform: translateY(100%);
-        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        touch-action: none;
-        z-index: 1000;
-        max-height: 90vh;
-    }
-
-    .bottom-sheet.open {
-        transform: translateY(0);
-    }
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(173, 183, 196, 0.2); /* Gray-blue with 20% opacity */
+      border-radius: 12px 12px 0 0;
+      transform: translateY(100%);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      touch-action: none;
+      z-index: 1000;
+      max-height: 90vh;
+  }
+  
+  .bottom-sheet.open {
+      transform: translateY(0);
+  }
 }
 
 .case-item h3 {
@@ -851,7 +570,7 @@ a span, .collapsible span {
     flex-direction: column;
     gap: 1rem;
   }
-
+  
   .left-container {
     margin-bottom: 0.5rem;
   }
