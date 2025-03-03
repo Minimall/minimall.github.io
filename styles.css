@@ -985,15 +985,7 @@ body.no-scroll {
 
   /* Using the unified dot styles defined at the bottom of this file */
   
-  .sticky-dots {
-    padding: 16px 16px 48px 16px; /* Extra padding for home indicator */
-  }
-
-  @supports (padding-bottom: env(safe-area-inset-bottom)) {
-    .sticky-dots {
-      padding-bottom: calc(24px + env(safe-area-inset-bottom));
-    }
-  }
+  /* Using sticky-dots from unified styles section at bottom of file */
 
   /* Centered image container for iOS style viewing */
   .centered-image-container {
