@@ -1148,3 +1148,14 @@ video.ios-swiper-image::-webkit-media-controls-panel {
   position: relative;
   z-index: 1;
 }
+/* Updated list item styling */
+li {
+  list-style: none;
+  background-color: rgba(0, 0, 0, 0.08);
+  border-radius: 100px;
+  padding: 0.4rem 0.8rem;
+  margin-bottom: 0.5rem;
+  display: inline-block;
+  margin-right: 0.5rem;
+  border: none; /* Remove any existing stroke */
+}
