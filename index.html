@@ -4,6 +4,9 @@
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Footer animation styles are consolidated in footer-animation.css -->
+
 		<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 		<meta http-equiv="Pragma" content="no-cache">
 		<meta http-equiv="Expires" content="0">
@@ -36,8 +39,15 @@
 		<link rel="manifest" href="/site.webmanifest" />
 		<link rel="preconnect" href="https://fonts.googleapis.com">
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-		<link href="https://fonts.googleapis.com/css2?family=Recursive:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+		<!-- Prioritize loading hover-related styles -->
+		<link rel="stylesheet" href="styles/links.css" fetchpriority="high">
+		<link href="https://fonts.googleapis.com/css2?family=Recursive:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+		<noscript>
+			<link href="https://fonts.googleapis.com/css2?family=Recursive:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+		</noscript>
 		<link rel="stylesheet" href="styles/font-loading.css">
+		<link rel="stylesheet" href="styles/footer-animation.css">
+		<script src="scripts/preload-hover.js"></script>
 		<script src="scripts/font-loader.js"></script>
 		<script type="application/ld+json">
 		{
@@ -129,8 +139,7 @@
 		}
 		</script>
 		<link rel="stylesheet" href="styles.css">
-		<link rel="stylesheet" href="styles/buttons.css">
-		<link rel="stylesheet" href="styles/header.css">
+		<script src="scripts/css-loader.js"></script>
 		<link rel="preload" href="about.html" as="document" crossorigin="anonymous">
 	</head>
 	<body>
@@ -145,7 +154,7 @@
 				<div class="nav-right">
 					<a href="about.html" class="nav-link" data-hover="true">About</a>
 					<a href="#case1-placeholder" class="nav-link" data-hover="true">Works</a>
-					<a href="drafts.html" class="nav-link" data-hover="true">Drafts</a>
+					<a href="lab.html" class="nav-link" data-hover="true">Lab</a>
 					<a href="mailto:hi@dvornichenko.design" class="nav-link" data-hover="true">Mail</a>
 				</div>
 			</nav>
@@ -159,11 +168,11 @@
 				<p>As a leader & manager, I've helped large orgs build happy & successful teams, and provided the right environment for designers to do the best work of their career.</p>
 
 				<p class="menu">
-					<a href="mailto:hi@dvornichenko.design" class="pill-button book-call"><svg class="button-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.103 0-2 .897-2 2v12c0 1.103.897 2 2 2h16c1.103 0 2-.897 2-2V6c0-1.103-.897-2-2-2zm0 2v.511l-8 6.223-8-6.222V6h16zM4 18V9.044l7.386 5.745a.994.994 0 0 0 1.228 0L20 9.044 20.002 18H4z"></path></svg>Contact me</a>
-					<a href="https://t.me/dmytrodvornichenko" class="pill-button chat">Chat</a>
-					<a href="https://www.linkedin.com/in/minimall/" class="pill-button linkedin">Linkedin</a>
+					<button onclick="window.location.href='mailto:hi@dvornichenko.design'" class="pill-button book-call"><svg class="button-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.103 0-2 .897-2 2v12c0 1.103.897 2 2 2h16c1.103 0 2-.897 2-2V6c0-1.103-.897-2-2-2zm0 2v.511l-8 6.223-8-6.222V6h16zM4 18V9.044l7.386 5.745a.994.994 0 0 0 1.228 0L20 9.044 20.002 18H4z"></path></svg>Contact me</button>
+					<button onclick="window.location.href='https://t.me/dmytrodvornichenko'" class="pill-button chat">Chat</button>
+					<button onclick="window.location.href='https://www.linkedin.com/in/minimall/'" class="pill-button linkedin">Linkedin</button>
 				</p>
-                <p>Check the most <a data-hover="true" href="#case1-placeholder">notable recent works</a> below ↓</p>
+                <p>Check the most notable recent works below ↓</p>
 				</div>
 
 			<!-- Case Studies -->
@@ -289,19 +298,18 @@
 			</div>
 		<div class="case-study-container footer2" style="--data-bg: #ffffff;">
 			<div class="footer-content">
-				<div class="animation-wrapper">
+				<div class="animation-wrapper visible">
 					<div id="footer-animation-container"></div>
 					<div class="animation-overlay"></div>
 				</div>
-				<div class="main-text">
+				<div class="main-text" style="z-index: 5;">
 					<h1 class="headline">
 						Let's push things forward <span class="wave-text">together</span>.
 					</h1>
 					<div class="menu">
-						<a href="mailto:hi@dvornichenko.design" class="pill-button book-call"><svg class="button-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.103 0-2 .897-2 2v12c0 1.103.897 2 2 2h16c1.103 0 2-.897 2-2V6c0-1.103-.897-2-2-2zm0 2v.511l-8 6.223-8-6.222V6h16zM4 18V9.044l7.386 5.745a.994.994 0 0 0 1.228 0L20 9.044 20.002 18H4z"></path></svg>Contact me</a>
-						<a href="/about.html" class="pill-button">About</a>
-						<a href="https://t.me/minimalldesign" class="pill-button chat">Chat</a>
-						<a href="https://www.linkedin.com/in/minimall/" class="pill-button linkedin">Linkedin</a>
+						<button onclick="window.location.href='mailto:hi@dvornichenko.design'" class="pill-button book-call"><svg class="button-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.103 0-2 .897-2 2v12c0 1.103.897 2 2 2h16c1.103 0 2-.897 2-2V6c0-1.103-.897-2-2-2zm0 2v.511l-8 6.223-8-6.222V6h16zM4 18V9.044l7.386 5.745a.994.994 0 0 0 1.228 0L20 9.044 20.002 18H4z"></path></svg>Contact me</button>
+						<button onclick="window.location.href='https://t.me/dmytrodvornichenko'" class="pill-button chat">Chat</button>
+						<button onclick="window.location.href='https://www.linkedin.com/in/minimall/'" class="pill-button linkedin">Linkedin</button>
 					</div>
 				</div>
 			</div>
@@ -311,22 +319,5 @@
 		<script src="scripts/scripts.js" defer></script>
 		<script src="scripts/scroll-color.js" defer></script>
 		<script src="scripts/footer-animation.js" defer></script>
-		<script src="scripts/grid-loader.js" defer></script>
-		
-		<script>
-			// Initialize footer animation when the page is loaded
-			document.addEventListener('DOMContentLoaded', function() {
-				const footerAnimationContainer = document.getElementById('footer-animation-container');
-				if (footerAnimationContainer) {
-					createGridAnimation(footerAnimationContainer);
-					
-					// Make animation wrapper visible
-					const animationWrapper = document.querySelector('.animation-wrapper');
-					if (animationWrapper) {
-						animationWrapper.classList.add('visible');
-					}
-				}
-			});
-		</script>
 	</body>
 </html>

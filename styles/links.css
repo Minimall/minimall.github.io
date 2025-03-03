@@ -1,0 +1,66 @@
+
+/* ==========================================================================
+   Links & Hover Effects
+   ========================================================================== */
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: all 0.3s ease, font-variation-settings 0.3s ease;
+  font-variation-settings: "wght" 500;
+}
+
+a:hover {
+  font-variation-settings: "wght" 500;
+  animation: colorWave 0.8s ease-in-out forwards;
+}
+
+/* Hover effect animations - optimized for performance */
+@keyframes colorWave {
+  0% { color: #1a4ce0; }
+  33% { color: #c12f78; }
+  88% { color: #540a99; }
+  100% { color: #111; }
+}
+
+/* Add will-change to optimize animation performance */
+[data-hover="true"] span {
+  color: #005FCB;
+  font-variation-settings: "wght" 500;
+  transition: color 0.3s ease, font-variation-settings 0.3s ease;
+  width: auto;
+  display: inline;
+  will-change: color, font-variation-settings;
+}
+
+/* Pre-initialize hover states for better performance */
+a, [data-hover="true"] {
+  will-change: font-variation-settings;
+}
+
+.name [data-hover="true"] span {
+  color: #111;
+}
+
+[data-hover="true"] span.wave-in {
+  font-variation-settings: "wght" 840;
+  animation: colorWave 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  transition: font-variation-settings 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+[data-hover="true"] span.wave-out {
+  font-variation-settings: "wght" 500;
+  transition: all 0.75s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Wave animation timing */
+a:hover span:nth-child(1n) { animation-delay: 0.05s; }
+a:hover span:nth-child(2n) { animation-delay: 0.1s; }
+a:hover span:nth-child(3n) { animation-delay: 0.15s; }
+a:hover span:nth-child(4n) { animation-delay: 0.2s; }
+a:hover span:nth-child(5n) { animation-delay: 0.25s; }
+
+a:not(:hover) span:nth-child(1n) { animation-delay: 0.015s; }
+a:not(:hover) span:nth-child(2n) { animation-delay: 0.030s; }
+a:not(:hover) span:nth-child(3n) { animation-delay: 0.045s; }
+a:not(:hover) span:nth-child(4n) { animation-delay: 0.06s; }
+a:not(:hover) span:nth-child(5n) { animation-delay: 0.1s; }

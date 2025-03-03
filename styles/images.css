@@ -1,0 +1,95 @@
+
+/* ==========================================================================
+   Image Components
+   ========================================================================== */
+.profile-image {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin-bottom: var(--spacing);
+  border: 1px solid #dbdbdb;
+  box-sizing: border-box;
+  object-position: center;
+  object-fit: cover;
+  image-rendering: auto;
+  box-shadow: 0 .8021873017743928px 2.0474388280329358px -.8333333333333333px #0000001a,
+              0 2.288533303243457px 7.781013231027754px -1.8888888888888885px #0000001a,
+              0 10px 34px -2.5px #0000001a;
+}
+
+.case-image-portrait {
+  position: relative;
+  aspect-ratio: 9/16;
+  overflow: hidden;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  width: min(calc((100vw - 20vw) / 4), calc((var(--max-width) - 10vw) / 4));
+  height: auto;
+  max-height: 910px;
+  max-width: calc(910px * 9/16);
+  flex: 1;
+}
+
+.case-image-landscape {
+  position: relative;
+  aspect-ratio: 16/10;
+  overflow: hidden;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  width: 100%;
+  max-width: 1680px;
+  margin: 0 auto;
+}
+
+.case-gallery:has(.case-image-portrait:only-child) .case-image-portrait {
+  width: 66.666%;
+  margin: 0 auto;
+  flex: none;
+}
+
+.case-gallery:has(.case-image-portrait:nth-last-child(2)) .case-image-portrait {
+  width: 33.333%;
+  flex: none;
+}
+
+.case-image-portrait img,
+.case-image-landscape img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 6px;
+  box-shadow: 0px 60px 36px 0px rgba(0, 0, 0, 0.03), 0px 27px 27px 0px rgba(0, 0, 0, 0.04), 0px 7px 15px 0px rgba(0, 0, 0, 0.05);
+}
+
+.hover-image {
+  opacity: 0;
+  position: fixed;
+  z-index: 1000;
+  pointer-events: none;
+  height: 480px;
+  width: auto;
+  max-width: 640px;
+  object-fit: contain;
+  transform: translate(-50%, -100%) scale(0) rotate(0deg);
+  will-change: transform, opacity;
+  padding: 24px 0 12px;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.hover-image.active {
+	opacity: 1;
+	transform: translate(-50%, -100%) scale(1) rotate(var(--rotation));
+}
+
+.hover-image:not(.active) {
+	transform: translate(-50%, -100%) scale(0) rotate(0deg);
+	transition: opacity 0.4s ease, transform 0.5s ease;
+}
+
+.hover-image.move-down {
+	transform: translate(-50%, 0) scale(0) rotate(var(--rotation));
+}
+
+.hover-image.move-down.active {
+	transform: translate(-50%, 0) scale(1) rotate(var(--rotation));
+}

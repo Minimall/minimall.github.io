@@ -130,23 +130,4 @@ document.addEventListener('DOMContentLoaded', function() {
         clearTimeout(resizeTimer);
         resizeTimer = setTimeout(loadDraftsGrid, 250);
     });
-
-    // Check if footer animation container exists
-    const footerAnimationContainer = document.getElementById('footer-animation-container');
-    if (footerAnimationContainer) {
-        // Wait a bit to ensure everything is loaded
-        setTimeout(() => {
-            if (typeof createGridAnimation === 'function') {
-                createGridAnimation(footerAnimationContainer);
-
-                // Make animation wrapper visible
-                const animationWrapper = document.querySelector('.animation-wrapper');
-                if (animationWrapper) {
-                    animationWrapper.classList.add('visible');
-                }
-            } else {
-                console.error('createGridAnimation function not found');
-            }
-        }, 200);
-    }
 });

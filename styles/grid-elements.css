@@ -16,6 +16,9 @@
   max-width: 100%;
   position: relative;
   margin-bottom: 8vw;
+  z-index: 1;
+  height: auto;
+  overflow: visible;
 }
 
 .grid-item {
