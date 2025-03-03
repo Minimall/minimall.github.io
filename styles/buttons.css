@@ -17,6 +17,22 @@
   position: relative;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
   line-height: 1.2;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.pill-button:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(120deg, transparent 0%, transparent 70%, rgba(255,255,255,0.1) 90%, rgba(255,255,255,0) 100%);
+  z-index: -1;
+  transform: translateX(-100%) translateY(-100%);
+  opacity: 0;
+  transition: all 0.8s cubic-bezier(0.19, 1, 0.22, 1);
 }
 
 .pill-button:hover {
@@ -27,9 +43,75 @@
   background-color: #fcfcfc;
 }
 
+.pill-button:hover:before {
+  transform: translateX(0) translateY(0);
+  opacity: 1;
+}
+
 .pill-button:active {
   transform: translateY(1px);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+/* Button with icon styling */
+.pill-button .button-icon {
+  margin-right: 0.5rem;
+  width: 1rem;
+  height: 1rem;
+}
+
+/* Specific button styles */
+.pill-button.book-call {
+  background-color: #111;
+  color: white;
+  font-variation-settings: "wght" 600;
+}
+
+.pill-button.book-call:before {
+  background: linear-gradient(120deg, transparent 0%, transparent 80%, rgba(255, 255, 255, 0.1) 95%, rgba(255, 255, 255, 0) 100%);
+}
+
+.pill-button.book-call:hover {
+  background-color: #222;
+}
+
+.pill-button.mail {
+  color: #EA4335;
+}
+
+.pill-button.mail:hover {
+  box-shadow: 0 0 6px rgba(234, 67, 53, 0.1);
+  background-color: rgba(234, 67, 53, 0.01);
+}
+
+.pill-button.mail:before {
+  background: linear-gradient(120deg, transparent 0%, transparent 80%, rgba(234, 67, 53, 0.05) 95%, rgba(234, 67, 53, 0) 100%);
+}
+
+.pill-button.chat {
+  color: #0088cc;
+}
+
+.pill-button.chat:hover {
+  box-shadow: 0 0 6px rgba(0, 136, 204, 0.1);
+  background-color: rgba(0, 136, 204, 0.01);
+}
+
+.pill-button.chat:before {
+  background: linear-gradient(120deg, transparent 0%, transparent 80%, rgba(0, 136, 204, 0.05) 95%, rgba(0, 136, 204, 0) 100%);
+}
+
+.pill-button.linkedin {
+  color: #0077B5;
+}
+
+.pill-button.linkedin:hover {
+  box-shadow: 0 0 6px rgba(0, 119, 181, 0.1);
+  background-color: rgba(0, 119, 181, 0.01);
+}
+
+.pill-button.linkedin:before {
+  background: linear-gradient(120deg, transparent 0%, transparent 80%, rgba(0, 119, 181, 0.05) 95%, rgba(0, 119, 181, 0) 100%);
 }
 
 .menu .pill-button {
