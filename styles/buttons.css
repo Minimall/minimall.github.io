@@ -1,16 +1,12 @@
-/* ==========================================================================
-   Button Styles
-   ========================================================================== */
-
-/* Base button style */
+/* Pill-shaped buttons styling */
 .pill-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   padding: 0.5rem 1.3rem;
   background-color: white;
-  color: #55595E;
-  border: 1px solid #F3F6FA;
+  color: #111;
+  border: 1px solid #f1f1f1;
   border-radius: 100px;
   text-decoration: none;
   font-size: 1.1rem;
@@ -22,11 +18,8 @@
   overflow: hidden;
   z-index: 1;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-  cursor: pointer;
-  font-family: inherit;
 }
 
-/* Button hover glow effect */
 .pill-button:before {
   content: '';
   position: absolute;
@@ -34,18 +27,20 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(120deg, transparent 0%, transparent 80%, rgba(85, 89, 94, 0.05) 95%, rgba(85, 89, 94, 0) 100%);
+  background: linear-gradient(120deg, transparent 0%, transparent 70%, rgba(255,255,255,0.1) 90%, rgba(255,255,255,0) 100%);
   z-index: -1;
   transform: translateX(-100%) translateY(-100%);
   opacity: 0;
   transition: all 0.8s cubic-bezier(0.19, 1, 0.22, 1);
 }
 
-/* General hover states */
 .pill-button:hover {
-  border-color: #EDF1F7;
-  background-color: white;
+  border-color: #eaeaea;
+  background-color: #fdfdfd;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.pill-button:not(.book-call):hover {
   color: #000000 !important;
 }
 
@@ -54,7 +49,7 @@
   opacity: 1;
 }
 
-/* Button icon styling */
+/* Button with icon styling */
 .pill-button .button-icon {
   margin-right: 0.5rem;
   width: 1rem;
@@ -62,12 +57,14 @@
   display: inline-block;
   flex-shrink: 0;
   pointer-events: none;
-  color: #55595E;
-  transition: color 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+  transform: none !important;
+  transition: none !important;
+  color: #55595E; /* Default icon color */
+  transition: color 0.3s cubic-bezier(0.23, 1, 0.32, 1); /* Add transition for smooth color change */
 }
 
-.pill-button:hover .button-icon {
-  color: #000000;
+.pill-button:not(.book-call):hover .button-icon {
+    color: #000000; /* Icon color on hover */
 }
 
 /* Ensure icons in buttons are always visible */
@@ -76,18 +73,15 @@
   visibility: visible !important;
 }
 
-/* Primary button style - Call to action */
+/* Specific button styles */
 .pill-button.book-call {
   background-color: #111;
-  color: white !important;
+  color: white !important; /* Force white text color always */
   font-variation-settings: "wght" 600;
-  border-color: #111;
 }
 
-.pill-button.book-call .button-icon,
-.pill-button.book-call span,
-.pill-button.book-call .wave-text span {
-  color: white !important;
+.pill-button.book-call .button-icon {
+  color: white !important; /* Force white icon color always */
 }
 
 .pill-button.book-call:before {
@@ -99,7 +93,12 @@
   border-color: #000;
 }
 
-/* Email button variant */
+/* Ensure text and spans inside book-call button stay white */
+.pill-button.book-call span,
+.pill-button.book-call .wave-text span {
+  color: white !important;
+}
+
 .pill-button.mail {
   color: #EA4335;
 }
@@ -113,13 +112,52 @@
   background: linear-gradient(120deg, transparent 0%, transparent 80%, rgba(234, 67, 53, 0.05) 95%, rgba(234, 67, 53, 0) 100%);
 }
 
-/* Proper spacing in button groups */
+.pill-button.chat,
+.pill-button.linkedin,
+.pill-button:not(.book-call) {
+  color: #55595E;
+  border-color: #F3F6FA;
+}
+
+.pill-button.chat:hover,
+.pill-button.linkedin:hover,
+.pill-button:not(.book-call):hover {
+  border-color: #EDF1F7;
+  background-color: white;
+}
+
+/* Styling for button spans in default state */
+.pill-button.chat span,
+.pill-button.linkedin span,
+.pill-button:not(.book-call) span {
+  color: #55595E;
+  transition: color 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+/* Change color of spans inside buttons on hover */
+.pill-button:not(.book-call):hover span {
+  color: #000000 !important;
+}
+
+.pill-button.chat:before,
+.pill-button.linkedin:before,
+.pill-button:not(.book-call):before {
+  background: linear-gradient(120deg, transparent 0%, transparent 80%, rgba(85, 89, 94, 0.05) 95%, rgba(85, 89, 94, 0) 100%);
+}
+
 .menu .pill-button:last-child {
   margin-right: 0;
 }
 
-/* Mobile responsive adjustments */
+/* Ensure buttons maintain pill shape on mobile */
 @media (max-width: 788px) {
+  .menu {
+    display: flex;
+    flex-direction: column !important;
+    flex-wrap: nowrap !important;
+    gap: 0.75rem;
+  }
+
   .menu .pill-button {
     margin-right: 0;
     width: 100%; /* Make buttons full width on mobile */

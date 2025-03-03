@@ -5,15 +5,7 @@ let rotationCounter = 0;
 
 // Set up hover effects for elements
 function setupHoverEffects() {
-    // Ensure CSS for hover effects is loaded
-    if (!document.querySelector('link[href*="links.css"]')) {
-        const linkCss = document.createElement('link');
-        linkCss.rel = 'stylesheet';
-        linkCss.href = 'styles/links.css';
-        document.head.appendChild(linkCss);
-    }
-    
-    const hoverableElements = document.querySelectorAll('a, button, [data-hover="true"]');
+    const hoverableElements = document.querySelectorAll('a, [data-hover="true"]');
 
     hoverableElements.forEach(element => {
         // Skip if already processed
@@ -248,31 +240,24 @@ function preserveLogos() {
 
 // Initialize hover effects on DOM content loaded
 document.addEventListener("DOMContentLoaded", () => {
-    // Priority 1: Set up core hover effects first
+    // Preload hover images
+    preloadHoverImages();
+    
+    // Set up hover effects
     setupHoverEffects();
     
-    // Priority 2: Add mouse move handler for desktop (with passive flag for performance)
+    // Set up mobile hover images
+    setupMobileHoverImages();
+    
+    // Add mouse move handler for desktop
     window.addEventListener("mousemove", updateMousePosition, { passive: true });
     
-    // Priority 3: Preserve logos
+    // Preserve logos
     preserveLogos();
     
-    // Less critical operations - run after a small delay to prioritize UI responsiveness
-    setTimeout(() => {
-        // Preload hover images for future use
-        preloadHoverImages();
-        
-        // Set up mobile hover images
-        setupMobileHoverImages();
-        
-        // Setup periodic logo preservation
-        setInterval(preserveLogos, 1000);
-    }, 100); // Very short delay to prioritize critical visual effects
+    // Setup periodic logo preservation
+    setInterval(preserveLogos, 1000);
 });
-
-// Pre-initialize critical CSS variables for hover effects
-document.documentElement.style.setProperty('--mouse-x', '0');
-document.documentElement.style.setProperty('--mouse-y', '0');
 
 // Export functions for use in other scripts
 window.hoverJS = {

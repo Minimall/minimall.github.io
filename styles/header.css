@@ -1,29 +1,31 @@
 
-/* ==========================================================================
-   Header & Navigation
-   ========================================================================== */
+@media (max-width: 788px) {
+  .name .subheadline {
+    display: none;
+  }
+  
+  .nav-left {
+    flex-direction: column;
+  }
+  
+  .nav-right {
 
+  }
+}
+
+
+/* Header Styles */
 .main-nav {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   width: 100%;
-  max-width: var(--max-width);
   margin-bottom: calc(var(--spacing) * 3);
-  font-size: 1.2rem;
-
 }
 
 .nav-left {
   display: flex;
   flex-direction: column;
-}
-
-.name {
-  display: flex;
-  flex-direction: column;
-  font-variation-settings: "wght" 400;
-  gap: 0.25rem;
 }
 
 .nav-right {
@@ -65,30 +67,15 @@
   opacity: 1;
 }
 
-.header {
-  max-width: var(--max-width);
-  margin-top: calc(var(--spacing) * 3);
-  margin-bottom: calc(var(--spacing) * 3);
-}
-
-/* Media queries */
+/* Mobile adjustments */
 @media (max-width: 788px) {
   .main-nav {
     flex-direction: column;
-    gap: 0.2rem;
   }
   
   .nav-right {
     width: 100%;
     justify-content: flex-start;
     gap: 1rem;
-  }
-  
-  .nav-left {
-    flex-direction: column;
-  }
-  
-  .name .subheadline {
-    display: none;
   }
 }

@@ -1,4 +1,3 @@
-
 function createGridAnimation(gridElement) {
     console.log("Starting grid animation");
     if (!gridElement) {
@@ -6,13 +5,12 @@ function createGridAnimation(gridElement) {
         return;
     }
     
-    // Clear any existing content in the grid element
-    while (gridElement.firstChild) {
-        gridElement.removeChild(gridElement.firstChild);
+    // Ensure the document is fully loaded before starting animation
+    if (document.readyState !== 'complete') {
+        console.log("Waiting for page to fully load before starting footer animation");
+        window.addEventListener('load', () => createGridAnimation(gridElement));
+        return;
     }
-    
-    // Always proceed with animation setup regardless of document.readyState
-    console.log("Document ready state:", document.readyState);
     const lines = [];
     const colors = [
         "#FF6B6B", "#4ECDC4", "#45B7D1", "#FFA07A", "#98D8C8", 
@@ -234,77 +232,4 @@ function createGridAnimation(gridElement) {
     requestAnimationFrame(animateLines);
 };
 
-// Make sure function is globally available
 window.createGridAnimation = createGridAnimation;
-
-// More reliable initialization - try multiple approaches
-function initializeFooterAnimation() {
-    console.log("Initializing footer animation");
-    
-    // Make animation wrapper visible immediately
-    const wrapper = document.querySelector('.animation-wrapper');
-    if (wrapper) {
-        wrapper.classList.add('visible');
-        // Force reflow
-        void wrapper.offsetWidth;
-    }
-    
-    const container = document.getElementById('footer-animation-container');
-    if (!container) {
-        console.error("Footer animation container not found");
-        return;
-    }
-    
-    // Clear any existing animation
-    while (container.firstChild) {
-        container.removeChild(container.firstChild);
-    }
-    
-    // Start the animation
-    if (typeof window.createGridAnimation === 'function') {
-        console.log("Starting footer grid animation");
-        window.createGridAnimation(container);
-    } else {
-        console.error("createGridAnimation function not available");
-    }
-}
-
-// Initialize on both events to ensure it works everywhere
-document.addEventListener('DOMContentLoaded', function() {
-    console.log("DOMContentLoaded triggered");
-    
-    // Small delay to ensure DOM is ready
-    setTimeout(initializeFooterAnimation, 300);
-});
-
-window.addEventListener('load', function() {
-    console.log("Window load triggered");
-    
-    // Ensure initialization happens
-    setTimeout(initializeFooterAnimation, 500);
-    
-    // Second attempt after a longer delay as a fallback
-    setTimeout(function() {
-        const container = document.getElementById('footer-animation-container');
-        const wrapper = document.querySelector('.animation-wrapper');
-        
-        if (container && !container.children.length && wrapper) {
-            console.log("Fallback initialization");
-            wrapper.classList.add('visible');
-            window.createGridAnimation(container);
-        }
-    }, 1500);
-});
-
-// Handle page visibility changes
-document.addEventListener('visibilitychange', function() {
-    if (!document.hidden) {
-        console.log("Page became visible, checking animation");
-        const container = document.getElementById('footer-animation-container');
-        
-        if (container && (!container.children.length || container.children.length < 10)) {
-            console.log("Reinitializing animation after visibility change");
-            initializeFooterAnimation();
-        }
-    }
-});

@@ -525,15 +525,6 @@ class IOSStyleSwiper {
 // Initialize mobile functionality
 document.addEventListener("DOMContentLoaded", () => {
     console.log("Mobile init started");
-    
-    // Ensure responsive CSS is loaded for mobile
-    if (window.matchMedia('(max-width: 788px)').matches && !document.querySelector('link[href*="responsive.css"]')) {
-        const responsiveCss = document.createElement('link');
-        responsiveCss.rel = 'stylesheet';
-        responsiveCss.href = 'styles/responsive.css';
-        document.head.appendChild(responsiveCss);
-    }
-    
     // Global rotation counter for image animations
     if (typeof window.rotationCounter === 'undefined') {
         window.rotationCounter = 0;
