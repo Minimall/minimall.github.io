@@ -1,0 +1,56 @@
+
+/* Header Styles */
+.main-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+  margin-bottom: calc(var(--spacing) * 3);
+}
+
+.nav-left {
+  display: flex;
+  flex-direction: column;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.nav-link {
+  font-variation-settings: "wght" 500;
+  position: relative;
+  color: #111;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.nav-link:hover {
+  font-variation-settings: "wght" 500;
+  animation: colorWave 0.8s ease-in-out forwards;
+}
+
+.nav-link.active {
+  color: #005FCB;
+}
+
+.nav-link.active:hover {
+  animation: none;
+  color: #005FCB;
+}
+
+/* Mobile adjustments */
+@media (max-width: 788px) {
+  .main-nav {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .nav-right {
+    width: 100%;
+    justify-content: flex-start;
+    gap: 1rem;
+  }
+}
