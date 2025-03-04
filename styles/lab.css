@@ -1,0 +1,150 @@
+
+/* Horizontal flow carousel styles */
+.flow-carousel {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow-x: hidden;
+  margin-left: calc(-50vw + 50%);
+  touch-action: pan-x;
+  cursor: grab;
+}
+
+.flow-carousel:active {
+  cursor: grabbing;
+}
+
+.carousel-track {
+  display: flex;
+  position: relative;
+  left: 0;
+  transition: transform 0.3s ease-out;
+}
+
+.carousel-item {
+  flex: 0 0 auto;
+  height: 100vh;
+  padding: 0 2vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.carousel-item img, 
+.carousel-item video {
+  max-height: 90vh;
+  max-width: 90vw;
+  object-fit: contain;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15);
+  border-radius: 4px;
+  pointer-events: none;
+}
+
+/* Navigation arrows */
+.flow-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: white;
+  color: #000;
+  border: 1px solid #f1f1f1;
+  padding: 16px;
+  cursor: pointer;
+  z-index: 1000;
+  border-radius: 50%;
+  transition: all 0.2s cubic-bezier(0.23, 1, 0.32, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+}
+
+.flow-nav:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(120deg, transparent 0%, transparent 70%, rgba(255,255,255,0.1) 90%, rgba(255,255,255,0) 100%);
+  z-index: -1;
+  transform: translateX(-100%) translateY(0%);
+  opacity: 0;
+  transition: all 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.flow-nav:hover {
+  border-color: #eaeaea;
+  background-color: #fdfdfd;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.flow-nav:hover:before {
+  transform: translateX(0) translateY(0);
+  opacity: 1;
+}
+
+.flow-nav.prev {
+  left: 20px;
+}
+
+.flow-nav.next {
+  right: 20px;
+}
+
+.flow-nav svg {
+  stroke: currentColor;
+  stroke-width: 2;
+  width: 28px;
+  height: 28px;
+}
+
+/* Progress indicator */
+.carousel-progress {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+}
+
+.progress-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.4);
+  transition: all 0.3s ease;
+}
+
+.progress-dot.active {
+  background-color: white;
+  transform: scale(1.2);
+}
+
+/* Responsive adjustments */
+@media (max-width: 788px) {
+  .flow-carousel {
+    height: 80vh;
+  }
+  
+  .carousel-item {
+    height: 80vh;
+  }
+  
+  .flow-nav {
+    width: 48px;
+    height: 48px;
+    padding: 12px;
+  }
+}
+
+/* Background transition support */
+.flow-carousel-section {
+  --data-bg: #111111;
+  position: relative;
+  margin-bottom: 2rem;
+}

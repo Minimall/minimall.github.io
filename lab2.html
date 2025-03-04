@@ -12,7 +12,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <title>Drafts | Dmytro Dvornichenko</title>
+    <title>Lab Alternative | Dmytro Dvornichenko</title>
     
     <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
     <meta name="theme-color" content="#111111" media="(prefers-color-scheme: dark)">
@@ -32,10 +32,9 @@
     <script src="scripts/font-loader.js"></script>
     
     <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="styles/grid-elements.css">
-    <link rel="stylesheet" href="styles/carousel.css">
     <link rel="stylesheet" href="styles/buttons.css">
     <link rel="stylesheet" href="styles/header.css">
+    <link rel="stylesheet" href="styles/lab.css">
 </head>
 <body>
     <!-- Google Tag Manager (noscript) -->
@@ -59,24 +58,24 @@
         </nav>
         
         <header class="header">
-            <h1 class="headline"><span class="wave-text">Lab</span></h1>
+            <h1 class="headline"><span class="wave-text">Lab</span> Alternative</h1>
         </header>
         
         <div class="main-text">
-            <div class="main-text">
-                <p>This is my creative laboratory — a curated collection of design experiments, client projects, and conceptual explorations from my 17-year journey in product design. </p>
-                    <p>Unlike my polished case studies, Lab offers a glimpse into my process: the initial concepts, unexpected directions, and technical experiments that shape my approach to design challenges.</p>
-                    <p>Some projects never went beyond the conceptual stage, others evolved dramatically from these initial versions, and a few appear almost exactly as you see them here. </p>
-                        <p> If something catches your interest or sparks a conversation, I'm always open to discussing the thinking behind these pieces. All work shown respects client confidentiality agreements, and some projects have been modified or anonymized where required.</p>
-          
+            <p>This is my creative laboratory — a curated collection of design experiments, client projects, and conceptual explorations from my 17-year journey in product design.</p>
+            <p>Unlike my polished case studies, Lab offers a glimpse into my process: the initial concepts, unexpected directions, and technical experiments that shape my approach to design challenges.</p>
+            <p>Some projects never went beyond the conceptual stage, others evolved dramatically from these initial versions, and a few appear almost exactly as you see them here.</p>
+            <p>If something catches your interest or sparks a conversation, I'm always open to discussing the thinking behind these pieces. All work shown respects client confidentiality agreements, and some projects have been modified or anonymized where required.</p>
         </div>
     </div>
     
-    <div id="dynamic-grid" class="grid-container">
-        <!-- Grid items will be dynamically inserted here by JavaScript -->
+    <div class="flow-carousel-section">
+        <div class="flow-carousel">
+            <!-- Carousel items will be inserted by JS -->
+        </div>
     </div>
     
-    </div>
+    <div class="container">
         <div class="case-study-container footer2" style="--data-bg: #ffffff;">
             <div class="animation-wrapper">
                 <div id="footer-animation-container"></div>
@@ -95,19 +94,12 @@
                 </div>
             </div>
         </div>
+    </div>
 
-    
-    <!-- Overlay for mobile image viewing -->
-    <div class="overlay"></div>
-    
     <script src="scripts/hover.js" defer></script>
-    <!-- Mobile hover script removed -->
     <script src="scripts/scripts.js" defer></script>
     <script src="scripts/scroll-color.js" defer></script>
     <script src="scripts/footer-animation.js" defer></script>
-    <script src="scripts/carousel.js" defer></script>
-    
-    <!-- Load grid scripts -->
-    <script src="scripts/grid-loader.js" defer></script>
+    <script src="scripts/lab.js" defer></script>
 </body>
 </html>
