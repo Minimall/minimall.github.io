@@ -15,6 +15,9 @@
   scrollbar-width: none; /* Firefox */
   cursor: grab;
   gap: 2em;
+  will-change: transform, scroll-position;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 /* Hide scrollbar */

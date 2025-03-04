@@ -6,7 +6,10 @@ document.addEventListener('DOMContentLoaded', () => {
         let isDown = false;
         let startX;
         let scrollLeft;
+        let velX = 0;
+        let momentumID;
 
+        // Mouse down event - start dragging
         slider.addEventListener('mousedown', (e) => {
             isDown = true;
             slider.classList.add('active');
@@ -15,23 +18,29 @@ document.addEventListener('DOMContentLoaded', () => {
             cancelMomentumTracking();
         });
 
+        // Mouse leave event - stop dragging if mouse leaves the element
         slider.addEventListener('mouseleave', () => {
-            isDown = false;
-            slider.classList.remove('active');
+            if (isDown) {
+                isDown = false;
+                slider.classList.remove('active');
+                beginMomentumTracking();
+            }
         });
 
+        // Mouse up event - stop dragging
         slider.addEventListener('mouseup', () => {
             isDown = false;
             slider.classList.remove('active');
             beginMomentumTracking();
         });
 
+        // Mouse move event - perform dragging
         slider.addEventListener('mousemove', (e) => {
             if (!isDown) return;
             e.preventDefault();
             const x = e.pageX - slider.offsetLeft;
-            const walk = (x - startX); //scroll-fast
-            var prevScrollLeft = slider.scrollLeft;
+            const walk = (x - startX); // scroll speed
+            const prevScrollLeft = slider.scrollLeft;
             slider.scrollLeft = scrollLeft - walk;
             velX = slider.scrollLeft - prevScrollLeft;
         });
@@ -56,19 +65,12 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             const x = e.touches[0].pageX - slider.offsetLeft;
             const walk = (x - startX);
-            var prevScrollLeft = slider.scrollLeft;
+            const prevScrollLeft = slider.scrollLeft;
             slider.scrollLeft = scrollLeft - walk;
             velX = slider.scrollLeft - prevScrollLeft;
         }, { passive: false });
 
-        // Momentum 
-        var velX = 0;
-        var momentumID;
-
-        slider.addEventListener('wheel', (e) => {
-            cancelMomentumTracking();
-        });
-
+        // Momentum tracking functions
         function beginMomentumTracking() {
             cancelMomentumTracking();
             momentumID = requestAnimationFrame(momentumLoop);
@@ -86,13 +88,30 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // Scroll
+        // Cancel momentum on wheel events
+        slider.addEventListener('wheel', (e) => {
+            cancelMomentumTracking();
+        });
+
+        // Scroll handling
         slider.addEventListener("wheel", (evt) => {
             evt.preventDefault();
-
             window.requestAnimationFrame(() => {
-                slider.scrollTo({ top: 0, left: slider.scrollLeft + (evt.deltaY * 2), behavior: "smooth" });
+                slider.scrollTo({ 
+                    top: 0, 
+                    left: slider.scrollLeft + (evt.deltaY * 2), 
+                    behavior: "smooth" 
+                });
             });
+        });
+
+        // Add global mouse up listener to handle cases where mouse is released outside the slider
+        document.addEventListener('mouseup', () => {
+            if (isDown) {
+                isDown = false;
+                slider.classList.remove('active');
+                beginMomentumTracking();
+            }
         });
     }
 });
