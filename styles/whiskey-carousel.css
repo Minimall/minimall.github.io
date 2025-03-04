@@ -1,5 +1,5 @@
 
-/* Whiskey Carousel - Fluid iOS-like Momentum Scrolling */
+/* Whiskey Carousel - Truly Free-Flowing with Seamless Scrolling */
 .carousel-wrapper {
   width: 100%;
   overflow: hidden;
@@ -11,29 +11,32 @@
   display: flex;
   overflow-x: scroll;
   padding: 2em;
-  scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none; /* Firefox */
   cursor: grab;
   gap: 2em;
-  will-change: scroll-position, transform;
+  will-change: scroll-position;
   user-select: none;
   -webkit-user-select: none;
   -ms-user-select: none;
   -moz-user-select: none;
-  touch-action: pan-x; /* Focus on horizontal panning */
-  overflow-anchor: none; /* Disable scroll anchoring */
-  scroll-snap-type: none; /* Disable snapping for fluid scrolling */
-  /* Performance optimizations for smoother animations */
+  touch-action: pan-x;
+  overflow-anchor: none;
+  scroll-snap-type: none !important; /* Explicitly disable snapping */
+  
+  /* Performance optimizations */
   transform: translateZ(0);
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
   -webkit-perspective: 1000;
   perspective: 1000;
   position: relative;
-  -webkit-touch-callout: none; /* Prevent iOS callout on long press */
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE/Edge */
+  
+  /* Prevent iOS callout and scrollbar */
+  -webkit-touch-callout: none;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  scroll-behavior: auto !important; /* Ensure no smooth scroll interference */
 }
 
 /* Hide scrollbar */
@@ -49,20 +52,26 @@
   -moz-user-select: none;
 }
 
-.carousel-item {
+.carousel-item,
+.whiskey-cards > * {
   flex: 0 0 auto;
   height: 100vh;
   display: flex;
   align-items: center;
-  justify-content: center; /* Center items */
+  justify-content: flex-start; /* Left-align rather than center */
   position: relative;
-  margin-right: 2em; /* Consistent spacing */
+  margin-right: 2em;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 .carousel-item img, 
-.carousel-item video {
+.carousel-item video,
+.whiskey-cards > * img,
+.whiskey-cards > * video {
   max-height: 80vh;
-  max-width: 80vw; /* Prevent images from being too wide */
+  max-width: 80vw;
   width: auto;
   height: auto;
   object-fit: contain;
@@ -71,7 +80,6 @@
   -webkit-user-drag: none;
   user-select: none;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15);
-  /* Enhanced rendering performance for smoother animations */
   will-change: transform;
   transform: translateZ(0);
   backface-visibility: hidden;
@@ -80,14 +88,27 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Mobile optimizations */
-@media (max-width: 768px) {
-  .carousel-item {
-    height: 70vh;
+/* Let the carousel behave naturally, not centered - better for small viewport images */
+@media (max-width: 1024px) {
+  .carousel-item,
+  .whiskey-cards > * {
+    height: auto;
+    min-height: 70vh;
+    justify-content: flex-start;
   }
-
-  .carousel-item img, 
-  .carousel-item video {
+  
+  .carousel-item img,
+  .carousel-item video,
+  .whiskey-cards > * img,
+  .whiskey-cards > * video {
     max-height: 60vh;
+  }
+}
+
+/* iOS-specific optimizations */
+@supports (-webkit-touch-callout: none) {
+  .whiskey-cards {
+    /* Even smoother momentum scrolling on iOS */
+    -webkit-overflow-scrolling: touch;
   }
 }
