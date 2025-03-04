@@ -116,6 +116,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const isDesktop = window.matchMedia('(min-width: 1201px)').matches;
         const isTablet = window.matchMedia('(min-width: 789px) and (max-width: 1200px)').matches;
         const isMobile = window.matchMedia('(max-width: 788px)').matches;
+        
+        // Ensure content doesn't overflow viewport
+        const viewportWidth = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
 
         if (isDesktop) {
             gridContainer.style.setProperty('--grid-columns', '12');
@@ -142,6 +145,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 item.style[`margin${marginDirection}`] = `${marginValue}vw`;
 
+                // Ensure items don't extend beyond viewport boundaries
+                item.style.maxWidth = 'calc(100% - 4vw)';
+                item.style.boxSizing = 'border-box';
+                
                 // Set uniform z-index to prevent any overlap rendering issues
                 item.style.zIndex = 1;
             });
