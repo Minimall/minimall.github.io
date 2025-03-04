@@ -58,7 +58,7 @@ class InfiniteCarousel {
     this.springConstant = 0.08; // For elastic bounce (lower = more elasticity)
     this.animationId = null;
     this.visibleSlides = new Set();
-    this.clonedIndices = new Map(); // Track cloned slides for infinite effect
+    this.virtualIndices = new Map(); // Track virtual position of each slide
     
     // Create DOM elements
     this.createCarouselElements();
@@ -165,7 +165,7 @@ class InfiniteCarousel {
   }
   
   setupDragEvents() {
-    // Handle touch events
+    // Touch events
     this.track.addEventListener('mousedown', this.handleDragStart.bind(this));
     this.track.addEventListener('touchstart', this.handleDragStart.bind(this), { passive: false });
     
@@ -326,9 +326,6 @@ class InfiniteCarousel {
       
       // Handle extremely slow velocity - snap to nearest slide
       if (Math.abs(this.velocity) < 0.5) {
-        const slideWidth = this.getSlideWidth();
-        const nearestSlidePosition = Math.round(this.position / slideWidth) * slideWidth;
-        
         // Calculate actual index, accounting for infinite wrapping
         const normalizedPosition = -this.position / slideWidth;
         const rawIndex = Math.round(normalizedPosition);
@@ -466,7 +463,7 @@ class InfiniteCarousel {
     this.track.innerHTML = '';
     this.dotsContainer.innerHTML = '';
     this.visibleSlides = new Set();
-    this.clonedIndices = new Map();
+    this.virtualIndices = new Map();
     
     // Initialize position to selected index
     const slideWidth = this.getSlideWidth();
@@ -501,7 +498,7 @@ class InfiniteCarousel {
       this.track.innerHTML = '';
       this.dotsContainer.innerHTML = '';
       this.visibleSlides.clear();
-      this.clonedIndices.clear();
+      this.virtualIndices.clear();
       
       // Re-enable scrolling
       document.body.style.overflow = '';
@@ -512,7 +509,7 @@ class InfiniteCarousel {
   
   initialSlideLoad() {
     // Load visible slides and buffer slides
-    const visibleRange = 1; // Slides visible on each side of current
+    const visibleRange = 2; // Slides visible on each side of current
     const bufferRange = 2;  // Additional buffer slides beyond visible range
     
     for (let offset = -visibleRange - bufferRange; offset <= visibleRange + bufferRange; offset++) {
@@ -537,7 +534,7 @@ class InfiniteCarousel {
     
     // Calculate which virtual indices should be visible based on position
     const centerVirtualIndex = Math.round(-this.position / slideWidth);
-    const visibleRange = 1; // Slides visible on each side of current
+    const visibleRange = 2; // Slides visible on each side of current
     const bufferRange = 2;  // Additional buffer slides beyond visible range
     
     const minVirtualIndex = centerVirtualIndex - visibleRange - bufferRange;
@@ -559,9 +556,9 @@ class InfiniteCarousel {
         const slide = this.track.querySelector(`.carousel-slide[data-virtual-index="${virtualIndex}"]`);
         if (slide) slide.remove();
         
-        // Clean up cloned index tracking if needed
-        if (this.clonedIndices.has(virtualIndex)) {
-          this.clonedIndices.delete(virtualIndex);
+        // Clean up virtual index tracking
+        if (this.virtualIndices.has(virtualIndex)) {
+          this.virtualIndices.delete(virtualIndex);
         }
       }
     });
@@ -607,11 +604,6 @@ class InfiniteCarousel {
       slideImg.src = img.src;
       slideImg.alt = img.alt || 'Image';
       
-      // Ensure image is loaded before adding to DOM
-      slideImg.onload = () => {
-        slide.appendChild(slideImg);
-      };
-      
       // Handle load errors
       slideImg.onerror = () => {
         console.error(`Failed to load image for slide ${actualIndex}`);
@@ -622,7 +614,7 @@ class InfiniteCarousel {
         slide.appendChild(fallback);
       };
       
-      // Start loading
+      // Add image to slide
       if (img.complete) {
         slide.appendChild(slideImg);
       } else {
@@ -630,6 +622,14 @@ class InfiniteCarousel {
         const placeholder = document.createElement('div');
         placeholder.className = 'carousel-image-placeholder';
         slide.appendChild(placeholder);
+        
+        // Replace placeholder when image loads
+        slideImg.onload = () => {
+          placeholder.replaceWith(slideImg);
+        };
+        
+        // Start loading
+        slideImg.src = img.src;
       }
     } else if (video) {
       const slideVideo = document.createElement('video');
@@ -656,7 +656,7 @@ class InfiniteCarousel {
     this.track.appendChild(slide);
     
     // Track the mapping from virtual to actual index
-    this.clonedIndices.set(virtualIndex, actualIndex);
+    this.virtualIndices.set(virtualIndex, actualIndex);
     
     return slide;
   }
