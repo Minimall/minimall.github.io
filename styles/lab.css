@@ -21,6 +21,10 @@
   position: relative;
   left: 0;
   transition: transform 0.3s ease-out;
+  gap: 2em; /* Add horizontal spacing between items */
+  padding: 0 2em; /* Add padding on sides */
+  flex-wrap: nowrap; /* Prevent wrapping */
+  width: max-content; /* Allow track to be as wide as needed */
 }
 
 .carousel-item {
@@ -32,11 +36,7 @@
   align-items: center;
   justify-content: center;
   width: auto;
-}
-
-.carousel-track {
-  gap: 2em; /* Add horizontal spacing between items */
-  padding: 0 2em; /* Add padding on sides */
+  position: relative; /* Ensure proper stacking context */
 }
 
 .carousel-item img, 

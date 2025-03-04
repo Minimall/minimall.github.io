@@ -347,16 +347,23 @@ document.addEventListener('DOMContentLoaded', () => {
   track.style.display = 'flex';
   track.style.gap = '2em';
   track.style.padding = '0 2em';
+  track.style.flexWrap = 'nowrap';
+  track.style.width = 'max-content';
   
   // Fix item positioning to be in a straight line
   const items = carouselContainer.querySelectorAll('.carousel-item');
   items.forEach(item => {
+    // Ensure each item has proper positioning
+    item.style.position = 'relative';
+    item.style.flexShrink = '0';
+    
     // Ensure items display at full height with auto width
     const media = item.querySelector('img, video');
     if (media) {
       media.style.height = '80vh';
       media.style.width = 'auto';
       media.style.borderRadius = '8px';
+      media.style.position = 'relative';
     }
   });
   
