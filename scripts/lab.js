@@ -339,9 +339,14 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initialize carousel with very slow auto-scroll
   const carousel = new FlowCarousel(carouselContainer, {
     autoScroll: true,
-    autoScrollSpeed: 0.2, // Reduced speed for slower movement
+    autoScrollSpeed: 0.15, // Even slower movement for better flow
     itemWidth: null // Allow natural width based on content
   });
+  
+  // Set proper styling for track to ensure items are in a horizontal line
+  track.style.display = 'flex';
+  track.style.gap = '2em';
+  track.style.padding = '0 2em';
   
   // Fix item positioning to be in a straight line
   const items = carouselContainer.querySelectorAll('.carousel-item');
@@ -351,6 +356,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (media) {
       media.style.height = '80vh';
       media.style.width = 'auto';
+      media.style.borderRadius = '8px';
     }
   });
   
