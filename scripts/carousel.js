@@ -43,13 +43,12 @@ class TrulyInfiniteCarousel {
     this.startX = 0;
     this.currentX = 0;
     this.lastX = 0;
-    this.velocity = 0;
+    this.velX = 0;
     this.isDragging = false;
     this.isAnimating = false;
     this.lastMoveTime = 0;
-    this.velocityTracker = [];
     this.animationId = null;
-    this.direction = 0;
+    this.momentumID = null;
     
     // Clone slides for infinite effect
     this.createVirtualSlides();
@@ -133,7 +132,7 @@ class TrulyInfiniteCarousel {
     }
     
     // Create clones for smooth infinite scrolling (add multiple copies)
-    const clonesPerSide = Math.ceil(3 * (this.containerWidth / this.calcSlideWidth()));
+    const clonesPerSide = Math.ceil(5 * (this.containerWidth / this.calcSlideWidth()));
     
     // Prepend clones (from end of original slides)
     for (let i = 0; i < clonesPerSide; i++) {
@@ -240,11 +239,8 @@ class TrulyInfiniteCarousel {
     // Calculate where we are in the virtual carousel
     const normalizedPosition = this.position - this.startPosition;
     const slideMultiplier = Math.round(normalizedPosition / totalWidth);
-    const virtualIndex = slideMultiplier % this.slideCount;
     
     // Calculate if we need to jump forward or backward for seamless scrolling
-    // When we've scrolled too far in either direction
-    
     if (slideMultiplier <= -this.prependCount + 2) {
       // We've scrolled too far backward - jump forward
       const offset = this.slideCount * totalWidth;
@@ -258,6 +254,7 @@ class TrulyInfiniteCarousel {
     }
     
     // Calculate the actual index (0 to slideCount-1)
+    const virtualIndex = slideMultiplier % this.slideCount;
     const wrappedIndex = ((virtualIndex % this.slideCount) + this.slideCount) % this.slideCount;
     
     // Update currentIndex if it changed
@@ -298,11 +295,8 @@ class TrulyInfiniteCarousel {
     // Don't capture if any animation is in progress
     if (this.isAnimating) return;
     
-    // Stop existing animation
-    if (this.animationId) {
-      cancelAnimationFrame(this.animationId);
-      this.animationId = null;
-    }
+    // Cancel any ongoing momentum
+    this.cancelMomentumTracking();
     
     // Store initial position for drag calculations
     this.isDragging = true;
@@ -312,7 +306,7 @@ class TrulyInfiniteCarousel {
     this.lastMoveTime = Date.now();
     this.track.style.transition = 'none';
     this.track.style.cursor = 'grabbing';
-    this.velocityTracker = [];
+    this.velX = 0;
     
     // Stop auto-play during interaction
     if (this.autoPlayInterval) {
@@ -335,25 +329,12 @@ class TrulyInfiniteCarousel {
     const deltaX = this.currentX - this.lastX;
     this.lastX = this.currentX;
     
+    // Store velocity for momentum
+    this.velX = deltaX;
+    
     // Update position
     this.position += deltaX;
     this.updateTrackPosition();
-    
-    // Track velocity for momentum scrolling
-    const now = Date.now();
-    const elapsed = now - this.lastMoveTime;
-    this.lastMoveTime = now;
-    
-    if (elapsed > 0) {
-      // Calculate velocity (px/ms)
-      const velocity = deltaX / elapsed;
-      
-      // Add to velocity tracker (keeping last 5 samples)
-      this.velocityTracker.push(velocity);
-      if (this.velocityTracker.length > 5) {
-        this.velocityTracker.shift();
-      }
-    }
     
     // Always prevent page scrolling when dragging
     if (e.cancelable) {
@@ -367,29 +348,8 @@ class TrulyInfiniteCarousel {
     this.isDragging = false;
     this.track.style.cursor = 'grab';
     
-    // Calculate final velocity (weighted average of last few samples)
-    let finalVelocity = 0;
-    if (this.velocityTracker.length > 0) {
-      let weight = 0;
-      let sum = 0;
-      
-      // Weight recent velocities more heavily
-      for (let i = 0; i < this.velocityTracker.length; i++) {
-        const sampleWeight = i + 1;
-        sum += this.velocityTracker[i] * sampleWeight;
-        weight += sampleWeight;
-      }
-      
-      finalVelocity = sum / weight;
-    }
-    
-    // Apply momentum with deceleration
-    if (Math.abs(finalVelocity) > 0.1) {
-      this.applyMomentum(finalVelocity);
-    } else {
-      // No significant momentum, just snap to closest slide
-      this.snapToNearestSlide();
-    }
+    // Apply momentum effect
+    this.beginMomentumTracking();
     
     // Restart auto-play if enabled
     if (this.options.autoPlay) {
@@ -397,48 +357,39 @@ class TrulyInfiniteCarousel {
     }
   }
   
-  applyMomentum(initialVelocity) {
-    // Scale the velocity for better feel
-    const scaledVelocity = initialVelocity * 100;
-    let velocity = scaledVelocity;
-    let lastTimestamp = null;
-    let position = this.position;
+  beginMomentumTracking() {
+    this.cancelMomentumTracking();
+    this.momentumID = requestAnimationFrame(this.momentumLoop.bind(this));
+  }
+  
+  cancelMomentumTracking() {
+    if (this.momentumID) {
+      cancelAnimationFrame(this.momentumID);
+      this.momentumID = null;
+    }
+    if (this.animationId) {
+      cancelAnimationFrame(this.animationId);
+      this.animationId = null;
+    }
+  }
+  
+  momentumLoop() {
+    // Apply velocity with decay
+    this.position += this.velX * 2;
+    this.velX *= 0.95; // Decay factor
     
-    const animate = (timestamp) => {
-      if (!lastTimestamp) {
-        lastTimestamp = timestamp;
-        this.animationId = requestAnimationFrame(animate);
-        return;
-      }
-      
-      // Calculate time delta
-      const delta = timestamp - lastTimestamp;
-      lastTimestamp = timestamp;
-      
-      // Apply friction (deceleration)
-      velocity *= Math.pow(0.95, delta / 16); // Normalized for 60fps
-      
-      // Update position based on velocity
-      position += velocity * delta;
-      
-      // Apply position
-      this.position = position;
-      this.updateTrackPosition();
-      
-      // Check for infinite scroll conditions
-      this.handleInfiniteScrolling();
-      
-      // Continue animation until velocity is minimal
-      if (Math.abs(velocity) > 0.1) {
-        this.animationId = requestAnimationFrame(animate);
-      } else {
-        // When slowed down enough, snap to nearest slide
-        this.snapToNearestSlide();
-      }
-    };
+    // Update position
+    this.updateTrackPosition();
     
-    // Start animation
-    this.animationId = requestAnimationFrame(animate);
+    // Check for infinite scroll conditions
+    this.handleInfiniteScrolling();
+    
+    // Continue animation or snap to nearest slide
+    if (Math.abs(this.velX) > 0.5) {
+      this.momentumID = requestAnimationFrame(this.momentumLoop.bind(this));
+    } else {
+      this.snapToNearestSlide();
+    }
   }
   
   snapToNearestSlide() {
@@ -474,9 +425,7 @@ class TrulyInfiniteCarousel {
     const duration = Math.min(500, 100 + Math.abs(distance));
     const startTime = performance.now();
     
-    if (this.animationId) {
-      cancelAnimationFrame(this.animationId);
-    }
+    this.cancelMomentumTracking();
     
     const animate = (currentTime) => {
       const elapsed = currentTime - startTime;
@@ -624,9 +573,7 @@ class TrulyInfiniteCarousel {
     window.removeEventListener('resize', this.onResize);
     
     // Stop any ongoing animations
-    if (this.animationId) {
-      cancelAnimationFrame(this.animationId);
-    }
+    this.cancelMomentumTracking();
     
     // Stop auto-play
     if (this.autoPlayInterval) {

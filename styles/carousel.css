@@ -148,6 +148,21 @@
     width: 8px;
     height: 8px;
   }
+  
+  /* Prevent iOS overscroll issues */
+  .carousel-container {
+    overscroll-behavior-x: none;
+    -webkit-overflow-scrolling: auto;
+  }
+  
+  /* Increase performance on mobile */
+  .carousel-track {
+    -webkit-transform: translateZ(0);
+    -moz-transform: translateZ(0);
+    -ms-transform: translateZ(0);
+    -o-transform: translateZ(0);
+    transform: translateZ(0);
+  }
 }
 
 /* Enhanced iOS-specific optimizations */
