@@ -34,6 +34,22 @@
     <link rel="stylesheet" href="styles/buttons.css">
     <link rel="stylesheet" href="styles/header.css">
     <link rel="stylesheet" href="styles/lab.css">
+    <style>
+        .flow-carousel {
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .flow-carousel img {
+            scroll-snap-align: start;
+            flex-shrink: 0;
+            width: 300px; /* Adjust as needed */
+            height: auto;
+            margin-right: 20px; /* Adjust as needed */
+        }
+    </style>
 </head>
 <body>
     <!-- Google Tag Manager (noscript) -->
@@ -66,7 +82,10 @@
         </div>
 
         <div class="flow-carousel" style="max-width: none !important;">
-            <!-- Carousel content will be populated by JavaScript -->
+            <img src="image1.jpg" alt="Carousel Image 1">
+            <img src="image2.jpg" alt="Carousel Image 2">
+            <img src="image3.jpg" alt="Carousel Image 3">
+            <!-- Add more images as needed -->
         </div>
 
         <div class="main-text">
