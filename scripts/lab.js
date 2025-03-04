@@ -296,14 +296,11 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // Get all images from the lab folder
   const labImages = [
-    // These would be populated with your actual images
-    // Using placeholder data for now - adjust with your actual lab images
-    { type: 'image', src: 'images/lab/lab1.webp', alt: 'Lab work 1' },
-    { type: 'image', src: 'images/lab/lab2.webp', alt: 'Lab work 2' },
-    { type: 'image', src: 'images/lab/lab3.webp', alt: 'Lab work 3' },
-    { type: 'image', src: 'images/lab/lab4.webp', alt: 'Lab work 4' },
-    { type: 'image', src: 'images/lab/lab5.webp', alt: 'Lab work 5' },
-    { type: 'video', src: 'videos/wombi-reel.mp4', alt: 'Wombi Reel' },
+    { type: 'image', src: 'images/lab/2-week-sprint.avif', alt: '2 Week Sprint' },
+    { type: 'image', src: 'images/lab/design-skillset.avif', alt: 'Design Skillset' },
+    { type: 'image', src: 'images/lab/healthcare.avif', alt: 'Healthcare' },
+    { type: 'image', src: 'images/lab/innomatix.avif', alt: 'Innomatix' },
+    { type: 'video', src: 'videos/wombi-reel.mp4', alt: 'Wombi Reel' }
   ];
   
   // Create carousel track and items
