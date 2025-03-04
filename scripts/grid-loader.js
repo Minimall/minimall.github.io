@@ -19,21 +19,6 @@ document.addEventListener('DOMContentLoaded', function() {
             video.loop = true;
             video.muted = true;
             video.playsInline = true;
-            video.controls = false; // No controls to keep clean UI
-            video.style.width = '100%';
-            video.style.height = '100%';
-            video.style.objectFit = 'cover';
-            
-            // Special handling for specific videos if needed
-            if (file === 'globallogic.mp4') {
-                console.log('Loading GlobalLogic video');
-                video.addEventListener('loadeddata', () => {
-                    console.log('GlobalLogic video loaded successfully');
-                });
-                video.addEventListener('error', (e) => {
-                    console.error('Error loading GlobalLogic video:', e);
-                });
-            }
 
             const source = document.createElement('source');
             source.src = `images/lab/${file}`;
@@ -42,11 +27,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
             video.appendChild(source);
             gridItem.appendChild(video);
-            
-            // Force video play
-            setTimeout(() => {
-                video.play().catch(e => console.warn('Auto-play prevented:', e));
-            }, 100);
         } else {
             const img = document.createElement('img');
             img.src = `images/lab/${file}`;
@@ -68,7 +48,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Hardcoded list of files in the lab directory
         const files = [
-            // Original lab content
             '2-week-sprint.avif',
             'design-skillset.avif',
             'healthcare.avif',
@@ -79,10 +58,7 @@ document.addEventListener('DOMContentLoaded', function() {
             'heateye-graphics.jpg',
             'heateye-logos.jpg',
             'heateye-tote.jpg',
-            'graphic.mp4',
-            // New content from drafts
-            'globallogic.mp4',
-            // Add other draft files dynamically discovered
+            'graphic.mp4'
         ];
 
         // If there are no files, show a message
@@ -145,14 +121,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Log for debugging
-    console.log('Starting lab grid loading process...');
-    
     // Start the grid loading process
     loadLabGrid();
-    
-    // Log completion
-    console.log('Lab grid loading process initiated');
 
     // Reload grid on resize to ensure proper layout
     let resizeTimer;
