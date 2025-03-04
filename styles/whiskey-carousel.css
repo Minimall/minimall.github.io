@@ -50,7 +50,7 @@
   height: 100vh;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start; /* Changed from center to flex-start */
   position: relative;
 }
 
@@ -69,6 +69,7 @@
   transform: translateZ(0);
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
+  margin-left: 0; /* Ensure no automatic centering margin */
 }
 
 /* Mobile optimizations */
