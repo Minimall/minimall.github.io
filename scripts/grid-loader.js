@@ -105,6 +105,57 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Apply Swiss design principles - positioning, overlaps, etc.
         applySwissDesignPrinciples(gridContainer, files.length);
+
+        // Ensure all items have proper aspect ratios and respect viewport
+        ensureMediaAspectRatios();
+    }
+
+    // Function to ensure all media maintains its aspect ratio and doesn't overflow
+    function ensureMediaAspectRatios() {
+        const gridItems = document.querySelectorAll('.grid-item');
+
+        gridItems.forEach(item => {
+            const media = item.querySelector('img, video');
+            if (media) {
+                // Handle images
+                if (media.tagName === 'IMG') {
+                    media.onload = function() {
+                        const aspectRatio = this.naturalWidth / this.naturalHeight;
+                        item.style.setProperty('--item-aspect-ratio', aspectRatio);
+                        item.style.aspectRatio = aspectRatio;
+                    };
+
+                    // If image is already loaded
+                    if (media.complete) {
+                        const aspectRatio = media.naturalWidth / media.naturalHeight;
+                        item.style.setProperty('--item-aspect-ratio', aspectRatio);
+                        item.style.aspectRatio = aspectRatio;
+                    }
+                } 
+                // Handle videos
+                else if (media.tagName === 'VIDEO') {
+                    media.addEventListener('loadedmetadata', function() {
+                        const aspectRatio = this.videoWidth / this.videoHeight;
+                        item.style.setProperty('--item-aspect-ratio', aspectRatio);
+                        item.style.aspectRatio = aspectRatio;
+                    });
+
+                    // If video metadata is already loaded
+                    if (media.readyState >= 1) {
+                        const aspectRatio = media.videoWidth / media.videoHeight;
+                        item.style.setProperty('--item-aspect-ratio', aspectRatio);
+                        item.style.aspectRatio = aspectRatio;
+                    }
+                }
+            }
+
+            // Ensure item doesn't overflow the viewport
+            const viewportWidth = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+            const safeWidth = viewportWidth - 120; // 60px padding on each side
+            if (item.offsetWidth > safeWidth) {
+                item.style.maxWidth = `${safeWidth}px`;
+            }
+        });
     }
 
     // Apply Swiss design principles to the grid
@@ -116,7 +167,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const isDesktop = window.matchMedia('(min-width: 1201px)').matches;
         const isTablet = window.matchMedia('(min-width: 789px) and (max-width: 1200px)').matches;
         const isMobile = window.matchMedia('(max-width: 788px)').matches;
-        
+
         // Ensure content doesn't overflow viewport
         const viewportWidth = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
 
@@ -140,7 +191,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!isMobile) {
             const gridItems = gridContainer.querySelectorAll('.grid-item');
             const moduleSize = isDesktop ? 4 : 3; // Base module size in vw
-            
+
             // Define a grid with fixed positions ensuring no overlap
             const positions = [
                 { column: 1, row: 1, width: 4, height: 3 },     // Item 1
@@ -160,17 +211,35 @@ document.addEventListener('DOMContentLoaded', function() {
             gridItems.forEach((item, i) => {
                 if (i < positions.length) {
                     const pos = positions[i];
-                    
+
                     // Apply precise grid positioning with modularity
                     item.style.gridColumn = `${pos.column} / span ${pos.width}`;
                     item.style.gridRow = `${pos.row} / span ${pos.height}`;
-                    
+
                     // Apply margins for visual rhythm
                     item.style.margin = `${moduleSize/2}px`;
-                    
-                    // Ensure items don't overlap by using precise grid positioning
+
+                    // Ensure items don't overlap and respect viewport edges
                     item.style.boxSizing = 'border-box';
                     item.style.zIndex = 1;
+
+                    // Ensure the item maintains the media's aspect ratio
+                    const media = item.querySelector('img, video');
+                    if (media) {
+                        if (media.tagName === 'IMG' && media.complete) {
+                            const aspectRatio = media.naturalWidth / media.naturalHeight;
+                            item.style.setProperty('--item-aspect-ratio', aspectRatio);
+                            item.style.aspectRatio = aspectRatio;
+                        } else if (media.tagName === 'VIDEO' && media.readyState >= 1) {
+                            const aspectRatio = media.videoWidth / media.videoHeight;
+                            item.style.setProperty('--item-aspect-ratio', aspectRatio);
+                            item.style.aspectRatio = aspectRatio;
+                        }
+                    }
+
+                    // Protect from viewport edge overlap
+                    item.style.maxWidth = `calc(100% - 10px)`;
+                    item.style.overflow = 'hidden';
                 }
             });
         }
