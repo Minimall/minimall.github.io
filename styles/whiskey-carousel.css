@@ -1,0 +1,61 @@
+
+/* Whiskey Carousel - Momentum Scrolling Style */
+.carousel-wrapper {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.whiskey-cards {
+  display: flex;
+  overflow-x: scroll;
+  padding: 2em;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; /* Firefox */
+  cursor: grab;
+  gap: 2em;
+}
+
+/* Hide scrollbar */
+.whiskey-cards::-webkit-scrollbar {
+  display: none;
+}
+
+.whiskey-cards.active {
+  cursor: grabbing;
+  user-select: none;
+}
+
+.carousel-item {
+  flex: 0 0 auto;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.carousel-item img, 
+.carousel-item video {
+  max-height: 80vh;
+  width: auto;
+  object-fit: contain;
+  border-radius: 8px;
+  pointer-events: none;
+  -webkit-user-drag: none;
+  user-select: none;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15);
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .carousel-item {
+    height: 70vh;
+  }
+
+  .carousel-item img, 
+  .carousel-item video {
+    max-height: 60vh;
+  }
+}
