@@ -10,7 +10,7 @@
   display: flex;
   overflow-x: scroll;
   padding: 2em;
-  scroll-behavior: auto; /* Changed from smooth to allow free-flowing drag */
+  scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none; /* Firefox */
   cursor: grab;
@@ -30,9 +30,6 @@
   perspective: 1000;
   -webkit-perspective: 1000;
   position: relative;
-  /* Improved scroll physics */
-  scroll-snap-type: none; /* Disable snap points for free movement */
-  overscroll-behavior-x: none; /* Prevent browser overscroll */
 }
 
 /* Hide scrollbar */
