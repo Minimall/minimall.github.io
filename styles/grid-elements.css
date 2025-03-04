@@ -1,24 +1,25 @@
 /* Swiss Typographic Grid Styles */
 :root {
   --grid-columns: 12;
-  --grid-rows: 12;
-  --grid-gap: 3vw; /* Increased gap for no overlaps */
-  --grid-margin: 4vw;
-  --grid-module: 1.5vw; /* Base module size for spacing */
+  --grid-rows: 24; /* More rows to accommodate spacing */
+  --grid-gap: 4vw; /* Increased gap to ensure no overlaps */
+  --grid-margin: 5vw; /* Larger margin for better edge spacing */
+  --grid-module: 2vw; /* Larger base module size for spacing */
 }
 
 .grid-container {
   display: grid;
   grid-template-columns: repeat(var(--grid-columns), 1fr);
-  grid-template-rows: repeat(var(--grid-rows), minmax(50px, auto));
+  grid-template-rows: repeat(var(--grid-rows), minmax(60px, auto));
   gap: var(--grid-gap);
   padding: var(--grid-margin);
   margin: 0 auto;
-  max-width: calc(100% - 4vw); /* Prevent content from touching viewport edges */
+  max-width: calc(100% - 6vw); /* Prevent content from touching viewport edges */
   position: relative;
-  margin-bottom: 8vw;
-  margin-left: 2vw;
-  margin-right: 2vw;
+  margin-bottom: 10vw;
+  margin-left: 3vw;
+  margin-right: 3vw;
+  isolation: isolate; /* Create stacking context to prevent overlap issues */
 }
 
 .grid-item {
@@ -83,152 +84,40 @@
   min-height: 360px;
 }
 
-/* Specific placements following Swiss design principles */
-.item-1 {
-  grid-column: 2 / span 4;
-  grid-row: 1 / span 3;
+/* Grid items will be positioned dynamically via JavaScript 
+   for better control over layout and to prevent overlaps */
+.grid-item {
+  position: relative;
+  z-index: 1;
+  /* Will have grid-column and grid-row set by JavaScript */
+  transition: all 0.3s ease;
+}
+
+/* Give each grid item a slight interaction effect */
+.grid-item:hover {
   z-index: 2;
-}
-
-.item-2 {
-  grid-column: 7 / span 5;
-  grid-row: 2 / span 4;
-  z-index: 1;
-}
-
-.item-3 {
-  grid-column: 1 / span 3;
-  grid-row: 5 / span 4;
-  z-index: 1;
-}
-
-.item-4 {
-  grid-column: 5 / span 3;
-  grid-row: 6 / span 3;
-  z-index: 1;
-}
-
-.item-5 {
-  grid-column: 9 / span 4;
-  grid-row: 7 / span 3;
-  z-index: 2;
-}
-
-.item-6 {
-  grid-column: 2 / span 5;
-  grid-row: 10 / span 3;
-  z-index: 1;
-}
-
-.item-7 {
-  grid-column: 8 / span 4;
-  grid-row: 11 / span 3;
-  z-index: 2;
-}
-
-.item-8 {
-  grid-column: 4 / span 3;
-  grid-row: 4 / span 2;
-  z-index: 1;
-}
-
-.item-9 {
-  grid-column: 10 / span 2;
-  grid-row: 1 / span 2;
-  z-index: 1;
-}
-
-.item-10 {
-  grid-column: 1 / span 2;
-  grid-row: 9 / span 2;
-  z-index: 3;
-}
-
-.item-11 {
-  grid-column: 6 / span 3;
-  grid-row: 8 / span 3;
-  z-index: 1;
-}
-
-.item-12 {
-  grid-column: 10 / span 3;
-  grid-row: 4 / span 2;
-  z-index: 1;
 }
 
 /* Media queries for responsive design */
 @media (max-width: 1200px) {
   :root {
     --grid-columns: 8;
-    --grid-rows: 16;
-    --grid-gap: 2.5vw; /* Adjusted gap for tablet */
-    --grid-module: 1.2vw; /* Adjusted module size for tablet */
+    --grid-rows: 32; /* Many more rows to ensure proper spacing */
+    --grid-gap: 4vw; /* Larger gap for tablet to prevent overlaps */
+    --grid-module: 2vw; /* Larger module size for tablet */
   }
-
-  .item-1 {
-    grid-column: 1 / span 3;
-    grid-row: 1 / span 3;
+  
+  /* All grid positions will be handled by JS for tablet view */
+  .grid-container {
+    padding: 5vw;
+    margin-left: 4vw;
+    margin-right: 4vw;
   }
-
-  .item-2 {
-    grid-column: 5 / span 4;
-    grid-row: 2 / span 4;
-  }
-
-  .item-3 {
-    grid-column: 1 / span 4;
-    grid-row: 5 / span 3;
-    margin-left: 0;
-  }
-
-  .item-4 {
-    grid-column: 6 / span 3;
-    grid-row: 7 / span 3;
-    margin-top: 0;
-  }
-
-  .item-5 {
-    grid-column: 2 / span 4;
-    grid-row: 9 / span 3;
-  }
-
-  .item-6 {
-    grid-column: 1 / span 3;
-    grid-row: 13 / span 2;
-  }
-
-  .item-7 {
-    grid-column: 5 / span 3;
-    grid-row: 12 / span 3;
-  }
-
-  .item-8 {
-    grid-column: 4 / span 3;
-    grid-row: 4 / span 2;
-    margin-left: 0;
-  }
-
-  .item-9 {
-    grid-column: 1 / span 2;
-    grid-row: 15 / span 2;
-    transform: none;
-  }
-
-  .item-10 {
-    grid-column: 5 / span 4;
-    grid-row: 1 / span 1;
-  }
-
-  .item-11 {
-    grid-column: 2 / span 3;
-    grid-row: 11 / span 2;
-    margin-top: 0;
-  }
-
-  .item-12 {
-    grid-column: 5 / span 3;
-    grid-row: 6 / span 2;
-    margin-left: 0;
+  
+  /* Remove any leftover margin/positioning that might cause overlaps */
+  .grid-item {
+    margin: 0;
+    transform: none !important;
   }
 }
 

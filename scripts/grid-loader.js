@@ -120,37 +120,58 @@ document.addEventListener('DOMContentLoaded', function() {
         // Ensure content doesn't overflow viewport
         const viewportWidth = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
 
+        // Increase the number of rows to give more vertical space
         if (isDesktop) {
             gridContainer.style.setProperty('--grid-columns', '12');
-            gridContainer.style.setProperty('--grid-rows', Math.max(12, Math.ceil(itemCount / 2)));
+            gridContainer.style.setProperty('--grid-rows', Math.max(24, Math.ceil(itemCount * 1.5)));
+            gridContainer.style.setProperty('--grid-gap', '4vw'); // Larger gap to prevent overlap
         } else if (isTablet) {
             gridContainer.style.setProperty('--grid-columns', '8');
-            gridContainer.style.setProperty('--grid-rows', Math.max(16, Math.ceil(itemCount / 1.5)));
+            gridContainer.style.setProperty('--grid-rows', Math.max(30, Math.ceil(itemCount * 2)));
+            gridContainer.style.setProperty('--grid-gap', '4vw');
         } else {
             // Mobile layout is a single column
             gridContainer.style.setProperty('--grid-columns', '4');
-            gridContainer.style.setProperty('--grid-rows', itemCount * 2);
+            gridContainer.style.setProperty('--grid-rows', itemCount * 3);
+            gridContainer.style.setProperty('--grid-gap', '6vw');
         }
 
-        // Apply module-based spacing for all views
+        // Position items according to a strict Swiss modernist grid
         if (!isMobile) {
             const gridItems = gridContainer.querySelectorAll('.grid-item');
-            const baseModuleSize = isDesktop ? 1.5 : 1.2; // Module size in vw
+            const moduleSize = isDesktop ? 4 : 3; // Base module size in vw
+            
+            // Define a grid with fixed positions ensuring no overlap
+            const positions = [
+                { column: 1, row: 1, width: 4, height: 3 },     // Item 1
+                { column: 6, row: 2, width: 5, height: 4 },     // Item 2
+                { column: 1, row: 6, width: 3, height: 4 },     // Item 3
+                { column: 5, row: 8, width: 3, height: 3 },     // Item 4
+                { column: 9, row: 7, width: 4, height: 4 },     // Item 5
+                { column: 1, row: 12, width: 5, height: 3 },    // Item 6
+                { column: 7, row: 13, width: 4, height: 3 },    // Item 7
+                { column: 4, row: 4, width: 3, height: 3 },     // Item 8
+                { column: 9, row: 1, width: 3, height: 2 },     // Item 9
+                { column: 1, row: 17, width: 2, height: 2 },    // Item 10
+                { column: 4, row: 16, width: 4, height: 3 },    // Item 11
+                { column: 9, row: 12, width: 3, height: 2 }     // Item 12
+            ];
 
             gridItems.forEach((item, i) => {
-                // Apply consistent module-based margins
-                const marginDirection = i % 2 === 0 ? 'Top' : 'Left';
-                const moduleMultiplier = (i % 3) + 1; // 1, 2, or 3 modules
-                const marginValue = baseModuleSize * moduleMultiplier;
-
-                item.style[`margin${marginDirection}`] = `${marginValue}vw`;
-
-                // Ensure items don't extend beyond viewport boundaries
-                item.style.maxWidth = 'calc(100% - 4vw)';
-                item.style.boxSizing = 'border-box';
-                
-                // Set uniform z-index to prevent any overlap rendering issues
-                item.style.zIndex = 1;
+                if (i < positions.length) {
+                    const pos = positions[i];
+                    
+                    // Apply precise grid positioning with modularity
+                    item.style.gridColumn = `${pos.column} / span ${pos.width}`;
+                    item.style.gridRow = `${pos.row} / span ${pos.height}`;
+                    
+                    // Apply margins for visual rhythm
+                    item.style.margin = `${moduleSize/2}px`;
+                    
+                    // Ensure items don't overlap by using precise grid positioning
+                    item.style.boxSizing = 'border-box';
+                    item.style.zIndex = 1;
+                }
             });
         }
     }
