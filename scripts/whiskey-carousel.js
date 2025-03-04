@@ -1,19 +1,82 @@
 
 document.addEventListener('DOMContentLoaded', () => {
     if (document.querySelector('.whiskey-cards')) {
-        // Slider dragging
+        console.log("Initializing truly infinite carousel");
+        
+        // Clone carousel items for infinite scrolling
         const slider = document.querySelector('.whiskey-cards');
+        const items = Array.from(slider.children);
+        
+        // Create clones at both ends for seamless looping
+        if (items.length > 0) {
+            // Clone all items to both ends for seamless scrolling
+            items.forEach(item => {
+                const cloneStart = item.cloneNode(true);
+                const cloneEnd = item.cloneNode(true);
+                slider.prepend(cloneEnd);
+                slider.appendChild(cloneStart);
+            });
+            
+            console.log(`Created ${items.length} clones at each end for seamless scrolling`);
+        }
+        
+        // Wait for the DOM to update with clones
+        setTimeout(() => {
+            // Scroll to the original items (skip the clones at the start)
+            const totalWidth = items.reduce((acc, item) => acc + item.offsetWidth + parseInt(getComputedStyle(item).marginRight), 0);
+            slider.scrollLeft = totalWidth;
+            console.log(`Initial scroll position set to: ${totalWidth}px`);
+        }, 10);
+        
+        // Slider dragging variables
         let isDown = false;
         let startX;
         let scrollLeft;
         let velX = 0;
         let momentumID;
         
-        console.log("Whiskey carousel initialized");
+        // Handle the infinite loop when scrolling reaches edges
+        function handleInfiniteScroll() {
+            const allItems = Array.from(slider.children);
+            const itemCount = allItems.length;
+            const originalCount = items.length;
+            
+            // Calculate total width of original items
+            const itemWidth = allItems.reduce((acc, item) => acc + item.offsetWidth + parseInt(getComputedStyle(item).marginRight), 0) / itemCount * originalCount;
+            
+            // If we've scrolled past the beginning items
+            if (slider.scrollLeft < itemWidth * 0.1) {
+                // Jump to the middle section (original items) without animation
+                slider.style.scrollBehavior = 'auto';
+                slider.scrollLeft += itemWidth;
+                console.log("Looped from beginning to middle");
+                
+                // Restore smooth scrolling after jump
+                setTimeout(() => {
+                    slider.style.scrollBehavior = 'smooth';
+                }, 10);
+            }
+            // If we've scrolled past the end items
+            else if (slider.scrollLeft > itemWidth * 1.9) {
+                // Jump back to the middle section without animation
+                slider.style.scrollBehavior = 'auto';
+                slider.scrollLeft -= itemWidth;
+                console.log("Looped from end to middle");
+                
+                // Restore smooth scrolling after jump
+                setTimeout(() => {
+                    slider.style.scrollBehavior = 'smooth';
+                }, 10);
+            }
+        }
+        
+        // Add scroll event listener for infinite loop handling
+        slider.addEventListener('scroll', () => {
+            handleInfiniteScroll();
+        });
 
         // Mouse down event - start dragging
         slider.addEventListener('mousedown', (e) => {
-            console.log("Mouse down detected");
             isDown = true;
             slider.classList.add('active');
             startX = e.clientX;
@@ -31,6 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 isDown = false;
                 slider.classList.remove('active');
                 beginMomentumTracking();
+                handleInfiniteScroll();
             }
         });
 
@@ -39,6 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
             isDown = false;
             slider.classList.remove('active');
             beginMomentumTracking();
+            handleInfiniteScroll();
         });
 
         // Mouse move event - perform dragging
@@ -51,13 +116,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const prevScrollLeft = slider.scrollLeft;
             slider.scrollLeft = scrollLeft - walk;
             
-            // Calculate velocity for momentum - track the last 5 movements for smoother acceleration
+            // Calculate velocity for momentum
             velX = slider.scrollLeft - prevScrollLeft;
-            
-            // Debug info at reduced frequency to avoid console spam
-            if (Math.random() < 0.1) { // Only log ~10% of move events
-                console.log(`walk: ${walk}, scrollLeft: ${slider.scrollLeft}, velX: ${velX}`);
-            }
         });
 
         // Touch events for mobile
@@ -67,7 +127,6 @@ document.addEventListener('DOMContentLoaded', () => {
             startX = e.touches[0].clientX;
             scrollLeft = slider.scrollLeft;
             cancelMomentumTracking();
-            console.log("Touch start detected");
             
             // Disable scroll behavior during touch for better responsiveness
             slider.style.scrollBehavior = 'auto';
@@ -78,6 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
             isDown = false;
             slider.classList.remove('active');
             beginMomentumTracking();
+            handleInfiniteScroll();
         });
 
         slider.addEventListener('touchmove', (e) => {
@@ -88,7 +148,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const prevScrollLeft = slider.scrollLeft;
             slider.scrollLeft = scrollLeft - walk;
             velX = slider.scrollLeft - prevScrollLeft;
-            console.log("Touch move: scrollLeft = " + slider.scrollLeft);
         }, { passive: false });
 
         // Momentum tracking functions
@@ -110,17 +169,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const frictionFactor = Math.max(0.90, 0.97 - Math.abs(velX) * 0.01);
             velX *= frictionFactor;
             
-            // Log less frequently to avoid console spam
-            if (Math.random() < 0.05) {
-                console.log("Momentum: velX = " + velX);
-            }
-            
             // Continue animation until velocity is very small
             if (Math.abs(velX) > 0.1) {
                 momentumID = requestAnimationFrame(momentumLoop);
             } else {
                 // Reset to smooth scrolling behavior after momentum ends
                 slider.style.scrollBehavior = 'smooth';
+                handleInfiniteScroll(); // Check if we need to loop after momentum ends
             }
         }
 
@@ -151,6 +206,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Re-enable smooth scrolling after drag ends
                 setTimeout(() => {
                     slider.style.scrollBehavior = 'smooth';
+                    handleInfiniteScroll();
                 }, 50);
             }
         });
