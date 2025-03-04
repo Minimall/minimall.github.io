@@ -1,9 +1,10 @@
 
-/* Whiskey Carousel - Momentum Scrolling Style */
+/* Whiskey Carousel - Fluid iOS-like Momentum Scrolling */
 .carousel-wrapper {
   width: 100%;
   overflow: hidden;
   position: relative;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .whiskey-cards {
@@ -15,21 +16,20 @@
   scrollbar-width: none; /* Firefox */
   cursor: grab;
   gap: 2em;
-  will-change: transform, scroll-position;
+  will-change: scroll-position;
   user-select: none;
   -webkit-user-select: none;
   -ms-user-select: none;
   -moz-user-select: none;
-  touch-action: pan-y; /* Enable native vertical scrolling but disable horizontal */
-  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+  touch-action: pan-x; /* Focus on horizontal panning */
   overflow-anchor: none; /* Disable scroll anchoring */
-  scroll-snap-type: x proximity; /* Enhance scrolling behavior */
-  /* Enhance performance for smoother animations */
+  scroll-snap-type: none; /* Disable snapping for fluid scrolling */
+  /* Performance optimizations for smoother animations */
   transform: translateZ(0);
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
-  perspective: 1000;
-  -webkit-perspective: 1000;
+  -webkit-perspective: 1000px;
+  perspective: 1000px;
   position: relative;
 }
 
@@ -66,11 +66,13 @@
   -webkit-user-drag: none;
   user-select: none;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15);
-  /* Enhance rendering performance */
+  /* Enhanced rendering performance for smoother animations */
   will-change: transform;
   transform: translateZ(0);
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* Mobile optimizations */
