@@ -14,15 +14,12 @@
   gap: var(--grid-gap);
   padding: var(--grid-margin);
   margin: 0 auto;
-  width: calc(100% - 6vw); /* Fixed width to ensure proper sizing */
   max-width: calc(100% - 6vw); /* Prevent content from touching viewport edges */
   position: relative;
   margin-bottom: 10vw;
   margin-left: 3vw;
   margin-right: 3vw;
   isolation: isolate; /* Create stacking context to prevent overlap issues */
-  box-sizing: border-box; /* Ensure padding is included in width calculation */
-  overflow-x: hidden; /* Prevent horizontal overflow */
 }
 
 .grid-item {
@@ -121,38 +118,6 @@
   .grid-item {
     margin: 0;
     transform: none !important;
-  }
-}
-
-
-/* Additional rules to prevent media from being cut off by viewport edges on desktop */
-@media (min-width: 1201px) {
-  /* Ensure all grid items respect viewport boundaries */
-  .grid-item {
-    max-width: calc(100vw - 6vw) !important;
-    box-sizing: border-box;
-    overflow: hidden;
-  }
-  
-  /* Ensure all media elements stay within their containers */
-  .grid-item img,
-  .grid-item video {
-    max-width: 100%;
-    height: auto;
-    object-fit: contain;
-    object-position: center;
-    margin: 0 auto;
-  }
-  
-  /* Additional safety margin for grid items near the edges */
-  .grid-item:first-child,
-  .grid-item:nth-child(3n+1) {
-    margin-left: clamp(10px, 1vw, 20px);
-  }
-  
-  .grid-item:last-child,
-  .grid-item:nth-child(3n) {
-    margin-right: clamp(10px, 1vw, 20px);
   }
 }
 
