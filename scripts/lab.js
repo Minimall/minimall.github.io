@@ -73,10 +73,18 @@ class FlowCarousel {
     this.isDragging = true;
     this.container.classList.add('dragging');
     
+    // Get current transform position
+    const transformValue = window.getComputedStyle(this.track).getPropertyValue('transform');
+    const matrix = new DOMMatrix(transformValue);
+    const currentTranslateX = matrix.m41;
+    
     // Get starting position based on mouse or touch
     const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
     this.startX = clientX - this.track.offsetLeft;
-    this.scrollLeft = this.track.scrollLeft;
+    this.initialTransform = currentTranslateX;
+    
+    // Stop transition during drag
+    this.track.style.transition = 'none';
     
     // Pause auto-scroll while dragging
     if (this.options.autoScroll) {
@@ -91,10 +99,13 @@ class FlowCarousel {
     // Calculate new position based on mouse or touch
     const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
     const x = clientX - this.track.offsetLeft;
-    const walk = (x - this.startX) * 2; // Adjust drag speed
+    const walk = (x - this.startX); // Distance moved by finger/cursor
+    
+    // Calculate new position by adding the walk distance to the initial transform
+    const newPosition = this.initialTransform + walk;
     
     // Move the track
-    this.track.style.transform = `translateX(${walk}px)`;
+    this.track.style.transform = `translateX(${newPosition}px)`;
   }
   
   stopDragging() {
@@ -106,6 +117,9 @@ class FlowCarousel {
     const transformValue = window.getComputedStyle(this.track).getPropertyValue('transform');
     const matrix = new DOMMatrix(transformValue);
     const currentTranslateX = matrix.m41;
+    
+    // Restore transition for smooth movement
+    this.track.style.transition = 'transform 0.3s ease-out';
     
     // Snap back if out of bounds
     if (this.options.loop) {
