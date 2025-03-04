@@ -37,7 +37,6 @@
 .grid-item {
   position: relative;
   overflow: hidden;
-  border-radius: 2px;
   background-color: transparent;
   aspect-ratio: var(--aspect-ratio, 1);
   display: flex;
@@ -52,18 +51,13 @@
   max-width: calc(100vw - 2 * var(--container-padding));
   
   /* Subtle interaction */
-  transition: transform 0.3s cubic-bezier(0.165, 0.84, 0.44, 1), 
-              box-shadow 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+  transition: transform 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
   cursor: pointer;
-  
-  /* Base shadow */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
 }
 
 /* Hover effect */
 .grid-item:hover {
   transform: translateY(-2px) scale(1.01);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   z-index: 2;
 }
 
@@ -182,18 +176,17 @@
 /* High-resolution screens */
 @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
   .grid-item {
-    /* Sharper edges on retina displays */
-    border-radius: 3px;
+    /* Removed border-radius */
   }
 }
 
 /* Dark mode adjustments */
 @media (prefers-color-scheme: dark) {
   .grid-item {
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    /* Removed shadows */
   }
   
   .grid-item:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    /* Removed shadows */
   }
 }
