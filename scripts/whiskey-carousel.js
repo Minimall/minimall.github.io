@@ -20,6 +20,9 @@ document.addEventListener('DOMContentLoaded', () => {
             scrollLeft = slider.scrollLeft;
             cancelMomentumTracking();
             e.preventDefault(); // Prevent text selection during drag
+            
+            // Disable transition during drag for more responsive feel
+            slider.style.scrollBehavior = 'auto';
         });
 
         // Mouse leave event - stop dragging if mouse leaves the element
@@ -42,18 +45,19 @@ document.addEventListener('DOMContentLoaded', () => {
         slider.addEventListener('mousemove', (e) => {
             if (!isDown) return;
             e.preventDefault();
-            console.log("Mouse move while dragging");
             
             const x = e.clientX;
             const walk = (x - startX); // scroll speed
             const prevScrollLeft = slider.scrollLeft;
             slider.scrollLeft = scrollLeft - walk;
             
-            // Calculate velocity for momentum
+            // Calculate velocity for momentum - track the last 5 movements for smoother acceleration
             velX = slider.scrollLeft - prevScrollLeft;
             
-            // Debug info
-            console.log(`walk: ${walk}, scrollLeft: ${slider.scrollLeft}, velX: ${velX}`);
+            // Debug info at reduced frequency to avoid console spam
+            if (Math.random() < 0.1) { // Only log ~10% of move events
+                console.log(`walk: ${walk}, scrollLeft: ${slider.scrollLeft}, velX: ${velX}`);
+            }
         });
 
         // Touch events for mobile
@@ -64,6 +68,10 @@ document.addEventListener('DOMContentLoaded', () => {
             scrollLeft = slider.scrollLeft;
             cancelMomentumTracking();
             console.log("Touch start detected");
+            
+            // Disable scroll behavior during touch for better responsiveness
+            slider.style.scrollBehavior = 'auto';
+            e.preventDefault(); // Prevent page scrolling during drag
         }, { passive: false });
 
         slider.addEventListener('touchend', () => {
@@ -94,12 +102,25 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         function momentumLoop() {
-            slider.scrollLeft += velX * 2;
-            velX *= 0.95; // Friction factor
-            console.log("Momentum: velX = " + velX);
+            // Apply momentum with iOS-like physics
+            slider.scrollLeft += velX;
             
-            if (Math.abs(velX) > 0.5) {
+            // Implement variable friction based on velocity for more natural deceleration
+            // Higher velocity = less friction initially for smoother feel
+            const frictionFactor = Math.max(0.90, 0.97 - Math.abs(velX) * 0.01);
+            velX *= frictionFactor;
+            
+            // Log less frequently to avoid console spam
+            if (Math.random() < 0.05) {
+                console.log("Momentum: velX = " + velX);
+            }
+            
+            // Continue animation until velocity is very small
+            if (Math.abs(velX) > 0.1) {
                 momentumID = requestAnimationFrame(momentumLoop);
+            } else {
+                // Reset to smooth scrolling behavior after momentum ends
+                slider.style.scrollBehavior = 'smooth';
             }
         }
 
@@ -126,6 +147,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 isDown = false;
                 slider.classList.remove('active');
                 beginMomentumTracking();
+                
+                // Re-enable smooth scrolling after drag ends
+                setTimeout(() => {
+                    slider.style.scrollBehavior = 'smooth';
+                }, 50);
+            }
+        });
+        
+        // Also track global mouse movement to ensure drag continues even if cursor moves fast
+        document.addEventListener('mousemove', (e) => {
+            if (isDown) {
+                e.preventDefault();
+                const x = e.clientX;
+                const walk = (x - startX);
+                const prevScrollLeft = slider.scrollLeft;
+                slider.scrollLeft = scrollLeft - walk;
+                velX = slider.scrollLeft - prevScrollLeft;
             }
         });
     }

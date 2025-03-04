@@ -23,6 +23,13 @@
   touch-action: pan-y; /* Enable native vertical scrolling but disable horizontal */
   -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
   overflow-anchor: none; /* Disable scroll anchoring */
+  /* Enhance performance for smoother animations */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  perspective: 1000;
+  -webkit-perspective: 1000;
+  position: relative;
 }
 
 /* Hide scrollbar */
@@ -57,6 +64,11 @@
   -webkit-user-drag: none;
   user-select: none;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15);
+  /* Enhance rendering performance */
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 /* Mobile optimizations */
