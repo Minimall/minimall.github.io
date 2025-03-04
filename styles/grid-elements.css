@@ -67,10 +67,16 @@
   aspect-ratio: attr(data-aspect-ratio) / 1;
 }
 
-/* Ensure containers are not smaller than 40% of original image size */
+/* Ensure containers and images are not smaller than 360px */
 .grid-item {
-  min-width: 40%;
-  min-height: 40%;
+  min-width: 360px;
+  min-height: 360px;
+}
+
+.grid-item img,
+.grid-item video {
+  min-width: 360px;
+  min-height: 360px;
 }
 
 /* Specific placements following Swiss design principles */

@@ -19,14 +19,14 @@ document.addEventListener('DOMContentLoaded', function() {
             video.loop = true;
             video.muted = true;
             video.playsInline = true;
-            
-            // Ensure container is not smaller than 40% of original size
-            gridItem.style.minWidth = '40%';
-            gridItem.style.minHeight = '40%';
+
+            // Ensure container is not smaller than 360px
+            gridItem.style.minWidth = '360px';
+            gridItem.style.minHeight = '360px';
 
             // Set default aspect ratio for videos (16:9)
             gridItem.style.aspectRatio = '16/9';
-            
+
             // Update aspect ratio when video metadata is loaded
             video.addEventListener('loadedmetadata', function() {
                 const aspectRatio = this.videoWidth / this.videoHeight;
@@ -44,11 +44,11 @@ document.addEventListener('DOMContentLoaded', function() {
             const img = document.createElement('img');
             img.src = `images/lab/${file}`;
             img.alt = file.split('.')[0].replace(/-/g, ' ');
-            
-            // Ensure container is not smaller than 40% of original size
-            gridItem.style.minWidth = '40%';
-            gridItem.style.minHeight = '40%';
-            
+
+            // Ensure container is not smaller than 360px
+            gridItem.style.minWidth = '360px';
+            gridItem.style.minHeight = '360px';
+
             // Set aspect ratio once image is loaded
             img.onload = function() {
                 const aspectRatio = this.naturalWidth / this.naturalHeight;
@@ -133,15 +133,15 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!isMobile) {
             const gridItems = gridContainer.querySelectorAll('.grid-item');
             const baseModuleSize = isDesktop ? 1.5 : 1.2; // Module size in vw
-            
+
             gridItems.forEach((item, i) => {
                 // Apply consistent module-based margins
                 const marginDirection = i % 2 === 0 ? 'Top' : 'Left';
                 const moduleMultiplier = (i % 3) + 1; // 1, 2, or 3 modules
                 const marginValue = baseModuleSize * moduleMultiplier;
-                
+
                 item.style[`margin${marginDirection}`] = `${marginValue}vw`;
-                
+
                 // Set uniform z-index to prevent any overlap rendering issues
                 item.style.zIndex = 1;
             });
