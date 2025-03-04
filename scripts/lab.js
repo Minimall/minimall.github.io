@@ -326,7 +326,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const carousel = new FlowCarousel(carouselContainer, {
     autoScroll: true,
     autoScrollSpeed: 0.15, // Even slower movement for better flow
-    itemWidth: null // Allow natural width based on content
+    itemWidth: null, // Allow natural width based on content
+    draggable: true,
+    loop: true,
+    showArrows: false
   });
   
   // Set proper styling for track to ensure items are in a horizontal line
