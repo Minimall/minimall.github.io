@@ -24,16 +24,19 @@
 .carousel-item {
   flex: 0 0 auto;
   height: 100vh;
-  padding: 0 2vw;
+  padding: 0;
+  margin: 0 1vw;
   display: flex;
   align-items: center;
   justify-content: center;
+  width: auto;
 }
 
 .carousel-item img, 
 .carousel-item video {
+  height: 100vh;
+  width: auto;
   max-height: 90vh;
-  max-width: 90vw;
   object-fit: contain;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15);
   border-radius: 4px;
@@ -83,8 +86,10 @@
 }
 
 /* Background transition support */
-.flow-carousel-section {
+.flow-carousel {
   --data-bg: #111111;
   position: relative;
   margin-bottom: 2rem;
+  background-color: rgba(0, 0, 0, 0.85);
+  transition: background-color 0.5s ease;
 }
