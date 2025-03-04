@@ -23,6 +23,7 @@
   touch-action: pan-y; /* Enable native vertical scrolling but disable horizontal */
   -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
   overflow-anchor: none; /* Disable scroll anchoring */
+  scroll-snap-type: x proximity; /* Enhance scrolling behavior */
   /* Enhance performance for smoother animations */
   transform: translateZ(0);
   backface-visibility: hidden;
@@ -50,8 +51,9 @@
   height: 100vh;
   display: flex;
   align-items: center;
-  justify-content: flex-start; /* Changed from center to flex-start */
+  justify-content: center;
   position: relative;
+  scroll-snap-align: center; /* Makes item snap into view */
 }
 
 .carousel-item img, 
@@ -69,7 +71,6 @@
   transform: translateZ(0);
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
-  margin-left: 0; /* Ensure no automatic centering margin */
 }
 
 /* Mobile optimizations */
