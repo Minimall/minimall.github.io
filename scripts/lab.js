@@ -117,14 +117,6 @@ class FlowCarousel {
     this.container.addEventListener('touchstart', this.onTouchStart.bind(this), { passive: true });
     window.addEventListener('touchmove', this.onTouchMove.bind(this), { passive: false });
     window.addEventListener('touchend', this.onTouchEnd.bind(this));
-    
-    // Button events
-    if (this.prevButton) {
-      this.prevButton.addEventListener('click', () => this.goToItem(this.currentIndex - 1));
-    }
-    if (this.nextButton) {
-      this.nextButton.addEventListener('click', () => this.goToItem(this.currentIndex + 1));
-    }
   }
   
   onMouseDown(e) {
@@ -246,14 +238,21 @@ class FlowCarousel {
     const scroll = () => {
       if (!this.autoScrollPaused && !this.isDragging) {
         const currentPosition = this.getCurrentScrollPosition();
-        let newPosition = currentPosition + this.options.autoScrollSpeed;
+        // Changed direction to right-to-left (negative value moves content right)
+        let newPosition = currentPosition - this.options.autoScrollSpeed;
         
-        // Loop back to start when reaching the end
-        if (newPosition >= this.maxScroll) {
-          newPosition = 0;
+        // Loop handling: when first item moves fully out of view to the right
+        if (newPosition <= -this.itemWidth) {
+          // Move the first item to the end of the track
+          const firstItem = this.items[0];
+          this.track.appendChild(firstItem);
+          this.items = Array.from(this.track.querySelectorAll('.carousel-item'));
+          
+          // Adjust position to account for the removed item
+          newPosition += this.itemWidth;
         }
         
-        this.setScrollPosition(newPosition);
+        this.setScrollPosition(Math.max(0, newPosition));
       }
       this.animationFrame = requestAnimationFrame(scroll);
     };
@@ -338,32 +337,12 @@ document.addEventListener('DOMContentLoaded', () => {
   // Add track to container
   carouselContainer.appendChild(track);
   
-  // Add navigation arrows
-  const prevButton = document.createElement('button');
-  prevButton.className = 'flow-nav prev';
-  prevButton.innerHTML = `
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M19 12H5"></path>
-      <path d="M12 19l-7-7 7-7"></path>
-    </svg>
-  `;
+  // Navigation arrows have been removed as per requirements
   
-  const nextButton = document.createElement('button');
-  nextButton.className = 'flow-nav next';
-  nextButton.innerHTML = `
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M5 12h14"></path>
-      <path d="M12 5l7 7-7 7"></path>
-    </svg>
-  `;
-  
-  carouselContainer.appendChild(prevButton);
-  carouselContainer.appendChild(nextButton);
-  
-  // Initialize carousel
+  // Initialize carousel with very slow auto-scroll
   const carousel = new FlowCarousel(carouselContainer, {
     autoScroll: true,
-    autoScrollSpeed: 0.5
+    autoScrollSpeed: 0.2 // Reduced speed for slower movement
   });
   
   // Connect with scroll-color.js
