@@ -16,7 +16,7 @@
   scrollbar-width: none; /* Firefox */
   cursor: grab;
   gap: 2em;
-  will-change: scroll-position;
+  will-change: scroll-position, transform;
   user-select: none;
   -webkit-user-select: none;
   -ms-user-select: none;
@@ -28,9 +28,12 @@
   transform: translateZ(0);
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
-  -webkit-perspective: 1000px;
-  perspective: 1000px;
+  -webkit-perspective: 1000;
+  perspective: 1000;
   position: relative;
+  -webkit-touch-callout: none; /* Prevent iOS callout on long press */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
 }
 
 /* Hide scrollbar */
@@ -51,9 +54,9 @@
   height: 100vh;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start; /* Align items to the left */
   position: relative;
-  scroll-snap-align: center; /* Makes item snap into view */
+  /* Removed scroll-snap-align for true fluid scrolling */
 }
 
 .carousel-item img, 

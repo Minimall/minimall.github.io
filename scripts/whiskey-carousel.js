@@ -1,28 +1,37 @@
 
 document.addEventListener('DOMContentLoaded', () => {
     if (document.querySelector('.whiskey-cards')) {
-        console.log("Initializing fluid iOS-like carousel");
+        console.log("Initializing fluid iOS-like carousel with bi-directional looping");
         
         // Set up main elements
         const slider = document.querySelector('.whiskey-cards');
-        const originalItems = Array.from(slider.children);
+        const originalItems = Array.from(slider.querySelectorAll(':scope > *'));
         
         // Clone carousel items for infinite scrolling if we have items
         if (originalItems.length > 0) {
-            // Create clones at both ends for seamless looping
-            originalItems.forEach(item => {
-                const cloneStart = item.cloneNode(true);
-                const cloneEnd = item.cloneNode(true);
-                slider.prepend(cloneEnd);
-                slider.appendChild(cloneStart);
-            });
+            // Add more clones for smoother looping
+            const numClones = Math.max(3, Math.ceil(window.innerWidth / originalItems[0].offsetWidth));
             
-            // Initialize to middle section (with original items)
+            // Add clones at the beginning and end
+            for (let i = 0; i < numClones; i++) {
+                const idx = i % originalItems.length;
+                const cloneStart = originalItems[idx].cloneNode(true);
+                const cloneEnd = originalItems[originalItems.length - 1 - (idx % originalItems.length)].cloneNode(true);
+                slider.appendChild(cloneStart);
+                slider.prepend(cloneEnd);
+            }
+            
+            // Calculate total width of original items
+            const sectionWidth = originalItems.reduce((acc, item) => {
+                const itemStyle = getComputedStyle(item);
+                const marginRight = parseInt(itemStyle.marginRight || 0);
+                return acc + item.offsetWidth + marginRight;
+            }, 0);
+            
+            // Initialize scroll position to show first genuine item
             setTimeout(() => {
-                const itemWidth = originalItems.reduce((acc, item) => 
-                    acc + item.offsetWidth + parseInt(getComputedStyle(item).marginRight || 0), 0);
-                slider.scrollLeft = itemWidth;
-            }, 10);
+                slider.scrollLeft = sectionWidth;
+            }, 50);
         }
         
         // Variables for tracking touch/mouse and momentum
@@ -34,32 +43,41 @@ document.addEventListener('DOMContentLoaded', () => {
         let prevTime = 0;
         let prevScrollLeft = 0;
         let isTouching = false;
+        let isScrolling = false;
         
         // Handle infinite looping when scrolling reaches edges
         function checkInfiniteLoop() {
             if (originalItems.length === 0) return;
             
-            // Calculate total width of original items
+            // Calculate section width (total width of original items)
             const sectionWidth = originalItems.reduce((acc, item) => {
                 const itemStyle = getComputedStyle(item);
                 const marginRight = parseInt(itemStyle.marginRight || 0);
                 return acc + item.offsetWidth + marginRight;
             }, 0);
             
-            // If we've scrolled past the beginning clones
+            // If we've scrolled too far left (into beginning clones)
             if (slider.scrollLeft < sectionWidth * 0.5) {
-                // Jump to middle section (original items) without animation
+                // Jump to middle section (original items) + offset
+                const offset = slider.scrollLeft;
+                const targetPos = sectionWidth + offset;
+                
+                // Jump without animation
                 slider.style.scrollBehavior = 'auto';
-                slider.scrollLeft += sectionWidth;
+                slider.scrollLeft = targetPos;
                 
                 // Restore smooth scrolling after jump
                 setTimeout(() => slider.style.scrollBehavior = '', 50);
             }
-            // If we've scrolled past the end clones
+            // If we've scrolled too far right (into ending clones)
             else if (slider.scrollLeft > sectionWidth * 1.5) {
-                // Jump back to the middle section without animation
+                // Jump back to the middle section + offset
+                const offset = slider.scrollLeft - (sectionWidth * 1.5);
+                const targetPos = sectionWidth * 0.5 + offset;
+                
+                // Jump without animation
                 slider.style.scrollBehavior = 'auto';
-                slider.scrollLeft -= sectionWidth;
+                slider.scrollLeft = targetPos;
                 
                 // Restore smooth scrolling after jump
                 setTimeout(() => slider.style.scrollBehavior = '', 50);
@@ -69,11 +87,21 @@ document.addEventListener('DOMContentLoaded', () => {
         // Momentum scrolling functions
         function beginMomentumTracking() {
             cancelMomentumTracking();
-            momentumID = requestAnimationFrame(momentumLoop);
+            
+            // Only start momentum if there's sufficient velocity
+            if (Math.abs(velX) > 0.5) {
+                isScrolling = true;
+                prevTime = performance.now();
+                momentumID = requestAnimationFrame(momentumLoop);
+            } else {
+                // If velocity is too small, just check loop conditions
+                checkInfiniteLoop();
+            }
         }
         
         function cancelMomentumTracking() {
             cancelAnimationFrame(momentumID);
+            isScrolling = false;
         }
         
         function momentumLoop() {
@@ -81,34 +109,42 @@ document.addEventListener('DOMContentLoaded', () => {
             const elapsed = now - prevTime;
             prevTime = now;
             
-            // Apply momentum with iOS-like physics
+            // iOS-like physics with adaptive friction
+            const currentVelocity = Math.abs(velX);
+            
+            // iOS-like physics: Less friction at high speeds, more at low speeds
+            // This creates that signature iOS deceleration curve
+            let friction;
+            if (currentVelocity > 10) {
+                friction = 0.97; // Less friction at high speeds
+            } else if (currentVelocity > 5) {
+                friction = 0.95; // Medium friction at medium speeds
+            } else {
+                friction = 0.90; // More friction at low speeds
+            }
+            
+            // Apply velocity to scroll position
             slider.scrollLeft += velX;
             
-            // Dynamic friction based on velocity for natural iOS-like feel
-            // Higher velocity = less friction initially for smoother feel
-            // Faster slowdown at lower speeds for precision stopping
-            const baseDecay = 0.97;
-            const velocityFactor = Math.min(0.02, Math.abs(velX) * 0.005);
-            const frictionFactor = baseDecay - velocityFactor;
+            // Reduce velocity with friction
+            velX *= friction;
             
-            // Apply the calculated friction
-            velX *= frictionFactor;
-            
-            // Continue animation until velocity is very small
+            // Continue animation until velocity is negligible
             if (Math.abs(velX) > 0.2) {
                 // Check for loop conditions during momentum scrolling
                 checkInfiniteLoop();
                 momentumID = requestAnimationFrame(momentumLoop);
             } else {
                 // Final check once momentum ends
+                isScrolling = false;
                 checkInfiniteLoop();
                 
-                // Re-enable smooth scrolling behavior
+                // Ensure scroll behavior is restored
                 slider.style.scrollBehavior = '';
             }
         }
         
-        // Track velocity during user interaction
+        // Track velocity for momentum scrolling
         function trackVelocity() {
             if (!isDown) return;
             
@@ -117,7 +153,10 @@ document.addEventListener('DOMContentLoaded', () => {
             
             if (elapsed > 0) {
                 const currentScrollLeft = slider.scrollLeft;
-                velX = (currentScrollLeft - prevScrollLeft) / (elapsed / 16.67); // Normalize to 60fps
+                const rawVelX = (currentScrollLeft - prevScrollLeft) / (elapsed / 16.67); // normalize to 60fps
+                
+                // Apply smoothing to velocity for more natural feel
+                velX = velX * 0.7 + rawVelX * 0.3;
                 
                 prevScrollLeft = currentScrollLeft;
                 prevTime = now;
@@ -128,21 +167,28 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Mouse Events for Desktop
         slider.addEventListener('mousedown', (e) => {
+            if (isScrolling) {
+                cancelMomentumTracking(); // Stop any ongoing momentum
+            }
+            
             isDown = true;
             slider.classList.add('active');
             startX = e.clientX;
-            startY = e.clientY; // Track vertical position to determine scroll direction
+            startY = e.clientY; 
             scrollLeft = slider.scrollLeft;
             prevTime = performance.now();
             prevScrollLeft = slider.scrollLeft;
             
-            cancelMomentumTracking();
+            // Reset velocity on new interaction
+            velX = 0;
+            
+            // Start tracking velocity for momentum
             requestAnimationFrame(trackVelocity);
             
-            // Disable transitions during drag for more responsive feel
+            // Disable scroll behaviors during drag for responsiveness
             slider.style.scrollBehavior = 'auto';
             
-            // Prevent default to avoid text selection
+            // Prevent default actions
             e.preventDefault();
         });
         
@@ -155,6 +201,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Restore smooth scrolling for momentum
             slider.style.scrollBehavior = '';
             
+            // Begin momentum scrolling
             beginMomentumTracking();
         });
         
@@ -167,6 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Restore smooth scrolling for momentum
             slider.style.scrollBehavior = '';
             
+            // Begin momentum scrolling
             beginMomentumTracking();
         });
         
@@ -176,17 +224,18 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             
             const x = e.clientX;
-            const y = e.clientY;
-            
-            // Calculate movement in x direction
             const deltaX = x - startX;
             
-            // Update scroll position
+            // Update scroll position based on drag distance
             slider.scrollLeft = scrollLeft - deltaX;
         });
         
         // Touch Events for Mobile
         slider.addEventListener('touchstart', (e) => {
+            if (isScrolling) {
+                cancelMomentumTracking(); // Stop any ongoing momentum
+            }
+            
             isTouching = true;
             isDown = true;
             slider.classList.add('active');
@@ -197,15 +246,22 @@ document.addEventListener('DOMContentLoaded', () => {
             startY = touch.clientY;
             scrollLeft = slider.scrollLeft;
             
+            // Reset tracking for new touch
             prevTime = performance.now();
             prevScrollLeft = slider.scrollLeft;
             
-            cancelMomentumTracking();
+            // Reset velocity on new interaction
+            velX = 0;
+            
+            // Start tracking velocity
             requestAnimationFrame(trackVelocity);
             
-            // Disable smooth scrolling during touch for better responsiveness
+            // Use auto scroll behavior for responsiveness
             slider.style.scrollBehavior = 'auto';
-        }, { passive: false });
+            
+            // Only prevent default if this is likely to be a horizontal swipe
+            // (to allow page scrolling for vertical touches)
+        }, { passive: true });
         
         slider.addEventListener('touchmove', (e) => {
             if (!isDown || !isTouching) return;
@@ -219,23 +275,27 @@ document.addEventListener('DOMContentLoaded', () => {
             const deltaX = startX - x;
             const deltaY = startY - y;
             
-            // Horizontal scrolling - only prevent default if horizontal movement is primary
-            if (Math.abs(deltaX) > Math.abs(deltaY)) {
+            // If this is primarily a horizontal movement
+            if (Math.abs(deltaX) > Math.abs(deltaY) * 1.2) {
+                // Prevent page scrolling
                 e.preventDefault();
+                
+                // Update carousel scroll position
                 slider.scrollLeft = scrollLeft + deltaX;
             }
         }, { passive: false });
         
-        slider.addEventListener('touchend', () => {
+        slider.addEventListener('touchend', (e) => {
             if (!isDown || !isTouching) return;
             
             isDown = false;
             isTouching = false;
             slider.classList.remove('active');
             
-            // Restore smooth scrolling
+            // Restore smooth scrolling for momentum
             slider.style.scrollBehavior = '';
             
+            // Begin momentum with current velocity
             beginMomentumTracking();
         });
         
@@ -249,28 +309,27 @@ document.addEventListener('DOMContentLoaded', () => {
             // Restore smooth scrolling
             slider.style.scrollBehavior = '';
             
-            beginMomentumTracking();
+            // Check for looping needs
+            checkInfiniteLoop();
         });
         
         // Wheel Events (Desktop)
         slider.addEventListener('wheel', (e) => {
             e.preventDefault();
             
+            // Stop any current momentum
             cancelMomentumTracking();
             
-            // Calculate velocity based on wheel delta
-            velX = e.deltaY * 2;
+            // Apply wheel delta to velocity (with scaling for better feel)
+            velX = e.deltaY * 1.5;
             
-            // Apply immediate scroll
-            slider.scrollLeft += velX;
-            
-            // Start momentum after wheel
+            // Start new momentum scrolling
             beginMomentumTracking();
         }, { passive: false });
         
         // Check for scroll events to handle infinite looping
         slider.addEventListener('scroll', () => {
-            if (!isDown) {
+            if (!isDown && !isScrolling) {
                 checkInfiniteLoop();
             }
         });
@@ -281,8 +340,11 @@ document.addEventListener('DOMContentLoaded', () => {
             
             isDown = false;
             slider.classList.remove('active');
+            
+            // Restore smooth behavior
             slider.style.scrollBehavior = '';
             
+            // Begin momentum with current velocity
             beginMomentumTracking();
         });
         
@@ -295,5 +357,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const deltaX = x - startX;
             slider.scrollLeft = scrollLeft - deltaX;
         });
+
+        // Initial check to ensure proper positioning
+        setTimeout(checkInfiniteLoop, 100);
     }
 });
