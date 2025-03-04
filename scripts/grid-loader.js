@@ -171,6 +171,21 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Ensure items don't overlap by using precise grid positioning
                     item.style.boxSizing = 'border-box';
                     item.style.zIndex = 1;
+                    
+                    // Ensure media stays within viewport boundaries
+                    item.style.maxWidth = '100%';
+                    item.style.position = 'relative';
+                    
+                    // Ensure the grid item's content doesn't extend beyond viewport
+                    const mediaElement = item.querySelector('img, video');
+                    if (mediaElement) {
+                        mediaElement.style.maxWidth = '100%';
+                        mediaElement.style.objectFit = 'contain';
+                        mediaElement.style.margin = '0 auto'; // Center the media
+                    }
+                    
+                    // Protect from viewport edge overlap
+                    item.style.overflowX = 'hidden';
                 }
             });
         }
