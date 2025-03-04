@@ -19,6 +19,10 @@ document.addEventListener('DOMContentLoaded', function() {
             video.loop = true;
             video.muted = true;
             video.playsInline = true;
+            
+            // Ensure container is not smaller than 40% of original size
+            gridItem.style.minWidth = '40%';
+            gridItem.style.minHeight = '40%';
 
             const source = document.createElement('source');
             source.src = `images/lab/${file}`;
@@ -31,6 +35,10 @@ document.addEventListener('DOMContentLoaded', function() {
             const img = document.createElement('img');
             img.src = `images/lab/${file}`;
             img.alt = file.split('.')[0].replace(/-/g, ' ');
+            
+            // Ensure container is not smaller than 40% of original size
+            gridItem.style.minWidth = '40%';
+            gridItem.style.minHeight = '40%';
 
             gridItem.appendChild(img);
         }

@@ -55,6 +55,12 @@
   object-fit: contain;
 }
 
+/* Ensure containers are not smaller than 40% of original image size */
+.grid-item {
+  min-width: 40%;
+  min-height: 40%;
+}
+
 /* Specific placements following Swiss design principles */
 .item-1 {
   grid-column: 2 / span 4;
@@ -222,6 +228,8 @@
     margin: 0 !important;
     transform: none !important;
     height: auto;
+    min-width: 40%;
+    min-height: 40%;
   }
 
   .item-1 { grid-row: 1 / span 2 !important; }
