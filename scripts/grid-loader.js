@@ -58,7 +58,10 @@ document.addEventListener('DOMContentLoaded', function() {
             'heateye-graphics.jpg',
             'heateye-logos.jpg',
             'heateye-tote.jpg',
-            'graphic.mp4'
+            'graphic.mp4',
+            'globallogic.mp4',
+            'color-wave.png',
+            'singularity.png'
         ];
 
         // If there are no files, show a message
@@ -109,9 +112,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
             gridItems.forEach((item, i) => {
                 if (i % 3 === 0) {
-                    // Create slight overlap for every third item
+                    // Create slight overlap for every third item (max 5%)
                     const marginDirection = Math.random() > 0.5 ? 'Left' : 'Top';
-                    const marginValue = (Math.random() * 2 + 0.5) * -1; // -0.5 to -2.5 vw
+                    const marginValue = Math.min((Math.random() * 1 + 0.5) * -1, -0.5); // -0.5 to -1.5 vw, limited to 5% overlap
                     item.style[`margin${marginDirection}`] = `${marginValue}vw`;
                 }
 
