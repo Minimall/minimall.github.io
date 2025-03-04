@@ -6,6 +6,10 @@
   height: 100vh;
   overflow-x: hidden;
   margin-left: calc(-50vw + 50%);
+  margin-right: calc(-50vw + 50%);
+  left: 0;
+  right: 0;
+  box-sizing: border-box;
   touch-action: pan-x;
   cursor: grab;
 }

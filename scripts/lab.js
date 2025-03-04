@@ -358,9 +358,13 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // Add some additional styling to ensure the carousel fills the viewport
   carouselContainer.style.width = '100vw';
-  carouselContainer.style.margin = '0 -50vw';
+  carouselContainer.style.left = '0';
+  carouselContainer.style.right = '0';
+  carouselContainer.style.position = 'relative';
   carouselContainer.style.marginLeft = 'calc(-50vw + 50%)';
+  carouselContainer.style.marginRight = 'calc(-50vw + 50%)';
   track.style.display = 'flex';
+  track.style.width = 'max-content';
   
   // Connect with scroll-color.js
   // The flow-carousel-section should be detected by the existing scroll-color.js
