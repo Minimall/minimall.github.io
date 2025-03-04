@@ -1,179 +1,199 @@
-/* Swiss Typographic Grid Styles */
+
+/* 
+ * Swiss Modernist Grid System
+ * Based on principles of Swiss typography and modular grid design
+ */
+
 :root {
+  /* Default grid variables - will be overridden by JavaScript */
   --grid-columns: 12;
-  --grid-rows: 24; /* More rows to accommodate spacing */
-  --grid-gap: 4vw; /* Increased gap to ensure no overlaps */
-  --grid-margin: 5vw; /* Larger margin for better edge spacing */
-  --grid-module: 2vw; /* Larger base module size for spacing */
+  --grid-rows: 36;
+  --grid-module: 4vw;     /* Base module size used for spacing rhythm */
+  --grid-gap: 2vw;        /* Gap between grid cells */
+  --container-padding: 3vw; /* Padding around the entire grid */
+  --module-ratio: 1.5;    /* Golden ratio approximation for vertical rhythm */
 }
 
+/* Main grid container */
 .grid-container {
   display: grid;
   grid-template-columns: repeat(var(--grid-columns), 1fr);
-  grid-template-rows: repeat(var(--grid-rows), minmax(60px, auto));
+  grid-auto-rows: minmax(min-content, auto);
   gap: var(--grid-gap);
-  padding: var(--grid-margin);
+  padding: var(--container-padding);
+  max-width: calc(100vw - 2 * var(--container-padding));
   margin: 0 auto;
-  max-width: calc(100% - 6vw); /* Prevent content from touching viewport edges */
   position: relative;
-  margin-bottom: 10vw;
-  margin-left: 3vw;
-  margin-right: 3vw;
-  isolation: isolate; /* Create stacking context to prevent overlap issues */
-}
-
-.grid-item {
-    cursor: pointer;
-    position: relative;
-    z-index: 2;
-    overflow: hidden;
-    border-radius: 2px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: transparent;
-    border-radius: 4px;
-    overflow: hidden;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.grid-item {
-  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-.grid-item:hover {
-  transform: scale(1.03);
-}
-
-.grid-item img, 
-.grid-item video {
-  max-width: 100%;
-  max-height: 100%;
-  width: auto;
-  height: auto;
-  object-fit: contain;
-  display: block;
   box-sizing: border-box;
-  position: relative;
+  
+  /* Create stacking context */
+  isolation: isolate;
+  
+  /* Ensure proper spacing */
+  margin-bottom: calc(var(--grid-module) * 2);
 }
 
-/* Ensure grid item inherits aspect ratio from its child media */
-.grid-item {
-  aspect-ratio: inherit;
-}
-
-/* Set aspect ratio based on child element */
-.grid-item:has(img[src$=".jpg"]), 
-.grid-item:has(img[src$=".jpeg"]), 
-.grid-item:has(img[src$=".png"]), 
-.grid-item:has(img[src$=".webp"]), 
-.grid-item:has(img[src$=".avif"]) {
-  aspect-ratio: attr(data-aspect-ratio) / 1;
-}
-
-/* Ensure containers and images are not smaller than 360px */
-.grid-item {
-  min-width: 360px;
-  min-height: 360px;
-}
-
-.grid-item img,
-.grid-item video {
-  min-width: 360px;
-  min-height: 360px;
-}
-
-/* Grid items will be positioned dynamically via JavaScript 
-   for better control over layout and to prevent overlaps */
+/* Grid items - the containers for media */
 .grid-item {
   position: relative;
-  z-index: 1;
-  /* Will have grid-column and grid-row set by JavaScript */
-  transition: all 0.3s ease;
+  overflow: hidden;
+  border-radius: 2px;
+  background-color: transparent;
+  aspect-ratio: var(--aspect-ratio, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  /* Ensure proper containment */
+  box-sizing: border-box;
+  max-width: 100%;
+  
+  /* Prevent overflow beyond viewport */
+  max-width: calc(100vw - 2 * var(--container-padding));
+  
+  /* Subtle interaction */
+  transition: transform 0.3s cubic-bezier(0.165, 0.84, 0.44, 1), 
+              box-shadow 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+  cursor: pointer;
+  
+  /* Base shadow */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
 }
 
-/* Give each grid item a slight interaction effect */
+/* Hover effect */
 .grid-item:hover {
+  transform: translateY(-2px) scale(1.01);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   z-index: 2;
 }
 
-/* Media queries for responsive design */
+/* Media content inside grid items */
+.grid-item .media-content {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  
+  /* Prevent distortion */
+  object-position: center;
+  
+  /* Ensure aspect ratio is maintained */
+  max-width: 100%;
+  max-height: 100%;
+}
+
+/* Ensure video content is properly contained */
+.grid-item[data-media-type="video"] {
+  overflow: hidden;
+}
+
+.grid-item[data-media-type="video"] video {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+}
+
+/* Apply vertical rhythm */
+.grid-item:nth-child(3n+1) {
+  align-self: start;
+}
+
+.grid-item:nth-child(3n+2) {
+  align-self: center;
+}
+
+.grid-item:nth-child(3n+3) {
+  align-self: end;
+}
+
+/* Ensure proper alignment and vertical rhythm */
+.grid-item::before {
+  content: "";
+  display: block;
+  height: 0;
+  width: 0;
+  padding-bottom: calc(100% / var(--aspect-ratio, 1));
+}
+
+/* Horizontal rhythm classes for Swiss-style asymmetric balance */
+.grid-item:nth-child(2n) {
+  justify-self: start;
+}
+
+.grid-item:nth-child(2n+1) {
+  justify-self: end;
+}
+
+/* Tablet Layout */
 @media (max-width: 1200px) {
   :root {
     --grid-columns: 8;
-    --grid-rows: 32; /* Many more rows to ensure proper spacing */
-    --grid-gap: 4vw; /* Larger gap for tablet to prevent overlaps */
-    --grid-module: 2vw; /* Larger module size for tablet */
+    --grid-rows: 48;
+    --grid-module: 5vw;
+    --grid-gap: 3vw;
+    --container-padding: 4vw;
   }
   
-  /* All grid positions will be handled by JS for tablet view */
   .grid-container {
-    padding: 5vw;
-    margin-left: 4vw;
-    margin-right: 4vw;
+    max-width: calc(100vw - 2 * var(--container-padding));
   }
   
-  /* Remove any leftover margin/positioning that might cause overlaps */
   .grid-item {
-    margin: 0;
-    transform: none !important;
+    max-width: calc(100vw - 2 * var(--container-padding) - 2 * var(--grid-gap));
   }
 }
 
+/* Mobile Layout */
 @media (max-width: 788px) {
   :root {
     --grid-columns: 4;
-    --grid-rows: 24;
-    --grid-gap: 5vw; /* Increased gap for mobile */
-    --grid-margin: 5vw;
-    --grid-module: 3vw; /* Larger module size for mobile */
+    --grid-rows: 60;
+    --grid-module: 6vw;
+    --grid-gap: 4vw;
+    --container-padding: 5vw;
   }
-
+  
+  .grid-container {
+    max-width: 100%;
+    padding: var(--container-padding);
+  }
+  
+  /* Mobile-specific adaptations */
   .grid-item {
-    grid-column: 1 / span 4 !important;
-    grid-row: auto !important;
-    margin: 0 !important;
-    transform: none !important;
-    height: auto;
-    min-width: 40%;
-    min-height: 40%;
+    grid-column: 1 / span 4 !important; /* Force full width */
+    aspect-ratio: var(--aspect-ratio, 1) !important;
+    margin: calc(var(--grid-gap) / 2) 0 !important;
+    width: 100%;
+    max-width: calc(100vw - 2 * var(--container-padding));
   }
-
-  .item-1 { grid-row: 1 / span 2 !important; }
-  .item-2 { grid-row: 3 / span 2 !important; }
-  .item-3 { grid-row: 5 / span 2 !important; }
-  .item-4 { grid-row: 7 / span 2 !important; }
-  .item-5 { grid-row: 9 / span 2 !important; }
-  .item-6 { grid-row: 11 / span 2 !important; }
-  .item-7 { grid-row: 13 / span 2 !important; }
-  .item-8 { grid-row: 15 / span 2 !important; }
-  .item-9 { grid-row: 17 / span 2 !important; }
-  .item-10 { grid-row: 19 / span 2 !important; }
-  .item-11 { grid-row: 21 / span 2 !important; }
-  .item-12 { grid-row: 23 / span 2 !important; }
+  
+  /* Ensure spacing between items */
+  .grid-item + .grid-item {
+    margin-top: var(--grid-gap) !important;
+  }
+  
+  /* Enhanced touch feedback */
+  .grid-item:active {
+    transform: scale(0.98);
+    opacity: 0.95;
+  }
 }
-/* Mobile-specific enhancements for grid items */
-@media (max-width: 788px) {
-    .grid-item {
-        position: relative;
-        transition: transform 0.2s ease, opacity 0.2s ease;
-    }
 
-    .grid-item:active {
-        opacity: 0.9;
-        transform: scale(0.98);
-    }
+/* High-resolution screens */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .grid-item {
+    /* Sharper edges on retina displays */
+    border-radius: 3px;
+  }
+}
 
-    /* Add a subtle overlay to indicate touchability */
-    .grid-item::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: transparent;
-        z-index: 1;
-    }
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+  .grid-item {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .grid-item:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
 }
