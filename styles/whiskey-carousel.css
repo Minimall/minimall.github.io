@@ -54,15 +54,17 @@
   height: 100vh;
   display: flex;
   align-items: center;
-  justify-content: flex-start; /* Align items to the left */
+  justify-content: center; /* Center items */
   position: relative;
-  /* Removed scroll-snap-align for true fluid scrolling */
+  margin-right: 2em; /* Consistent spacing */
 }
 
 .carousel-item img, 
 .carousel-item video {
   max-height: 80vh;
+  max-width: 80vw; /* Prevent images from being too wide */
   width: auto;
+  height: auto;
   object-fit: contain;
   border-radius: 8px;
   pointer-events: none;
