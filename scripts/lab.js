@@ -139,20 +139,27 @@ class FlowCarousel {
     const trackWidth = this.getTotalWidth();
     const containerWidth = this.container.offsetWidth;
     const itemWidth = this.getAverageItemWidth();
-    const buffer = itemWidth * 2; // Create a buffer zone for smoother looping
+    const buffer = itemWidth * 1.5; // Adjusted buffer for smoother transition
     
     // If scrolled past the beginning (left edge), jump to the equivalent position near the end
-    if (currentTranslateX > buffer) {
+    if (currentTranslateX > 0) {
+      // Calculate an appropriate position near the end that matches the visual position
+      const endPosition = -(trackWidth - containerWidth) + (currentTranslateX % itemWidth);
+      
       this.track.style.transition = 'none';
-      this.track.style.transform = `translateX(${-(trackWidth - containerWidth - buffer)}px)`;
+      this.track.style.transform = `translateX(${endPosition}px)`;
       setTimeout(() => {
         this.track.style.transition = 'transform 0.3s ease-out';
       }, 10);
     } 
     // If scrolled past the end (right edge), jump to the equivalent position near the beginning
-    else if (Math.abs(currentTranslateX) > trackWidth - containerWidth + buffer) {
+    else if (Math.abs(currentTranslateX) > trackWidth - containerWidth) {
+      // Calculate an appropriate position near the beginning that matches the visual position
+      const offset = Math.abs(Math.abs(currentTranslateX) - (trackWidth - containerWidth)) % itemWidth;
+      const startPosition = -offset;
+      
       this.track.style.transition = 'none';
-      this.track.style.transform = `translateX(${-buffer}px)`;
+      this.track.style.transform = `translateX(${startPosition}px)`;
       setTimeout(() => {
         this.track.style.transition = 'transform 0.3s ease-out';
       }, 10);
@@ -300,14 +307,18 @@ class FlowCarousel {
       if (this.options.loop) {
         // If we've scrolled significantly past the first or last item, reset position
         const itemWidth = this.getAverageItemWidth();
-        const buffer = itemWidth * 2;
         
-        if (newPosition > buffer) {
+        if (newPosition > 0) {
           // Scrolled too far left, jump to end
-          this.track.style.transform = `translateX(${-(trackWidth - containerWidth - buffer)}px)`;
-        } else if (Math.abs(newPosition) > trackWidth - containerWidth + buffer) {
+          // Calculate position that maintains visual continuity
+          const endPosition = -(trackWidth - containerWidth) + (newPosition % itemWidth);
+          this.track.style.transform = `translateX(${endPosition}px)`;
+        } else if (Math.abs(newPosition) > trackWidth - containerWidth) {
           // Scrolled too far right, jump to beginning
-          this.track.style.transform = `translateX(${-buffer}px)`;
+          // Calculate position that maintains visual continuity
+          const offset = Math.abs(Math.abs(newPosition) - (trackWidth - containerWidth)) % itemWidth;
+          const startPosition = -offset;
+          this.track.style.transform = `translateX(${startPosition}px)`;
         }
       } else {
         // Change direction when reaching boundaries
