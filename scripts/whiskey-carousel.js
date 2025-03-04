@@ -8,14 +8,18 @@ document.addEventListener('DOMContentLoaded', () => {
         let scrollLeft;
         let velX = 0;
         let momentumID;
+        
+        console.log("Whiskey carousel initialized");
 
         // Mouse down event - start dragging
         slider.addEventListener('mousedown', (e) => {
+            console.log("Mouse down detected");
             isDown = true;
             slider.classList.add('active');
-            startX = e.pageX - slider.offsetLeft;
+            startX = e.clientX;
             scrollLeft = slider.scrollLeft;
             cancelMomentumTracking();
+            e.preventDefault(); // Prevent text selection during drag
         });
 
         // Mouse leave event - stop dragging if mouse leaves the element
@@ -38,20 +42,28 @@ document.addEventListener('DOMContentLoaded', () => {
         slider.addEventListener('mousemove', (e) => {
             if (!isDown) return;
             e.preventDefault();
-            const x = e.pageX - slider.offsetLeft;
+            console.log("Mouse move while dragging");
+            
+            const x = e.clientX;
             const walk = (x - startX); // scroll speed
             const prevScrollLeft = slider.scrollLeft;
             slider.scrollLeft = scrollLeft - walk;
+            
+            // Calculate velocity for momentum
             velX = slider.scrollLeft - prevScrollLeft;
+            
+            // Debug info
+            console.log(`walk: ${walk}, scrollLeft: ${slider.scrollLeft}, velX: ${velX}`);
         });
 
         // Touch events for mobile
         slider.addEventListener('touchstart', (e) => {
             isDown = true;
             slider.classList.add('active');
-            startX = e.touches[0].pageX - slider.offsetLeft;
+            startX = e.touches[0].clientX;
             scrollLeft = slider.scrollLeft;
             cancelMomentumTracking();
+            console.log("Touch start detected");
         }, { passive: false });
 
         slider.addEventListener('touchend', () => {
@@ -63,11 +75,12 @@ document.addEventListener('DOMContentLoaded', () => {
         slider.addEventListener('touchmove', (e) => {
             if (!isDown) return;
             e.preventDefault();
-            const x = e.touches[0].pageX - slider.offsetLeft;
+            const x = e.touches[0].clientX;
             const walk = (x - startX);
             const prevScrollLeft = slider.scrollLeft;
             slider.scrollLeft = scrollLeft - walk;
             velX = slider.scrollLeft - prevScrollLeft;
+            console.log("Touch move: scrollLeft = " + slider.scrollLeft);
         }, { passive: false });
 
         // Momentum tracking functions
@@ -82,7 +95,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         function momentumLoop() {
             slider.scrollLeft += velX * 2;
-            velX *= 0.95;
+            velX *= 0.95; // Friction factor
+            console.log("Momentum: velX = " + velX);
+            
             if (Math.abs(velX) > 0.5) {
                 momentumID = requestAnimationFrame(momentumLoop);
             }

@@ -18,6 +18,11 @@
   will-change: transform, scroll-position;
   user-select: none;
   -webkit-user-select: none;
+  -ms-user-select: none;
+  -moz-user-select: none;
+  touch-action: pan-y; /* Enable native vertical scrolling but disable horizontal */
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+  overflow-anchor: none; /* Disable scroll anchoring */
 }
 
 /* Hide scrollbar */
@@ -26,8 +31,11 @@
 }
 
 .whiskey-cards.active {
-  cursor: grabbing;
+  cursor: grabbing !important;
   user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  -moz-user-select: none;
 }
 
 .carousel-item {
