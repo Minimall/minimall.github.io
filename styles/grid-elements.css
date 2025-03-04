@@ -2,8 +2,9 @@
 :root {
   --grid-columns: 12;
   --grid-rows: 12;
-  --grid-gap: 2vw;
+  --grid-gap: 3vw; /* Increased gap for no overlaps */
   --grid-margin: 4vw;
+  --grid-module: 1.5vw; /* Base module size for spacing */
 }
 
 .grid-container {
@@ -88,15 +89,13 @@
 .item-3 {
   grid-column: 1 / span 3;
   grid-row: 5 / span 4;
-  z-index: 3;
-  margin-left: 2vw;
+  z-index: 1;
 }
 
 .item-4 {
   grid-column: 5 / span 3;
   grid-row: 6 / span 3;
   z-index: 1;
-  margin-top: -1vw;
 }
 
 .item-5 {
@@ -120,15 +119,13 @@
 .item-8 {
   grid-column: 4 / span 3;
   grid-row: 4 / span 2;
-  z-index: 4;
-  margin-left: -1vw;
+  z-index: 1;
 }
 
 .item-9 {
   grid-column: 10 / span 2;
   grid-row: 1 / span 2;
   z-index: 1;
-  transform: translateY(1vw);
 }
 
 .item-10 {
@@ -140,15 +137,13 @@
 .item-11 {
   grid-column: 6 / span 3;
   grid-row: 8 / span 3;
-  z-index: 4;
-  margin-top: 2vw;
+  z-index: 1;
 }
 
 .item-12 {
   grid-column: 10 / span 3;
   grid-row: 4 / span 2;
-  z-index: 2;
-  margin-left: -2vw;
+  z-index: 1;
 }
 
 /* Media queries for responsive design */
@@ -156,6 +151,8 @@
   :root {
     --grid-columns: 8;
     --grid-rows: 16;
+    --grid-gap: 2.5vw; /* Adjusted gap for tablet */
+    --grid-module: 1.2vw; /* Adjusted module size for tablet */
   }
 
   .item-1 {
@@ -229,8 +226,9 @@
   :root {
     --grid-columns: 4;
     --grid-rows: 24;
-    --grid-gap: 4vw;
+    --grid-gap: 5vw; /* Increased gap for mobile */
     --grid-margin: 5vw;
+    --grid-module: 3vw; /* Larger module size for mobile */
   }
 
   .grid-item {

@@ -129,20 +129,21 @@ document.addEventListener('DOMContentLoaded', function() {
             gridContainer.style.setProperty('--grid-rows', itemCount * 2);
         }
 
-        // Apply some random overlaps for desktop and tablet views
+        // Apply module-based spacing for all views
         if (!isMobile) {
             const gridItems = gridContainer.querySelectorAll('.grid-item');
-
+            const baseModuleSize = isDesktop ? 1.5 : 1.2; // Module size in vw
+            
             gridItems.forEach((item, i) => {
-                if (i % 3 === 0) {
-                    // Create slight overlap for every third item (max 5%)
-                    const marginDirection = Math.random() > 0.5 ? 'Left' : 'Top';
-                    const marginValue = Math.min((Math.random() * 1 + 0.5) * -1, -0.5); // -0.5 to -1.5 vw, limited to 5% overlap
-                    item.style[`margin${marginDirection}`] = `${marginValue}vw`;
-                }
-
-                // Randomize z-index for overlapping effect
-                item.style.zIndex = Math.floor(Math.random() * 5) + 1;
+                // Apply consistent module-based margins
+                const marginDirection = i % 2 === 0 ? 'Top' : 'Left';
+                const moduleMultiplier = (i % 3) + 1; // 1, 2, or 3 modules
+                const marginValue = baseModuleSize * moduleMultiplier;
+                
+                item.style[`margin${marginDirection}`] = `${marginValue}vw`;
+                
+                // Set uniform z-index to prevent any overlap rendering issues
+                item.style.zIndex = 1;
             });
         }
     }
