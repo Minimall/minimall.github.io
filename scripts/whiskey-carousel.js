@@ -76,8 +76,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const preWidth = scrollData.preWidth;
             const contentWidth = scrollData.contentWidth;
 
-            // If we're scrolled too far to the left (into left clones)
-            if (slider.scrollLeft < preWidth - (contentWidth * 0.5)) {
+            // If we're scrolled too far to the left (into left clones) - improved boundary detection
+            if (slider.scrollLeft < preWidth - (contentWidth * 0.1)) {
                 // Jump forward by exactly one set of original items
                 slider.scrollLeft += contentWidth;
             }
@@ -170,8 +170,8 @@ document.addEventListener('DOMContentLoaded', () => {
             // Apply velocity to scroll position with time scaling
             slider.scrollLeft += velocityX * (elapsed / 16.67);
 
-            // Apply friction
-            velocityX *= friction;
+            // Apply friction with 20% stronger reduction (less aggressive inertia)
+            velocityX *= friction * 0.8;
 
             // Check for looping during momentum
             checkForLooping();
