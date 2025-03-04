@@ -36,6 +36,14 @@
     overflow: hidden;
     will-change: transform;
     cursor: grab;
+    touch-action: pan-y;
+    -webkit-overflow-scrolling: touch;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+}
+
+.carousel-track-container.dragging {
+    cursor: grabbing;
 }
 
 .carousel-slide {
@@ -51,6 +59,8 @@
     -webkit-overflow-scrolling: touch;
     -webkit-backface-visibility: hidden;
     backface-visibility: hidden;
+    transform-style: preserve-3d;
+    transition: opacity 0.3s ease;
 }
 
 .carousel-image {
@@ -58,7 +68,7 @@
     max-height: 90%;
     object-fit: contain;
     opacity: 1;
-    transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: opacity 0.3s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
     -webkit-user-drag: none;
     -webkit-tap-highlight-color: transparent;
     -ms-touch-action: none;
@@ -117,6 +127,10 @@
 }
 
 .carousel-dots {
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    right: 0;
     display: flex;
     justify-content: center;
     gap: 10px;
@@ -136,6 +150,13 @@
 .dot.active {
     background: rgba(255, 255, 255, 0.9);
     transform: scale(1.2);
+}
+
+/* Hide nav buttons when dragging */
+.carousel-track-container.dragging ~ .carousel-nav {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
 }
 
 /* Optimize for mobile */
@@ -160,23 +181,15 @@
     }
 }
 
-/* Hide nav buttons when dragging */
-.carousel-track-container.dragging ~ .carousel-nav {
-    opacity: 0;
-    pointer-events: none;
-}
-
-/* Optimizations for touch devices */
-@media (pointer: coarse) {
-    .carousel-track-container {
-        cursor: default;
-    }
-}
-
 /* Support for Safari/iOS */
 @supports (-webkit-touch-callout: none) {
     .carousel-image {
         /* Prevent iOS image saving popup */
         -webkit-touch-callout: none;
+    }
+    
+    .carousel-track-container {
+        /* Better scrolling feel on iOS */
+        -webkit-overflow-scrolling: touch;
     }
 }
