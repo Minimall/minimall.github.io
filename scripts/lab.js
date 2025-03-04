@@ -135,23 +135,24 @@ class FlowCarousel {
   }
   
   handleLoopBoundaries(currentTranslateX) {
-    // Implement logic for looping carousel boundaries
-    // This is a simplified version; a real implementation would need
-    // to calculate based on actual item positions and widths
+    // Enhanced logic for smooth looping carousel boundaries
     const trackWidth = this.getTotalWidth();
     const containerWidth = this.container.offsetWidth;
+    const itemWidth = this.getAverageItemWidth();
+    const buffer = itemWidth * 2; // Create a buffer zone for smoother looping
     
-    if (currentTranslateX > 0) {
-      // Scrolled too far left, jump to end
+    // If scrolled past the beginning (left edge), jump to the equivalent position near the end
+    if (currentTranslateX > buffer) {
       this.track.style.transition = 'none';
-      this.track.style.transform = `translateX(${-trackWidth + containerWidth}px)`;
+      this.track.style.transform = `translateX(${-(trackWidth - containerWidth - buffer)}px)`;
       setTimeout(() => {
         this.track.style.transition = 'transform 0.3s ease-out';
       }, 10);
-    } else if (Math.abs(currentTranslateX) > trackWidth - containerWidth) {
-      // Scrolled too far right, jump to beginning
+    } 
+    // If scrolled past the end (right edge), jump to the equivalent position near the beginning
+    else if (Math.abs(currentTranslateX) > trackWidth - containerWidth + buffer) {
       this.track.style.transition = 'none';
-      this.track.style.transform = `translateX(0px)`;
+      this.track.style.transform = `translateX(${-buffer}px)`;
       setTimeout(() => {
         this.track.style.transition = 'transform 0.3s ease-out';
       }, 10);
@@ -244,13 +245,31 @@ class FlowCarousel {
   }
   
   setupInfiniteLoop() {
-    // Clone first and last items for infinite loop effect
-    const firstItemClone = this.items[0].cloneNode(true);
-    const lastItemClone = this.items[this.items.length - 1].cloneNode(true);
+    // Create multiple clones for a more seamless infinite loop
+    // Add sufficient duplicates of the first few items at the end
+    const numClones = Math.min(3, this.items.length);
     
-    // Add clones to track
-    this.track.appendChild(firstItemClone);
-    this.track.insertBefore(lastItemClone, this.track.firstChild);
+    for (let i = 0; i < numClones; i++) {
+      const clone = this.items[i].cloneNode(true);
+      this.track.appendChild(clone);
+    }
+    
+    // Add duplicates of the last few items at the beginning
+    for (let i = this.items.length - 1; i >= Math.max(0, this.items.length - numClones); i--) {
+      const clone = this.items[i].cloneNode(true);
+      this.track.insertBefore(clone, this.track.firstChild);
+    }
+    
+    // Add event listener to detect when animation ends
+    this.track.addEventListener('transitionend', () => {
+      // Get current transform
+      const transformValue = window.getComputedStyle(this.track).getPropertyValue('transform');
+      const matrix = new DOMMatrix(transformValue);
+      const currentTranslateX = matrix.m41;
+      
+      // Check if we need to handle looping
+      this.handleLoopBoundaries(currentTranslateX);
+    });
   }
   
   startAutoScroll() {
@@ -279,10 +298,16 @@ class FlowCarousel {
       
       // Loop if enabled
       if (this.options.loop) {
-        // If we've scrolled past the first or last item, reset position
-        if (Math.abs(newPosition) > trackWidth - containerWidth) {
-          // Reached the end, start from beginning
-          this.track.style.transform = `translateX(0px)`;
+        // If we've scrolled significantly past the first or last item, reset position
+        const itemWidth = this.getAverageItemWidth();
+        const buffer = itemWidth * 2;
+        
+        if (newPosition > buffer) {
+          // Scrolled too far left, jump to end
+          this.track.style.transform = `translateX(${-(trackWidth - containerWidth - buffer)}px)`;
+        } else if (Math.abs(newPosition) > trackWidth - containerWidth + buffer) {
+          // Scrolled too far right, jump to beginning
+          this.track.style.transform = `translateX(${-buffer}px)`;
         }
       } else {
         // Change direction when reaching boundaries
