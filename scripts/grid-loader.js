@@ -19,6 +19,8 @@ document.addEventListener('DOMContentLoaded', function() {
             video.loop = true;
             video.muted = true;
             video.playsInline = true;
+            video.style.maxWidth = '40%';
+            video.style.maxHeight = '40%';
 
             const source = document.createElement('source');
             source.src = `images/lab/${file}`;
@@ -31,6 +33,8 @@ document.addEventListener('DOMContentLoaded', function() {
             const img = document.createElement('img');
             img.src = `images/lab/${file}`;
             img.alt = file.split('.')[0].replace(/-/g, ' ');
+            img.style.maxWidth = '40%';
+            img.style.maxHeight = '40%';
 
             gridItem.appendChild(img);
         }
