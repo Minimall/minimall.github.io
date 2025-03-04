@@ -1,311 +1,408 @@
 
 /**
- * InfiniteImageCarousel
+ * TrulyInfiniteCarousel
  * 
- * Features:
- * - Truly infinite image scrolling with no visible "end"
- * - iOS-style physics with momentum scrolling
- * - Dynamic image preloading for seamless experience
- * - Touch and mouse gesture support
+ * A carousel that provides:
+ * - Truly seamless infinite scrolling with no visible jumps
+ * - iOS-like physics and momentum
+ * - Drag/swipe with fluid animation and inertia
+ * - Responsive design
  */
 
-document.addEventListener('DOMContentLoaded', function() {
-  // Initialize carousel with a slight delay to ensure DOM is fully rendered
-  setTimeout(() => {
-    const gridItems = document.querySelectorAll('.grid-item');
-    if (gridItems.length > 0) {
-      console.log("Grid items found:", gridItems.length);
-      initializeCarousel(gridItems);
-    } else {
-      console.log("No grid items found");
-    }
-  }, 300);
-});
-
-function initializeCarousel(gridItems) {
-  const carousel = new InfiniteCarousel(gridItems);
-  
-  // Store the carousel instance in window for future reference
-  window.currentCarouselInstance = carousel;
-  
-  // Add click handlers to grid items
-  gridItems.forEach((item, index) => {
-    item.addEventListener('click', () => {
-      carousel.open(index);
-    });
-    item.style.cursor = 'pointer';
-  });
-}
-
-class InfiniteCarousel {
-  constructor(gridItems) {
-    this.gridItems = Array.from(gridItems);
-    this.totalItems = this.gridItems.length;
-    this.currentIndex = 0;
-    this.isOpen = false;
+class TrulyInfiniteCarousel {
+  constructor(container, options = {}) {
+    this.container = typeof container === 'string' ? document.querySelector(container) : container;
     
-    // Physics parameters - calibrated for iOS-like feel
-    this.velocity = 0;
+    // Default options
+    this.options = {
+      slideSelector: '.carousel-item',
+      autoPlay: options.autoPlay !== undefined ? options.autoPlay : false,
+      autoPlaySpeed: options.autoPlaySpeed || 3000,
+      showArrows: options.showArrows !== undefined ? options.showArrows : true,
+      showDots: options.showDots !== undefined ? options.showDots : false,
+      loop: true, // Always true for this implementation
+      initialSlide: options.initialSlide || 0,
+      dragThreshold: options.dragThreshold || 20,
+      slideSpacing: options.slideSpacing || 20,
+      centerMode: options.centerMode !== undefined ? options.centerMode : true
+    };
+    
+    // Create necessary DOM elements if they don't exist
+    this.setupDOM();
+    
+    // Core state variables
+    this.slides = Array.from(this.container.querySelectorAll(this.options.slideSelector));
+    this.slideCount = this.slides.length;
+    this.currentIndex = this.options.initialSlide;
+    this.containerWidth = this.container.offsetWidth;
+    this.slideWidth = this.calcSlideWidth();
+    
+    // Initialize physics variables
     this.position = 0;
+    this.targetPosition = 0;
     this.startX = 0;
-    this.startY = 0;
+    this.currentX = 0;
     this.lastX = 0;
-    this.lastTimestamp = 0;
+    this.velocity = 0;
     this.isDragging = false;
-    this.isScrolling = false;
-    this.scrollDirection = null;
-    this.friction = 0.95; // Higher value = less friction
-    this.springConstant = 0.08; // For elastic bounce (lower = more elasticity)
+    this.isAnimating = false;
+    this.lastMoveTime = 0;
+    this.velocityTracker = [];
     this.animationId = null;
-    this.visibleSlides = new Set();
-    this.virtualIndices = new Map(); // Track virtual position of each slide
+    this.direction = 0;
     
-    // Create DOM elements
-    this.createCarouselElements();
-    this.setupEventListeners();
+    // Clone slides for infinite effect
+    this.createVirtualSlides();
+    
+    // Set initial position
+    this.setSlidePositions();
+    
+    // Bind event handlers
+    this.bindEvents();
+    
+    // Start auto-play if enabled
+    if (this.options.autoPlay) {
+      this.startAutoPlay();
+    }
+    
+    // Initialize arrows and dots
+    if (this.options.showArrows) {
+      this.createArrows();
+    }
+    
+    if (this.options.showDots) {
+      this.createDots();
+    }
+    
+    // Set initial slide
+    this.goToSlide(this.options.initialSlide, false);
   }
   
-  createCarouselElements() {
-    // Create overlay
-    this.overlay = document.createElement('div');
-    this.overlay.className = 'carousel-overlay';
+  setupDOM() {
+    // Make sure container has position relative/absolute
+    if (getComputedStyle(this.container).position === 'static') {
+      this.container.style.position = 'relative';
+    }
     
-    // Create carousel container
-    this.container = document.createElement('div');
-    this.container.className = 'carousel-container';
-    
-    // Create track container for horizontal scrolling
-    this.track = document.createElement('div');
-    this.track.className = 'carousel-track-container';
-    
-    // Create navigation arrows with iOS-style design
-    this.prevArrow = document.createElement('button');
-    this.prevArrow.className = 'carousel-nav prev';
-    this.prevArrow.innerHTML = `
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-        <path d="M19 12H5"></path>
-        <path d="M12 19l-7-7 7-7"></path>
-      </svg>
-    `;
-    
-    this.nextArrow = document.createElement('button');
-    this.nextArrow.className = 'carousel-nav next';
-    this.nextArrow.innerHTML = `
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-        <path d="M5 12h14"></path>
-        <path d="M12 5l7 7-7 7"></path>
-      </svg>
-    `;
-    
-    // Create dots indicator container
-    this.dotsContainer = document.createElement('div');
-    this.dotsContainer.className = 'carousel-dots';
-    
-    // Assemble the carousel
-    this.container.appendChild(this.track);
-    this.container.appendChild(this.prevArrow);
-    this.container.appendChild(this.nextArrow);
-    this.container.appendChild(this.dotsContainer);
-    this.overlay.appendChild(this.container);
-    
-    // Add to document
-    document.body.appendChild(this.overlay);
-  }
-  
-  setupEventListeners() {
-    // Navigation buttons
-    this.prevArrow.addEventListener('click', (e) => {
-      e.stopPropagation();
-      this.navigateTo(this.currentIndex - 1, true);
-    });
-    
-    this.nextArrow.addEventListener('click', (e) => {
-      e.stopPropagation();
-      this.navigateTo(this.currentIndex + 1, true);
-    });
-    
-    // Close on overlay click (if not dragging)
-    this.overlay.addEventListener('click', (e) => {
-      if (e.target === this.overlay && !this.isDragging) {
-        this.close();
-      }
-    });
-    
-    // Keyboard navigation
-    document.addEventListener('keydown', (e) => {
-      if (!this.isOpen) return;
+    // Ensure we have a track element
+    this.track = this.container.querySelector('.carousel-track');
+    if (!this.track) {
+      this.track = document.createElement('div');
+      this.track.className = 'carousel-track';
       
-      switch (e.key) {
-        case 'Escape':
-          this.close();
+      // Move all direct children into the track
+      while (this.container.firstChild) {
+        if (!this.container.firstChild.classList || 
+            !this.container.firstChild.classList.contains('carousel-arrow') && 
+            !this.container.firstChild.classList.contains('carousel-dots')) {
+          this.track.appendChild(this.container.firstChild);
+        } else {
           break;
-        case 'ArrowLeft':
-          this.navigateTo(this.currentIndex - 1, true);
-          break;
-        case 'ArrowRight':
-          this.navigateTo(this.currentIndex + 1, true);
-          break;
+        }
       }
+      
+      this.container.insertBefore(this.track, this.container.firstChild);
+    }
+    
+    // Set basic styles for track
+    Object.assign(this.track.style, {
+      display: 'flex',
+      flexWrap: 'nowrap',
+      transition: 'none',
+      willChange: 'transform',
+      width: 'max-content'
     });
     
-    // Touch and mouse events
-    this.setupDragEvents();
-    
-    // Handle window resize
-    window.addEventListener('resize', this.handleResize.bind(this));
-    
-    // Handle visibility change to pause/resume auto-loading
-    document.addEventListener('visibilitychange', () => {
-      if (document.hidden) {
-        this.pauseAutoLoading();
-      } else if (this.isOpen) {
-        this.resumeAutoLoading();
-      }
-    });
+    // Ensure container has proper overflow
+    this.container.style.overflow = 'hidden';
   }
   
-  setupDragEvents() {
-    // Touch events
-    this.track.addEventListener('mousedown', this.handleDragStart.bind(this));
-    this.track.addEventListener('touchstart', this.handleDragStart.bind(this), { passive: false });
+  createVirtualSlides() {
+    // We need at least 3 slides for the infinite effect
+    if (this.slideCount < 3) {
+      // Create clones to have at least 3 slides
+      const clonesToAdd = 3 - this.slideCount;
+      for (let i = 0; i < clonesToAdd; i++) {
+        const clone = this.slides[i % this.slideCount].cloneNode(true);
+        clone.classList.add('carousel-clone');
+        this.track.appendChild(clone);
+      }
+      // Update slides array after adding clones
+      this.slides = Array.from(this.container.querySelectorAll(this.options.slideSelector));
+      this.slideCount = this.slides.length;
+    }
     
-    window.addEventListener('mousemove', this.handleDragMove.bind(this));
-    window.addEventListener('touchmove', this.handleDragMove.bind(this), { passive: false });
+    // Create clones for smooth infinite scrolling (add multiple copies)
+    const clonesPerSide = Math.ceil(3 * (this.containerWidth / this.calcSlideWidth()));
     
-    window.addEventListener('mouseup', this.handleDragEnd.bind(this));
-    window.addEventListener('touchend', this.handleDragEnd.bind(this));
+    // Prepend clones (from end of original slides)
+    for (let i = 0; i < clonesPerSide; i++) {
+      const index = this.slideCount - 1 - (i % this.slideCount);
+      const clone = this.slides[index].cloneNode(true);
+      clone.classList.add('carousel-clone');
+      clone.dataset.cloneIndex = index;
+      clone.dataset.position = 'prepend';
+      this.track.insertBefore(clone, this.track.firstChild);
+    }
+    
+    // Append clones (from start of original slides)
+    for (let i = 0; i < clonesPerSide; i++) {
+      const index = i % this.slideCount;
+      const clone = this.slides[index].cloneNode(true);
+      clone.classList.add('carousel-clone');
+      clone.dataset.cloneIndex = index;
+      clone.dataset.position = 'append';
+      this.track.appendChild(clone);
+    }
+    
+    // Update virtual slides arrays
+    this.virtualSlides = Array.from(this.container.querySelectorAll(this.options.slideSelector));
+    this.virtualSlideCount = this.virtualSlides.length;
+    this.prependCount = clonesPerSide;
+    this.appendCount = clonesPerSide;
+    
+    // Calculate offset for original slides (after prepends)
+    this.originalOffset = clonesPerSide;
+  }
+  
+  calcSlideWidth() {
+    if (this.slides.length === 0) return this.containerWidth;
+    
+    // Get the first slide to measure
+    const slide = this.slides[0];
+    const style = window.getComputedStyle(slide);
+    
+    // Calculate total width including margins
+    const width = slide.offsetWidth +
+                  parseFloat(style.marginLeft || 0) +
+                  parseFloat(style.marginRight || 0);
+    
+    return width;
+  }
+  
+  setSlidePositions() {
+    // Calculate slide gap
+    const slideGap = this.options.slideSpacing;
+    
+    // Calculate total width of a slide (including gap)
+    const totalWidth = this.slideWidth + slideGap;
+    
+    // Set width and position for all slides
+    this.virtualSlides.forEach((slide, index) => {
+      // Set slide-specific styles
+      slide.style.flexShrink = '0';
+      slide.style.marginRight = `${slideGap}px`;
+      slide.style.position = 'relative';
+      
+      // Store position for performance
+      slide.dataset.position = index * totalWidth;
+    });
+    
+    // Set track styling for better dragging
+    this.track.style.cursor = 'grab';
+    
+    // Calculate real start position (to center the first original slide)
+    if (this.options.centerMode) {
+      this.centerOffset = (this.containerWidth - this.slideWidth) / 2;
+    } else {
+      this.centerOffset = 0;
+    }
+    
+    // Calculate starting position
+    this.startPosition = -this.prependCount * totalWidth + this.centerOffset;
+    
+    // Initialize position
+    this.position = this.startPosition;
+    this.updateTrackPosition();
+  }
+  
+  updateTrackPosition(animate = false) {
+    if (animate) {
+      this.track.style.transition = 'transform 0.3s cubic-bezier(0.25, 1, 0.5, 1)';
+    } else {
+      this.track.style.transition = 'none';
+    }
+    
+    this.track.style.transform = `translateX(${this.position}px)`;
+    
+    // Reset transition after animation completes
+    if (animate) {
+      setTimeout(() => {
+        this.track.style.transition = 'none';
+      }, 300);
+    }
+  }
+  
+  handleInfiniteScrolling() {
+    const slideGap = this.options.slideSpacing;
+    const totalWidth = this.slideWidth + slideGap;
+    
+    // Calculate where we are in the virtual carousel
+    const normalizedPosition = this.position - this.startPosition;
+    const slideMultiplier = Math.round(normalizedPosition / totalWidth);
+    const virtualIndex = slideMultiplier % this.slideCount;
+    
+    // Calculate if we need to jump forward or backward for seamless scrolling
+    // When we've scrolled too far in either direction
+    
+    if (slideMultiplier <= -this.prependCount + 2) {
+      // We've scrolled too far backward - jump forward
+      const offset = this.slideCount * totalWidth;
+      this.position += offset;
+      this.updateTrackPosition(false);
+    } else if (slideMultiplier >= this.slideCount + 2) {
+      // We've scrolled too far forward - jump backward
+      const offset = this.slideCount * totalWidth;
+      this.position -= offset;
+      this.updateTrackPosition(false);
+    }
+    
+    // Calculate the actual index (0 to slideCount-1)
+    const wrappedIndex = ((virtualIndex % this.slideCount) + this.slideCount) % this.slideCount;
+    
+    // Update currentIndex if it changed
+    if (wrappedIndex !== this.currentIndex) {
+      this.currentIndex = wrappedIndex;
+      this.updateActiveDot();
+    }
+  }
+  
+  bindEvents() {
+    // Mouse events
+    this.track.addEventListener('mousedown', this.onDragStart.bind(this));
+    window.addEventListener('mousemove', this.onDragMove.bind(this));
+    window.addEventListener('mouseup', this.onDragEnd.bind(this));
+    
+    // Touch events for mobile
+    this.track.addEventListener('touchstart', this.onDragStart.bind(this), { passive: false });
+    window.addEventListener('touchmove', this.onDragMove.bind(this), { passive: false });
+    window.addEventListener('touchend', this.onDragEnd.bind(this));
     
     // Prevent context menu on long press
-    this.track.addEventListener('contextmenu', (e) => {
+    this.track.addEventListener('contextmenu', e => {
       if (this.isDragging) {
         e.preventDefault();
       }
     });
+    
+    // Window resize event
+    window.addEventListener('resize', this.onResize.bind(this));
+    
+    // Track transiton end for infinite scroll jumps
+    this.track.addEventListener('transitionend', () => {
+      this.isAnimating = false;
+    });
   }
   
-  handleDragStart(e) {
-    if (!this.isOpen) return;
+  onDragStart(e) {
+    // Don't capture if any animation is in progress
+    if (this.isAnimating) return;
     
-    this.isDragging = true;
-    this.track.classList.add('dragging');
-    this.velocity = 0;
-    
-    // Cancel any ongoing animation
+    // Stop existing animation
     if (this.animationId) {
       cancelAnimationFrame(this.animationId);
       this.animationId = null;
     }
     
-    // Get starting position and time
-    const point = e.touches ? e.touches[0] : e;
-    this.startX = point.clientX;
-    this.startY = point.clientY;
+    // Store initial position for drag calculations
+    this.isDragging = true;
+    this.startX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+    this.currentX = this.startX;
     this.lastX = this.startX;
-    this.lastTimestamp = Date.now();
-    this.scrollDirection = null;
-    this.isScrolling = false;
-    
-    // Track velocity data
-    this.velocityHistory = [];
-    
-    // Improve visual feedback
+    this.lastMoveTime = Date.now();
+    this.track.style.transition = 'none';
     this.track.style.cursor = 'grabbing';
+    this.velocityTracker = [];
     
-    e.preventDefault();
-  }
-  
-  handleDragMove(e) {
-    if (!this.isDragging || !this.isOpen) return;
-    
-    const point = e.touches ? e.touches[0] : e;
-    const currentX = point.clientX;
-    const currentY = point.clientY;
-    const timestamp = Date.now();
-    
-    // Determine scroll direction on first move
-    if (this.scrollDirection === null) {
-      const deltaX = Math.abs(currentX - this.startX);
-      const deltaY = Math.abs(currentY - this.startY);
-      
-      // Set a threshold to determine the intended direction
-      if (deltaY > deltaX && deltaY > 10) {
-        this.isDragging = false;
-        this.isScrolling = true;
-        this.track.classList.remove('dragging');
-        return;
-      }
-      
-      if (deltaX > 10) {
-        this.scrollDirection = 'horizontal';
-        e.preventDefault();
-      }
+    // Stop auto-play during interaction
+    if (this.autoPlayInterval) {
+      clearInterval(this.autoPlayInterval);
     }
     
-    // Only process horizontal movements
-    if (this.scrollDirection === 'horizontal') {
-      // Calculate drag distance and time
-      const deltaX = currentX - this.lastX;
-      const deltaTime = timestamp - this.lastTimestamp;
-      
-      if (deltaTime > 0) {
-        // Record velocity samples for more accurate physics
-        this.velocityHistory.push({
-          velocity: deltaX / deltaTime,
-          timestamp: timestamp
-        });
-        
-        // Keep only recent samples for velocity calculation
-        if (this.velocityHistory.length > 5) {
-          this.velocityHistory.shift();
-        }
-      }
-      
-      // Apply movement
-      this.position += deltaX;
-      
-      // Update display and ensure slides are properly loaded
-      this.updateTrackPosition();
-      this.ensureProperSlides();
-      
-      this.lastX = currentX;
-      this.lastTimestamp = timestamp;
-      
+    // Prevent page scrolling on mobile
+    if (e.cancelable) {
       e.preventDefault();
     }
   }
   
-  handleDragEnd() {
-    if (!this.isDragging || !this.isOpen) return;
+  onDragMove(e) {
+    if (!this.isDragging) return;
     
-    this.isDragging = false;
-    this.track.classList.remove('dragging');
-    this.track.style.cursor = 'grab';
+    // Update current position
+    this.currentX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
     
-    // Calculate final velocity based on recent movement history
-    if (this.velocityHistory.length > 0) {
-      // Weight recent movements more heavily
-      let totalWeight = 0;
-      let weightedVelocity = 0;
+    // Calculate distance moved
+    const deltaX = this.currentX - this.lastX;
+    this.lastX = this.currentX;
+    
+    // Update position
+    this.position += deltaX;
+    this.updateTrackPosition();
+    
+    // Track velocity for momentum scrolling
+    const now = Date.now();
+    const elapsed = now - this.lastMoveTime;
+    this.lastMoveTime = now;
+    
+    if (elapsed > 0) {
+      // Calculate velocity (px/ms)
+      const velocity = deltaX / elapsed;
       
-      // Use weighted average of last few velocity samples
-      for (let i = 0; i < this.velocityHistory.length; i++) {
-        const weight = i + 1;
-        weightedVelocity += this.velocityHistory[i].velocity * weight;
-        totalWeight += weight;
+      // Add to velocity tracker (keeping last 5 samples)
+      this.velocityTracker.push(velocity);
+      if (this.velocityTracker.length > 5) {
+        this.velocityTracker.shift();
       }
-      
-      this.velocity = (weightedVelocity / totalWeight) * 20; // Amplify for better feel
-    } else {
-      this.velocity = 0;
     }
     
-    // Start deceleration animation
-    this.startDecelerationAnimation();
+    // Always prevent page scrolling when dragging
+    if (e.cancelable) {
+      e.preventDefault();
+    }
   }
   
-  startDecelerationAnimation() {
-    const slideWidth = this.getSlideWidth();
+  onDragEnd() {
+    if (!this.isDragging) return;
+    
+    this.isDragging = false;
+    this.track.style.cursor = 'grab';
+    
+    // Calculate final velocity (weighted average of last few samples)
+    let finalVelocity = 0;
+    if (this.velocityTracker.length > 0) {
+      let weight = 0;
+      let sum = 0;
+      
+      // Weight recent velocities more heavily
+      for (let i = 0; i < this.velocityTracker.length; i++) {
+        const sampleWeight = i + 1;
+        sum += this.velocityTracker[i] * sampleWeight;
+        weight += sampleWeight;
+      }
+      
+      finalVelocity = sum / weight;
+    }
+    
+    // Apply momentum with deceleration
+    if (Math.abs(finalVelocity) > 0.1) {
+      this.applyMomentum(finalVelocity);
+    } else {
+      // No significant momentum, just snap to closest slide
+      this.snapToNearestSlide();
+    }
+    
+    // Restart auto-play if enabled
+    if (this.options.autoPlay) {
+      this.startAutoPlay();
+    }
+  }
+  
+  applyMomentum(initialVelocity) {
+    // Scale the velocity for better feel
+    const scaledVelocity = initialVelocity * 100;
+    let velocity = scaledVelocity;
     let lastTimestamp = null;
+    let position = this.position;
     
     const animate = (timestamp) => {
       if (!lastTimestamp) {
@@ -314,117 +411,92 @@ class InfiniteCarousel {
         return;
       }
       
-      const elapsed = timestamp - lastTimestamp;
+      // Calculate time delta
+      const delta = timestamp - lastTimestamp;
       lastTimestamp = timestamp;
       
-      // Apply friction to velocity (time-based)
-      const timeScale = elapsed / 16.6667; // Normalize for 60fps
-      this.velocity *= Math.pow(this.friction, timeScale);
+      // Apply friction (deceleration)
+      velocity *= Math.pow(0.95, delta / 16); // Normalized for 60fps
       
-      // Apply velocity to position
-      this.position += this.velocity * timeScale;
+      // Update position based on velocity
+      position += velocity * delta;
       
-      // Handle extremely slow velocity - snap to nearest slide
-      if (Math.abs(this.velocity) < 0.5) {
-        // Calculate actual index, accounting for infinite wrapping
-        const normalizedPosition = -this.position / slideWidth;
-        const rawIndex = Math.round(normalizedPosition);
-        const actualIndex = ((rawIndex % this.totalItems) + this.totalItems) % this.totalItems;
-        
-        this.navigateTo(actualIndex, true);
-        return;
-      }
-      
-      // Update visual position and ensure proper slides are visible
+      // Apply position
+      this.position = position;
       this.updateTrackPosition();
-      this.ensureProperSlides();
       
-      this.animationId = requestAnimationFrame(animate);
+      // Check for infinite scroll conditions
+      this.handleInfiniteScrolling();
+      
+      // Continue animation until velocity is minimal
+      if (Math.abs(velocity) > 0.1) {
+        this.animationId = requestAnimationFrame(animate);
+      } else {
+        // When slowed down enough, snap to nearest slide
+        this.snapToNearestSlide();
+      }
     };
     
-    // Start the animation
-    if (this.animationId) {
-      cancelAnimationFrame(this.animationId);
-    }
+    // Start animation
     this.animationId = requestAnimationFrame(animate);
   }
   
-  navigateTo(targetIndex, animate = false) {
-    // Wrap around for infinite scrolling
-    targetIndex = ((targetIndex % this.totalItems) + this.totalItems) % this.totalItems;
+  snapToNearestSlide() {
+    const slideGap = this.options.slideSpacing;
+    const totalWidth = this.slideWidth + slideGap;
     
-    // Update current index
-    this.currentIndex = targetIndex;
+    // Calculate the offset from startPosition
+    const relativeOffset = this.position - this.startPosition;
     
-    // Calculate slide width and target position
-    const slideWidth = this.getSlideWidth();
+    // Find nearest slide index
+    const slideIndex = Math.round(relativeOffset / totalWidth);
     
-    // Find the closest instance of this slide to the current position
-    // This ensures the shortest path to the target slide
-    const currentVirtualIndex = Math.round(-this.position / slideWidth);
-    const currentActualIndex = ((currentVirtualIndex % this.totalItems) + this.totalItems) % this.totalItems;
+    // Calculate target position
+    const targetPosition = this.startPosition + (slideIndex * totalWidth);
     
-    // Calculate how many full cycles of slides away we are
-    const cycle = Math.floor(currentVirtualIndex / this.totalItems);
-    
-    // Find the closest instance of the target slide
-    let targetVirtualIndex = cycle * this.totalItems + targetIndex;
-    
-    // Check if it's shorter to go to previous/next cycle
-    if (currentActualIndex > targetIndex && Math.abs(currentActualIndex - targetIndex) > this.totalItems/2) {
-      // It's shorter to go forward to the next cycle
-      targetVirtualIndex = (cycle + 1) * this.totalItems + targetIndex;
-    } else if (currentActualIndex < targetIndex && Math.abs(currentActualIndex - targetIndex) > this.totalItems/2) {
-      // It's shorter to go backward to the previous cycle
-      targetVirtualIndex = (cycle - 1) * this.totalItems + targetIndex;
-    }
-    
-    const targetPosition = -targetVirtualIndex * slideWidth;
-    
-    // Cancel any ongoing animation
-    if (this.animationId) {
-      cancelAnimationFrame(this.animationId);
-      this.animationId = null;
-    }
-    
-    if (animate) {
-      this.animateToPosition(targetPosition, () => {
-        this.updateDots();
-        this.ensureProperSlides();
-      });
-    } else {
-      this.position = targetPosition;
-      this.updateTrackPosition();
-      this.updateDots();
-      this.ensureProperSlides();
-    }
+    // Animate to target position
+    this.animateToPosition(targetPosition, () => {
+      // Update current index after snapping
+      const normalizedIndex = ((slideIndex % this.slideCount) + this.slideCount) % this.slideCount;
+      this.currentIndex = normalizedIndex;
+      this.updateActiveDot();
+      
+      // Handle infinite scrolling after animation completes
+      this.handleInfiniteScrolling();
+    });
   }
   
   animateToPosition(targetPosition, callback) {
+    this.isAnimating = true;
+    
     const startPosition = this.position;
     const distance = targetPosition - startPosition;
-    const duration = Math.min(500, 300 + Math.abs(distance) / 2); // Dynamic duration based on distance
+    const duration = Math.min(500, 100 + Math.abs(distance));
     const startTime = performance.now();
+    
+    if (this.animationId) {
+      cancelAnimationFrame(this.animationId);
+    }
     
     const animate = (currentTime) => {
       const elapsed = currentTime - startTime;
       const progress = Math.min(elapsed / duration, 1);
       
-      // Use cubic easing for natural motion
-      const easedProgress = 1 - Math.pow(1 - progress, 3);
+      // Use cubic ease-out for natural motion
+      const easeOut = 1 - Math.pow(1 - progress, 3);
       
-      this.position = startPosition + distance * easedProgress;
+      // Calculate new position
+      this.position = startPosition + (distance * easeOut);
       this.updateTrackPosition();
-      
-      // Always ensure proper slides during animation
-      this.ensureProperSlides();
       
       if (progress < 1) {
         this.animationId = requestAnimationFrame(animate);
       } else {
-        this.position = targetPosition;
+        this.position = targetPosition; // Ensure we end at exact position
         this.updateTrackPosition();
+        this.isAnimating = false;
         this.animationId = null;
+        
         if (callback) callback();
       }
     };
@@ -432,310 +504,167 @@ class InfiniteCarousel {
     this.animationId = requestAnimationFrame(animate);
   }
   
-  updateTrackPosition() {
-    if (this.track) {
-      // Apply transform with will-change for performance
-      this.track.style.transform = `translateX(${this.position}px)`;
-      
-      // Update current index based on position
-      const slideWidth = this.getSlideWidth();
-      const normalizedPosition = -this.position / slideWidth;
-      const rawIndex = Math.round(normalizedPosition);
-      const actualIndex = ((rawIndex % this.totalItems) + this.totalItems) % this.totalItems;
-      
-      if (actualIndex !== this.currentIndex) {
-        this.currentIndex = actualIndex;
-        this.updateDots();
-      }
-    }
-  }
-  
-  open(index) {
-    if (this.isOpen || this.totalItems === 0) return;
+  goToSlide(index, animate = true) {
+    // Make sure index is within bounds
+    index = ((index % this.slideCount) + this.slideCount) % this.slideCount;
     
-    this.isOpen = true;
+    // Calculate target position
+    const slideGap = this.options.slideSpacing;
+    const totalWidth = this.slideWidth + slideGap;
+    const targetPosition = this.startPosition + (index * totalWidth);
+    
+    // Update current index
     this.currentIndex = index;
+    this.updateActiveDot();
     
-    // Prevent page scrolling
-    document.body.style.overflow = 'hidden';
-    
-    // Clear the track and prepare for slides
-    this.track.innerHTML = '';
-    this.dotsContainer.innerHTML = '';
-    this.visibleSlides = new Set();
-    this.virtualIndices = new Map();
-    
-    // Initialize position to selected index
-    const slideWidth = this.getSlideWidth();
-    this.position = -index * slideWidth;
-    
-    // Create initial slides (visible + buffer)
-    this.initialSlideLoad();
-    this.updateDots();
-    
-    // Show overlay with fade-in
-    this.overlay.style.display = 'flex';
-    requestAnimationFrame(() => {
-      this.overlay.style.opacity = '1';
-    });
-  }
-  
-  close() {
-    if (!this.isOpen) return;
-    
-    // Stop any ongoing animation
-    if (this.animationId) {
-      cancelAnimationFrame(this.animationId);
-      this.animationId = null;
-    }
-    
-    // Fade out overlay
-    this.overlay.style.opacity = '0';
-    
-    // Clean up after animation finishes
-    setTimeout(() => {
-      this.overlay.style.display = 'none';
-      this.track.innerHTML = '';
-      this.dotsContainer.innerHTML = '';
-      this.visibleSlides.clear();
-      this.virtualIndices.clear();
-      
-      // Re-enable scrolling
-      document.body.style.overflow = '';
-      
-      this.isOpen = false;
-    }, 300);
-  }
-  
-  initialSlideLoad() {
-    // Load visible slides and buffer slides
-    const visibleRange = 2; // Slides visible on each side of current
-    const bufferRange = 2;  // Additional buffer slides beyond visible range
-    
-    for (let offset = -visibleRange - bufferRange; offset <= visibleRange + bufferRange; offset++) {
-      // Calculate the virtual index (allowing for duplicates in different positions)
-      const virtualIndex = this.currentIndex + offset;
-      
-      // Calculate the actual index (wrapped around for infinite effect)
-      const actualIndex = ((virtualIndex % this.totalItems) + this.totalItems) % this.totalItems;
-      
-      // Create the slide
-      this.createSlide(actualIndex, virtualIndex);
-      
-      // Track which slides are loaded
-      this.visibleSlides.add(virtualIndex);
+    // Move to position
+    if (animate) {
+      this.animateToPosition(targetPosition);
+    } else {
+      this.position = targetPosition;
+      this.updateTrackPosition();
+      this.handleInfiniteScrolling();
     }
   }
   
-  ensureProperSlides() {
-    if (!this.isOpen) return;
-    
-    const slideWidth = this.getSlideWidth();
-    
-    // Calculate which virtual indices should be visible based on position
-    const centerVirtualIndex = Math.round(-this.position / slideWidth);
-    const visibleRange = 2; // Slides visible on each side of current
-    const bufferRange = 2;  // Additional buffer slides beyond visible range
-    
-    const minVirtualIndex = centerVirtualIndex - visibleRange - bufferRange;
-    const maxVirtualIndex = centerVirtualIndex + visibleRange + bufferRange;
-    
-    // Create set of virtual indices that should be visible
-    const targetVisibleSlides = new Set();
-    for (let virtualIndex = minVirtualIndex; virtualIndex <= maxVirtualIndex; virtualIndex++) {
-      targetVisibleSlides.add(virtualIndex);
-    }
-    
-    // Remove slides that should no longer be visible
-    const slidesToRemove = [];
-    this.visibleSlides.forEach(virtualIndex => {
-      if (!targetVisibleSlides.has(virtualIndex)) {
-        slidesToRemove.push(virtualIndex);
-        
-        // Remove the slide from DOM
-        const slide = this.track.querySelector(`.carousel-slide[data-virtual-index="${virtualIndex}"]`);
-        if (slide) slide.remove();
-        
-        // Clean up virtual index tracking
-        if (this.virtualIndices.has(virtualIndex)) {
-          this.virtualIndices.delete(virtualIndex);
-        }
-      }
-    });
-    
-    // Update tracking of visible slides
-    slidesToRemove.forEach(virtualIndex => {
-      this.visibleSlides.delete(virtualIndex);
-    });
-    
-    // Add slides that should be visible but aren't yet
-    targetVisibleSlides.forEach(virtualIndex => {
-      if (!this.visibleSlides.has(virtualIndex)) {
-        // Get the actual index with proper wrapping
-        const actualIndex = ((virtualIndex % this.totalItems) + this.totalItems) % this.totalItems;
-        
-        // Create the slide
-        this.createSlide(actualIndex, virtualIndex);
-        
-        // Track that it's now visible
-        this.visibleSlides.add(virtualIndex);
-      }
-    });
+  next() {
+    this.goToSlide(this.currentIndex + 1);
   }
   
-  createSlide(actualIndex, virtualIndex) {
-    const slideWidth = this.getSlideWidth();
-    const slide = document.createElement('div');
-    slide.className = 'carousel-slide';
-    slide.dataset.actualIndex = actualIndex;
-    slide.dataset.virtualIndex = virtualIndex;
-    
-    // Position slide based on virtual index
-    slide.style.transform = `translateX(${virtualIndex * slideWidth}px)`;
-    
-    // Set up the grid item content (image or video)
-    const gridItem = this.gridItems[actualIndex];
-    const img = gridItem.querySelector('img');
-    const video = gridItem.querySelector('video');
-    
-    if (img) {
-      const slideImg = document.createElement('img');
-      slideImg.className = 'carousel-image';
-      slideImg.src = img.src;
-      slideImg.alt = img.alt || 'Image';
-      
-      // Handle load errors
-      slideImg.onerror = () => {
-        console.error(`Failed to load image for slide ${actualIndex}`);
-        // Create a fallback display
-        const fallback = document.createElement('div');
-        fallback.className = 'carousel-image carousel-image-fallback';
-        fallback.textContent = 'Image not available';
-        slide.appendChild(fallback);
-      };
-      
-      // Add image to slide
-      if (img.complete) {
-        slide.appendChild(slideImg);
-      } else {
-        // Create a temporary placeholder while image loads
-        const placeholder = document.createElement('div');
-        placeholder.className = 'carousel-image-placeholder';
-        slide.appendChild(placeholder);
-        
-        // Replace placeholder when image loads
-        slideImg.onload = () => {
-          placeholder.replaceWith(slideImg);
-        };
-        
-        // Start loading
-        slideImg.src = img.src;
-      }
-    } else if (video) {
-      const slideVideo = document.createElement('video');
-      slideVideo.className = 'carousel-image';
-      slideVideo.controls = true;
-      slideVideo.autoplay = true;
-      slideVideo.loop = true;
-      slideVideo.muted = true;
-      slideVideo.playsInline = true;
-      
-      // Copy all source elements
-      const sources = video.querySelectorAll('source');
-      sources.forEach(source => {
-        const newSource = document.createElement('source');
-        newSource.src = source.src;
-        newSource.type = source.type;
-        slideVideo.appendChild(newSource);
-      });
-      
-      slide.appendChild(slideVideo);
-    }
-    
-    // Add to track
-    this.track.appendChild(slide);
-    
-    // Track the mapping from virtual to actual index
-    this.virtualIndices.set(virtualIndex, actualIndex);
-    
-    return slide;
+  prev() {
+    this.goToSlide(this.currentIndex - 1);
   }
   
-  updateDots() {
-    if (!this.isOpen) return;
+  onResize() {
+    // Recalculate dimensions
+    this.containerWidth = this.container.offsetWidth;
+    this.slideWidth = this.calcSlideWidth();
     
-    // Clear existing dots
-    this.dotsContainer.innerHTML = '';
+    // Update slide positions
+    this.setSlidePositions();
     
-    // Only show dots if we have enough items
-    if (this.totalItems <= 1) {
-      this.dotsContainer.style.display = 'none';
-      return;
-    }
+    // Go to current slide (reposition correctly)
+    this.goToSlide(this.currentIndex, false);
+  }
+  
+  createArrows() {
+    // Create previous arrow
+    this.prevArrow = document.createElement('button');
+    this.prevArrow.className = 'carousel-arrow carousel-prev';
+    this.prevArrow.innerHTML = '<svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"></path></svg>';
+    this.prevArrow.addEventListener('click', () => this.prev());
     
-    this.dotsContainer.style.display = 'flex';
+    // Create next arrow
+    this.nextArrow = document.createElement('button');
+    this.nextArrow.className = 'carousel-arrow carousel-next';
+    this.nextArrow.innerHTML = '<svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path></svg>';
+    this.nextArrow.addEventListener('click', () => this.next());
     
-    // Create a dot for each item
-    for (let i = 0; i < this.totalItems; i++) {
-      const dot = document.createElement('div');
-      dot.className = 'dot' + (i === this.currentIndex ? ' active' : '');
-      
-      // Add click handler
-      dot.addEventListener('click', (e) => {
-        e.stopPropagation();
-        this.navigateTo(i, true);
-      });
-      
+    // Add arrows to container
+    this.container.appendChild(this.prevArrow);
+    this.container.appendChild(this.nextArrow);
+  }
+  
+  createDots() {
+    // Create dots container
+    this.dotsContainer = document.createElement('div');
+    this.dotsContainer.className = 'carousel-dots';
+    
+    // Create dots for each slide
+    for (let i = 0; i < this.slideCount; i++) {
+      const dot = document.createElement('button');
+      dot.className = 'carousel-dot';
+      dot.setAttribute('aria-label', `Go to slide ${i + 1}`);
+      dot.addEventListener('click', () => this.goToSlide(i));
       this.dotsContainer.appendChild(dot);
     }
+    
+    // Add dots to container
+    this.container.appendChild(this.dotsContainer);
+    
+    // Set initial active dot
+    this.updateActiveDot();
   }
   
-  getSlideWidth() {
-    return this.container.clientWidth;
+  updateActiveDot() {
+    if (!this.options.showDots || !this.dotsContainer) return;
+    
+    // Remove active class from all dots
+    const dots = this.dotsContainer.querySelectorAll('.carousel-dot');
+    dots.forEach(dot => dot.classList.remove('active'));
+    
+    // Add active class to current dot
+    if (dots[this.currentIndex]) {
+      dots[this.currentIndex].classList.add('active');
+    }
   }
   
-  handleResize() {
-    if (!this.isOpen) return;
+  startAutoPlay() {
+    // Clear any existing interval
+    if (this.autoPlayInterval) {
+      clearInterval(this.autoPlayInterval);
+    }
     
-    const slideWidth = this.getSlideWidth();
-    
-    // Update all slide positions
-    const slides = this.track.querySelectorAll('.carousel-slide');
-    slides.forEach(slide => {
-      const virtualIndex = parseInt(slide.dataset.virtualIndex, 10);
-      slide.style.transform = `translateX(${virtualIndex * slideWidth}px)`;
-    });
-    
-    // Reset position to current index
-    // Find the closest instance of the current slide
-    const currentVirtualIndex = Math.round(-this.position / slideWidth);
-    const cycle = Math.floor(currentVirtualIndex / this.totalItems);
-    const targetVirtualIndex = cycle * this.totalItems + this.currentIndex;
-    this.position = -targetVirtualIndex * slideWidth;
-    
-    this.updateTrackPosition();
-    this.ensureProperSlides();
+    // Set up new interval
+    this.autoPlayInterval = setInterval(() => {
+      this.next();
+    }, this.options.autoPlaySpeed);
   }
   
-  pauseAutoLoading() {
-    // Pause any resource-intensive operations when tab is hidden
+  destroy() {
+    // Clean up all event listeners
+    this.track.removeEventListener('mousedown', this.onDragStart);
+    window.removeEventListener('mousemove', this.onDragMove);
+    window.removeEventListener('mouseup', this.onDragEnd);
+    
+    this.track.removeEventListener('touchstart', this.onDragStart);
+    window.removeEventListener('touchmove', this.onDragMove);
+    window.removeEventListener('touchend', this.onDragEnd);
+    
+    window.removeEventListener('resize', this.onResize);
+    
+    // Stop any ongoing animations
     if (this.animationId) {
       cancelAnimationFrame(this.animationId);
-      this.animationId = null;
     }
-  }
-  
-  resumeAutoLoading() {
-    // Resume operations when tab becomes visible
-    if (this.isOpen) {
-      this.ensureProperSlides();
+    
+    // Stop auto-play
+    if (this.autoPlayInterval) {
+      clearInterval(this.autoPlayInterval);
     }
+    
+    // Remove all cloned slides
+    const clones = this.track.querySelectorAll('.carousel-clone');
+    clones.forEach(clone => clone.remove());
+    
+    // Remove navigation elements
+    if (this.prevArrow) this.prevArrow.remove();
+    if (this.nextArrow) this.nextArrow.remove();
+    if (this.dotsContainer) this.dotsContainer.remove();
+    
+    // Reset track styles
+    this.track.style = '';
   }
 }
 
-// Add window resize handler
-window.addEventListener('resize', () => {
-  if (window.currentCarouselInstance) {
-    window.currentCarouselInstance.handleResize();
-  }
+// Initialize carousels when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+  // Find all carousel containers
+  const carouselContainers = document.querySelectorAll('.carousel-container');
+  
+  // Initialize each carousel
+  carouselContainers.forEach(container => {
+    // Store the carousel instance in a data attribute for future reference
+    container.carousel = new TrulyInfiniteCarousel(container, {
+      slideSelector: '.carousel-item',
+      autoPlay: false,
+      showArrows: false,
+      showDots: false,
+      slideSpacing: 20,
+      centerMode: true
+    });
+  });
+  
+  // Expose carousel class globally for manual initialization
+  window.TrulyInfiniteCarousel = TrulyInfiniteCarousel;
 });
