@@ -24,6 +24,15 @@ document.addEventListener('DOMContentLoaded', function() {
             gridItem.style.minWidth = '40%';
             gridItem.style.minHeight = '40%';
 
+            // Set default aspect ratio for videos (16:9)
+            gridItem.style.aspectRatio = '16/9';
+            
+            // Update aspect ratio when video metadata is loaded
+            video.addEventListener('loadedmetadata', function() {
+                const aspectRatio = this.videoWidth / this.videoHeight;
+                gridItem.style.aspectRatio = aspectRatio;
+            });
+
             const source = document.createElement('source');
             source.src = `images/lab/${file}`;
             source.type = file.endsWith('.mp4') ? 'video/mp4' : 
@@ -39,6 +48,12 @@ document.addEventListener('DOMContentLoaded', function() {
             // Ensure container is not smaller than 40% of original size
             gridItem.style.minWidth = '40%';
             gridItem.style.minHeight = '40%';
+            
+            // Set aspect ratio once image is loaded
+            img.onload = function() {
+                const aspectRatio = this.naturalWidth / this.naturalHeight;
+                gridItem.style.aspectRatio = aspectRatio;
+            };
 
             gridItem.appendChild(img);
         }
