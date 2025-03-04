@@ -6,10 +6,6 @@
   height: 100vh;
   overflow-x: hidden;
   margin-left: calc(-50vw + 50%);
-  margin-right: calc(-50vw + 50%);
-  left: 0;
-  right: 0;
-  box-sizing: border-box;
   touch-action: pan-x;
   cursor: grab;
 }
@@ -23,24 +19,21 @@
   position: relative;
   left: 0;
   transition: transform 0.3s ease-out;
-  width: max-content; /* Allow track to be as wide as needed for all items */
 }
 
 .carousel-item {
   flex: 0 0 auto;
   height: 100vh;
-  padding: 0;
-  margin: 0 1vw;
+  padding: 0 2vw;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: auto;
 }
 
 .carousel-item img, 
 .carousel-item video {
-  height: 80vh;
-  width: auto;
+  max-height: 90vh;
+  max-width: 90vw;
   object-fit: contain;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15);
   border-radius: 4px;
@@ -90,10 +83,8 @@
 }
 
 /* Background transition support */
-.flow-carousel {
+.flow-carousel-section {
   --data-bg: #111111;
   position: relative;
   margin-bottom: 2rem;
-  background-color: rgba(0, 0, 0, 0.85);
-  transition: background-color 0.5s ease;
 }

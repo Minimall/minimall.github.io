@@ -239,14 +239,20 @@ class FlowCarousel {
       if (!this.autoScrollPaused && !this.isDragging) {
         const currentPosition = this.getCurrentScrollPosition();
         // Changed direction to right-to-left (negative value moves content right)
-        let newPosition = currentPosition + this.options.autoScrollSpeed;
+        let newPosition = currentPosition - this.options.autoScrollSpeed;
         
-        // Loop handling: when we reach the end, loop back to start
-        if (newPosition >= this.maxScroll) {
-          newPosition = 0;
+        // Loop handling: when first item moves fully out of view to the right
+        if (newPosition <= -this.itemWidth) {
+          // Move the first item to the end of the track
+          const firstItem = this.items[0];
+          this.track.appendChild(firstItem);
+          this.items = Array.from(this.track.querySelectorAll('.carousel-item'));
+          
+          // Adjust position to account for the removed item
+          newPosition += this.itemWidth;
         }
         
-        this.setScrollPosition(newPosition);
+        this.setScrollPosition(Math.max(0, newPosition));
       }
       this.animationFrame = requestAnimationFrame(scroll);
     };
@@ -333,38 +339,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initialize carousel with very slow auto-scroll
   const carousel = new FlowCarousel(carouselContainer, {
     autoScroll: true,
-    autoScrollSpeed: 0.2, // Reduced speed for slower movement
-    itemWidth: null // Allow natural width based on content
+    autoScrollSpeed: 0.2 // Reduced speed for slower movement
   });
-  
-  // Fix item positioning to be in a straight line
-  const items = carouselContainer.querySelectorAll('.carousel-item');
-  items.forEach(item => {
-    // Ensure items display at full height with auto width
-    const media = item.querySelector('img, video');
-    if (media) {
-      media.style.height = '80vh';
-      media.style.width = 'auto';
-      // Make sure the media loads to full size
-      if (media.complete) {
-        // If already loaded
-        carousel.calculateSizes();
-      } else {
-        // If still loading
-        media.onload = () => carousel.calculateSizes();
-      }
-    }
-  });
-  
-  // Add some additional styling to ensure the carousel fills the viewport
-  carouselContainer.style.width = '100vw';
-  carouselContainer.style.left = '0';
-  carouselContainer.style.right = '0';
-  carouselContainer.style.position = 'relative';
-  carouselContainer.style.marginLeft = 'calc(-50vw + 50%)';
-  carouselContainer.style.marginRight = 'calc(-50vw + 50%)';
-  track.style.display = 'flex';
-  track.style.width = 'max-content';
   
   // Connect with scroll-color.js
   // The flow-carousel-section should be detected by the existing scroll-color.js
