@@ -23,7 +23,6 @@
   touch-action: pan-y; /* Enable native vertical scrolling but disable horizontal */
   -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
   overflow-anchor: none; /* Disable scroll anchoring */
-  scroll-snap-type: x proximity; /* Enhance scrolling behavior */
   /* Enhance performance for smoother animations */
   transform: translateZ(0);
   backface-visibility: hidden;
@@ -53,7 +52,6 @@
   align-items: center;
   justify-content: center;
   position: relative;
-  scroll-snap-align: center; /* Makes item snap into view */
 }
 
 .carousel-item img, 
