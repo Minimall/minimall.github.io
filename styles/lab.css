@@ -19,6 +19,7 @@
   position: relative;
   left: 0;
   transition: transform 0.3s ease-out;
+  width: max-content; /* Allow track to be as wide as needed for all items */
 }
 
 .carousel-item {
@@ -34,9 +35,8 @@
 
 .carousel-item img, 
 .carousel-item video {
-  height: 100vh;
+  height: 80vh;
   width: auto;
-  max-height: 90vh;
   object-fit: contain;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15);
   border-radius: 4px;
