@@ -2,6 +2,7 @@
 /**
  * Desktop Carousel Handler for elements.html
  * A custom image viewer optimized for desktop devices only
+ * with seamless infinite image streaming
  */
 
 // Initialize carousel when the DOM is loaded
@@ -41,7 +42,7 @@ function initializeDesktopCarousel() {
     console.log("Found", gridItems.length, "grid items, initializing desktop carousel");
 
     // Create carousel instance for desktop
-    const carousel = new DesktopCarousel();
+    const carousel = new InfiniteCarousel(gridItems);
 
     // Add click handlers to grid items
     gridItems.forEach((item, index) => {
@@ -55,23 +56,22 @@ function initializeDesktopCarousel() {
     });
 }
 
-class DesktopCarousel {
-    constructor() {
+class InfiniteCarousel {
+    constructor(gridItems) {
+        this.gridItemsArray = Array.from(gridItems);
         this.currentIndex = 0;
-        this.overlay = null;
-        this.carouselContainer = null;
-        this.imageContainer = null;
-        this.prevArrow = null;
-        this.nextArrow = null;
-        this.gridItemsArray = [];
+        this.totalItems = this.gridItemsArray.length;
         this.isOpen = false;
         this.animationInProgress = false;
-
+        
+        // Pre-load items
+        this.preloadAmount = 2; // Number of items to preload in each direction
+        
+        // Create DOM elements
         this.createCarouselElements();
         this.setupEventListeners();
-        this.updateGridItems();
-
-        console.log("Desktop carousel created");
+        
+        console.log("Infinite carousel created with", this.totalItems, "items");
     }
 
     createCarouselElements() {
@@ -83,9 +83,14 @@ class DesktopCarousel {
         this.carouselContainer = document.createElement('div');
         this.carouselContainer.className = 'carousel-container';
 
-        // Create image container
-        this.imageContainer = document.createElement('div');
-        this.imageContainer.className = 'carousel-image-container';
+        // Create track container for horizontal scrolling
+        this.trackContainer = document.createElement('div');
+        this.trackContainer.className = 'carousel-track-container';
+        this.trackContainer.style.display = 'flex';
+        this.trackContainer.style.transition = 'transform 0.4s ease-out';
+        this.trackContainer.style.width = '100%';
+        this.trackContainer.style.height = '100%';
+        this.trackContainer.style.position = 'relative';
 
         // Create navigation arrows
         this.prevArrow = document.createElement('button');
@@ -107,7 +112,7 @@ class DesktopCarousel {
         `;
 
         // Assemble the carousel
-        this.carouselContainer.appendChild(this.imageContainer);
+        this.carouselContainer.appendChild(this.trackContainer);
         this.carouselContainer.appendChild(this.prevArrow);
         this.carouselContainer.appendChild(this.nextArrow);
         this.overlay.appendChild(this.carouselContainer);
@@ -151,21 +156,45 @@ class DesktopCarousel {
                     break;
             }
         });
-    }
 
-    updateGridItems() {
-        // Get all grid items
-        const items = document.querySelectorAll('.grid-item');
-        this.gridItemsArray = Array.from(items);
-        console.log("Updated grid items array with", this.gridItemsArray.length, "items");
+        // Touch events for swipe
+        let startX, moveX, isDragging = false;
+        const threshold = 50; // Minimum swipe distance
+
+        this.trackContainer.addEventListener('touchstart', (e) => {
+            if (!this.isOpen) return;
+            startX = e.touches[0].clientX;
+            isDragging = true;
+        });
+
+        this.trackContainer.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            moveX = e.touches[0].clientX;
+            const diff = moveX - startX;
+            
+            // Apply a direct transform during drag for immediate feedback
+            this.trackContainer.style.transform = `translateX(${diff}px)`;
+        });
+
+        this.trackContainer.addEventListener('touchend', (e) => {
+            if (!isDragging) return;
+            const diff = moveX - startX;
+            
+            if (Math.abs(diff) > threshold) {
+                // Swipe detected - navigate in the appropriate direction
+                this.navigate(diff < 0 ? 1 : -1);
+            } else {
+                // Reset position if swipe was too small
+                this.trackContainer.style.transform = 'translateX(0)';
+            }
+            
+            isDragging = false;
+        });
     }
 
     open(index) {
         if (this.isOpen) return;
-
-        // Make sure we have the latest grid items
-        this.updateGridItems();
-
+        
         if (this.gridItemsArray.length === 0) {
             console.warn("No grid items to show in carousel");
             return;
@@ -178,28 +207,22 @@ class DesktopCarousel {
         // Prevent page scrolling
         document.body.style.overflow = 'hidden';
 
+        // Clear track container
+        this.trackContainer.innerHTML = '';
+
+        // Load initial set of images
+        this.loadImagesForInfiniteScroll();
+
         // Show overlay with fade-in
         this.overlay.style.display = 'flex';
         setTimeout(() => {
             this.overlay.style.opacity = '1';
         }, 10);
-
-        // Load current image with animation
-        this.loadCurrentImage(true);
     }
 
     close() {
         if (!this.isOpen) return;
         console.log("Closing carousel");
-
-        // Get the current image for animation
-        const currentImg = this.imageContainer.querySelector('.carousel-image');
-        if (currentImg) {
-            // Animate image out
-            currentImg.style.transition = 'transform 0.5s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.4s ease';
-            currentImg.style.transform = 'scale(0)';
-            currentImg.style.opacity = '0';
-        }
 
         // Fade out overlay
         this.overlay.style.opacity = '0';
@@ -209,8 +232,8 @@ class DesktopCarousel {
             // Hide overlay
             this.overlay.style.display = 'none';
 
-            // Clear image container
-            this.imageContainer.innerHTML = '';
+            // Clear track container
+            this.trackContainer.innerHTML = '';
 
             // Allow scrolling
             document.body.style.overflow = '';
@@ -220,93 +243,67 @@ class DesktopCarousel {
         }, 500);
     }
 
-    navigate(direction) {
-        if (this.animationInProgress) return;
-        this.animationInProgress = true;
-
-        // Calculate new index with wrapping
-        const totalItems = this.gridItemsArray.length;
-        let newIndex = this.currentIndex + direction;
-
-        // Wrap around if needed
-        if (newIndex < 0) newIndex = totalItems - 1;
-        if (newIndex >= totalItems) newIndex = 0;
-
-        console.log("Navigating from", this.currentIndex, "to", newIndex);
+    loadImagesForInfiniteScroll() {
+        // Calculate indices for visible and preloaded items
+        const indices = [];
         
-        // Get the current image element
-        const currentImg = this.imageContainer.querySelector('.carousel-image');
-        
-        // Animate current image out
-        if (currentImg) {
-            currentImg.style.transition = 'transform 0.5s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.4s ease';
-            currentImg.style.transform = `translateX(${direction < 0 ? '100%' : '-100%'}) scale(0.8)`;
-            currentImg.style.opacity = '0';
+        // Add items before current
+        for (let i = this.preloadAmount; i > 0; i--) {
+            indices.push(this.getWrappedIndex(this.currentIndex - i));
         }
         
-        // Update current index
-        this.currentIndex = newIndex;
+        // Add current item
+        indices.push(this.currentIndex);
         
-        // Load new image after animation completes
-        setTimeout(() => {
-            this.imageContainer.innerHTML = '';
-            this.loadCurrentImage(true);
-        }, 300);
+        // Add items after current
+        for (let i = 1; i <= this.preloadAmount; i++) {
+            indices.push(this.getWrappedIndex(this.currentIndex + i));
+        }
+        
+        // Create image containers and position them
+        indices.forEach((index, position) => {
+            const item = this.gridItemsArray[index];
+            const container = this.createImageContainer(item, index);
+            
+            // Position relative to current index
+            const offset = position - this.preloadAmount;
+            container.style.transform = `translateX(${offset * 100}%)`;
+            
+            this.trackContainer.appendChild(container);
+        });
+        
+        // Center on current item
+        this.trackContainer.style.transform = 'translateX(0)';
     }
 
-    loadCurrentImage(animate = false) {
-        const currentItem = this.gridItemsArray[this.currentIndex];
-        if (!currentItem) {
-            console.error("No item found at index", this.currentIndex);
-            this.animationInProgress = false;
-            return;
-        }
-
-        // Check if the grid item contains an image or video
-        const img = currentItem.querySelector('img');
-        const video = currentItem.querySelector('video');
+    createImageContainer(gridItem, index) {
+        const container = document.createElement('div');
+        container.className = 'carousel-slide';
+        container.dataset.index = index;
+        container.style.position = 'absolute';
+        container.style.left = '0';
+        container.style.top = '0';
+        container.style.width = '100%';
+        container.style.height = '100%';
+        container.style.display = 'flex';
+        container.style.alignItems = 'center';
+        container.style.justifyContent = 'center';
         
-        // No rotation for the carousel images
-
+        // Check if the grid item contains an image or video
+        const img = gridItem.querySelector('img');
+        const video = gridItem.querySelector('video');
+        
         if (img) {
-            console.log("Loading image:", img.src);
-            // Create a new image to show in carousel
             const carouselImg = document.createElement('img');
             carouselImg.className = 'carousel-image';
             carouselImg.src = img.src;
             carouselImg.alt = img.alt || 'Image';
+            carouselImg.style.maxWidth = '90%';
+            carouselImg.style.maxHeight = '90%';
+            carouselImg.style.objectFit = 'contain';
             
-            // Set initial state for animation
-            if (animate) {
-                carouselImg.style.opacity = '0';
-                carouselImg.style.transform = `scale(0)`;
-            }
-
-            // Add to DOM
-            this.imageContainer.appendChild(carouselImg);
-            
-            // Trigger enter animation
-            if (animate) {
-                // Force reflow to ensure starting position is applied
-                void carouselImg.offsetWidth;
-                
-                carouselImg.style.transition = 'transform 0.6s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.5s ease';
-                carouselImg.style.opacity = '1';
-                carouselImg.style.transform = `scale(1)`;
-            }
-
-            carouselImg.onload = () => {
-                console.log('Carousel image loaded');
-                this.animationInProgress = false;
-            };
-
-            carouselImg.onerror = (e) => {
-                console.error('Error loading carousel image:', e);
-                this.animationInProgress = false;
-            };
+            container.appendChild(carouselImg);
         } else if (video) {
-            console.log("Loading video");
-            // Create a new video to show in carousel
             const carouselVideo = document.createElement('video');
             carouselVideo.className = 'carousel-image';
             carouselVideo.controls = true;
@@ -314,13 +311,10 @@ class DesktopCarousel {
             carouselVideo.loop = true;
             carouselVideo.muted = true;
             carouselVideo.playsInline = true;
+            carouselVideo.style.maxWidth = '90%';
+            carouselVideo.style.maxHeight = '90%';
+            carouselVideo.style.objectFit = 'contain';
             
-            // Set initial state for animation
-            if (animate) {
-                carouselVideo.style.opacity = '0';
-                carouselVideo.style.transform = `scale(0)`;
-            }
-
             // Copy all source elements
             const sources = video.querySelectorAll('source');
             sources.forEach(source => {
@@ -329,27 +323,50 @@ class DesktopCarousel {
                 newSource.type = source.type;
                 carouselVideo.appendChild(newSource);
             });
-
-            // Add to DOM
-            this.imageContainer.appendChild(carouselVideo);
             
-            // Trigger enter animation
-            if (animate) {
-                // Force reflow to ensure starting position is applied
-                void carouselVideo.offsetWidth;
-                
-                carouselVideo.style.transition = 'transform 0.6s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.5s ease';
-                carouselVideo.style.opacity = '1';
-                carouselVideo.style.transform = `scale(1)`;
-            }
-            
-            // Mark animation as complete
-            setTimeout(() => {
-                this.animationInProgress = false;
-            }, 600);
-        } else {
-            console.warn('No media found in grid item at index', this.currentIndex);
-            this.animationInProgress = false;
+            container.appendChild(carouselVideo);
         }
+        
+        return container;
+    }
+
+    navigate(direction) {
+        if (this.animationInProgress) return;
+        this.animationInProgress = true;
+        
+        // Update current index with wrapping
+        this.currentIndex = this.getWrappedIndex(this.currentIndex + direction);
+        
+        console.log("Navigating to index", this.currentIndex);
+        
+        // Slide the track
+        this.trackContainer.style.transition = 'transform 0.4s ease-out';
+        this.trackContainer.style.transform = `translateX(${-direction * 100}%)`;
+        
+        // After animation completes, reset and load new images
+        setTimeout(() => {
+            // Remove transition temporarily
+            this.trackContainer.style.transition = 'none';
+            
+            // Reset transform and update images
+            this.trackContainer.style.transform = 'translateX(0)';
+            
+            // Clear and reload images
+            this.trackContainer.innerHTML = '';
+            this.loadImagesForInfiniteScroll();
+            
+            // Force reflow to apply new positions before re-enabling transitions
+            void this.trackContainer.offsetWidth;
+            
+            // Re-enable transitions
+            this.trackContainer.style.transition = 'transform 0.4s ease-out';
+            
+            this.animationInProgress = false;
+        }, 400);
+    }
+
+    getWrappedIndex(index) {
+        // Handle index wrapping for infinite scrolling
+        return ((index % this.totalItems) + this.totalItems) % this.totalItems;
     }
 }
