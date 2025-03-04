@@ -260,15 +260,15 @@ class InfiniteCarousel {
         }
       }
       
-      // Apply movement with edge resistance
+      // Apply movement
       this.position += deltaX;
+      
+      // Update display and ensure slides are properly loaded
       this.updateTrackPosition();
+      this.ensureProperSlides();
       
       this.lastX = currentX;
       this.lastTimestamp = timestamp;
-      
-      // Ensure we're loading the right slides as we drag
-      this.ensureProperSlides();
       
       e.preventDefault();
     }
@@ -324,23 +324,22 @@ class InfiniteCarousel {
       // Apply velocity to position
       this.position += this.velocity * timeScale;
       
-      // Calculate virtual position for snapping
-      const virtualPosition = this.position % (this.totalItems * slideWidth);
-      const normalizedPosition = -virtualPosition / slideWidth;
-      
       // Handle extremely slow velocity - snap to nearest slide
       if (Math.abs(this.velocity) < 0.5) {
-        const nearestIndex = Math.round(-this.position / slideWidth) % this.totalItems;
-        const actualIndex = (nearestIndex + this.totalItems) % this.totalItems;
+        const slideWidth = this.getSlideWidth();
+        const nearestSlidePosition = Math.round(this.position / slideWidth) * slideWidth;
+        
+        // Calculate actual index, accounting for infinite wrapping
+        const normalizedPosition = -this.position / slideWidth;
+        const rawIndex = Math.round(normalizedPosition);
+        const actualIndex = ((rawIndex % this.totalItems) + this.totalItems) % this.totalItems;
         
         this.navigateTo(actualIndex, true);
         return;
       }
       
-      // Update visual position
+      // Update visual position and ensure proper slides are visible
       this.updateTrackPosition();
-      
-      // Ensure we're loading the right slides during deceleration
       this.ensureProperSlides();
       
       this.animationId = requestAnimationFrame(animate);
@@ -357,23 +356,33 @@ class InfiniteCarousel {
     // Wrap around for infinite scrolling
     targetIndex = ((targetIndex % this.totalItems) + this.totalItems) % this.totalItems;
     
+    // Update current index
+    this.currentIndex = targetIndex;
+    
+    // Calculate slide width and target position
     const slideWidth = this.getSlideWidth();
-    const targetPosition = -targetIndex * slideWidth;
     
-    // Determine shortest path (wrapping around if needed)
-    let currentVirtualIndex = Math.round(-this.position / slideWidth);
-    let shortestPathTarget = targetIndex;
+    // Find the closest instance of this slide to the current position
+    // This ensures the shortest path to the target slide
+    const currentVirtualIndex = Math.round(-this.position / slideWidth);
+    const currentActualIndex = ((currentVirtualIndex % this.totalItems) + this.totalItems) % this.totalItems;
     
-    // Calculate if wrapping around is shorter
-    if (Math.abs(currentVirtualIndex - targetIndex) > this.totalItems / 2) {
-      if (currentVirtualIndex > targetIndex) {
-        shortestPathTarget = targetIndex + this.totalItems;
-      } else {
-        shortestPathTarget = targetIndex - this.totalItems;
-      }
+    // Calculate how many full cycles of slides away we are
+    const cycle = Math.floor(currentVirtualIndex / this.totalItems);
+    
+    // Find the closest instance of the target slide
+    let targetVirtualIndex = cycle * this.totalItems + targetIndex;
+    
+    // Check if it's shorter to go to previous/next cycle
+    if (currentActualIndex > targetIndex && Math.abs(currentActualIndex - targetIndex) > this.totalItems/2) {
+      // It's shorter to go forward to the next cycle
+      targetVirtualIndex = (cycle + 1) * this.totalItems + targetIndex;
+    } else if (currentActualIndex < targetIndex && Math.abs(currentActualIndex - targetIndex) > this.totalItems/2) {
+      // It's shorter to go backward to the previous cycle
+      targetVirtualIndex = (cycle - 1) * this.totalItems + targetIndex;
     }
     
-    const finalTargetPosition = -shortestPathTarget * slideWidth;
+    const targetPosition = -targetVirtualIndex * slideWidth;
     
     // Cancel any ongoing animation
     if (this.animationId) {
@@ -382,16 +391,12 @@ class InfiniteCarousel {
     }
     
     if (animate) {
-      this.animateToPosition(finalTargetPosition, () => {
-        // After animation, normalize position to prevent floating point issues
-        this.position = -targetIndex * slideWidth;
-        this.currentIndex = targetIndex;
+      this.animateToPosition(targetPosition, () => {
         this.updateDots();
         this.ensureProperSlides();
       });
     } else {
-      this.position = finalTargetPosition;
-      this.currentIndex = targetIndex;
+      this.position = targetPosition;
       this.updateTrackPosition();
       this.updateDots();
       this.ensureProperSlides();
@@ -437,11 +442,12 @@ class InfiniteCarousel {
       
       // Update current index based on position
       const slideWidth = this.getSlideWidth();
-      const absolutePosition = Math.abs(this.position);
-      const nearestIndex = Math.round(absolutePosition / slideWidth) % this.totalItems;
+      const normalizedPosition = -this.position / slideWidth;
+      const rawIndex = Math.round(normalizedPosition);
+      const actualIndex = ((rawIndex % this.totalItems) + this.totalItems) % this.totalItems;
       
-      if (nearestIndex !== this.currentIndex) {
-        this.currentIndex = nearestIndex;
+      if (actualIndex !== this.currentIndex) {
+        this.currentIndex = actualIndex;
         this.updateDots();
       }
     }
@@ -510,8 +516,10 @@ class InfiniteCarousel {
     const bufferRange = 2;  // Additional buffer slides beyond visible range
     
     for (let offset = -visibleRange - bufferRange; offset <= visibleRange + bufferRange; offset++) {
-      // Get the actual index with wrapping
+      // Calculate the virtual index (allowing for duplicates in different positions)
       const virtualIndex = this.currentIndex + offset;
+      
+      // Calculate the actual index (wrapped around for infinite effect)
       const actualIndex = ((virtualIndex % this.totalItems) + this.totalItems) % this.totalItems;
       
       // Create the slide
@@ -598,7 +606,31 @@ class InfiniteCarousel {
       slideImg.className = 'carousel-image';
       slideImg.src = img.src;
       slideImg.alt = img.alt || 'Image';
-      slide.appendChild(slideImg);
+      
+      // Ensure image is loaded before adding to DOM
+      slideImg.onload = () => {
+        slide.appendChild(slideImg);
+      };
+      
+      // Handle load errors
+      slideImg.onerror = () => {
+        console.error(`Failed to load image for slide ${actualIndex}`);
+        // Create a fallback display
+        const fallback = document.createElement('div');
+        fallback.className = 'carousel-image carousel-image-fallback';
+        fallback.textContent = 'Image not available';
+        slide.appendChild(fallback);
+      };
+      
+      // Start loading
+      if (img.complete) {
+        slide.appendChild(slideImg);
+      } else {
+        // Create a temporary placeholder while image loads
+        const placeholder = document.createElement('div');
+        placeholder.className = 'carousel-image-placeholder';
+        slide.appendChild(placeholder);
+      }
     } else if (video) {
       const slideVideo = document.createElement('video');
       slideVideo.className = 'carousel-image';
@@ -675,8 +707,14 @@ class InfiniteCarousel {
     });
     
     // Reset position to current index
-    this.position = -this.currentIndex * slideWidth;
+    // Find the closest instance of the current slide
+    const currentVirtualIndex = Math.round(-this.position / slideWidth);
+    const cycle = Math.floor(currentVirtualIndex / this.totalItems);
+    const targetVirtualIndex = cycle * this.totalItems + this.currentIndex;
+    this.position = -targetVirtualIndex * slideWidth;
+    
     this.updateTrackPosition();
+    this.ensureProperSlides();
   }
   
   pauseAutoLoading() {
