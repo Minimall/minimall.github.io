@@ -423,10 +423,9 @@ class TrulyInfiniteCarousel {
       const isTouchEvent = !e.type.includes('mouse');
       
       // For natural drag movement:
-      // When dragging left, content should move left (negative deltaX)
-      // When dragging right, content should move right (positive deltaX)
-      // We need to invert the delta for natural feeling
-      this.offset -= deltaX;
+      // When dragging left, content should move left with finger/cursor
+      // When dragging right, content should move right with finger/cursor
+      this.offset += deltaX;
 
       // Track position for velocity calculation
       this.velocityTracker.addPosition(currentTime, this.offset);
@@ -468,10 +467,9 @@ class TrulyInfiniteCarousel {
       // Get velocity from tracker for natural momentum feel
       const velocity = this.velocityTracker.getVelocity();
 
-      // Scale velocity to a reasonable range and invert for natural feel
-      // Since we reversed the drag direction, we need to invert the velocity too
+      // Scale velocity to a reasonable range - keep same direction as the drag
       const momentumMultiplier = 100;
-      const cappedVelocity = -Math.sign(velocity) * 
+      const cappedVelocity = Math.sign(velocity) * 
                              Math.min(Math.abs(velocity * momentumMultiplier), 50);
 
       // Apply momentum
