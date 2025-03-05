@@ -1,3 +1,4 @@
+
 document.addEventListener('DOMContentLoaded', () => {
     if (document.querySelector('.whiskey-cards')) {
         console.log("Initializing true infinite stream carousel");
@@ -77,6 +78,72 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Initialize the infinite stream
         let streamData = createSeamlessStream();
+
+        // ===== SEAMLESS INFINITE SCROLLING =====
+        // Monitor the scroll position and reset when appropriate to create infinite effect
+        function monitorScrollPosition() {
+            // Get current scroll position
+            const currentPosition = slider.scrollLeft;
+            const containerWidth = slider.clientWidth;
+            
+            // Calculate total width of one set of original items
+            const originalSetWidth = originalItems.reduce((sum, item) => {
+                const style = window.getComputedStyle(item);
+                const marginRight = parseInt(style.marginRight) || 0;
+                return sum + item.offsetWidth + marginRight;
+            }, 0);
+            
+            // Get all cloned sets before the original items
+            const preCloneSets = streamData.requiredSets;
+            const preCloneWidth = preCloneSets * originalSetWidth;
+            
+            // Get total content width including all clones
+            const totalWidth = slider.scrollWidth;
+            
+            // Calculate trigger points for resetting scroll position
+            // We trigger a reset before reaching actual edges to ensure seamless experience
+            const leftResetTrigger = preCloneWidth * 0.5; // Half of left clone width
+            const rightResetTrigger = preCloneWidth + originalSetWidth + (streamData.requiredSets * 0.5 * originalSetWidth);
+            
+            // If scrolled too far left, reset to equivalent position from right side
+            if (currentPosition < leftResetTrigger) {
+                // Calculate how far into the left clones we've scrolled
+                const offset = (leftResetTrigger - currentPosition) % originalSetWidth;
+                // Reset to equivalent position in right clones
+                const newPosition = preCloneWidth + originalSetWidth - offset;
+                
+                // Disable smooth scrolling temporarily for instant jump
+                slider.style.scrollBehavior = 'auto';
+                slider.scrollLeft = newPosition;
+                // Re-enable smooth scrolling
+                setTimeout(() => {
+                    slider.style.scrollBehavior = '';
+                }, 50);
+            }
+            
+            // If scrolled too far right, reset to equivalent position from left side
+            else if (currentPosition > rightResetTrigger) {
+                // Calculate how far into the right clones we've scrolled
+                const excess = currentPosition - rightResetTrigger;
+                const offset = excess % originalSetWidth;
+                // Reset to equivalent position in left clones
+                const newPosition = preCloneWidth - (originalSetWidth - offset);
+                
+                // Disable smooth scrolling temporarily for instant jump
+                slider.style.scrollBehavior = 'auto';
+                slider.scrollLeft = newPosition;
+                // Re-enable smooth scrolling
+                setTimeout(() => {
+                    slider.style.scrollBehavior = '';
+                }, 50);
+            }
+            
+            // Continue monitoring
+            requestAnimationFrame(monitorScrollPosition);
+        }
+        
+        // Start monitoring scroll position for infinite loop effect
+        requestAnimationFrame(monitorScrollPosition);
 
         // ===== PHYSICS-BASED SCROLLING =====
 

@@ -33,13 +33,17 @@
   
   /* Prevent scroll flicker */
   -webkit-overflow-scrolling: touch;
-  scroll-behavior: auto !important;
+  scroll-behavior: auto; /* Allow script to control scroll behavior */
   overscroll-behavior-x: none;
   
   /* Clean up mobile experience */
   -webkit-touch-callout: none;
   -ms-overflow-style: none;
   scrollbar-width: none;
+  
+  /* Optimize for smoother infinite scrolling */
+  box-sizing: border-box;
+  position: relative;
 }
 
 /* Hide scrollbar */
