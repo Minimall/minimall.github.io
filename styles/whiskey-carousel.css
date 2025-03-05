@@ -35,6 +35,10 @@
   -webkit-overflow-scrolling: touch;
   scroll-behavior: auto; /* Allow script to control scroll behavior */
   overscroll-behavior-x: none;
+  /* Ensure better scrolling behavior */
+  scroll-snap-type: none;
+  /* Improve hardware acceleration */
+  transform: translate3d(0,0,0);
   
   /* Clean up mobile experience */
   -webkit-touch-callout: none;

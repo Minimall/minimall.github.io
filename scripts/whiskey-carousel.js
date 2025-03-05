@@ -30,7 +30,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Create enough clones to fill several viewport widths on each side
             // This ensures users can't scroll to the edges during normal interaction
-            const requiredSets = Math.ceil((viewportWidth * 5) / totalContentWidth) + 2;
+            // Increase the multiplication factor to ensure more clones are created
+            const requiredSets = Math.ceil((viewportWidth * 8) / totalContentWidth) + 3;
 
             // Remove existing clones
             slider.querySelectorAll('.carousel-clone').forEach(clone => clone.remove());
@@ -103,7 +104,10 @@ document.addEventListener('DOMContentLoaded', () => {
             // Calculate trigger points for resetting scroll position
             // We trigger a reset before reaching actual edges to ensure seamless experience
             const leftResetTrigger = preCloneWidth * 0.5; // Half of left clone width
-            const rightResetTrigger = preCloneWidth + originalSetWidth + (streamData.requiredSets * 0.5 * originalSetWidth);
+            
+            // Improved right trigger detection that properly accounts for the entire content area
+            // This ensures we reset the position before reaching the actual end
+            const rightResetTrigger = preCloneWidth + (originalSetWidth * 0.8); // Lower threshold for right reset
             
             // If scrolled too far left, reset to equivalent position from right side
             if (currentPosition < leftResetTrigger) {
@@ -136,6 +140,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 setTimeout(() => {
                     slider.style.scrollBehavior = '';
                 }, 50);
+                
+                // Log for debugging
+                console.log("Right reset triggered", {
+                    currentPosition,
+                    rightResetTrigger,
+                    excess,
+                    offset,
+                    newPosition
+                });
             }
             
             // Continue monitoring
