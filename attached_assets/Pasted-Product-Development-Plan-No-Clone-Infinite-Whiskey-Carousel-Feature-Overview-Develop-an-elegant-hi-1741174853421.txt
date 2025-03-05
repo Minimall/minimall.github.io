@@ -1,0 +1,67 @@
+Product Development Plan: No-Clone Infinite Whiskey Carousel
+Feature Overview
+Develop an elegant, high-performance infinite carousel for the lab2.html page that creates a truly seamless scrolling experience without using DOM element clones. The carousel will display media from /media/lab/ in a horizontal scrolling gallery that spans the full viewport height.
+Technical Requirements
+Core Functionality
+1. Infinite Loop Without Clones
+    * Implement virtual positioning system using modular arithmetic
+    * Create the illusion of endless content using mathematical wrapping of a single set of elements
+    * Support continuous scrolling in both directions without visual interruptions or reset jumps
+2. Physics-Based Scrolling Mechanics
+    * Implement iOS-style momentum scrolling with natural deceleration curves
+    * Create variable friction that adjusts dynamically based on scroll velocity
+    * Higher velocity = reduced friction for more fluid feel at speed
+    * Lower velocity = increased friction for precision control at slow speeds
+3. Cross-Device Input Handling
+    * Desktop: Implement mouse drag/swipe detection with proper event capturing
+    * Mobile: Support touch gestures with momentum transfer
+    * Create gesture disambiguation system that distinguishes horizontal carousel movements from vertical page scrolling
+    * Only capture horizontal events when user intent is clearly carousel interaction
+4. Performance Optimization
+    * Implement element recycling to only render visible items plus buffer zone
+    * Use CSS transform instead of position/left/top properties for hardware acceleration
+    * Employ will-change hints to optimize rendering pipeline
+    * Ensure smooth 60fps scrolling on mid-tier mobile devices
+Visual Design Requirements
+1. Layout Specifications
+    * Carousel container takes full viewport height
+    * Media takes 95% of height
+    * Media have consistent padding on top and bottom
+    * Consistent gaps between adjacent media
+    * All elements maintain proper aspect ratios across screen sizes
+2. Responsive Behavior
+    * Dynamically recalculate visible item counts on resize
+    * Maintain scroll position relative to content when orientation changes
+    * Adjust touch sensitivity for different device sizes
+Implementation Guidelines
+Algorithm Approach
+1. The carousel should track a continuous offset value that can grow infinitely
+2. For positioning items, wrap this offset using modulo arithmetic within content bounds
+3. Calculate which items should be visible based on current offset and viewport
+4. Position only necessary visible items, hiding others for performance
+5. When an item scrolls out of view, reposition it to appear on the opposite side when needed
+Technical Constraints
+1. Use vanilla JavaScript without external dependencies
+2. Maintain accessibility support for keyboard navigation and screen readers
+3. Ensure code is well-commented and follows consistent naming conventions
+4. Include subtle visual debugging tools during development that can be disabled in production
+Success Criteria
+1. Users can scroll continuously in either direction without ever noticing a boundary
+2. Scrolling feels natural with momentum that matches iOS-like physics
+3. The carousel performs at 60fps even on mid-range mobile devices
+4. The implementation successfully distinguishes between carousel scrolling and page scrolling
+5. The carousel responds correctly to changes in screen orientation and size
+6. No visible "jumping" or repositioning occurs during normal interaction
+Deliverables
+1. Complete JavaScript implementation with documentation
+2. CSS for carousel styling and layout
+3. HTML structure example for page integration
+4. Brief technical overview explaining the approach for future developer reference
+Notes
+* The implementation should avoid DOM cloning entirely, instead using a more elegant mathematical position calculation approach
+* Focus on minimal DOM manipulation for optimal performance
+* Measure performance using browser dev tools to ensure smooth scrolling without frame drops
+Last edited just now
+
+
+
