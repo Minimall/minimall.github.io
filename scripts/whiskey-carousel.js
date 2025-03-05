@@ -9,10 +9,11 @@ document.addEventListener('DOMContentLoaded', () => {
         // Remove any existing clones
         slider.querySelectorAll('.carousel-clone').forEach(clone => clone.remove());
 
-        // Function to create clones for infinite scrolling
+        // Enhanced function to create clones for truly seamless infinite streaming
         function setupInfiniteScroll() {
-            // Calculate how many clones we need based on viewport width
-            // We want at least 3 screens worth on each side for truly seamless scrolling
+            // Calculate how many clones we need based on viewport width and scroll velocity
+            // We want at least 4 screens worth on each side for truly seamless scrolling
+            // even during rapid flicking gestures
             const viewportWidth = window.innerWidth;
             const contentWidth = items.reduce((sum, item) => {
                 const style = window.getComputedStyle(item);
@@ -20,17 +21,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 return sum + item.offsetWidth + marginRight;
             }, 0);
 
-            const repeatsNeeded = Math.ceil((viewportWidth * 3) / contentWidth) + 1;
+            // Add extra clones for high-speed scrolling scenarios
+            const repeatsNeeded = Math.ceil((viewportWidth * 4) / contentWidth) + 2;
 
             // Remove existing clones
             slider.querySelectorAll('.carousel-clone').forEach(clone => clone.remove());
 
+            // For truly seamless effect, we need perfect continuation pattern
+            // First analyze the visual pattern at the boundaries
+            const firstItem = items[0];
+            const lastItem = items[items.length - 1];
+            
             // Add clones before original items (for seamless scrolling to the left)
+            // Starting with the end items to ensure perfect pattern continuation
             for (let i = 0; i < repeatsNeeded; i++) {
                 for (let j = items.length - 1; j >= 0; j--) {
                     const clone = items[j].cloneNode(true);
                     clone.classList.add('carousel-clone');
                     clone.setAttribute('aria-hidden', 'true');
+                    // Add data attribute to help with debugging
+                    clone.setAttribute('data-clone-index', `left-${i}-${j}`);
                     slider.insertBefore(clone, slider.firstChild);
                 }
             }
@@ -41,6 +51,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     const clone = items[j].cloneNode(true);
                     clone.classList.add('carousel-clone');
                     clone.setAttribute('aria-hidden', 'true');
+                    // Add data attribute to help with debugging
+                    clone.setAttribute('data-clone-index', `right-${i}-${j}`);
                     slider.appendChild(clone);
                 }
             }
@@ -68,24 +80,47 @@ document.addEventListener('DOMContentLoaded', () => {
         // Set up the infinite scroll
         let scrollData = setupInfiniteScroll();
 
-        // Detect when we should loop around
+        // Advanced boundary handling for creating an illusion of truly infinite stream
         function checkForLooping() {
             if (!scrollData || !scrollData.originalItems.length) return;
 
             const originals = scrollData.originalItems;
             const preWidth = scrollData.preWidth;
             const contentWidth = scrollData.contentWidth;
-
-            // If we're scrolled too far to the left (into left clones) - improved boundary detection
-            if (slider.scrollLeft < preWidth - (contentWidth * 0.1)) {
-                // Jump forward by exactly one set of original items
-                slider.scrollLeft += contentWidth;
+            const itemAvgWidth = contentWidth / originals.length;
+            
+            // Create threshold variables for more granular control
+            const leftThreshold = preWidth - (itemAvgWidth * 2); // Detect earlier before visible edge
+            const rightThreshold = preWidth + contentWidth + (itemAvgWidth * 2);
+            
+            // Get current scroll velocity to determine if user is actively scrolling
+            const isActivelyScrolling = Math.abs(velocityX) > 0.5;
+            
+            // If approaching left boundary (scrolling backward)
+            if (slider.scrollLeft < leftThreshold) {
+                // Only reposition when user isn't actively interacting or during very fast scrolls
+                if (!isDragging || Math.abs(velocityX) > 15) {
+                    // Instead of jumping by full content width, jump by a calculated offset
+                    // that places identical content under the viewport
+                    const currentVisibleOffset = preWidth - slider.scrollLeft;
+                    const seamlessJumpPos = preWidth + contentWidth - currentVisibleOffset;
+                    
+                    // Use immediate repositioning without animation
+                    slider.scrollLeft = seamlessJumpPos;
+                }
             }
-
-            // If we're scrolled too far to the right (into right clones)
-            if (slider.scrollLeft > preWidth + contentWidth * 1.5) {
-                // Jump backward by exactly one set of original items
-                slider.scrollLeft -= contentWidth;
+            
+            // If approaching right boundary (scrolling forward)
+            if (slider.scrollLeft > rightThreshold) {
+                // Only reposition when user isn't actively interacting or during very fast scrolls
+                if (!isDragging || Math.abs(velocityX) > 15) {
+                    // Calculate exact position to create perfect content alignment
+                    const currentVisibleOffset = slider.scrollLeft - preWidth - contentWidth;
+                    const seamlessJumpPos = preWidth + currentVisibleOffset;
+                    
+                    // Use immediate repositioning without animation
+                    slider.scrollLeft = seamlessJumpPos;
+                }
             }
         }
 

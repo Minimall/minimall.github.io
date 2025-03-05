@@ -1,5 +1,5 @@
 
-/* Whiskey Carousel - Truly Free-Flowing with Seamless Scrolling */
+/* Whiskey Carousel - Truly Free-Flowing with Seamless Infinite Stream */
 .carousel-wrapper {
   width: 100%;
   overflow: hidden;
@@ -15,7 +15,7 @@
   scrollbar-width: none; /* Firefox */
   cursor: grab;
   gap: 2em;
-  will-change: scroll-position;
+  will-change: scroll-position, transform;
   user-select: none;
   -webkit-user-select: none;
   -ms-user-select: none;
@@ -24,7 +24,7 @@
   overflow-anchor: none;
   scroll-snap-type: none !important; /* Explicitly disable snapping */
   
-  /* Performance optimizations */
+  /* Enhanced performance optimizations for seamless scrolling */
   transform: translateZ(0);
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
@@ -32,11 +32,19 @@
   perspective: 1000;
   position: relative;
   
+  /* Prevent scroll flickering during position adjustments */
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: auto !important; /* Ensure no smooth scroll interference */
+  overscroll-behavior-x: none; /* Prevent browser navigation gestures */
+  
   /* Prevent iOS callout and scrollbar */
   -webkit-touch-callout: none;
   -ms-overflow-style: none;
   scrollbar-width: none;
-  scroll-behavior: auto !important; /* Ensure no smooth scroll interference */
+  
+  /* Improve GPU rendering to prevent "seams" between scroll positions */
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
 }
 
 /* Hide scrollbar */
