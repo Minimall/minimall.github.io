@@ -410,24 +410,24 @@ class TrulyInfiniteCarousel {
     if (isTrackpad) {
       // Trackpad scrolling - more direct, less amplified
       const scrollDelta = e.deltaY * 0.6; // Less amplification for trackpad precision
-      this.offset -= scrollDelta; // Standard desktop direction (not "natural")
+      this.offset += scrollDelta; // Standard desktop direction (not "natural")
       
       // Update visual position
       this.renderItems();
       
       // Lower momentum for trackpad to feel more direct
-      const velocity = -scrollDelta * 0.15;
+      const velocity = scrollDelta * 0.15;
       this.startScrollWithVelocity(velocity);
     } else {
       // Mouse wheel scrolling - more amplified with momentum
       const scrollDelta = e.deltaY * 0.8; // Higher multiplier for wheel
-      this.offset -= scrollDelta; // Standard desktop direction
+      this.offset += scrollDelta; // Standard desktop direction
       
       // Update visual position
       this.renderItems();
       
       // Higher momentum for wheel scrolling to feel more fluid
-      const velocity = -scrollDelta * 0.3;
+      const velocity = scrollDelta * 0.3;
       this.startScrollWithVelocity(velocity);
     }
   }
