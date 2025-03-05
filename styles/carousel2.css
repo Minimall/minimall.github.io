@@ -50,7 +50,7 @@
 .carousel-item {
   flex: 0 0 auto;
   position: absolute;
-  height: 100%;
+  height: 100%; /* Fixed height for all containers */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -66,16 +66,18 @@
   opacity: 1;
   padding: 0;
   margin: 0;
-  /* Add a natural width constraint based on content */
+  /* Width will be determined by content */
   width: auto;
   /* Prevent content overflow */
   overflow: hidden;
+  /* Force item to fit content exactly */
+  box-sizing: border-box;
 }
 
 .carousel-item img,
 .carousel-item video {
-  height: 100%; /* Fill 100% height of carousel track as requested */
-  width: auto;
+  height: 100%; /* Fill 100% height of carousel track */
+  width: auto; /* Width adjusts based on image aspect ratio */
   object-fit: contain;
   pointer-events: none;
   user-drag: none;

@@ -649,11 +649,15 @@ class TrulyInfiniteCarousel {
         // Store the current position
         item.x = smoothedOffset;
         
-        // Ensure container width matches the image width + padding
-        // This helps prevent overlapping by making the hitbox match the visible content
+        // Ensure container width matches the image width exactly
+        // This makes containers hug images based on their aspect ratio
         const imgElement = element.querySelector('img, video');
         if (imgElement) {
+          // Get natural dimensions of the image
+          const imgHeight = imgElement.offsetHeight;
           const imgWidth = imgElement.offsetWidth;
+          
+          // Set container width to match image width exactly
           element.style.width = `${imgWidth}px`;
         }
       } else {
@@ -874,13 +878,53 @@ document.addEventListener('DOMContentLoaded', () => {
     window.TrulyInfiniteCarousel = TrulyInfiniteCarousel;
   };
   
-  // Wait for images to load before initializing carousel
-  // This helps ensure proper measurements
-  if (document.readyState === 'complete') {
-    initializeCarousels();
+  // Preload images for accurate sizing
+  const preloadImages = () => {
+    const allImages = document.querySelectorAll('.carousel-item img');
+    let loadedCount = 0;
+    
+    // If no images, initialize immediately
+    if (allImages.length === 0) {
+      initializeCarousels();
+      return;
+    }
+    
+    // Load each image and track progress
+    allImages.forEach(img => {
+      // If image is already loaded or has no src
+      if (img.complete || !img.src) {
+        loadedCount++;
+        if (loadedCount === allImages.length) {
+          initializeCarousels();
+        }
+      } else {
+        // Add load event listener
+        img.addEventListener('load', () => {
+          loadedCount++;
+          if (loadedCount === allImages.length) {
+            initializeCarousels();
+          }
+        });
+        
+        // Handle error case
+        img.addEventListener('error', () => {
+          loadedCount++;
+          if (loadedCount === allImages.length) {
+            initializeCarousels();
+          }
+        });
+      }
+    });
+    
+    // Fallback initialization after timeout
+    setTimeout(initializeCarousels, 500);
+  };
+  
+  // Start preloading if document is ready
+  if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    preloadImages();
   } else {
-    // Use both approaches for maximum compatibility
-    window.addEventListener('load', initializeCarousels);
-    setTimeout(initializeCarousels, 300); // Fallback if load event doesn't fire
+    // Wait for initial DOM ready before starting image preload
+    document.addEventListener('DOMContentLoaded', preloadImages);
   }
 });
