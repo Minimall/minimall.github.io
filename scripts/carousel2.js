@@ -25,9 +25,9 @@ class TrulyInfiniteCarousel {
       itemSelector: options.itemSelector || '.carousel-item',
       itemSpacing: options.itemSpacing || 30, // Gap between items in pixels
       visibleBuffer: options.visibleBuffer || 2, // Extra items to render beyond viewport
-      frictionFactor: options.frictionFactor || 0.92, // Base friction (lower = more friction)
+      frictionFactor: options.frictionFactor || 0.98, // Base friction (lower = more friction)
       dynamicFriction: options.dynamicFriction !== false, // Whether to adjust friction based on velocity
-      enableKeyboard: options.enableKeyboard !== false, // Enable keyboard navigation
+      enableKeyboard: options.enableKeyboard !== true, // Enable keyboard navigation
       debugMode: options.debugMode || false // Enable visual debugging
     };
 
@@ -485,7 +485,7 @@ class TrulyInfiniteCarousel {
     this.lastFrameTime = timestamp;
 
     // Skip if too much time passed (tab was inactive)
-    if (elapsed > 100) {
+    if (elapsed > 200) {
       this.isScrolling = false;
       return;
     }
@@ -506,15 +506,15 @@ class TrulyInfiniteCarousel {
     if (this.options.dynamicFriction) {
       const absVelocity = Math.abs(this.velocity);
       if (absVelocity > 1.5) {
-        friction = 0.98; // Very fast - very smooth deceleration
+        friction = 0.80; // Very fast - very smooth deceleration
       } else if (absVelocity > 0.8) {
-        friction = 0.97; // Fast - smooth deceleration 
+        friction = 0.75; // Fast - smooth deceleration 
       } else if (absVelocity > 0.4) {
-        friction = 0.96; // Medium - gradually increasing friction
+        friction = 0.70; // Medium - gradually increasing friction
       } else if (absVelocity > 0.2) {
-        friction = 0.94; // Slow - more noticeable friction
+        friction = 0.65; // Slow - more noticeable friction
       } else {
-        friction = 0.90; // Very slow - higher friction to stop naturally
+        friction = 0.60; // Very slow - higher friction to stop naturally
       }
     }
 
@@ -864,8 +864,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const carousel = new TrulyInfiniteCarousel(container, {
         itemSelector: '.carousel-item',
         itemSpacing: 60, // Control spacing between items with position offset only
-        visibleBuffer: 8, // Larger buffer for smoother infinite scrolling experience
-        frictionFactor: 0.95, // Higher value (less friction) for smoother scrolling
+        visibleBuffer: 6, // Larger buffer for smoother infinite scrolling experience
+        frictionFactor: 0.98, // Higher value (less friction) for smoother scrolling
         dynamicFriction: true, // Enable dynamic friction for natural deceleration
         debugMode: false
       });
