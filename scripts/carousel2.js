@@ -340,16 +340,16 @@ class TrulyInfiniteCarousel {
 
     // Only process horizontal movements when determined
     if (this.isHorizontalDrag === true) {
-      // REVERSED: Update offset with reversed direction - content moves opposite to cursor
-      // This creates a more natural "pushing" feel like on mobile devices
-      this.offset -= deltaX * 0.6; // Reduced sensitivity for less aggressive movement
+      // REVERSED: Update offset with reversed direction but with smoother response
+      // Lower coefficient means less resistance during direct manipulation
+      this.offset -= deltaX * 0.8; // Higher sensitivity for more direct response
 
-      // Calculate velocity for momentum that matches reversed drag direction
+      // Calculate velocity for momentum with smoother transition
       const now = performance.now();
       const elapsed = now - this.lastMoveTime;
       if (elapsed > 0) {
-        // Velocity with reversed direction and reduced intensity
-        this.velocity = (deltaX * 0.3) / elapsed; // Positive for reversed momentum direction
+        // More natural velocity calculation with less dampening
+        this.velocity = (deltaX * 0.5) / elapsed; // Higher coefficient for better momentum
       }
 
       // Update last values
@@ -381,12 +381,12 @@ class TrulyInfiniteCarousel {
 
     // Only apply momentum if this was a horizontal drag
     if (this.isHorizontalDrag === true) {
-      // Scale velocity for momentum effect with greatly reduced intensity
-      const momentumVelocity = this.velocity * 150; // Greatly reduced momentum scaling
+      // Scale velocity for momentum effect with natural feel
+      const momentumVelocity = this.velocity * 200; // Higher momentum scaling for smoother transitions
 
-      // Limit maximum velocity to prevent excessive scrolling
+      // Apply a higher velocity cap for more natural scrolling
       const limitedVelocity = Math.sign(momentumVelocity) * 
-        Math.min(Math.abs(momentumVelocity), 80); // Lower cap on maximum velocity
+        Math.min(Math.abs(momentumVelocity), 120); // Higher cap allows more fluid movement
 
       // Start momentum scrolling
       this.startScrollWithVelocity(limitedVelocity);
@@ -405,14 +405,14 @@ class TrulyInfiniteCarousel {
 
     // REVERSED: Reversed scrolling direction to match new drag behavior
     // This creates consistency between touch and wheel interactions
-    const scrollDelta = (e.deltaY || e.deltaX) * 0.25; // Positive for reversed scrolling direction, reduced sensitivity
+    const scrollDelta = (e.deltaY || e.deltaX) * 0.35; // Higher multiplier for more responsive wheel scrolling
     this.offset += scrollDelta;
 
     // Update visual position
     this.renderItems();
 
-    // Apply momentum for smoother feel but with reduced intensity
-    const velocity = scrollDelta * 0.15; // Reduced momentum for less aggressive scrolling
+    // Apply momentum for smoother feel with higher intensity for better response
+    const velocity = scrollDelta * 0.25; // Increased momentum for smoother scrolling
     this.startScrollWithVelocity(velocity);
   }
 
@@ -490,8 +490,18 @@ class TrulyInfiniteCarousel {
       return;
     }
 
-    // Calculate how much to scroll this frame
-    const delta = this.velocity * elapsed;
+    // Calculate how much to scroll this frame with easing applied
+    // Cubic easing equation for smoother deceleration
+    const easeOutCubic = (t) => {
+      return 1 - Math.pow(1 - t, 3);
+    };
+    
+    // Get a normalized time for our easing (0-1)
+    const normalizedTime = Math.min(1.0, Math.abs(this.velocity) / 2.0);
+    
+    // Apply easing to make the movement more natural at the end
+    const easedVelocity = this.velocity * (1.0 - easeOutCubic(normalizedTime) * 0.3);
+    const delta = easedVelocity * elapsed;
 
     // Update scroll position
     if (delta !== 0) {
@@ -499,22 +509,22 @@ class TrulyInfiniteCarousel {
       this.renderItems();
     }
 
-    // Apply dynamic friction based on velocity
+    // Use constant friction when dynamic friction is disabled
     let friction = this.options.frictionFactor;
 
-    // Dynamic friction: faster movement = less friction for more natural feel
+    // Only apply dynamic friction if enabled in options
     if (this.options.dynamicFriction) {
       const absVelocity = Math.abs(this.velocity);
       if (absVelocity > 1.5) {
-        friction = 0.80; // Very fast - very smooth deceleration
+        friction = 0.90; // Very fast - almost no deceleration
       } else if (absVelocity > 0.8) {
-        friction = 0.75; // Fast - smooth deceleration 
+        friction = 0.85; // Fast - minimal deceleration 
       } else if (absVelocity > 0.4) {
-        friction = 0.70; // Medium - gradually increasing friction
+        friction = 0.80; // Medium - light deceleration
       } else if (absVelocity > 0.2) {
-        friction = 0.65; // Slow - more noticeable friction
+        friction = 0.75; // Slow - modest deceleration
       } else {
-        friction = 0.60; // Very slow - higher friction to stop naturally
+        friction = 0.70; // Very slow - natural stopping
       }
     }
 
@@ -865,8 +875,8 @@ document.addEventListener('DOMContentLoaded', () => {
         itemSelector: '.carousel-item',
         itemSpacing: 60, // Control spacing between items with position offset only
         visibleBuffer: 6, // Larger buffer for smoother infinite scrolling experience
-        frictionFactor: 0.98, // Higher value (less friction) for smoother scrolling
-        dynamicFriction: true, // Enable dynamic friction for natural deceleration
+        frictionFactor: 0.995, // Very low friction for almost free-flowing scrolling
+        dynamicFriction: false, // Disable dynamic friction for consistent movement
         debugMode: false
       });
 
