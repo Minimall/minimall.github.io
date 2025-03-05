@@ -59,7 +59,7 @@
   transform: translateZ(0);
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
-  transition: transform 0.35s cubic-bezier(0.33, 1, 0.68, 1), opacity 0.3s ease;
+  /* Transitions will be applied dynamically in JS when needed */
   /* Prevent flickering during transitions */
   -webkit-transform-style: preserve-3d;
   transform-style: preserve-3d;

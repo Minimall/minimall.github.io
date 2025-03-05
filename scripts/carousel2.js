@@ -583,8 +583,9 @@ class TrulyInfiniteCarousel {
   /**
    * Render all items based on current offset
    * This is the core function that positions items using wrapping logic
+   * @param {boolean} animate - Whether to animate position changes (default: true)
    */
-  renderItems() {
+  renderItems(animate = true) {
     // Normalize the offset within the content width
     // This is the key to infinite scrolling without clones
     const normalizedOffset = this.moduloWithNegative(this.offset, this.totalContentWidth);
@@ -636,12 +637,18 @@ class TrulyInfiniteCarousel {
       // Show/hide based on visibility and update position with smooth transitions
       if (isVisible) {
         if (!item.onScreen) {
-          // Ensure elements fade in smoothly when becoming visible
-          element.style.opacity = '0';
-          element.style.display = 'block';
-          // Force a reflow before starting transition
-          void element.offsetWidth;
-          element.style.opacity = '1';
+          if (animate) {
+            // Ensure elements fade in smoothly when becoming visible (only when animating)
+            element.style.opacity = '0';
+            element.style.display = 'block';
+            // Force a reflow before starting transition
+            void element.offsetWidth;
+            element.style.opacity = '1';
+          } else {
+            // When not animating (initial load), just display without transition
+            element.style.opacity = '1';
+            element.style.display = 'block';
+          }
           item.onScreen = true;
         }
         
@@ -652,8 +659,14 @@ class TrulyInfiniteCarousel {
         const distanceFromCenter = Math.abs(itemOffset - (this.containerWidth / 2));
         const isNearCenter = distanceFromCenter < (this.containerWidth * 0.6);
         
+        // Set transition property based on whether we want animation
+        if (animate) {
+          element.style.transition = 'transform 0.35s cubic-bezier(0.33, 1, 0.68, 1), opacity 0.3s ease';
+        } else {
+          element.style.transition = 'none';
+        }
+        
         // Use transform for positioning with hardware acceleration
-        // Add easing for smoother movement and reduce visual jumping
         element.style.transform = `translateX(${smoothedOffset}px) translateZ(0)`;
         
         // Dynamic z-index to ensure proper overlapping (center items on top)
@@ -686,25 +699,22 @@ class TrulyInfiniteCarousel {
    * Position items initially with proper spacing
    */
   initialItemPositioning() {
+    // Hide all items first to prevent stacking during initialization
+    this.virtualItems.forEach(item => {
+      item.element.style.display = 'none';
+      item.onScreen = false;
+    });
+    
     // Calculate initial offset to center items in the viewport
     const containerCenter = this.containerWidth / 2;
     const firstItemCenter = this.virtualItems[0].width / 2;
     const initialOffset = containerCenter - firstItemCenter;
     
-    // Position each item with proper spacing
-    let currentOffset = initialOffset;
-    this.virtualItems.forEach((item, index) => {
-      item.element.style.display = 'block';
-      item.element.style.transform = `translateX(${currentOffset}px) translateZ(0)`;
-      item.x = currentOffset;
-      item.onScreen = true;
-      
-      // Update offset for next item
-      currentOffset += item.width + this.options.itemSpacing;
-    });
-    
     // Set initial offset to position first item properly
     this.offset = -initialOffset + (this.options.itemSpacing / 2);
+    
+    // Immediately render items in their correct positions without animation
+    this.renderItems(false);
   }
   
   /**
