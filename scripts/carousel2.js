@@ -340,22 +340,21 @@ class TrulyInfiniteCarousel {
 
     // Only process horizontal movements when determined
     if (this.isHorizontalDrag === true) {
-      // Use desktop direction (not "natural")
-      // 1:1 movement for direct manipulation feel
+      // Direct 1:1 mapping for dragging without acceleration or modification
       this.offset += deltaX;
 
-      // Calculate velocity for momentum with iOS-like transition
+      // Simple velocity calculation for momentum after release
       const now = performance.now();
       const elapsed = now - this.lastMoveTime;
       if (elapsed > 0) {
-        // iOS-like velocity calculation
-        this.velocity = -deltaX / elapsed;
+        // Store current velocity (pixels per millisecond)
+        this.velocity = deltaX / elapsed;
       }
 
       // Update last values
       this.lastMoveTime = now;
 
-      // Update visual position
+      // Update visual position immediately without added effects
       this.renderItems();
 
       // Prevent default only for horizontal drag to allow vertical scrolling
@@ -381,15 +380,19 @@ class TrulyInfiniteCarousel {
 
     // Only apply momentum if this was a horizontal drag
     if (this.isHorizontalDrag === true) {
-      // Scale velocity for momentum effect with natural feel
-      const momentumVelocity = this.velocity * 200; // Higher momentum scaling for smoother transitions
-
-      // Apply a higher velocity cap for more natural scrolling
-      const limitedVelocity = Math.sign(momentumVelocity) * 
-        Math.min(Math.abs(momentumVelocity), 120); // Higher cap allows more fluid movement
-
-      // Start momentum scrolling
-      this.startScrollWithVelocity(limitedVelocity);
+      // Apply a more natural momentum based on final drag velocity
+      // Using smaller multiplier for more predictable behavior
+      const momentumMultiplier = 120; // Less aggressive multiplier
+      
+      // Calculate momentum based on last drag velocity
+      const momentumVelocity = this.velocity * momentumMultiplier;
+      
+      // Apply velocity cap for more natural feel
+      const cappedVelocity = Math.sign(momentumVelocity) * 
+        Math.min(Math.abs(momentumVelocity), 50); // Lower cap for more controlled deceleration
+      
+      // Start momentum scrolling with calculated velocity
+      this.startScrollWithVelocity(cappedVelocity);
     }
   }
 
@@ -406,30 +409,23 @@ class TrulyInfiniteCarousel {
     // Detect if this is a trackpad or mouse wheel
     const isTrackpad = Math.abs(e.deltaX) > 0 || Math.abs(e.deltaY) < 15;
     
-    // Different handling for trackpad vs mouse wheel
-    if (isTrackpad) {
-      // Trackpad scrolling - more direct, less amplified
-      const scrollDelta = e.deltaY * 0.6; // Less amplification for trackpad precision
-      this.offset += scrollDelta; // Standard desktop direction (not "natural")
-      
-      // Update visual position
-      this.renderItems();
-      
-      // Lower momentum for trackpad to feel more direct
-      const velocity = scrollDelta * 0.15;
-      this.startScrollWithVelocity(velocity);
-    } else {
-      // Mouse wheel scrolling - more amplified with momentum
-      const scrollDelta = e.deltaY * 0.8; // Higher multiplier for wheel
-      this.offset += scrollDelta; // Standard desktop direction
-      
-      // Update visual position
-      this.renderItems();
-      
-      // Higher momentum for wheel scrolling to feel more fluid
-      const velocity = scrollDelta * 0.3;
-      this.startScrollWithVelocity(velocity);
-    }
+    // Simplified approach for both trackpad and wheel
+    // Use a consistent multiplier that feels natural
+    const scrollDelta = e.deltaY * (isTrackpad ? 0.5 : 0.7);
+    
+    // Apply scroll delta directly to offset (desktop direction)
+    this.offset += scrollDelta;
+    
+    // Update visual position immediately
+    this.renderItems();
+    
+    // Set velocity proportional to scroll delta but not excessive
+    // This creates momentum that feels natural but not exaggerated
+    const velocityFactor = isTrackpad ? 0.08 : 0.12;
+    const velocity = scrollDelta * velocityFactor;
+    
+    // Start momentum scrolling with the calculated velocity
+    this.startScrollWithVelocity(velocity);
   }
 
   /**
@@ -506,30 +502,9 @@ class TrulyInfiniteCarousel {
       return;
     }
 
-    // iOS-like deceleration curve
-    const easeOutCubic = (t) => {
-      return 1 - Math.pow(1 - t, 3);
-    };
-    
-    // iOS-like spring physics
-    const applySpringPhysics = (velocity, elapsed) => {
-      // Higher values = more responsive, lower values = more fluid
-      const springConstant = 0.0008;
-      const dampingRatio = 0.9;
-      
-      // Apply spring formula
-      return velocity * Math.exp(-dampingRatio * springConstant * elapsed);
-    };
-    
-    // Apply spring physics to get iOS-like scrolling
-    const springVelocity = applySpringPhysics(this.velocity, elapsed);
-    
-    // Apply easing as scrolling slows down
-    const normalizedTime = Math.min(1.0, Math.abs(springVelocity) / 1.5);
-    const easedVelocity = springVelocity * (1.0 - easeOutCubic(normalizedTime) * 0.4);
-    
-    // Calculate scroll delta using our enhanced physics
-    const delta = easedVelocity * elapsed;
+    // Simple iOS-like deceleration with no spring physics
+    // Calculate scroll delta using current velocity
+    const delta = this.velocity * elapsed;
 
     // Update scroll position
     if (Math.abs(delta) > 0.01) {
@@ -537,19 +512,14 @@ class TrulyInfiniteCarousel {
       this.renderItems();
     }
 
-    // iOS-like friction - always smooth, never abrupt
-    const baseFriction = 0.95;
-    const velocityAdjustedFriction = Math.min(
-      baseFriction,
-      baseFriction - (0.05 * (1.0 - Math.min(1, Math.abs(this.velocity))))
-    );
+    // Apply constant deceleration factor - simple iOS-like feel
+    const frictionFactor = 0.95; // Higher = less friction, lower = more friction
     
-    // Apply our enhanced friction
-    this.velocity *= velocityAdjustedFriction;
+    // Apply consistent friction to velocity
+    this.velocity *= frictionFactor;
 
     // Stop scrolling when velocity becomes negligible
-    // Lower threshold makes it stop more naturally
-    if (Math.abs(this.velocity) < 0.0025) {
+    if (Math.abs(this.velocity) < 0.001) {
       this.isScrolling = false;
       this.velocity = 0;
     } else {

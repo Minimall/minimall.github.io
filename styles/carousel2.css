@@ -173,7 +173,7 @@
 /* Responsive styles */
 @media (max-width: 768px) {
   .carousel-container {
-    height: 65vh; /* Shorter height on mobile */
+    height: 100vh; /* Same height as desktop */
     overscroll-behavior-x: none;
     overscroll-behavior-y: contain;
     -webkit-overflow-scrolling: touch;
@@ -204,21 +204,23 @@
   
   .carousel-item {
     will-change: transform; /* Optimize for mobile performance */
+    width: auto; /* Auto width based on content, same as desktop */
   }
   
   .carousel-item img,
   .carousel-item video {
-    max-height: 80%;
-    max-width: 90vw;
-    border-radius: 6px; /* Smaller radius on mobile */
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15); /* Lighter shadow on mobile */
+    height: 100%; /* Fill 100% height like desktop */
+    width: auto; /* Auto width based on aspect ratio */
+    max-width: none; /* Remove max-width constraint */
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Same shadow as desktop */
   }
 }
 
 /* Enhanced iOS-specific optimizations */
 @supports (-webkit-touch-callout: none) {
   .carousel-container {
-    height: 60vh; /* Even shorter height specifically for iOS */
+    height: 100vh; /* Match desktop height */
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: none;
   }
@@ -232,10 +234,15 @@
   .carousel-item {
     transform: translate3d(0, 0, 0);
     -webkit-transform: translate3d(0, 0, 0);
+    width: auto; /* Auto width based on content */
   }
 
   .carousel-item img,
   .carousel-item video {
+    /* Keep consistent with desktop */
+    height: 100%;
+    width: auto;
+    max-width: none;
     /* Prevent iOS image preview and add better touch performance */
     -webkit-touch-callout: none;
     -webkit-user-select: none;
