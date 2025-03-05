@@ -580,28 +580,29 @@ class TrulyInfiniteCarousel {
     // This is the key to infinite scrolling without clones
     const normalizedOffset = this.moduloWithNegative(this.offset, this.totalContentWidth);
     
-    // Calculate which items should be visible
-    const visibilityBuffer = this.options.itemSpacing * this.options.visibleBuffer;
+    // Calculate which items should be visible with a larger buffer to prevent flickering
+    const visibilityBuffer = this.options.itemSpacing * Math.max(4, this.options.visibleBuffer);
     const visibleStart = -visibilityBuffer;
     const visibleEnd = this.containerWidth + visibilityBuffer;
     
+    // Sort virtualItems by index to ensure consistent rendering order
+    const sortedItems = [...this.virtualItems].sort((a, b) => a.index - b.index);
+    
     // Position each item
-    this.virtualItems.forEach(item => {
+    sortedItems.forEach(item => {
       const element = item.element;
       
       // Calculate item's virtual position
-      // This wraps the item position infinitely using modulo arithmetic
       let itemOffset = item.left - normalizedOffset;
       
-      // Wrap position for infinite scrolling effect
-      // If item's left edge is beyond right of content, subtract content width
-      while (itemOffset > this.totalContentWidth - visibleStart) {
-        itemOffset -= this.totalContentWidth;
-      }
+      // More stable wrapping logic for infinite scrolling
+      const totalWidth = this.totalContentWidth;
       
-      // If item's right edge is beyond left of content, add content width
-      while (itemOffset + item.width < visibleEnd - this.totalContentWidth) {
-        itemOffset += this.totalContentWidth;
+      // Ensure we only wrap once in either direction to prevent excessive shuffling
+      if (itemOffset > totalWidth - visibleStart) {
+        itemOffset -= totalWidth;
+      } else if (itemOffset + item.width < visibleEnd - totalWidth) {
+        itemOffset += totalWidth;
       }
       
       // Determine if the item should be visible
@@ -618,7 +619,9 @@ class TrulyInfiniteCarousel {
         }
         
         // Position element with transform for better performance
-        element.style.transform = `translateX(${itemOffset}px)`;
+        // Add translateZ for hardware acceleration
+        element.style.transform = `translateX(${itemOffset}px) translateZ(0)`;
+        element.style.zIndex = Math.round(1000 - Math.abs(itemOffset - (this.containerWidth / 2)));
         item.x = itemOffset;
       } else {
         if (item.onScreen) {
@@ -791,20 +794,23 @@ document.addEventListener('DOMContentLoaded', () => {
   // Find all carousel containers
   const carouselContainers = document.querySelectorAll('.carousel-container');
   
-  // Initialize each carousel
-  carouselContainers.forEach(container => {
-    // Create and store the carousel instance
-    const carousel = new TrulyInfiniteCarousel(container, {
-      itemSelector: '.carousel-item',
-      itemSpacing: 30,
-      visibleBuffer: 2,
-      debugMode: false
+  // Initialize each carousel with a slight delay to ensure all resources are loaded
+  setTimeout(() => {
+    carouselContainers.forEach(container => {
+      // Create and store the carousel instance
+      const carousel = new TrulyInfiniteCarousel(container, {
+        itemSelector: '.carousel-item',
+        itemSpacing: 30,
+        visibleBuffer: 3, // Increased buffer for smoother experience
+        frictionFactor: 0.95, // Adjusted for smoother deceleration
+        debugMode: false
+      });
+      
+      // Store the instance on the container for external access
+      container.carousel = carousel;
     });
     
-    // Store the instance on the container for external access
-    container.carousel = carousel;
-  });
-  
-  // Make the carousel class globally available
-  window.TrulyInfiniteCarousel = TrulyInfiniteCarousel;
+    // Make the carousel class globally available
+    window.TrulyInfiniteCarousel = TrulyInfiniteCarousel;
+  }, 100); // Small delay to ensure images are measured correctly
 });

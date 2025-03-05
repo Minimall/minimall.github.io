@@ -26,6 +26,10 @@
   transform: translateZ(0);
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
+  -webkit-transform-style: preserve-3d;
+  transform-style: preserve-3d;
+  perspective: 1000;
+  -webkit-perspective: 1000;
   cursor: grab;
 }
 
@@ -43,7 +47,13 @@
   justify-content: center;
   transform-origin: center center;
   will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
   transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+  /* Prevent flickering during transitions */
+  -webkit-transform-style: preserve-3d;
+  transform-style: preserve-3d;
 }
 
 .carousel-item img,
