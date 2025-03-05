@@ -69,9 +69,9 @@
 
 .carousel-item img,
 .carousel-item video {
-  max-height: 95%;
+  height: 100%;
   width: auto;
-  height: auto;
+  max-width: none;
   object-fit: contain;
   pointer-events: none;
   user-drag: none;

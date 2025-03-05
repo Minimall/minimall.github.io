@@ -574,30 +574,43 @@ class TrulyInfiniteCarousel {
       return a.index - b.index;
     });
     
-    // Track item positions to prevent overlapping
-    const usedPositions = new Map();
+    // Calculate total padding needed for first item
+    const firstItemPadding = this.firstItemPadding || this.options.itemSpacing;
+    
+    // Create an extended content width that includes padding for proper wrapping
+    const extendedContentWidth = this.totalContentWidth + firstItemPadding;
     
     // Position each item
     sortedItems.forEach(item => {
       const element = item.element;
       
-      // Calculate item's virtual position
+      // Calculate item's virtual position with special handling for first item
       let itemOffset = item.left - normalizedOffset;
       
-      // More stable wrapping logic with improved collision avoidance
-      const totalWidth = this.totalContentWidth;
+      // Apply padding to first item
+      if (item.index === 0) {
+        itemOffset += firstItemPadding;
+      }
+      
+      // Total width needs to include the padding for proper wrapping
+      const totalWidth = extendedContentWidth;
       
       // Original position before any wrapping
       const originalOffset = itemOffset;
       
-      // Apply wrapping logic more conservatively to reduce shuffling
-      if (itemOffset > totalWidth - visibleStart) {
-        itemOffset -= totalWidth;
-      } else if (itemOffset + item.width < visibleEnd - totalWidth) {
-        itemOffset += totalWidth;
+      // Apply modified wrapping logic for seamless infinite scrolling
+      // This creates a proper buffer zone on both sides
+      if (itemOffset > visibleEnd) {
+        // When an item goes too far right, wrap it to the left
+        const wraps = Math.ceil(itemOffset / totalWidth);
+        itemOffset -= totalWidth * wraps;
+      } else if (itemOffset + item.width < visibleStart) {
+        // When an item goes too far left, wrap it to the right
+        const wraps = Math.ceil(Math.abs(itemOffset + item.width - visibleStart) / totalWidth);
+        itemOffset += totalWidth * wraps;
       }
       
-      // Store the wrapped position for collision detection
+      // Store the wrapped position
       item.wrappedPosition = itemOffset;
       
       // Determine if the item should be visible with an expanded buffer for smoother transitions
@@ -663,8 +676,11 @@ class TrulyInfiniteCarousel {
     const firstItemCenter = this.virtualItems[0].width / 2;
     const initialOffset = containerCenter - firstItemCenter;
     
-    // Set initial offset to position first item properly
-    this.offset = -initialOffset + (this.options.itemSpacing / 2);
+    // Add extra padding for the first item equal to item spacing
+    this.firstItemPadding = this.options.itemSpacing;
+    
+    // Set initial offset to position first item properly with added padding
+    this.offset = -initialOffset + this.firstItemPadding;
     
     // Immediately render items in their correct positions without animation
     this.renderItems(false);
@@ -834,7 +850,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const carousel = new TrulyInfiniteCarousel(container, {
         itemSelector: '.carousel-item',
         itemSpacing: 40, // Increased spacing for better separation
-        visibleBuffer: 5, // Larger buffer for smoother experience
+        visibleBuffer: 8, // Larger buffer for smoother infinite scrolling experience
         frictionFactor: 0.92, // Better deceleration
         dynamicFriction: true, // Enable dynamic friction
         debugMode: false
