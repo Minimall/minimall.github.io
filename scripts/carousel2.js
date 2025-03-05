@@ -293,24 +293,36 @@ class TrulyInfiniteCarousel {
     // Check for iOS/mobile device
     const isMobileDevice = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     
-    // Determine correct scrolling direction - on mobile/iOS devices we need to invert
-    // compared to desktop to make the direction feel consistent
-    const directionMultiplier = isMobileDevice ? -1 : 1;
-
-    // Calculate scroll delta with direction adjustment
-    const scrollDelta = e.deltaY * (isTrackpad ? 0.5 : 0.7) * directionMultiplier;
-
-    // Apply scroll delta with natural scrolling adjustment
-    this.offset += isNaturalScrolling ? -scrollDelta : scrollDelta;
+    // For consistent direction across all devices, we need to ensure:
+    // 1. Scrolling down moves carousel right
+    // 2. Scrolling up moves carousel left
+    // This matches the natural movement expectation on mobile and desktop
+    
+    // Base scroll delta - for both trackpad and wheel
+    let scrollDelta = e.deltaY * (isTrackpad ? 0.5 : 0.7);
+    
+    // On iOS/mobile, we need consistent direction with desktop swipe
+    if (isMobileDevice) {
+      // Mobile direction is already correct with natural scrolling
+      this.offset += scrollDelta;
+    } else {
+      // On desktop, invert the direction for natural feeling
+      this.offset -= scrollDelta;
+    }
 
     // Update visual position immediately
     this.renderItems();
 
     // Only add momentum for wheel events, not trackpad panning
     if (!isTrackpad) {
-      // Simple velocity calculation
+      // Simple velocity calculation with corrected direction
       const velocityFactor = 0.1;
-      const velocity = (isNaturalScrolling ? -scrollDelta : scrollDelta) * velocityFactor;
+      
+      // Apply the same direction logic to velocity as we did for offset
+      const velocity = isMobileDevice ? 
+                       (scrollDelta * velocityFactor) : 
+                       (-scrollDelta * velocityFactor);
+                       
       this.startScrollWithVelocity(velocity);
     }
   }
@@ -410,8 +422,8 @@ class TrulyInfiniteCarousel {
       // Check if touch event (mobile/iOS) or mouse event
       const isTouchEvent = !e.type.includes('mouse');
       
-      // Apply consistent direction across devices
-      // No direction multiplier needed for drag - the natural direction is consistent
+      // For drag movement, the natural direction is correct and consistent across devices
+      // Moving finger/mouse right should move content right
       this.offset += deltaX;
 
       // Track position for velocity calculation
