@@ -340,6 +340,9 @@ class TrulyInfiniteCarousel {
 
     // Only process horizontal movements when determined
     if (this.isHorizontalDrag === true) {
+      // Mobile devices already use natural touch direction, no need to invert
+      // Desktop drag should match wheel direction for consistency
+      
       // Direct 1:1 mapping for dragging without acceleration or modification
       this.offset += deltaX;
 
@@ -409,12 +412,23 @@ class TrulyInfiniteCarousel {
     // Detect if this is a trackpad or mouse wheel
     const isTrackpad = Math.abs(e.deltaX) > 0 || Math.abs(e.deltaY) < 15;
     
-    // Simplified approach for both trackpad and wheel
+    // Detect natural scrolling setting (Safari)
+    // For Chrome and other browsers, this will typically be false
+    const isNaturalScrolling = e.webkitDirectionInvertedFromDevice === true;
+    
+    // Store detected scrolling preference (for debugging)
+    if (this.options.debugMode) {
+      console.log(`Natural scrolling: ${isNaturalScrolling ? 'enabled' : 'disabled'}`);
+    }
+    
+    // Simplified approach for both trackpad and wheel with natural scrolling detection
     // Use a consistent multiplier that feels natural
     const scrollDelta = e.deltaY * (isTrackpad ? 0.5 : 0.7);
     
-    // Apply scroll delta directly to offset (desktop direction)
-    this.offset += scrollDelta;
+    // Apply scroll delta with appropriate direction based on natural scrolling setting
+    // This reverses the direction when natural scrolling is NOT enabled to maintain
+    // a consistent experience regardless of the user's OS settings
+    this.offset += isNaturalScrolling ? -scrollDelta : scrollDelta;
     
     // Update visual position immediately
     this.renderItems();
@@ -422,7 +436,7 @@ class TrulyInfiniteCarousel {
     // Set velocity proportional to scroll delta but not excessive
     // This creates momentum that feels natural but not exaggerated
     const velocityFactor = isTrackpad ? 0.08 : 0.12;
-    const velocity = scrollDelta * velocityFactor;
+    const velocity = (isNaturalScrolling ? -scrollDelta : scrollDelta) * velocityFactor;
     
     // Start momentum scrolling with the calculated velocity
     this.startScrollWithVelocity(velocity);
