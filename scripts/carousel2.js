@@ -574,8 +574,9 @@ class TrulyInfiniteCarousel {
       return a.index - b.index;
     });
     
-    // Calculate total padding needed for first item
-    const firstItemPadding = this.firstItemPadding || this.options.itemSpacing;
+    // Calculate total padding needed for first item - add padding equal to gap between images
+    const firstItemPadding = this.options.itemSpacing;
+    this.firstItemPadding = firstItemPadding;
     
     // Create an extended content width that includes padding for proper wrapping
     const extendedContentWidth = this.totalContentWidth + firstItemPadding;
@@ -641,11 +642,20 @@ class TrulyInfiniteCarousel {
         // Use transform for positioning with hardware acceleration
         element.style.transform = `translateX(${smoothedOffset}px) translateZ(0)`;
         
-        // Dynamic z-index to ensure proper overlapping (center items on top)
-        element.style.zIndex = Math.round(1000 - distanceFromCenter);
+        // Apply consistent z-index based on item index to prevent overlapping
+        // Items that appear earlier in the DOM get higher z-index
+        element.style.zIndex = this.itemCount - item.index;
         
         // Store the current position
         item.x = smoothedOffset;
+        
+        // Ensure container width matches the image width + padding
+        // This helps prevent overlapping by making the hitbox match the visible content
+        const imgElement = element.querySelector('img, video');
+        if (imgElement) {
+          const imgWidth = imgElement.offsetWidth;
+          element.style.width = `${imgWidth}px`;
+        }
       } else {
         if (item.onScreen) {
           // Hide items immediately without animation
@@ -851,8 +861,8 @@ document.addEventListener('DOMContentLoaded', () => {
         itemSelector: '.carousel-item',
         itemSpacing: 60, // Control spacing between items with position offset only
         visibleBuffer: 8, // Larger buffer for smoother infinite scrolling experience
-        frictionFactor: 0.92, // Better deceleration
-        dynamicFriction: true, // Enable dynamic friction
+        frictionFactor: 0.4, // Better deceleration
+        //dynamicFriction: true,  Enable dynamic friction
         debugMode: false
       });
       

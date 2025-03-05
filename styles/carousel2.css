@@ -51,7 +51,6 @@
   flex: 0 0 auto;
   position: absolute;
   height: 100%;
-  max-width: 80vw;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -67,13 +66,16 @@
   opacity: 1;
   padding: 0;
   margin: 0;
+  /* Add a natural width constraint based on content */
+  width: auto;
+  /* Prevent content overflow */
+  overflow: hidden;
 }
 
 .carousel-item img,
 .carousel-item video {
-  height: 100%;
+  height: 100%; /* Fill 100% height of carousel track as requested */
   width: auto;
-  max-width: none;
   object-fit: contain;
   pointer-events: none;
   user-drag: none;
