@@ -1,5 +1,5 @@
 
-/* Whiskey Carousel - Truly Free-Flowing with Seamless Infinite Stream */
+/* Whiskey Carousel - Truly Seamless Infinite Stream */
 .carousel-wrapper {
   width: 100%;
   overflow: hidden;
@@ -15,7 +15,7 @@
   scrollbar-width: none; /* Firefox */
   cursor: grab;
   gap: 2em;
-  will-change: scroll-position, transform;
+  will-change: transform, scroll-position;
   user-select: none;
   -webkit-user-select: none;
   -ms-user-select: none;
@@ -24,27 +24,22 @@
   overflow-anchor: none;
   scroll-snap-type: none !important; /* Explicitly disable snapping */
   
-  /* Enhanced performance optimizations for seamless scrolling */
+  /* Performance optimizations */
   transform: translateZ(0);
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
   -webkit-perspective: 1000;
   perspective: 1000;
-  position: relative;
   
-  /* Prevent scroll flickering during position adjustments */
+  /* Prevent scroll flicker */
   -webkit-overflow-scrolling: touch;
-  scroll-behavior: auto !important; /* Ensure no smooth scroll interference */
-  overscroll-behavior-x: none; /* Prevent browser navigation gestures */
+  scroll-behavior: auto !important;
+  overscroll-behavior-x: none;
   
-  /* Prevent iOS callout and scrollbar */
+  /* Clean up mobile experience */
   -webkit-touch-callout: none;
   -ms-overflow-style: none;
   scrollbar-width: none;
-  
-  /* Improve GPU rendering to prevent "seams" between scroll positions */
-  transform-style: preserve-3d;
-  -webkit-transform-style: preserve-3d;
 }
 
 /* Hide scrollbar */
@@ -66,7 +61,7 @@
   height: 100vh;
   display: flex;
   align-items: center;
-  justify-content: flex-start; /* Left-align rather than center */
+  justify-content: flex-start;
   position: relative;
   margin-right: 2em;
   transform: translateZ(0);
@@ -92,11 +87,9 @@
   transform: translateZ(0);
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Let the carousel behave naturally, not centered - better for small viewport images */
+/* Responsive adjustments */
 @media (max-width: 1024px) {
   .carousel-item,
   .whiskey-cards > * {
@@ -116,7 +109,11 @@
 /* iOS-specific optimizations */
 @supports (-webkit-touch-callout: none) {
   .whiskey-cards {
-    /* Even smoother momentum scrolling on iOS */
     -webkit-overflow-scrolling: touch;
   }
+}
+
+/* Add subtle styling for clone items - useful for debugging */
+.whiskey-cards > .carousel-clone {
+  opacity: 1; /* Set to 0.8 for debugging */
 }
