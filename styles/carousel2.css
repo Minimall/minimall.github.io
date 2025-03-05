@@ -2,6 +2,7 @@
 /* 
  * TrulyInfiniteCarousel CSS
  * Styles for the high-performance infinite carousel without clones
+ * No animations or transitions except for scrolling
  */
 
 .carousel-container {
@@ -59,8 +60,8 @@
   transform: translateZ(0);
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
-  /* Transitions will be applied dynamically in JS when needed */
-  /* Prevent flickering during transitions */
+  /* No transitions - items move instantly */
+  transition: none;
   -webkit-transform-style: preserve-3d;
   transform-style: preserve-3d;
   opacity: 1;
@@ -82,6 +83,8 @@
   transform: translateZ(0);
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
+  /* No transitions for images */
+  transition: none;
 }
 
 /* Navigation arrows (optional) */
@@ -100,17 +103,20 @@
   align-items: center;
   justify-content: center;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
-  transition: all 0.2s ease;
+  /* No transition */
+  transition: none;
   outline: none;
 }
 
 .carousel-arrow:hover {
   background-color: rgba(255, 255, 255, 0.9);
-  transform: translateY(-50%) scale(1.1);
+  /* No animation */
+  transform: translateY(-50%);
 }
 
 .carousel-arrow:active {
-  transform: translateY(-50%) scale(0.95);
+  /* No animation */
+  transform: translateY(-50%);
 }
 
 .carousel-arrow svg {
@@ -147,13 +153,13 @@
   border: none;
   padding: 0;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: none;
   outline: none;
 }
 
 .carousel-dot.active {
   background-color: white;
-  transform: scale(1.2);
+  transform: none;
 }
 
 /* Responsive styles */
@@ -192,7 +198,7 @@
 /* Enhanced iOS-specific optimizations */
 @supports (-webkit-touch-callout: none) {
   .carousel-track {
-    /* Smoother animations on iOS */
+    /* No smooth animations on iOS */
     -webkit-overflow-scrolling: touch;
   }
 

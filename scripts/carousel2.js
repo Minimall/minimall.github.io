@@ -547,37 +547,9 @@ class TrulyInfiniteCarousel {
    * Programmatically scroll the carousel by the given amount
    */
   scrollBy(amount, animate = false) {
-    if (animate) {
-      // Animate the scroll
-      this.velocity = 0;
-      this.targetOffset = this.offset + amount;
-      
-      const duration = 500; // ms
-      const startOffset = this.offset;
-      const startTime = performance.now();
-      
-      const animateToTarget = (timestamp) => {
-        const elapsed = timestamp - startTime;
-        const progress = Math.min(elapsed / duration, 1);
-        
-        // Use easing function for smooth motion
-        const easeProgress = 1 - Math.pow(1 - progress, 3); // Cubic ease out
-        
-        // Update current offset
-        this.offset = startOffset + (amount * easeProgress);
-        this.renderItems();
-        
-        if (progress < 1) {
-          requestAnimationFrame(animateToTarget);
-        }
-      };
-      
-      requestAnimationFrame(animateToTarget);
-    } else {
-      // Instant scroll
-      this.offset += amount;
-      this.renderItems();
-    }
+    // Always use instant scroll without animation
+    this.offset += amount;
+    this.renderItems(false);
   }
   
   /**
@@ -585,7 +557,7 @@ class TrulyInfiniteCarousel {
    * This is the core function that positions items using wrapping logic
    * @param {boolean} animate - Whether to animate position changes (default: true)
    */
-  renderItems(animate = true) {
+  renderItems(animate = false) {
     // Normalize the offset within the content width
     // This is the key to infinite scrolling without clones
     const normalizedOffset = this.moduloWithNegative(this.offset, this.totalContentWidth);
@@ -634,21 +606,12 @@ class TrulyInfiniteCarousel {
         itemOffset + item.width > visibleStart
       );
       
-      // Show/hide based on visibility and update position with smooth transitions
+      // Show/hide based on visibility without transitions
       if (isVisible) {
         if (!item.onScreen) {
-          if (animate) {
-            // Ensure elements fade in smoothly when becoming visible (only when animating)
-            element.style.opacity = '0';
-            element.style.display = 'block';
-            // Force a reflow before starting transition
-            void element.offsetWidth;
-            element.style.opacity = '1';
-          } else {
-            // When not animating (initial load), just display without transition
-            element.style.opacity = '1';
-            element.style.display = 'block';
-          }
+          // Simply show the element without animations
+          element.style.opacity = '1';
+          element.style.display = 'block';
           item.onScreen = true;
         }
         
@@ -659,12 +622,8 @@ class TrulyInfiniteCarousel {
         const distanceFromCenter = Math.abs(itemOffset - (this.containerWidth / 2));
         const isNearCenter = distanceFromCenter < (this.containerWidth * 0.6);
         
-        // Set transition property based on whether we want animation
-        if (animate) {
-          element.style.transition = 'transform 0.35s cubic-bezier(0.33, 1, 0.68, 1), opacity 0.3s ease';
-        } else {
-          element.style.transition = 'none';
-        }
+        // No transitions for transforms - only direct positioning
+        element.style.transition = 'none';
         
         // Use transform for positioning with hardware acceleration
         element.style.transform = `translateX(${smoothedOffset}px) translateZ(0)`;
@@ -676,14 +635,8 @@ class TrulyInfiniteCarousel {
         item.x = smoothedOffset;
       } else {
         if (item.onScreen) {
-          // Fade out items before removing them
-          element.style.opacity = '0';
-          setTimeout(() => {
-            // Only hide if still off-screen after timeout
-            if (!item.onScreen) {
-              element.style.display = 'none';
-            }
-          }, 300);
+          // Hide items immediately without animation
+          element.style.display = 'none';
           item.onScreen = false;
         }
       }
