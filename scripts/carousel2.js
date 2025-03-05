@@ -326,7 +326,7 @@ class TrulyInfiniteCarousel {
       const absY = Math.abs(currentY - this.startY);
       
       // If we've moved enough to detect direction
-      if (absX > 12 || absY > 12) { // Increased threshold
+      if (absX > 15 || absY > 15) { // Increased threshold for less accidental activation
         // If movement is more horizontal than vertical, capture it
         this.isHorizontalDrag = absX > absY;
         
@@ -341,16 +341,16 @@ class TrulyInfiniteCarousel {
     
     // Only process horizontal movements when determined
     if (this.isHorizontalDrag === true) {
-      // Update offset with natural direction - content follows the cursor
-      // This matches desktop platform conventions where dragging content makes it move with your cursor
-      this.offset += deltaX * 0.9; // Slightly higher sensitivity for more responsive feel
+      // REVERSED: Update offset with reversed direction - content moves opposite to cursor
+      // This creates a more natural "pushing" feel like on mobile devices
+      this.offset -= deltaX * 0.6; // Reduced sensitivity for less aggressive movement
       
-      // Calculate velocity for momentum that matches drag direction
+      // Calculate velocity for momentum that matches reversed drag direction
       const now = performance.now();
       const elapsed = now - this.lastMoveTime;
       if (elapsed > 0) {
-        // Velocity in pixels per millisecond with direction preserved
-        this.velocity = -(deltaX * 0.6) / elapsed; // Negative for correct momentum direction
+        // Velocity with reversed direction and reduced intensity
+        this.velocity = (deltaX * 0.3) / elapsed; // Positive for reversed momentum direction
       }
       
       // Update last values
@@ -382,12 +382,12 @@ class TrulyInfiniteCarousel {
     
     // Only apply momentum if this was a horizontal drag
     if (this.isHorizontalDrag === true) {
-      // Scale velocity for momentum effect with reduced intensity
-      const momentumVelocity = this.velocity * -300; // Reduced momentum scaling
+      // Scale velocity for momentum effect with greatly reduced intensity
+      const momentumVelocity = this.velocity * 150; // Greatly reduced momentum scaling
       
       // Limit maximum velocity to prevent excessive scrolling
       const limitedVelocity = Math.sign(momentumVelocity) * 
-        Math.min(Math.abs(momentumVelocity), 150); // Cap maximum velocity
+        Math.min(Math.abs(momentumVelocity), 80); // Lower cap on maximum velocity
       
       // Start momentum scrolling
       this.startScrollWithVelocity(limitedVelocity);
@@ -404,16 +404,16 @@ class TrulyInfiniteCarousel {
     // Prevent default browser scrolling behavior
     e.preventDefault();
     
-    // Use standard scrolling direction for desktop (negative deltaY means scroll up/left)
-    // This follows the standard convention where scrolling down/right moves content left
-    const scrollDelta = -(e.deltaY || e.deltaX) * 0.4; // Negative for natural scrolling direction
+    // REVERSED: Reversed scrolling direction to match new drag behavior
+    // This creates consistency between touch and wheel interactions
+    const scrollDelta = (e.deltaY || e.deltaX) * 0.25; // Positive for reversed scrolling direction, reduced sensitivity
     this.offset += scrollDelta;
     
     // Update visual position
     this.renderItems();
     
-    // Apply momentum for smoother feel
-    const velocity = -scrollDelta * 0.3; // Correctly calculated momentum based on direction
+    // Apply momentum for smoother feel but with reduced intensity
+    const velocity = scrollDelta * 0.15; // Reduced momentum for less aggressive scrolling
     this.startScrollWithVelocity(velocity);
   }
   
@@ -503,19 +503,19 @@ class TrulyInfiniteCarousel {
     // Apply dynamic friction based on velocity
     let friction = this.options.frictionFactor;
     
-    // Dynamic friction: faster movement = less friction
+    // Dynamic friction: faster movement = less friction for more natural feel
     if (this.options.dynamicFriction) {
       const absVelocity = Math.abs(this.velocity);
-      if (absVelocity > 2) {
-        friction = 0.97; // Very fast
-      } else if (absVelocity > 1) {
-        friction = 0.95; // Fast
-      } else if (absVelocity > 0.5) {
-        friction = 0.92; // Medium
+      if (absVelocity > 1.5) {
+        friction = 0.98; // Very fast - very smooth deceleration
+      } else if (absVelocity > 0.8) {
+        friction = 0.97; // Fast - smooth deceleration 
+      } else if (absVelocity > 0.4) {
+        friction = 0.96; // Medium - gradually increasing friction
       } else if (absVelocity > 0.2) {
-        friction = 0.88; // Slow
+        friction = 0.94; // Slow - more noticeable friction
       } else {
-        friction = 0.82; // Very slow
+        friction = 0.90; // Very slow - higher friction to stop naturally
       }
     }
     
@@ -523,7 +523,8 @@ class TrulyInfiniteCarousel {
     this.velocity *= friction;
     
     // Stop scrolling when velocity becomes negligible
-    if (Math.abs(this.velocity) < 0.01) {
+    // Higher threshold for smoother end of animation
+    if (Math.abs(this.velocity) < 0.005) {
       this.isScrolling = false;
     } else {
       // Continue animation
@@ -865,8 +866,8 @@ document.addEventListener('DOMContentLoaded', () => {
         itemSelector: '.carousel-item',
         itemSpacing: 60, // Control spacing between items with position offset only
         visibleBuffer: 8, // Larger buffer for smoother infinite scrolling experience
-        frictionFactor: 0.4, // Better deceleration
-        //dynamicFriction: true,  Enable dynamic friction
+        frictionFactor: 0.95, // Higher value (less friction) for smoother scrolling
+        dynamicFriction: true, // Enable dynamic friction for natural deceleration
         debugMode: false
       });
       
