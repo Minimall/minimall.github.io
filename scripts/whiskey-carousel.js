@@ -170,6 +170,17 @@ document.addEventListener('DOMContentLoaded', () => {
         // Start monitoring scroll position for infinite loop effect
         requestAnimationFrame(monitorScrollPosition);
         
+        // Calculate original set width for reference
+        const originalSetWidth = originalItems.reduce((sum, item) => {
+            const style = window.getComputedStyle(item);
+            const marginRight = parseInt(style.marginRight) || 0;
+            return sum + item.offsetWidth + marginRight;
+        }, 0);
+        
+        // Calculate pre-clone width
+        const preCloneSets = streamData.requiredSets;
+        const preCloneWidth = preCloneSets * originalSetWidth;
+        
         // Performance monitoring - track time to reach right boundary
         const rightBoundaryReachedTime = {
             hasReached: false,
