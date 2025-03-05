@@ -341,15 +341,16 @@ class TrulyInfiniteCarousel {
     
     // Only process horizontal movements when determined
     if (this.isHorizontalDrag === true) {
-      // Update offset with dampening factor for smoother control
-      this.offset -= deltaX * 0.7; // Apply damping factor for smoother dragging
+      // Update offset with natural direction - content follows the cursor
+      // This matches desktop platform conventions where dragging content makes it move with your cursor
+      this.offset += deltaX * 0.9; // Slightly higher sensitivity for more responsive feel
       
-      // Calculate velocity for momentum with damping
+      // Calculate velocity for momentum that matches drag direction
       const now = performance.now();
       const elapsed = now - this.lastMoveTime;
       if (elapsed > 0) {
-        // Velocity in pixels per millisecond with dampening
-        this.velocity = (deltaX * 0.6) / elapsed; // Dampen velocity
+        // Velocity in pixels per millisecond with direction preserved
+        this.velocity = -(deltaX * 0.6) / elapsed; // Negative for correct momentum direction
       }
       
       // Update last values
@@ -403,15 +404,16 @@ class TrulyInfiniteCarousel {
     // Prevent default browser scrolling behavior
     e.preventDefault();
     
-    // Adjust scroll direction and amount with reduced sensitivity
-    const scrollDelta = (e.deltaY || e.deltaX) * 0.4; // Reduced sensitivity
+    // Use standard scrolling direction for desktop (negative deltaY means scroll up/left)
+    // This follows the standard convention where scrolling down/right moves content left
+    const scrollDelta = -(e.deltaY || e.deltaX) * 0.4; // Negative for natural scrolling direction
     this.offset += scrollDelta;
     
     // Update visual position
     this.renderItems();
     
-    // Apply momentum for smoother feel with reduced velocity
-    const velocity = scrollDelta * -0.3; // Reduced momentum
+    // Apply momentum for smoother feel
+    const velocity = -scrollDelta * 0.3; // Correctly calculated momentum based on direction
     this.startScrollWithVelocity(velocity);
   }
   

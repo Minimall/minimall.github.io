@@ -33,6 +33,15 @@
   cursor: grab;
 }
 
+/* Cursor changes to show interaction state */
+.carousel-track.dragging {
+  cursor: grabbing !important;
+}
+
+.carousel-track.horizontal-drag {
+  cursor: grabbing !important;
+}
+
 .carousel-track.dragging {
   cursor: grabbing;
 }
