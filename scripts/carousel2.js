@@ -1,4 +1,3 @@
-
 /**
  * TrulyInfiniteCarousel
  * 
@@ -15,12 +14,12 @@ class TrulyInfiniteCarousel {
     this.container = typeof container === 'string' 
       ? document.querySelector(container) 
       : container;
-    
+
     if (!this.container) {
       console.error('Carousel container not found');
       return;
     }
-    
+
     // Default options
     this.options = {
       itemSelector: options.itemSelector || '.carousel-item',
@@ -31,7 +30,7 @@ class TrulyInfiniteCarousel {
       enableKeyboard: options.enableKeyboard !== false, // Enable keyboard navigation
       debugMode: options.debugMode || false // Enable visual debugging
     };
-    
+
     // Core state variables
     this.items = []; // Original items from DOM
     this.virtualItems = []; // Virtual representation of items for rendering
@@ -39,7 +38,7 @@ class TrulyInfiniteCarousel {
     this.itemWidth = 0; // Average item width
     this.containerWidth = 0; // Viewport width
     this.totalContentWidth = 0; // Width of all items combined
-    
+
     // Scroll state
     this.offset = 0; // Current scroll offset (can grow infinitely)
     this.targetOffset = 0; // Target offset for smooth transitions
@@ -47,7 +46,7 @@ class TrulyInfiniteCarousel {
     this.isScrolling = false; // Whether momentum scrolling is active
     this.isDragging = false; // Whether user is currently dragging
     this.isAnimating = false; // Whether an animation is in progress
-    
+
     // Touch/mouse state
     this.startX = 0; // Starting X position for drag
     this.startY = 0; // Starting Y position for drag
@@ -55,46 +54,46 @@ class TrulyInfiniteCarousel {
     this.lastY = 0; // Last Y position for drag direction detection
     this.lastMoveTime = 0; // Last move timestamp for velocity calculation
     this.isHorizontalDrag = null; // Whether current drag is horizontal
-    
+
     // Animation state
     this.scrollAnimationId = null; // Current animation frame ID
     this.lastFrameTime = 0; // Last animation frame timestamp
-    
+
     // Initialize the carousel
     this.init();
   }
-  
+
   /**
    * Initialize the carousel
    */
   init() {
     // Ensure container has necessary styling
     this.setupContainerStyles();
-    
+
     // Get all items and create virtual item data
     this.collectItems();
-    
+
     // Measure items and container
     this.measureDimensions();
-    
+
     // Position items initially with proper spacing
     this.initialItemPositioning();
-    
+
     // Setup event listeners
     this.bindEvents();
-    
+
     // Initial rendering
     this.renderItems();
-    
+
     // Debug mode
     if (this.options.debugMode) {
       this.setupDebugTools();
     }
-    
+
     // Handle orientation change and resize
     window.addEventListener('resize', this.onResize.bind(this));
     window.addEventListener('orientationchange', this.onResize.bind(this));
-    
+
     // Log initialization
     console.log('TrulyInfiniteCarousel initialized', {
       itemCount: this.itemCount,
@@ -102,28 +101,28 @@ class TrulyInfiniteCarousel {
       containerWidth: this.containerWidth
     });
   }
-  
+
   /**
    * Set required styles on container
    */
   setupContainerStyles() {
     const containerStyle = window.getComputedStyle(this.container);
-    
+
     // Set container styles if not already set
     if (containerStyle.position === 'static') {
       this.container.style.position = 'relative';
     }
-    
+
     if (containerStyle.overflow !== 'hidden') {
       this.container.style.overflow = 'hidden';
     }
-    
+
     // Create a track if not present
     this.track = this.container.querySelector('.carousel-track');
     if (!this.track) {
       this.track = document.createElement('div');
       this.track.className = 'carousel-track';
-      
+
       // Move all direct item children into the track
       const items = this.container.querySelectorAll(this.options.itemSelector);
       items.forEach(item => {
@@ -131,10 +130,10 @@ class TrulyInfiniteCarousel {
           this.track.appendChild(item);
         }
       });
-      
+
       this.container.appendChild(this.track);
     }
-    
+
     // Ensure track has the right styles
     Object.assign(this.track.style, {
       display: 'flex',
@@ -148,7 +147,7 @@ class TrulyInfiniteCarousel {
       cursor: 'grab'
     });
   }
-  
+
   /**
    * Collect and initialize all carousel items
    */
@@ -156,28 +155,28 @@ class TrulyInfiniteCarousel {
     // Get all item elements
     const itemElements = this.track.querySelectorAll(this.options.itemSelector);
     this.itemCount = itemElements.length;
-    
+
     if (this.itemCount === 0) {
       console.warn('No carousel items found');
       return;
     }
-    
+
     // Store original items and create virtual representations
     this.items = Array.from(itemElements);
-    
+
     // Initialize with basic data, measurements will be updated later
     this.items.forEach((item, index) => {
       // Make sure items have correct base styles
       if (window.getComputedStyle(item).position === 'static') {
         item.style.position = 'absolute';
       }
-      
+
       item.style.top = '0';
       item.style.height = '100%';
-      
+
       // Store original index on element for reference
       item.dataset.carouselIndex = index.toString();
-      
+
       // Create virtual item representation (logical position tracking)
       this.virtualItems.push({
         element: item,
@@ -190,49 +189,49 @@ class TrulyInfiniteCarousel {
       });
     });
   }
-  
+
   /**
    * Measure dimensions of container and items
    */
   measureDimensions() {
     // Get container dimensions
     this.containerWidth = this.container.clientWidth;
-    
+
     // Calculate item widths and total content width
     let totalWidth = 0;
     const spacing = this.options.itemSpacing;
-    
+
     this.virtualItems.forEach((item, i) => {
       const element = item.element;
       // Temporarily reset transforms for accurate measurement
       const prevTransform = element.style.transform;
       element.style.transform = 'none';
       element.style.display = 'block';
-      
+
       // Measure item width
       const width = element.offsetWidth;
       item.width = width;
-      
+
       // Add to total width (including spacing between items)
       totalWidth += width + (i < this.itemCount - 1 ? spacing : 0);
-      
+
       // Restore transform
       element.style.transform = prevTransform;
     });
-    
+
     this.totalContentWidth = totalWidth;
-    
+
     // Calculate average item width as fallback
     const avgItemWidth = totalWidth / this.itemCount;
     this.itemWidth = avgItemWidth;
-    
+
     // Update virtual item positions based on measurements
     let currentLeft = 0;
     this.virtualItems.forEach((item, i) => {
       item.left = currentLeft;
       currentLeft += item.width + spacing;
     });
-    
+
     // Log dimensions
     if (this.options.debugMode) {
       console.log('Carousel dimensions:', {
@@ -243,7 +242,7 @@ class TrulyInfiniteCarousel {
       });
     }
   }
-  
+
   /**
    * Set up all event listeners for the carousel
    */
@@ -252,21 +251,21 @@ class TrulyInfiniteCarousel {
     this.track.addEventListener('mousedown', this.onDragStart.bind(this));
     window.addEventListener('mousemove', this.onDragMove.bind(this));
     window.addEventListener('mouseup', this.onDragEnd.bind(this));
-    
+
     // Touch events for mobile
     this.track.addEventListener('touchstart', this.onDragStart.bind(this), { passive: false });
     window.addEventListener('touchmove', this.onDragMove.bind(this), { passive: false });
     window.addEventListener('touchend', this.onDragEnd.bind(this));
-    
+
     // Wheel events for scrolling with mousewheel/trackpad
     this.container.addEventListener('wheel', this.onWheel.bind(this), { passive: false });
-    
+
     // Keyboard navigation
     if (this.options.enableKeyboard) {
       this.container.setAttribute('tabindex', '0'); // Make focusable
       this.container.addEventListener('keydown', this.onKeyDown.bind(this));
     }
-    
+
     // Prevent context menu during interaction
     this.track.addEventListener('contextmenu', e => {
       if (this.isDragging) {
@@ -274,18 +273,18 @@ class TrulyInfiniteCarousel {
       }
     });
   }
-  
+
   /**
    * Handle start of drag/touch interaction
    */
   onDragStart(e) {
     // Stop any ongoing animations
     this.stopScrolling();
-    
+
     this.isDragging = true;
     this.isHorizontalDrag = null; // Direction not determined yet
     this.track.style.cursor = 'grabbing';
-    
+
     // Get starting position from mouse or touch
     const point = e.type.includes('mouse') ? e : e.touches[0];
     this.startX = point.clientX;
@@ -293,43 +292,43 @@ class TrulyInfiniteCarousel {
     this.lastX = this.startX;
     this.lastY = this.startY;
     this.lastMoveTime = performance.now();
-    
+
     // Add active class for styling
     this.track.classList.add('dragging');
-    
+
     // Prevent default behavior but only for mouse events
     // (enabling this for touch events breaks scrolling on iOS)
     if (e.type.includes('mouse')) {
       e.preventDefault();
     }
   }
-  
+
   /**
    * Handle drag/touch movement
    */
   onDragMove(e) {
     if (!this.isDragging) return;
-    
+
     // Get current position from mouse or touch
     const point = e.type.includes('mouse') ? e : e.touches[0];
     const currentX = point.clientX;
     const currentY = point.clientY;
-    
+
     // Calculate deltas
     const deltaX = currentX - this.lastX;
     const deltaY = currentY - this.lastY;
-    
+
     // Detect direction if not already determined
     if (this.isHorizontalDrag === null) {
       // Use a larger threshold for more reliable direction detection
       const absX = Math.abs(currentX - this.startX);
       const absY = Math.abs(currentY - this.startY);
-      
+
       // If we've moved enough to detect direction
-      if (absX > 15 || absY > 15) { // Increased threshold for less accidental activation
+      if (absX > 10 || absY > 10) { // Lower threshold for better mobile response
         // If movement is more horizontal than vertical, capture it
-        this.isHorizontalDrag = absX > absY;
-        
+        this.isHorizontalDrag = absX > absY * 1.2; // Favor horizontal scrolling slightly
+
         // Add a class to indicate drag direction
         if (this.isHorizontalDrag) {
           this.track.classList.add('horizontal-drag');
@@ -338,13 +337,13 @@ class TrulyInfiniteCarousel {
         }
       }
     }
-    
+
     // Only process horizontal movements when determined
     if (this.isHorizontalDrag === true) {
       // REVERSED: Update offset with reversed direction - content moves opposite to cursor
       // This creates a more natural "pushing" feel like on mobile devices
       this.offset -= deltaX * 0.6; // Reduced sensitivity for less aggressive movement
-      
+
       // Calculate velocity for momentum that matches reversed drag direction
       const now = performance.now();
       const elapsed = now - this.lastMoveTime;
@@ -352,71 +351,71 @@ class TrulyInfiniteCarousel {
         // Velocity with reversed direction and reduced intensity
         this.velocity = (deltaX * 0.3) / elapsed; // Positive for reversed momentum direction
       }
-      
+
       // Update last values
       this.lastMoveTime = now;
-      
+
       // Update visual position
       this.renderItems();
-      
+
       // Prevent default only for horizontal drag to allow vertical scrolling
       e.preventDefault();
     }
-    
+
     // Update last position
     this.lastX = currentX;
     this.lastY = currentY;
   }
-  
+
   /**
    * Handle end of drag/touch interaction
    */
   onDragEnd() {
     if (!this.isDragging) return;
-    
+
     this.isDragging = false;
     this.track.style.cursor = 'grab';
-    
+
     // Remove classes
     this.track.classList.remove('dragging', 'horizontal-drag', 'vertical-drag');
-    
+
     // Only apply momentum if this was a horizontal drag
     if (this.isHorizontalDrag === true) {
       // Scale velocity for momentum effect with greatly reduced intensity
       const momentumVelocity = this.velocity * 150; // Greatly reduced momentum scaling
-      
+
       // Limit maximum velocity to prevent excessive scrolling
       const limitedVelocity = Math.sign(momentumVelocity) * 
         Math.min(Math.abs(momentumVelocity), 80); // Lower cap on maximum velocity
-      
+
       // Start momentum scrolling
       this.startScrollWithVelocity(limitedVelocity);
     }
   }
-  
+
   /**
    * Handle mouse wheel events
    */
   onWheel(e) {
     // Stop any ongoing animations
     this.stopScrolling();
-    
+
     // Prevent default browser scrolling behavior
     e.preventDefault();
-    
+
     // REVERSED: Reversed scrolling direction to match new drag behavior
     // This creates consistency between touch and wheel interactions
     const scrollDelta = (e.deltaY || e.deltaX) * 0.25; // Positive for reversed scrolling direction, reduced sensitivity
     this.offset += scrollDelta;
-    
+
     // Update visual position
     this.renderItems();
-    
+
     // Apply momentum for smoother feel but with reduced intensity
     const velocity = scrollDelta * 0.15; // Reduced momentum for less aggressive scrolling
     this.startScrollWithVelocity(velocity);
   }
-  
+
   /**
    * Handle keyboard navigation
    */
@@ -424,35 +423,35 @@ class TrulyInfiniteCarousel {
     // Only handle left/right arrows
     if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
       e.preventDefault();
-      
+
       // Calculate amount to scroll (about 20% of container width)
       const scrollAmount = this.containerWidth * 0.2 * (e.key === 'ArrowLeft' ? -1 : 1);
-      
+
       // Animate scroll
       this.scrollBy(scrollAmount, true);
     }
   }
-  
+
   /**
    * Handle window resize or orientation change
    */
   onResize() {
     // Don't measure immediately, wait for resize to complete
     if (this.resizeTimer) clearTimeout(this.resizeTimer);
-    
+
     this.resizeTimer = setTimeout(() => {
       // Get current relative position as percentage of total width
       const relativePosition = this.offset / this.totalContentWidth;
-      
+
       // Remeasure dimensions
       this.measureDimensions();
-      
+
       // Maintain relative position
       this.offset = relativePosition * this.totalContentWidth;
-      
+
       // Update visual position
       this.renderItems();
-      
+
       if (this.options.debugMode) {
         console.log('Carousel resized:', {
           containerWidth: this.containerWidth,
@@ -461,14 +460,14 @@ class TrulyInfiniteCarousel {
       }
     }, 250);
   }
-  
+
   /**
    * Start momentum scrolling with given velocity
    */
   startScrollWithVelocity(initialVelocity) {
     // Set initial velocity (pixels per second)
     this.velocity = initialVelocity;
-    
+
     // Start animation if not already running
     if (!this.isScrolling) {
       this.isScrolling = true;
@@ -476,7 +475,7 @@ class TrulyInfiniteCarousel {
       this.scrollAnimationId = requestAnimationFrame(this.updateScroll.bind(this));
     }
   }
-  
+
   /**
    * Update scroll position during momentum scrolling
    */
@@ -484,25 +483,25 @@ class TrulyInfiniteCarousel {
     // Calculate time since last frame
     const elapsed = timestamp - this.lastFrameTime;
     this.lastFrameTime = timestamp;
-    
+
     // Skip if too much time passed (tab was inactive)
     if (elapsed > 100) {
       this.isScrolling = false;
       return;
     }
-    
+
     // Calculate how much to scroll this frame
     const delta = this.velocity * elapsed;
-    
+
     // Update scroll position
     if (delta !== 0) {
       this.offset -= delta;
       this.renderItems();
     }
-    
+
     // Apply dynamic friction based on velocity
     let friction = this.options.frictionFactor;
-    
+
     // Dynamic friction: faster movement = less friction for more natural feel
     if (this.options.dynamicFriction) {
       const absVelocity = Math.abs(this.velocity);
@@ -518,10 +517,10 @@ class TrulyInfiniteCarousel {
         friction = 0.90; // Very slow - higher friction to stop naturally
       }
     }
-    
+
     // Apply friction
     this.velocity *= friction;
-    
+
     // Stop scrolling when velocity becomes negligible
     // Higher threshold for smoother end of animation
     if (Math.abs(this.velocity) < 0.005) {
@@ -531,7 +530,7 @@ class TrulyInfiniteCarousel {
       this.scrollAnimationId = requestAnimationFrame(this.updateScroll.bind(this));
     }
   }
-  
+
   /**
    * Stop any ongoing scrolling
    */
@@ -543,7 +542,7 @@ class TrulyInfiniteCarousel {
     this.isScrolling = false;
     this.velocity = 0;
   }
-  
+
   /**
    * Programmatically scroll the carousel by the given amount
    */
@@ -552,7 +551,7 @@ class TrulyInfiniteCarousel {
     this.offset += amount;
     this.renderItems(false);
   }
-  
+
   /**
    * Render all items based on current offset
    * This is the core function that positions items using wrapping logic
@@ -562,44 +561,44 @@ class TrulyInfiniteCarousel {
     // Normalize the offset within the content width
     // This is the key to infinite scrolling without clones
     const normalizedOffset = this.moduloWithNegative(this.offset, this.totalContentWidth);
-    
+
     // Calculate which items should be visible with a larger buffer to prevent flickering
     const visibilityBuffer = this.options.itemSpacing * Math.max(6, this.options.visibleBuffer);
     const visibleStart = -visibilityBuffer;
     const visibleEnd = this.containerWidth + visibilityBuffer;
-    
+
     // Sort virtualItems by index to ensure consistent rendering order
     // Using stable sort to maintain visual order during interaction
     const sortedItems = [...this.virtualItems].sort((a, b) => {
       // First sort by index to ensure stable ordering
       return a.index - b.index;
     });
-    
+
     // Calculate total padding needed for first item - add padding equal to gap between images
     const firstItemPadding = this.options.itemSpacing;
     this.firstItemPadding = firstItemPadding;
-    
+
     // Create an extended content width that includes padding for proper wrapping
     const extendedContentWidth = this.totalContentWidth + firstItemPadding;
-    
+
     // Position each item
     sortedItems.forEach(item => {
       const element = item.element;
-      
+
       // Calculate item's virtual position with special handling for first item
       let itemOffset = item.left - normalizedOffset;
-      
+
       // Apply padding to first item
       if (item.index === 0) {
         itemOffset += firstItemPadding;
       }
-      
+
       // Total width needs to include the padding for proper wrapping
       const totalWidth = extendedContentWidth;
-      
+
       // Original position before any wrapping
       const originalOffset = itemOffset;
-      
+
       // Apply modified wrapping logic for seamless infinite scrolling
       // This creates a proper buffer zone on both sides
       if (itemOffset > visibleEnd) {
@@ -611,16 +610,16 @@ class TrulyInfiniteCarousel {
         const wraps = Math.ceil(Math.abs(itemOffset + item.width - visibleStart) / totalWidth);
         itemOffset += totalWidth * wraps;
       }
-      
+
       // Store the wrapped position
       item.wrappedPosition = itemOffset;
-      
+
       // Determine if the item should be visible with an expanded buffer for smoother transitions
       const isVisible = (
         itemOffset < visibleEnd &&
         itemOffset + item.width > visibleStart
       );
-      
+
       // Show/hide based on visibility without transitions
       if (isVisible) {
         if (!item.onScreen) {
@@ -629,27 +628,27 @@ class TrulyInfiniteCarousel {
           element.style.display = 'block';
           item.onScreen = true;
         }
-        
+
         // Smooth out position changes for items near the center
         let smoothedOffset = itemOffset;
-        
+
         // Smoother transitions for items near the viewport center
         const distanceFromCenter = Math.abs(itemOffset - (this.containerWidth / 2));
         const isNearCenter = distanceFromCenter < (this.containerWidth * 0.6);
-        
+
         // No transitions for transforms - only direct positioning
         element.style.transition = 'none';
-        
+
         // Use transform for positioning with hardware acceleration
         element.style.transform = `translateX(${smoothedOffset}px) translateZ(0)`;
-        
+
         // Apply consistent z-index based on item index to prevent overlapping
         // Items that appear earlier in the DOM get higher z-index
         element.style.zIndex = this.itemCount - item.index;
-        
+
         // Store the current position
         item.x = smoothedOffset;
-        
+
         // Ensure container width matches the image width exactly
         // This makes containers hug images based on their aspect ratio
         const imgElement = element.querySelector('img, video');
@@ -657,7 +656,7 @@ class TrulyInfiniteCarousel {
           // Get natural dimensions of the image
           const imgHeight = imgElement.offsetHeight;
           const imgWidth = imgElement.offsetWidth;
-          
+
           // Set container width to match image width exactly
           element.style.width = `${imgWidth}px`;
         }
@@ -669,13 +668,13 @@ class TrulyInfiniteCarousel {
         }
       }
     });
-    
+
     // Update debug display if enabled
     if (this.options.debugMode && this.debugDisplay) {
       this.updateDebugInfo();
     }
   }
-  
+
   /**
    * Position items initially with proper spacing
    */
@@ -685,29 +684,29 @@ class TrulyInfiniteCarousel {
       item.element.style.display = 'none';
       item.onScreen = false;
     });
-    
+
     // Calculate initial offset to center items in the viewport
     const containerCenter = this.containerWidth / 2;
     const firstItemCenter = this.virtualItems[0].width / 2;
     const initialOffset = containerCenter - firstItemCenter;
-    
+
     // Add extra padding for the first item equal to item spacing
     this.firstItemPadding = this.options.itemSpacing;
-    
+
     // Set initial offset to position first item properly with added padding
     this.offset = -initialOffset + this.firstItemPadding;
-    
+
     // Immediately render items in their correct positions without animation
     this.renderItems(false);
   }
-  
+
   /**
    * Safe modulo function that handles negative numbers correctly
    */
   moduloWithNegative(n, m) {
     return ((n % m) + m) % m;
   }
-  
+
   /**
    * Setup debugging tools for development
    */
@@ -729,10 +728,10 @@ class TrulyInfiniteCarousel {
       maxWidth: '300px',
       pointerEvents: 'none'
     });
-    
+
     this.container.appendChild(this.debugDisplay);
     this.updateDebugInfo();
-    
+
     // Add visual indicators for item positions
     this.virtualItems.forEach(item => {
       const indicator = document.createElement('div');
@@ -749,15 +748,15 @@ class TrulyInfiniteCarousel {
       item.debugIndicator = indicator;
     });
   }
-  
+
   /**
    * Update debug information
    */
   updateDebugInfo() {
     if (!this.debugDisplay) return;
-    
+
     const normalizedOffset = this.moduloWithNegative(this.offset, this.totalContentWidth);
-    
+
     this.debugDisplay.innerHTML = `
       Offset: ${Math.round(this.offset)}px<br>
       Normalized: ${Math.round(normalizedOffset)}px<br>
@@ -766,7 +765,7 @@ class TrulyInfiniteCarousel {
       Container: ${this.containerWidth}px<br>
       Content: ${Math.round(this.totalContentWidth)}px
     `;
-    
+
     // Update item indicators
     this.virtualItems.forEach(item => {
       if (item.debugIndicator && item.onScreen) {
@@ -779,7 +778,7 @@ class TrulyInfiniteCarousel {
       }
     });
   }
-  
+
   /**
    * Go to a specific item
    */
@@ -788,51 +787,51 @@ class TrulyInfiniteCarousel {
       console.warn('Invalid item index:', index);
       return;
     }
-    
+
     // Calculate target offset
     const targetItem = this.virtualItems[index];
     const targetOffset = targetItem.left + (targetItem.width / 2) - (this.containerWidth / 2);
-    
+
     // Scroll to target
     const deltaOffset = targetOffset - this.offset;
     this.scrollBy(deltaOffset, animate);
   }
-  
+
   /**
    * Destroy the carousel instance and clean up
    */
   destroy() {
     // Stop any animations
     this.stopScrolling();
-    
+
     // Remove event listeners
     this.track.removeEventListener('mousedown', this.onDragStart);
     window.removeEventListener('mousemove', this.onDragMove);
     window.removeEventListener('mouseup', this.onDragEnd);
-    
+
     this.track.removeEventListener('touchstart', this.onDragStart);
     window.removeEventListener('touchmove', this.onDragMove);
     window.removeEventListener('touchend', this.onDragEnd);
-    
+
     this.container.removeEventListener('wheel', this.onWheel);
-    
+
     if (this.options.enableKeyboard) {
       this.container.removeEventListener('keydown', this.onKeyDown);
     }
-    
+
     window.removeEventListener('resize', this.onResize);
     window.removeEventListener('orientationchange', this.onResize);
-    
+
     // Remove debug elements if they exist
     if (this.debugDisplay) {
       this.debugDisplay.remove();
     }
-    
+
     this.virtualItems.forEach(item => {
       if (item.debugIndicator) {
         item.debugIndicator.remove();
       }
-      
+
       // Reset item styles
       const element = item.element;
       element.style.transform = '';
@@ -840,15 +839,15 @@ class TrulyInfiniteCarousel {
       element.style.display = '';
       element.style.top = '';
       element.style.height = '';
-      
+
       // Remove data attributes
       delete element.dataset.carouselIndex;
     });
-    
+
     // Reset track styles
     this.track.style = '';
     this.track.classList.remove('dragging', 'horizontal-drag', 'vertical-drag');
-    
+
     console.log('Carousel destroyed');
   }
 }
@@ -857,7 +856,7 @@ class TrulyInfiniteCarousel {
 document.addEventListener('DOMContentLoaded', () => {
   // Find all carousel containers
   const carouselContainers = document.querySelectorAll('.carousel-container');
-  
+
   // Function to initialize carousels with proper timing
   const initializeCarousels = () => {
     carouselContainers.forEach(container => {
@@ -870,26 +869,26 @@ document.addEventListener('DOMContentLoaded', () => {
         dynamicFriction: true, // Enable dynamic friction for natural deceleration
         debugMode: false
       });
-      
+
       // Store the instance on the container for external access
       container.carousel = carousel;
     });
-    
+
     // Make the carousel class globally available
     window.TrulyInfiniteCarousel = TrulyInfiniteCarousel;
   };
-  
+
   // Preload images for accurate sizing
   const preloadImages = () => {
     const allImages = document.querySelectorAll('.carousel-item img');
     let loadedCount = 0;
-    
+
     // If no images, initialize immediately
     if (allImages.length === 0) {
       initializeCarousels();
       return;
     }
-    
+
     // Load each image and track progress
     allImages.forEach(img => {
       // If image is already loaded or has no src
@@ -906,7 +905,7 @@ document.addEventListener('DOMContentLoaded', () => {
             initializeCarousels();
           }
         });
-        
+
         // Handle error case
         img.addEventListener('error', () => {
           loadedCount++;
@@ -916,11 +915,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       }
     });
-    
+
     // Fallback initialization after timeout
     setTimeout(initializeCarousels, 500);
   };
-  
+
   // Start preloading if document is ready
   if (document.readyState === 'complete' || document.readyState === 'interactive') {
     preloadImages();

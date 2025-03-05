@@ -172,6 +172,14 @@
 
 /* Responsive styles */
 @media (max-width: 768px) {
+  .carousel-container {
+    height: 65vh; /* Shorter height on mobile */
+    overscroll-behavior-x: none;
+    overscroll-behavior-y: contain;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
+  }
+  
   .carousel-arrow {
     width: 36px;
     height: 36px;
@@ -190,30 +198,49 @@
     height: 8px;
   }
   
-  /* Improve mobile experience */
-  .carousel-container {
-    overscroll-behavior-x: none;
-    -webkit-overflow-scrolling: auto;
+  .carousel-track {
+    transform: translateZ(0); /* Force hardware acceleration */
+  }
+  
+  .carousel-item {
+    will-change: transform; /* Optimize for mobile performance */
   }
   
   .carousel-item img,
   .carousel-item video {
-    max-height: 85%;
-    max-width: 85vw;
+    max-height: 80%;
+    max-width: 90vw;
+    border-radius: 6px; /* Smaller radius on mobile */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15); /* Lighter shadow on mobile */
   }
 }
 
 /* Enhanced iOS-specific optimizations */
 @supports (-webkit-touch-callout: none) {
-  .carousel-track {
-    /* No smooth animations on iOS */
+  .carousel-container {
+    height: 60vh; /* Even shorter height specifically for iOS */
     -webkit-overflow-scrolling: touch;
+    overscroll-behavior: none;
+  }
+  
+  .carousel-track {
+    -webkit-transform: translateZ(0);
+    -webkit-perspective: 1000;
+    -webkit-backface-visibility: hidden;
+  }
+
+  .carousel-item {
+    transform: translate3d(0, 0, 0);
+    -webkit-transform: translate3d(0, 0, 0);
   }
 
   .carousel-item img,
   .carousel-item video {
-    /* Prevent iOS image preview */
+    /* Prevent iOS image preview and add better touch performance */
     -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
   }
 }
 
