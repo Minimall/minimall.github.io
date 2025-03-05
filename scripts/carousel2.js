@@ -425,13 +425,10 @@ class TrulyInfiniteCarousel {
     // Use a consistent multiplier that feels natural
     const scrollDelta = e.deltaY * (isTrackpad ? 0.5 : 0.7);
     
-    // Standard scrolling direction for carousels:
-    // - Scrolling down/right should move content right (negative delta)
-    // - Scrolling up/left should move content left (positive delta)
-    // 
-    // Apply correct scrolling based on deltaY sign and natural scrolling setting
-    // Natural scrolling already inverts the deltaY, so we need to adapt
-    this.offset -= scrollDelta;
+    // Apply scroll delta with appropriate direction based on natural scrolling setting
+    // This reverses the direction when natural scrolling is NOT enabled to maintain
+    // a consistent experience regardless of the user's OS settings
+    this.offset += isNaturalScrolling ? -scrollDelta : scrollDelta;
     
     // Update visual position immediately
     this.renderItems();
@@ -439,7 +436,7 @@ class TrulyInfiniteCarousel {
     // Set velocity proportional to scroll delta but not excessive
     // This creates momentum that feels natural but not exaggerated
     const velocityFactor = isTrackpad ? 0.08 : 0.12;
-    const velocity = -scrollDelta * velocityFactor;
+    const velocity = (isNaturalScrolling ? -scrollDelta : scrollDelta) * velocityFactor;
     
     // Start momentum scrolling with the calculated velocity
     this.startScrollWithVelocity(velocity);
