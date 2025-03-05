@@ -275,6 +275,40 @@ class TrulyInfiniteCarousel {
   }
 
   /**
+   * Handle mouse wheel events
+   */
+  onWheel(e) {
+    // Stop any ongoing animations
+    this.stopScrolling();
+
+    // Prevent default browser scrolling behavior
+    e.preventDefault();
+
+    // Detect if this is a trackpad or mouse wheel
+    const isTrackpad = Math.abs(e.deltaX) > 0 || Math.abs(e.deltaY) < 15;
+
+    // Detect natural scrolling setting (Safari)
+    const isNaturalScrolling = e.webkitDirectionInvertedFromDevice === true;
+
+    // Simple calculation for scroll delta
+    const scrollDelta = e.deltaY * (isTrackpad ? 0.5 : 0.7);
+
+    // Apply scroll delta with direction adjustment
+    this.offset += isNaturalScrolling ? scrollDelta : -scrollDelta;
+
+    // Update visual position immediately
+    this.renderItems();
+
+    // Only add momentum for wheel events, not trackpad panning
+    if (!isTrackpad) {
+      // Simple velocity calculation
+      const velocityFactor = 0.1;
+      const velocity = (isNaturalScrolling ? scrollDelta : -scrollDelta) * velocityFactor;
+      this.startScrollWithVelocity(velocity);
+    }
+  }
+
+  /**
    * Handle start of drag/touch interaction
    */
   onDragStart(e) {
@@ -282,7 +316,7 @@ class TrulyInfiniteCarousel {
     this.stopScrolling();
 
     this.isDragging = true;
-    this.isHorizontalDrag = null; // Direction not determined yet
+    this.isSwipe = false; // Start as a pan, may become a swipe
     this.track.style.cursor = 'grabbing';
 
     // Get starting position from mouse or touch
@@ -291,13 +325,38 @@ class TrulyInfiniteCarousel {
     this.startY = point.clientY;
     this.lastX = this.startX;
     this.lastY = this.startY;
-    this.lastMoveTime = performance.now();
+    this.dragStartTime = performance.now();
+    this.dragDistance = 0;
+
+    // Track drag velocity for momentum scrolling
+    this.velocityTracker = {
+      positions: [], // Array of [timestamp, position] entries
+      addPosition(time, position) {
+        // Keep only recent positions (last 100ms)
+        const recentTime = time - 100;
+        while (this.positions.length > 0 && this.positions[0][0] < recentTime) {
+          this.positions.shift();
+        }
+        this.positions.push([time, position]);
+      },
+      getVelocity() {
+        if (this.positions.length < 2) return 0;
+
+        const first = this.positions[0];
+        const last = this.positions[this.positions.length - 1];
+        const deltaTime = last[0] - first[0];
+
+        if (deltaTime === 0) return 0;
+
+        const deltaPosition = last[1] - first[1];
+        return deltaPosition / deltaTime; // pixels per ms
+      }
+    };
 
     // Add active class for styling
     this.track.classList.add('dragging');
 
-    // Prevent default behavior but only for mouse events
-    // (enabling this for touch events breaks scrolling on iOS)
+    // Prevent default for mouse events only
     if (e.type.includes('mouse')) {
       e.preventDefault();
     }
@@ -313,23 +372,24 @@ class TrulyInfiniteCarousel {
     const point = e.type.includes('mouse') ? e : e.touches[0];
     const currentX = point.clientX;
     const currentY = point.clientY;
+    const currentTime = performance.now();
 
     // Calculate deltas
     const deltaX = currentX - this.lastX;
     const deltaY = currentY - this.lastY;
 
-    // Detect direction if not already determined
+    // Track total distance moved (for swipe detection)
+    this.dragDistance += Math.abs(deltaX);
+
+    // Determine if horizontal or vertical movement on first significant move
     if (this.isHorizontalDrag === null) {
-      // Use a threshold for more reliable direction detection
       const absX = Math.abs(currentX - this.startX);
       const absY = Math.abs(currentY - this.startY);
 
-      // If we've moved enough to detect direction
-      if (absX > 8 || absY > 8) { // Lower threshold for better mobile response
-        // If movement is more horizontal than vertical, capture it
-        this.isHorizontalDrag = absX > absY; // No bias, just natural movement
+      // Need minimum movement to determine direction
+      if (absX > 8 || absY > 8) {
+        this.isHorizontalDrag = absX > absY;
 
-        // Add a class to indicate drag direction
         if (this.isHorizontalDrag) {
           this.track.classList.add('horizontal-drag');
         } else {
@@ -338,29 +398,18 @@ class TrulyInfiniteCarousel {
       }
     }
 
-    // Only process horizontal movements when determined
+    // Only process horizontal drags
     if (this.isHorizontalDrag === true) {
-      // Mobile devices already use natural touch direction, no need to invert
-      // Desktop drag should match wheel direction for consistency
-      
-      // Direct 1:1 mapping for dragging without acceleration or modification
+      // Directly apply movement for immediate feedback
       this.offset += deltaX;
 
-      // Simple velocity calculation for momentum after release
-      const now = performance.now();
-      const elapsed = now - this.lastMoveTime;
-      if (elapsed > 0) {
-        // Store current velocity (pixels per millisecond)
-        this.velocity = deltaX / elapsed;
-      }
+      // Track position for velocity calculation
+      this.velocityTracker.addPosition(currentTime, this.offset);
 
-      // Update last values
-      this.lastMoveTime = now;
-
-      // Update visual position immediately without added effects
+      // Update rendering
       this.renderItems();
 
-      // Prevent default only for horizontal drag to allow vertical scrolling
+      // Prevent default to avoid page scrolling during horizontal drag
       e.preventDefault();
     }
 
@@ -378,67 +427,30 @@ class TrulyInfiniteCarousel {
     this.isDragging = false;
     this.track.style.cursor = 'grab';
 
+    // Calculate drag duration and distance
+    const dragDuration = performance.now() - this.dragStartTime;
+
+    // Determine if this was a swipe (fast, purposeful movement)
+    // or just a slow pan/position adjustment
+    const isSwipe = (dragDuration < 300 && this.dragDistance > 30) || 
+                    (this.velocityTracker.getVelocity() > 0.5);
+
     // Remove classes
     this.track.classList.remove('dragging', 'horizontal-drag', 'vertical-drag');
 
-    // Only apply momentum if this was a horizontal drag
-    if (this.isHorizontalDrag === true) {
-      // Apply a more natural momentum based on final drag velocity
-      // Using smaller multiplier for more predictable behavior
-      const momentumMultiplier = 120; // Less aggressive multiplier
-      
-      // Calculate momentum based on last drag velocity
-      const momentumVelocity = this.velocity * momentumMultiplier;
-      
-      // Apply velocity cap for more natural feel
-      const cappedVelocity = Math.sign(momentumVelocity) * 
-        Math.min(Math.abs(momentumVelocity), 50); // Lower cap for more controlled deceleration
-      
-      // Start momentum scrolling with calculated velocity
+    // Only apply momentum if this was a horizontal swipe
+    if (this.isHorizontalDrag === true && isSwipe) {
+      // Get velocity from tracker for natural momentum feel
+      const velocity = this.velocityTracker.getVelocity();
+
+      // Scale velocity to a reasonable range
+      const momentumMultiplier = 100;
+      const cappedVelocity = Math.sign(velocity) * 
+                             Math.min(Math.abs(velocity * momentumMultiplier), 50);
+
+      // Apply momentum
       this.startScrollWithVelocity(cappedVelocity);
     }
-  }
-
-  /**
-   * Handle mouse wheel events
-   */
-  onWheel(e) {
-    // Stop any ongoing animations
-    this.stopScrolling();
-
-    // Prevent default browser scrolling behavior
-    e.preventDefault();
-
-    // Detect if this is a trackpad or mouse wheel
-    const isTrackpad = Math.abs(e.deltaX) > 0 || Math.abs(e.deltaY) < 15;
-    
-    // Detect natural scrolling setting (Safari)
-    // For Chrome and other browsers, this will typically be false
-    const isNaturalScrolling = e.webkitDirectionInvertedFromDevice === true;
-    
-    // Store detected scrolling preference (for debugging)
-    if (this.options.debugMode) {
-      console.log(`Natural scrolling: ${isNaturalScrolling ? 'enabled' : 'disabled'}`);
-    }
-    
-    // Simplified approach for both trackpad and wheel with natural scrolling detection
-    // Use a consistent multiplier that feels natural
-    const scrollDelta = e.deltaY * (isTrackpad ? 0.5 : 0.7);
-    
-    // Apply scroll delta with reversed direction from the previous implementation
-    // This makes the carousel move in the expected direction for both natural and non-natural scrolling
-    this.offset += isNaturalScrolling ? scrollDelta : -scrollDelta;
-    
-    // Update visual position immediately
-    this.renderItems();
-    
-    // Set velocity proportional to scroll delta but not excessive
-    // This creates momentum that feels natural but not exaggerated
-    const velocityFactor = isTrackpad ? 0.08 : 0.12;
-    const velocity = (isNaturalScrolling ? scrollDelta : -scrollDelta) * velocityFactor;
-    
-    // Start momentum scrolling with the calculated velocity
-    this.startScrollWithVelocity(velocity);
   }
 
   /**
@@ -527,7 +539,7 @@ class TrulyInfiniteCarousel {
 
     // Apply constant deceleration factor - simple iOS-like feel
     const frictionFactor = 0.95; // Higher = less friction, lower = more friction
-    
+
     // Apply consistent friction to velocity
     this.velocity *= frictionFactor;
 
