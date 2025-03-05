@@ -290,11 +290,18 @@ class TrulyInfiniteCarousel {
     // Detect natural scrolling setting (Safari)
     const isNaturalScrolling = e.webkitDirectionInvertedFromDevice === true;
 
-    // Simple calculation for scroll delta
-    const scrollDelta = e.deltaY * (isTrackpad ? 0.5 : 0.7);
+    // Check for iOS/mobile device
+    const isMobileDevice = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    
+    // Determine correct scrolling direction - on mobile/iOS devices we need to invert
+    // compared to desktop to make the direction feel consistent
+    const directionMultiplier = isMobileDevice ? -1 : 1;
 
-    // Apply scroll delta with direction adjustment
-    this.offset += isNaturalScrolling ? scrollDelta : -scrollDelta;
+    // Calculate scroll delta with direction adjustment
+    const scrollDelta = e.deltaY * (isTrackpad ? 0.5 : 0.7) * directionMultiplier;
+
+    // Apply scroll delta with natural scrolling adjustment
+    this.offset += isNaturalScrolling ? -scrollDelta : scrollDelta;
 
     // Update visual position immediately
     this.renderItems();
@@ -303,7 +310,7 @@ class TrulyInfiniteCarousel {
     if (!isTrackpad) {
       // Simple velocity calculation
       const velocityFactor = 0.1;
-      const velocity = (isNaturalScrolling ? scrollDelta : -scrollDelta) * velocityFactor;
+      const velocity = (isNaturalScrolling ? -scrollDelta : scrollDelta) * velocityFactor;
       this.startScrollWithVelocity(velocity);
     }
   }
@@ -400,7 +407,11 @@ class TrulyInfiniteCarousel {
 
     // Only process horizontal drags
     if (this.isHorizontalDrag === true) {
-      // Directly apply movement for immediate feedback
+      // Check if touch event (mobile/iOS) or mouse event
+      const isTouchEvent = !e.type.includes('mouse');
+      
+      // Apply consistent direction across devices
+      // No direction multiplier needed for drag - the natural direction is consistent
       this.offset += deltaX;
 
       // Track position for velocity calculation
