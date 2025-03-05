@@ -30,8 +30,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Create enough clones to fill several viewport widths on each side
             // This ensures users can't scroll to the edges during normal interaction
-            // Increase the multiplication factor to ensure more clones are created
-            const requiredSets = Math.ceil((viewportWidth * 8) / totalContentWidth) + 3;
+            // Keep clone count moderate to balance performance and user experience
+            const requiredSets = Math.ceil((viewportWidth * 5) / totalContentWidth) + 3;
+            
+            // Log clone creation stats for performance monitoring
+            console.log(`Carousel initialization: Creating ${requiredSets} clone sets (${requiredSets * itemCount} total clones)`, {
+                viewportWidth, 
+                totalContentWidth,
+                itemCount, 
+                totalClones: requiredSets * itemCount * 2 // Both sides
+            });
 
             // Remove existing clones
             slider.querySelectorAll('.carousel-clone').forEach(clone => clone.remove());
@@ -141,13 +149,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     slider.style.scrollBehavior = '';
                 }, 50);
                 
-                // Log for debugging
-                console.log("Right reset triggered", {
+                // Enhanced logging for right reset events
+                console.log("🔄 RIGHT RESET TRIGGERED", {
                     currentPosition,
                     rightResetTrigger,
                     excess,
                     offset,
-                    newPosition
+                    newPosition,
+                    timeSincePageLoad: performance.now() - rightBoundaryReachedTime.startTime,
+                    scrollableWidth: slider.scrollWidth,
+                    visibleWidth: slider.clientWidth,
+                    originalSetWidth
                 });
             }
             
@@ -157,6 +169,27 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Start monitoring scroll position for infinite loop effect
         requestAnimationFrame(monitorScrollPosition);
+        
+        // Performance monitoring - track time to reach right boundary
+        const rightBoundaryReachedTime = {
+            hasReached: false,
+            startTime: performance.now(),
+            threshold: preCloneWidth + (originalSetWidth * 0.8)
+        };
+        
+        // Log scroll position stats periodically
+        slider.addEventListener('scroll', () => {
+            // Log if right boundary reached for the first time
+            if (!rightBoundaryReachedTime.hasReached && slider.scrollLeft > rightBoundaryReachedTime.threshold) {
+                const timeTaken = performance.now() - rightBoundaryReachedTime.startTime;
+                rightBoundaryReachedTime.hasReached = true;
+                console.log(`🚨 RIGHT BOUNDARY REACHED after ${timeTaken.toFixed(0)}ms`, {
+                    scrollPosition: slider.scrollLeft,
+                    rightBoundaryThreshold: rightBoundaryReachedTime.threshold,
+                    timeSincePageLoad: timeTaken
+                });
+            }
+        });
 
         // ===== PHYSICS-BASED SCROLLING =====
 
