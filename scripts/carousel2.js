@@ -421,14 +421,13 @@ class TrulyInfiniteCarousel {
       console.log(`Natural scrolling: ${isNaturalScrolling ? 'enabled' : 'disabled'}`);
     }
     
-    // Simplified approach for both trackpad and wheel with natural scrolling detection
+    // Simplified approach for both trackpad and wheel
     // Use a consistent multiplier that feels natural
     const scrollDelta = e.deltaY * (isTrackpad ? 0.5 : 0.7);
     
-    // Apply scroll delta with appropriate direction based on natural scrolling setting
-    // This reverses the direction when natural scrolling is NOT enabled to maintain
-    // a consistent experience regardless of the user's OS settings
-    this.offset += isNaturalScrolling ? -scrollDelta : scrollDelta;
+    // Apply scroll delta - deltaY is already the right direction based on user's system settings
+    // This creates the expected scrolling behavior - wheel down or swipe down = scroll right
+    this.offset += scrollDelta;
     
     // Update visual position immediately
     this.renderItems();
@@ -436,7 +435,7 @@ class TrulyInfiniteCarousel {
     // Set velocity proportional to scroll delta but not excessive
     // This creates momentum that feels natural but not exaggerated
     const velocityFactor = isTrackpad ? 0.08 : 0.12;
-    const velocity = (isNaturalScrolling ? -scrollDelta : scrollDelta) * velocityFactor;
+    const velocity = scrollDelta * velocityFactor;
     
     // Start momentum scrolling with the calculated velocity
     this.startScrollWithVelocity(velocity);
