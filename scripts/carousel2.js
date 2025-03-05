@@ -849,7 +849,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // Create and store the carousel instance
       const carousel = new TrulyInfiniteCarousel(container, {
         itemSelector: '.carousel-item',
-        itemSpacing: 40, // Increased spacing for better separation
+        itemSpacing: 60, // Control spacing between items with position offset only
         visibleBuffer: 8, // Larger buffer for smoother infinite scrolling experience
         frictionFactor: 0.92, // Better deceleration
         dynamicFriction: true, // Enable dynamic friction

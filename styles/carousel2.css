@@ -65,6 +65,8 @@
   -webkit-transform-style: preserve-3d;
   transform-style: preserve-3d;
   opacity: 1;
+  padding: 0;
+  margin: 0;
 }
 
 .carousel-item img,
@@ -85,6 +87,8 @@
   -webkit-backface-visibility: hidden;
   /* No transitions for images */
   transition: none;
+  margin: 0; /* Explicitly remove margin */
+  padding: 0; /* Explicitly remove padding */
 }
 
 /* Navigation arrows (optional) */
