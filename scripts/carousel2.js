@@ -255,13 +255,13 @@ class TrulyInfiniteCarousel {
     window.addEventListener('mousemove', this.onDragMove.bind(this));
     window.addEventListener('mouseup', this.onDragEnd.bind(this));
 
-    // Touch events for mobile
-    this.track.addEventListener('touchstart', this.onDragStart.bind(this), { passive: false });
+    // Touch events for mobile - use passive: true for touchstart to allow vertical scrolling
+    this.track.addEventListener('touchstart', this.onDragStart.bind(this), { passive: true });
     window.addEventListener('touchmove', this.onDragMove.bind(this), { passive: false });
     window.addEventListener('touchend', this.onDragEnd.bind(this));
 
-    // Wheel events for scrolling with mousewheel/trackpad
-    this.container.addEventListener('wheel', this.onWheel.bind(this), { passive: false });
+    // Wheel events for scrolling with mousewheel/trackpad - use passive: true to allow vertical scrolling
+    this.container.addEventListener('wheel', this.onWheel.bind(this), { passive: true });
 
     // Keyboard navigation
     if (this.options.enableKeyboard) {
@@ -281,36 +281,31 @@ class TrulyInfiniteCarousel {
    * Handle mouse wheel events
    */
   onWheel(e) {
+    // Detect if this is horizontal scrolling (deltaX) or vertical scrolling (deltaY)
+    const isHorizontalScroll = Math.abs(e.deltaX) > Math.abs(e.deltaY);
+    
+    // For vertical scrolling, don't interfere with the page's natural scroll
+    if (!isHorizontalScroll) {
+      return; // Allow page to scroll vertically
+    }
+    
+    // For horizontal scrolling, handle within the carousel
     // Stop any ongoing animations
     this.stopScrolling();
 
-    // Prevent default browser scrolling behavior
+    // Prevent default only for horizontal scrolling to avoid page horizontal scroll
     e.preventDefault();
 
     // Detect if this is a trackpad or mouse wheel
     const isTrackpad = Math.abs(e.deltaX) > 0 || Math.abs(e.deltaY) < 15;
-
-    // Check for Mac platform
-    const isMac = /Mac/i.test(navigator.platform);
     
-    // Check for iOS/mobile device
-    const isMobileDevice = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    
-    // Use deltaX for horizontal scrolling if available (typically from trackpads)
-    // Otherwise use deltaY
-    let scrollDelta = Math.abs(e.deltaX) > 0 ? e.deltaX : e.deltaY;
+    // Use deltaX for horizontal scrolling
+    let scrollDelta = e.deltaX;
     
     // Apply sensitivity modifier
     scrollDelta *= (isTrackpad ? 0.5 : 0.7);
     
-    // The main principle here is to make the content move in the same direction
-    // as the scroll/swipe gesture, similar to how our drag behavior works.
-    // When scrolling down/right, content should move right.
-    // When scrolling up/left, content should move left.
-    
-    // For both mobile and desktop, ensure consistent direction with drag
-    // The sign of deltaY depends on the device and natural scrolling settings
-    // So we use a simple approach - move content in the same direction as the delta
+    // Update carousel position
     this.offset += scrollDelta;
 
     // Update visual position immediately
@@ -334,6 +329,7 @@ class TrulyInfiniteCarousel {
 
     this.isDragging = true;
     this.isSwipe = false; // Start as a pan, may become a swipe
+    this.isHorizontalDrag = null; // Reset drag direction detection
     this.track.style.cursor = 'grabbing';
 
     // Get starting position from mouse or touch
@@ -373,11 +369,16 @@ class TrulyInfiniteCarousel {
     // Add active class for styling
     this.track.classList.add('dragging');
 
-    // Always prevent default on touch devices to avoid scrolling the page
-    if (this.isMobile || e.type.includes('touch')) {
+    // Only prevent default for mouse events to allow touch scrolling
+    if (e.type.includes('mouse')) {
       e.preventDefault();
-    } else if (e.type.includes('mouse')) {
-      e.preventDefault();
+    }
+
+    // For touch events, we'll determine direction first before preventing defaults
+    // This allows vertical scrolling on mobile devices
+    if (e.type.includes('touch')) {
+      // Don't prevent default yet for touch events
+      // We'll decide based on direction in onDragMove
     }
   }
 
@@ -413,6 +414,14 @@ class TrulyInfiniteCarousel {
           this.track.classList.add('horizontal-drag');
         } else {
           this.track.classList.add('vertical-drag');
+          
+          // If it's a vertical drag, we should end our handling and let the page scroll
+          if (!e.type.includes('mouse')) {
+            this.isDragging = false;
+            this.track.style.cursor = 'grab';
+            this.track.classList.remove('dragging');
+            return;
+          }
         }
       }
     }
@@ -435,6 +444,9 @@ class TrulyInfiniteCarousel {
 
       // Prevent default to avoid page scrolling during horizontal drag
       e.preventDefault();
+    } else if (this.isHorizontalDrag === false) {
+      // For vertical drags, let the browser handle scrolling
+      return;
     }
 
     // Update last position
