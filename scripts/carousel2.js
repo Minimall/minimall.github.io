@@ -462,10 +462,11 @@ class TrulyInfiniteCarousel {
       // Get velocity from tracker for natural momentum feel
       const velocity = this.velocityTracker.getVelocity();
 
-      // Scale velocity to a reasonable range - keep same direction as the drag
-      // Since we reversed the drag direction, we need to invert velocity too
+      // Scale velocity to a reasonable range
+      // We need to invert the velocity to match our drag direction pattern
+      // Since dragging works with offset -= deltaX, velocity should follow same direction
       const momentumMultiplier = 100;
-      const cappedVelocity = -Math.sign(velocity) * 
+      const cappedVelocity = Math.sign(velocity) * 
                              Math.min(Math.abs(velocity * momentumMultiplier), 50);
 
       // Apply momentum
