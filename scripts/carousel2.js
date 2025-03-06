@@ -297,15 +297,8 @@ class TrulyInfiniteCarousel {
     // Otherwise use deltaY
     let scrollDelta = Math.abs(e.deltaX) > 0 ? e.deltaX : e.deltaY;
     
-    // Check for mobile device
-    const isMobileDevice = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    
-    // Apply sensitivity modifier, with significantly reduced sensitivity for mobile
-    if (isMobileDevice) {
-      scrollDelta *= (isTrackpad ? 0.25 : 0.35); // Much lower sensitivity for mobile
-    } else {
-      scrollDelta *= (isTrackpad ? 0.5 : 0.7);  // Keep desktop sensitivity the same
-    }
+    // Apply sensitivity modifier
+    scrollDelta *= (isTrackpad ? 0.5 : 0.7);
     
     // The main principle here is to make the content move in the same direction
     // as the scroll/swipe gesture, similar to how our drag behavior works.
@@ -322,11 +315,8 @@ class TrulyInfiniteCarousel {
 
     // Only add momentum for wheel events, not trackpad panning
     if (!isTrackpad) {
-      // Check for mobile device
-      const isMobileDevice = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-      
-      // Simple velocity calculation with reduced factor for mobile
-      const velocityFactor = isMobileDevice ? 0.05 : 0.1;
+      // Simple velocity calculation
+      const velocityFactor = 0.1;
       const velocity = scrollDelta * velocityFactor;
       this.startScrollWithVelocity(velocity);
     }
@@ -472,17 +462,12 @@ class TrulyInfiniteCarousel {
       // Get velocity from tracker for natural momentum feel
       const velocity = this.velocityTracker.getVelocity();
 
-      // Check if we're on mobile
-      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-      
-      // Scale velocity to a reasonable range with lower values for mobile
+      // Scale velocity to a reasonable range
       // We need to invert the velocity to match our drag direction pattern
       // Since dragging works with offset -= deltaX, velocity should follow same direction
-      const momentumMultiplier = isMobile ? 50 : 100; // Half the momentum for mobile
-      const maxVelocity = isMobile ? 25 : 50; // Lower max velocity for mobile
-      
+      const momentumMultiplier = 100;
       const cappedVelocity = Math.sign(velocity) * 
-                             Math.min(Math.abs(velocity * momentumMultiplier), maxVelocity);
+                             Math.min(Math.abs(velocity * momentumMultiplier), 50);
 
       // Apply momentum
       this.startScrollWithVelocity(cappedVelocity);
@@ -573,13 +558,9 @@ class TrulyInfiniteCarousel {
       this.renderItems();
     }
 
-    // Detect if we're on mobile
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    
     // Apply constant deceleration factor - simple iOS-like feel
-    // Higher friction (lower factor) for mobile devices to stop quicker
-    const frictionFactor = isMobile ? 0.92 : 0.95; // More friction for mobile
-    
+    const frictionFactor = 0.95; // Higher = less friction, lower = more friction
+
     // Apply consistent friction to velocity
     this.velocity *= frictionFactor;
 
