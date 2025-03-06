@@ -470,9 +470,9 @@ class TrulyInfiniteCarousel {
       // Scale velocity to a reasonable range
       // We need to invert the velocity to match our drag direction pattern
       // Since dragging works with offset -= deltaX, velocity should follow same direction
-      const momentumMultiplier = 100;
+      const momentumMultiplier = 15;
       const cappedVelocity = Math.sign(velocity) * 
-                             Math.min(Math.abs(velocity * momentumMultiplier), 50);
+                             Math.min(Math.abs(velocity * momentumMultiplier), 15);
 
       // Apply momentum
       this.startScrollWithVelocity(cappedVelocity);
