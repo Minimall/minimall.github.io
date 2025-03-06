@@ -287,42 +287,37 @@ class TrulyInfiniteCarousel {
     // Detect if this is a trackpad or mouse wheel
     const isTrackpad = Math.abs(e.deltaX) > 0 || Math.abs(e.deltaY) < 15;
 
-    // Detect natural scrolling setting (Safari)
-    const isNaturalScrolling = e.webkitDirectionInvertedFromDevice === true;
-
+    // Check for Mac platform
+    const isMac = /Mac/i.test(navigator.platform);
+    
     // Check for iOS/mobile device
     const isMobileDevice = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     
-    // For consistent direction across all devices, we need to ensure:
-    // 1. Scrolling down moves carousel right
-    // 2. Scrolling up moves carousel left
-    // This matches the natural movement expectation on mobile and desktop
+    // Use deltaX for horizontal scrolling if available (typically from trackpads)
+    // Otherwise use deltaY
+    let scrollDelta = Math.abs(e.deltaX) > 0 ? e.deltaX : e.deltaY;
     
-    // Base scroll delta - for both trackpad and wheel
-    let scrollDelta = e.deltaY * (isTrackpad ? 0.5 : 0.7);
+    // Apply sensitivity modifier
+    scrollDelta *= (isTrackpad ? 0.5 : 0.7);
     
-    // On iOS/mobile, we need consistent direction with desktop swipe
-    if (isMobileDevice) {
-      // Mobile direction is already correct with natural scrolling
-      this.offset += scrollDelta;
-    } else {
-      // On desktop, invert the direction for natural feeling
-      this.offset -= scrollDelta;
-    }
+    // The main principle here is to make the content move in the same direction
+    // as the scroll/swipe gesture, similar to how our drag behavior works.
+    // When scrolling down/right, content should move right.
+    // When scrolling up/left, content should move left.
+    
+    // For both mobile and desktop, ensure consistent direction with drag
+    // The sign of deltaY depends on the device and natural scrolling settings
+    // So we use a simple approach - move content in the same direction as the delta
+    this.offset += scrollDelta;
 
     // Update visual position immediately
     this.renderItems();
 
     // Only add momentum for wheel events, not trackpad panning
     if (!isTrackpad) {
-      // Simple velocity calculation with corrected direction
+      // Simple velocity calculation
       const velocityFactor = 0.1;
-      
-      // Apply the same direction logic to velocity as we did for offset
-      const velocity = isMobileDevice ? 
-                       (scrollDelta * velocityFactor) : 
-                       (-scrollDelta * velocityFactor);
-                       
+      const velocity = scrollDelta * velocityFactor;
       this.startScrollWithVelocity(velocity);
     }
   }
