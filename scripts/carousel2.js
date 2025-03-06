@@ -20,12 +20,15 @@ class TrulyInfiniteCarousel {
       return;
     }
 
+    // Detect if mobile device
+    this.isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
     // Default options
     this.options = {
       itemSelector: options.itemSelector || '.carousel-item',
-      itemSpacing: options.itemSpacing || 30, // Gap between items in pixels
+      itemSpacing: this.isMobile ? 20 : (options.itemSpacing || 30), // Reduced spacing on mobile
       visibleBuffer: options.visibleBuffer || 2, // Extra items to render beyond viewport
-      frictionFactor: options.frictionFactor || 0.98, // Base friction (lower = more friction)
+      frictionFactor: this.isMobile ? 0.95 : (options.frictionFactor || 0.98), // Adjusted friction for mobile
       dynamicFriction: options.dynamicFriction !== false, // Whether to adjust friction based on velocity
       enableKeyboard: options.enableKeyboard !== true, // Enable keyboard navigation
       debugMode: options.debugMode || false // Enable visual debugging
@@ -370,8 +373,10 @@ class TrulyInfiniteCarousel {
     // Add active class for styling
     this.track.classList.add('dragging');
 
-    // Prevent default for mouse events only
-    if (e.type.includes('mouse')) {
+    // Always prevent default on touch devices to avoid scrolling the page
+    if (this.isMobile || e.type.includes('touch')) {
+      e.preventDefault();
+    } else if (e.type.includes('mouse')) {
       e.preventDefault();
     }
   }
@@ -702,6 +707,18 @@ class TrulyInfiniteCarousel {
 
           // Set container width to match image width exactly
           element.style.width = `${imgWidth}px`;
+          
+          // Special handling for mobile
+          if (this.isMobile) {
+            // Make container height match viewport height and position image properly
+            element.style.height = '100%';
+            
+            // Make sure images fill height properly while maintaining aspect ratio
+            imgElement.style.height = '90vh';
+            imgElement.style.width = 'auto';
+            imgElement.style.maxWidth = 'none';
+            imgElement.style.objectFit = 'contain';
+          }
         }
       } else {
         if (item.onScreen) {
@@ -899,16 +916,19 @@ class TrulyInfiniteCarousel {
 document.addEventListener('DOMContentLoaded', () => {
   // Find all carousel containers
   const carouselContainers = document.querySelectorAll('.carousel-container');
+  
+  // Detect if mobile device
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
   // Function to initialize carousels with proper timing
   const initializeCarousels = () => {
     carouselContainers.forEach(container => {
-      // Create and store the carousel instance
+      // Create and store the carousel instance with device-specific settings
       const carousel = new TrulyInfiniteCarousel(container, {
         itemSelector: '.carousel-item',
-        itemSpacing: 60, // Control spacing between items
-        visibleBuffer: 6, // Larger buffer for smoother infinite scrolling
-        frictionFactor: 0.92, // Balanced friction for iOS-like scrolling feel
+        itemSpacing: isMobile ? 20 : 60, // Smaller spacing on mobile
+        visibleBuffer: isMobile ? 4 : 6, // Adjusted buffer for mobile
+        frictionFactor: isMobile ? 0.90 : 0.92, // Increased friction on mobile for better control
         dynamicFriction: true, // Enable dynamic friction for natural momentum
         debugMode: false
       });
@@ -959,8 +979,8 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    // Fallback initialization after timeout
-    setTimeout(initializeCarousels, 500);
+    // Shorter fallback timeout on mobile for better performance
+    setTimeout(initializeCarousels, isMobile ? 300 : 500);
   };
 
   // Start preloading if document is ready
