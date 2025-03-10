@@ -1,4 +1,3 @@
-
 /**
  * Auto-scrolling functionality for the carousel that:
  * - Scrolls slowly to the left automatically
@@ -10,7 +9,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   // Find all carousel containers on the page
   const carouselContainers = document.querySelectorAll('.carousel-container');
-  
+
   carouselContainers.forEach(container => {
     // Wait for the carousel to be initialized first
     const checkForCarousel = setInterval(() => {
@@ -20,22 +19,23 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }, 100);
   });
-  
+
   function initAutoScroll(container) {
     const carousel = container.carousel;
-    
+
     // Configuration
-    const scrollSpeed = 1; // Pixels per frame (lower = slower)
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const scrollSpeed = isMobile ? 0.2 : 0.3; // Slightly slower on mobile for smoother experience
     let isScrolling = true;
     let isInteracting = false;
     let isVisible = false;
     let animationId = null;
-    
+
     // Set up Intersection Observer to track visibility
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         isVisible = entry.isIntersecting;
-        
+
         if (isVisible) {
           // Only start scrolling if not currently interacting
           if (!isInteracting && !animationId) {
@@ -49,10 +49,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }, {
       threshold: 0.1 // Consider visible when 10% is in viewport
     });
-    
+
     // Observe the carousel container
     observer.observe(container);
-    
+
     // Auto-scroll animation function
     function autoScroll() {
       if (isScrolling && !carousel.isDragging && !carousel.isScrolling) {
@@ -60,23 +60,23 @@ document.addEventListener('DOMContentLoaded', () => {
         carousel.offset += scrollSpeed;
         carousel.renderItems();
       }
-      
+
       animationId = requestAnimationFrame(autoScroll);
     }
-    
+
     function startAutoScroll() {
       if (!animationId) {
         animationId = requestAnimationFrame(autoScroll);
       }
     }
-    
+
     function stopAutoScroll() {
       if (animationId) {
         cancelAnimationFrame(animationId);
         animationId = null;
       }
     }
-    
+
     // Listen for user interactions to pause auto-scrolling
     const interactionEvents = [
       { element: carousel.track, event: 'mousedown', type: 'start' },
@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
       { element: window, event: 'touchend', type: 'end' },
       { element: container, event: 'wheel', type: 'wheel' }
     ];
-    
+
     interactionEvents.forEach(({ element, event, type }) => {
       element.addEventListener(event, (e) => {
         if (type === 'start') {
@@ -103,7 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
           // For wheel events, pause briefly then resume
           isInteracting = true;
           stopAutoScroll();
-          
+
           clearTimeout(wheelTimeout);
           const wheelTimeout = setTimeout(() => {
             isInteracting = false;
@@ -114,7 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }, { passive: true });
     });
-    
+
     // Initial start if visible
     if (isVisible) {
       startAutoScroll();
