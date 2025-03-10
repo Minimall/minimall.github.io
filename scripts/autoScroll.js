@@ -9,11 +9,16 @@
 document.addEventListener('DOMContentLoaded', () => {
   // Find all carousel containers on the page
   const carouselContainers = document.querySelectorAll('.carousel-container');
+  
+  // Detect if mobile device
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
   carouselContainers.forEach(container => {
     // Wait for the carousel to be initialized first
     const checkForCarousel = setInterval(() => {
-      if (container.carousel instanceof TrulyInfiniteCarousel) {
+      // Check for either desktop or mobile carousel
+      if ((container.carousel instanceof TrulyInfiniteCarousel) || 
+          (isMobile && window.MobileCarousel && container.carousel instanceof MobileCarousel)) {
         clearInterval(checkForCarousel);
         initAutoScroll(container);
       }
@@ -22,10 +27,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function initAutoScroll(container) {
     const carousel = container.carousel;
+    if (!carousel) return;
 
     // Configuration
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    const scrollSpeed = isMobile ? 0.2 : 0.3; // Slightly slower on mobile for smoother experience
+    const scrollSpeed = isMobile ? 0.15 : 0.3; // Slower on mobile for smoother experience
     let isScrolling = true;
     let isInteracting = false;
     let isVisible = false;
@@ -79,13 +84,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Listen for user interactions to pause auto-scrolling
     const interactionEvents = [
+      // Desktop events
       { element: carousel.track, event: 'mousedown', type: 'start' },
       { element: window, event: 'mousemove', type: 'during' },
       { element: window, event: 'mouseup', type: 'end' },
+      // Mobile events
       { element: carousel.track, event: 'touchstart', type: 'start' },
       { element: window, event: 'touchmove', type: 'during' },
       { element: window, event: 'touchend', type: 'end' },
-      { element: container, event: 'wheel', type: 'wheel' }
+      { element: window, event: 'touchcancel', type: 'end' },
+      // Wheel events
+      { element: container, event: 'wheel', type: 'wheel' },
+      // Page scroll for mobile
+      { element: window, event: 'scroll', type: 'scroll' }
     ];
 
     interactionEvents.forEach(({ element, event, type }) => {
@@ -95,24 +106,51 @@ document.addEventListener('DOMContentLoaded', () => {
           stopAutoScroll();
         } else if (type === 'end') {
           isInteracting = false;
-          // Resume scrolling if still visible
-          if (isVisible) {
-            startAutoScroll();
-          }
-        } else if (type === 'wheel') {
-          // For wheel events, pause briefly then resume
+          // Resume scrolling after a short delay
+          setTimeout(() => {
+            if (isVisible && !carousel.isDragging && !carousel.isScrolling) {
+              startAutoScroll();
+            }
+          }, 500);
+        } else if (type === 'wheel' || type === 'scroll') {
+          // For wheel/scroll events, pause briefly then resume
           isInteracting = true;
           stopAutoScroll();
 
-          clearTimeout(wheelTimeout);
-          const wheelTimeout = setTimeout(() => {
+          clearTimeout(this.pauseTimeout);
+          this.pauseTimeout = setTimeout(() => {
             isInteracting = false;
-            if (isVisible) {
+            if (isVisible && !carousel.isDragging && !carousel.isScrolling) {
               startAutoScroll();
             }
           }, 1000);
         }
       }, { passive: true });
+    });
+
+    // Custom event listeners for broader interaction support
+    container.addEventListener('carouselInteractionStart', () => {
+      isInteracting = true;
+      stopAutoScroll();
+    });
+    
+    container.addEventListener('carouselInteractionEnd', () => {
+      isInteracting = false;
+      // Resume scrolling after a short delay
+      setTimeout(() => {
+        if (isVisible && !carousel.isDragging && !carousel.isScrolling) {
+          startAutoScroll();
+        }
+      }, 500);
+    });
+
+    // Handle visibility changes
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        stopAutoScroll();
+      } else if (isVisible && !isInteracting) {
+        startAutoScroll();
+      }
     });
 
     // Initial start if visible
