@@ -219,6 +219,13 @@
     padding: 0; /* Remove padding */
     margin: 0; /* Remove margins */
     -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+    /* Ensure proper z-index stacking during drag */
+    z-index: 1;
+  }
+  
+  /* Ensure active item being dragged is above others */
+  .carousel-item.dragging {
+    z-index: 10;
   }
   
   .carousel-item img,
