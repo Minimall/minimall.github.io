@@ -207,10 +207,6 @@
     transform: translateZ(0); /* Force hardware acceleration */
     padding: 0; /* Remove padding */
     height: 100%; /* Take full height */
-    position: relative;
-    /* Prevent items from stacking incorrectly */
-    perspective: 1000;
-    backface-visibility: hidden;
   }
   
   .carousel-item {
@@ -223,14 +219,6 @@
     padding: 0; /* Remove padding */
     margin: 0; /* Remove margins */
     -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
-    position: absolute; /* Position items absolutely for better control */
-    top: 0;
-    left: 0;
-    backface-visibility: hidden; /* Prevent ghost images */
-    transform-style: flat; /* Prevent 3D stacking issues */
-    transform: translateZ(0); /* Force GPU acceleration */
-    /* Transition none to prevent ghosting during transforms */
-    transition: none;
   }
   
   .carousel-item img,
@@ -246,10 +234,6 @@
     -webkit-user-select: none;
     -webkit-touch-callout: none; /* Prevent iOS image menu */
     touch-action: none; /* Prevent browser handling touches */
-    /* Critical: force images to be on their own layer */
-    transform: translateZ(0);
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
   }
 
   /* Fix carousel wrapper specifically for lab2.html */
@@ -259,13 +243,6 @@
     margin: 0;
     padding: 0;
     overflow: hidden;
-  }
-  
-  /* Make sure hidden items are truly hidden */
-  .carousel-item[style*="display: none"] {
-    visibility: hidden;
-    opacity: 0;
-    pointer-events: none;
   }
 }
 
