@@ -695,49 +695,65 @@ class TrulyInfiniteCarousel {
           item.onScreen = true;
         }
 
-        // Smooth out position changes for items near the center
-        let smoothedOffset = itemOffset;
-
-        // Smoother transitions for items near the viewport center
-        const distanceFromCenter = Math.abs(itemOffset - (this.containerWidth / 2));
-        const isNearCenter = distanceFromCenter < (this.containerWidth * 0.6);
-
-        // No transitions for transforms - only direct positioning
+        // Use hardware-accelerated transform for positioning
         element.style.transition = 'none';
-
-        // Use transform for positioning with hardware acceleration
-        element.style.transform = `translateX(${smoothedOffset}px) translateZ(0)`;
-
-        // Apply consistent z-index based on item index to prevent overlapping
-        // Items that appear earlier in the DOM get higher z-index
-        element.style.zIndex = this.itemCount - item.index;
-
-        // Store the current position
-        item.x = smoothedOffset;
-
-        // Ensure container width matches the image width exactly
-        // This makes containers hug images based on their aspect ratio
-        const imgElement = element.querySelector('img, video');
-        if (imgElement) {
-          // Get natural dimensions of the image
-          const imgHeight = imgElement.offsetHeight;
-          const imgWidth = imgElement.offsetWidth;
-
-          // Set container width to match image width exactly
-          element.style.width = `${imgWidth}px`;
+        
+        // Mobile-specific positioning fixes
+        if (this.isMobile) {
+          // Apply consistent z-index based on distance from center
+          // Items closer to center should appear on top
+          const distanceFromCenter = Math.abs(itemOffset - (this.containerWidth / 2));
+          const maxDistance = this.containerWidth;
+          // Z-index decreases as distance increases (inverse relationship)
+          // Using 1000 as base to ensure all items have positive z-index
+          const zIndex = 1000 - Math.round((distanceFromCenter / maxDistance) * 100);
+          element.style.zIndex = zIndex;
           
-          // Special handling for mobile
-          if (this.isMobile) {
-            // Make container height match viewport height and position image properly
+          // Ensure clean positioning without overlap
+          element.style.transform = `translate3d(${itemOffset}px, 0, 0)`;
+          
+          // For mobile, set explicit left position to 0 and rely on transform for positioning
+          element.style.left = '0';
+          element.style.right = 'auto';
+          
+          // Ensure items are absolutely positioned
+          element.style.position = 'absolute';
+          element.style.top = '0';
+          
+          // Ensure item container width is set properly
+          const imgElement = element.querySelector('img, video');
+          if (imgElement) {
+            // Get natural dimensions of the image after it's loaded
+            const imgWidth = imgElement.offsetWidth;
+            
+            // Set explicit width to container based on image dimension
+            element.style.width = `${imgWidth}px`;
+            
+            // Make container height match viewport height
             element.style.height = '100%';
             
-            // Make sure images fill height properly while maintaining aspect ratio
-            imgElement.style.height = '90vh';
+            // Set image constraints
+            imgElement.style.height = '75vh';
             imgElement.style.width = 'auto';
-            imgElement.style.maxWidth = 'none';
+            imgElement.style.maxWidth = '80vw';
             imgElement.style.objectFit = 'contain';
           }
+        } else {
+          // Desktop positioning (unchanged)
+          element.style.transform = `translateX(${itemOffset}px) translateZ(0)`;
+          element.style.zIndex = this.itemCount - item.index;
+          
+          // Ensure container width matches the image width exactly
+          const imgElement = element.querySelector('img, video');
+          if (imgElement) {
+            const imgWidth = imgElement.offsetWidth;
+            element.style.width = `${imgWidth}px`;
+          }
         }
+
+        // Store the current position
+        item.x = itemOffset;
+
       } else {
         if (item.onScreen) {
           // Hide items immediately without animation

@@ -25,11 +25,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Configuration
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    const scrollSpeed = isMobile ? 0.2 : 0.3; // Slightly slower on mobile for smoother experience
+    const scrollSpeed = isMobile ? 0.15 : 0.3; // Even slower on mobile for smoother experience
     let isScrolling = true;
     let isInteracting = false;
     let isVisible = false;
     let animationId = null;
+    let lastFrameTime = 0; // For consistent timing
 
     // Set up Intersection Observer to track visibility
     const observer = new IntersectionObserver((entries) => {
@@ -53,11 +54,19 @@ document.addEventListener('DOMContentLoaded', () => {
     // Observe the carousel container
     observer.observe(container);
 
-    // Auto-scroll animation function
-    function autoScroll() {
+    // Auto-scroll animation function with time-based movement for consistency
+    function autoScroll(timestamp) {
+      if (!lastFrameTime) lastFrameTime = timestamp;
+      
+      const deltaTime = timestamp - lastFrameTime;
+      lastFrameTime = timestamp;
+      
+      // Only proceed if we're supposed to be scrolling and not in middle of user interaction
       if (isScrolling && !carousel.isDragging && !carousel.isScrolling) {
-        // Move slightly to the left
-        carousel.offset += scrollSpeed;
+        // Use deltaTime to ensure consistent speed regardless of frame rate
+        // Move slightly to the left (time-normalized)
+        const frameAdjustedSpeed = scrollSpeed * (deltaTime / 16.67); // Normalize to 60fps
+        carousel.offset += frameAdjustedSpeed;
         carousel.renderItems();
       }
 

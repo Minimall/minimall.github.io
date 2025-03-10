@@ -207,6 +207,7 @@
     transform: translateZ(0); /* Force hardware acceleration */
     padding: 0; /* Remove padding */
     height: 100%; /* Take full height */
+    position: relative; /* Ensure proper stacking context */
   }
   
   .carousel-item {
@@ -219,13 +220,17 @@
     padding: 0; /* Remove padding */
     margin: 0; /* Remove margins */
     -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+    overflow: visible; /* Prevent image clipping */
+    position: absolute; /* Ensure proper positioning */
+    top: 0; /* Align to top */
+    left: 0; /* Will be positioned via transform */
   }
   
   .carousel-item img,
   .carousel-item video {
-    height: 80vh; /* Reduced height to prevent overlapping */
+    height: 75vh; /* Reduced height to prevent overlapping */
     width: auto; /* Auto width based on aspect ratio */
-    max-width: 85vw; /* Add max-width to prevent overflow */
+    max-width: 80vw; /* Prevent overflow */
     border-radius: 8px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     pointer-events: none; /* Prevent unwanted touch events on images */
@@ -272,15 +277,18 @@
     width: auto; /* Auto width based on content */
     /* Fix for iOS Safari bottom bar issues */
     height: -webkit-fill-available;
-    margin: 0 15px; /* Add horizontal spacing between items for iOS */
+    margin: 0; /* Remove margins - they cause positioning issues */
+    overflow: visible; /* Ensure content isn't clipped */
+    position: absolute; /* Fixed positioning */
+    isolation: isolate; /* Create stacking context for proper z-index behavior */
   }
 
   .carousel-item img,
   .carousel-item video {
     /* Reduced height for better compatibility */
-    height: 80vh; 
+    height: 75vh; 
     width: auto;
-    max-width: 85vw; /* Add max-width to prevent overflowing */
+    max-width: 80vw; /* Prevent overflowing */
     max-height: -webkit-fill-available; /* iOS Safari compatibility */
     /* Prevent iOS image preview and add better touch performance */
     -webkit-touch-callout: none;
