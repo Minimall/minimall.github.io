@@ -2,6 +2,7 @@
 /* 
  * TrulyInfiniteCarousel CSS
  * Styles for the high-performance infinite carousel without clones
+ * No animations or transitions except for scrolling
  */
 
 .carousel-container {
@@ -206,9 +207,6 @@
     transform: translateZ(0); /* Force hardware acceleration */
     padding: 0; /* Remove padding */
     height: 100%; /* Take full height */
-    -webkit-transform: translateZ(0);
-    -webkit-backface-visibility: hidden;
-    backface-visibility: hidden;
   }
   
   .carousel-item {
@@ -221,14 +219,6 @@
     padding: 0; /* Remove padding */
     margin: 0; /* Remove margins */
     -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
-    /* Ensure precise positioning */
-    position: absolute;
-    left: 0;
-    top: 0;
-    /* Prevent content overflow */
-    overflow: visible;
-    /* Important for z-index stacking */
-    z-index: 1;
   }
   
   .carousel-item img,
@@ -244,11 +234,6 @@
     -webkit-user-select: none;
     -webkit-touch-callout: none; /* Prevent iOS image menu */
     touch-action: none; /* Prevent browser handling touches */
-    /* Hardware acceleration */
-    transform: translateZ(0);
-    -webkit-transform: translateZ(0);
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
   }
 
   /* Fix carousel wrapper specifically for lab2.html */
@@ -287,11 +272,7 @@
     width: auto; /* Auto width based on content */
     /* Fix for iOS Safari bottom bar issues */
     height: -webkit-fill-available;
-    /* Ensure consistent spacing */
-    margin: 0;
-    padding: 0;
-    /* Fix z-index stacking on iOS */
-    z-index: 1;
+    margin: 0 15px; /* Add horizontal spacing between items for iOS */
   }
 
   .carousel-item img,
@@ -311,9 +292,6 @@
     /* Fix for blurry images during animations on iOS */
     transform: translateZ(0);
     -webkit-transform: translateZ(0);
-    /* Ensure proper positioning in iOS */
-    object-position: center;
-    object-fit: contain;
   }
   
   /* Specific fix for iOS Safari notch and bottom bar */
