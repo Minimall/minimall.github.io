@@ -26,8 +26,8 @@ class TrulyInfiniteCarousel {
     // Default options
     this.options = {
       itemSelector: options.itemSelector || '.carousel-item',
-      itemSpacing: this.isMobile ? 60 : (options.itemSpacing || 80), // Increased spacing to prevent overlap
-      visibleBuffer: options.visibleBuffer || 3, // Extra items to render beyond viewport
+      itemSpacing: this.isMobile ? 20 : (options.itemSpacing || 30), // Reduced spacing on mobile
+      visibleBuffer: options.visibleBuffer || 2, // Extra items to render beyond viewport
       frictionFactor: this.isMobile ? 0.95 : (options.frictionFactor || 0.98), // Adjusted friction for mobile
       dynamicFriction: options.dynamicFriction !== false, // Whether to adjust friction based on velocity
       enableKeyboard: options.enableKeyboard !== true, // Enable keyboard navigation
@@ -944,8 +944,8 @@ document.addEventListener('DOMContentLoaded', () => {
       // Create and store the carousel instance with device-specific settings
       const carousel = new TrulyInfiniteCarousel(container, {
         itemSelector: '.carousel-item',
-        itemSpacing: isMobile ? 60 : 80, // Increased spacing to prevent overlap
-        visibleBuffer: isMobile ? 5 : 6, // Adjusted buffer for mobile
+        itemSpacing: isMobile ? 20 : 60, // Smaller spacing on mobile
+        visibleBuffer: isMobile ? 4 : 6, // Adjusted buffer for mobile
         frictionFactor: isMobile ? 0.90 : 0.92, // Increased friction on mobile for better control
         dynamicFriction: true, // Enable dynamic friction for natural momentum
         debugMode: false
