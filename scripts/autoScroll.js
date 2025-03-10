@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const carousel = container.carousel;
     
     // Configuration
-    const scrollSpeed = 0.3; // Pixels per frame (lower = slower)
+    const scrollSpeed = 1; // Pixels per frame (lower = slower)
     let isScrolling = true;
     let isInteracting = false;
     let isVisible = false;
