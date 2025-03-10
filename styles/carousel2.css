@@ -183,6 +183,7 @@
     max-width: 100vw; /* Prevent horizontal overflow */
     margin: 0; /* Remove margins */
     padding: 0; /* Remove padding */
+    position: relative; /* Ensure proper stacking context */
   }
   
   .carousel-arrow {
@@ -207,6 +208,10 @@
     transform: translateZ(0); /* Force hardware acceleration */
     padding: 0; /* Remove padding */
     height: 100%; /* Take full height */
+    width: 100%; /* Take full width */
+    position: relative; /* Create proper stacking context */
+    display: flex; /* Ensure flex layout */
+    overflow: visible; /* Allow items to be positioned outside track */
   }
   
   .carousel-item {
@@ -219,6 +224,11 @@
     padding: 0; /* Remove padding */
     margin: 0; /* Remove margins */
     -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+    position: absolute; /* Use absolute positioning for better control */
+    transform-origin: center center; /* Center transformations */
+    overflow: visible; /* Ensure content isn't clipped */
+    top: 0; /* Position from top */
+    transition: none; /* Disable transitions for smoother scrolling */
   }
   
   .carousel-item img,
@@ -234,6 +244,9 @@
     -webkit-user-select: none;
     -webkit-touch-callout: none; /* Prevent iOS image menu */
     touch-action: none; /* Prevent browser handling touches */
+    display: block; /* Ensure proper block display */
+    margin: 0 auto; /* Center images */
+    transform: translateZ(0); /* Force hardware acceleration */
   }
 
   /* Fix carousel wrapper specifically for lab2.html */
@@ -243,6 +256,8 @@
     margin: 0;
     padding: 0;
     overflow: hidden;
+    position: relative; /* Create proper stacking context */
+    touch-action: pan-y; /* Allow vertical scroll */
   }
 }
 
