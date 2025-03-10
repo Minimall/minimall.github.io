@@ -1,123 +1,116 @@
+
 /**
- * Auto-scrolling functionality for the carousel that:
- * - Scrolls slowly to the left automatically
- * - Pauses when user interacts (drag, swipe, wheel)
- * - Pauses when the carousel is out of viewport
- * - Resumes from the same position when back in view
+ * Auto-scrolling functionality for the carousel
+ * Works with both desktop and mobile implementations
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-  // Find all carousel containers on the page
+  // Configure auto-scroll parameters
+  const AUTO_SCROLL_SPEED = 0.5; // pixels per frame
+  const SCROLL_PAUSE_DURATION = 2000; // ms to pause after interaction
+  
+  // Find all carousel containers
   const carouselContainers = document.querySelectorAll('.carousel-container');
-
+  
+  // Detect if mobile
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  
   carouselContainers.forEach(container => {
-    // Wait for the carousel to be initialized first
-    const checkForCarousel = setInterval(() => {
-      if (container.carousel instanceof TrulyInfiniteCarousel) {
-        clearInterval(checkForCarousel);
-        initAutoScroll(container);
-      }
-    }, 100);
-  });
-
-  function initAutoScroll(container) {
-    const carousel = container.carousel;
-
-    // Configuration
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    const scrollSpeed = isMobile ? 0.2 : 0.3; // Slightly slower on mobile for smoother experience
-    let isScrolling = true;
-    let isInteracting = false;
+    // Track state
+    let isScrolling = false;
+    let isPaused = false;
+    let pauseTimeout = null;
     let isVisible = false;
-    let animationId = null;
-
-    // Set up Intersection Observer to track visibility
+    let scrollAnimationId = null;
+    
+    // Create an Intersection Observer to detect when carousel is visible
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         isVisible = entry.isIntersecting;
-
-        if (isVisible) {
-          // Only start scrolling if not currently interacting
-          if (!isInteracting && !animationId) {
-            startAutoScroll();
-          }
+        
+        // Start/stop auto-scrolling based on visibility
+        if (isVisible && !isPaused) {
+          startAutoScroll();
         } else {
-          // Stop scrolling when out of view
           stopAutoScroll();
         }
       });
-    }, {
-      threshold: 0.1 // Consider visible when 10% is in viewport
-    });
-
+    }, { threshold: 0.1 }); // 10% visibility threshold
+    
     // Observe the carousel container
     observer.observe(container);
-
-    // Auto-scroll animation function
-    function autoScroll() {
-      if (isScrolling && !carousel.isDragging && !carousel.isScrolling) {
-        // Move slightly to the left
-        carousel.offset += scrollSpeed;
+    
+    // Listen for user interaction to pause auto-scrolling
+    container.addEventListener('carouselInteractionStart', () => {
+      isPaused = true;
+      stopAutoScroll();
+    });
+    
+    // Resume auto-scrolling after interaction ends (with delay)
+    container.addEventListener('carouselInteractionEnd', () => {
+      // Clear any existing timeout
+      if (pauseTimeout) {
+        clearTimeout(pauseTimeout);
+      }
+      
+      // Set a timeout to resume auto-scrolling
+      pauseTimeout = setTimeout(() => {
+        isPaused = false;
+        if (isVisible) {
+          startAutoScroll();
+        }
+      }, SCROLL_PAUSE_DURATION);
+    });
+    
+    // Auto-scroll animation frame callback
+    const autoScrollFrame = () => {
+      if (!isVisible || isPaused) {
+        isScrolling = false;
+        return;
+      }
+      
+      // Get the appropriate carousel instance
+      const carousel = isMobile ? container.mobileCarousel : container.carousel;
+      
+      if (carousel) {
+        // Update position for auto-scrolling
+        carousel.offset += AUTO_SCROLL_SPEED;
         carousel.renderItems();
       }
-
-      animationId = requestAnimationFrame(autoScroll);
-    }
-
-    function startAutoScroll() {
-      if (!animationId) {
-        animationId = requestAnimationFrame(autoScroll);
+      
+      // Continue animation
+      scrollAnimationId = requestAnimationFrame(autoScrollFrame);
+    };
+    
+    // Start auto-scrolling
+    const startAutoScroll = () => {
+      if (!isScrolling) {
+        isScrolling = true;
+        scrollAnimationId = requestAnimationFrame(autoScrollFrame);
       }
-    }
-
-    function stopAutoScroll() {
-      if (animationId) {
-        cancelAnimationFrame(animationId);
-        animationId = null;
+    };
+    
+    // Stop auto-scrolling
+    const stopAutoScroll = () => {
+      if (scrollAnimationId) {
+        cancelAnimationFrame(scrollAnimationId);
+        scrollAnimationId = null;
       }
-    }
-
-    // Listen for user interactions to pause auto-scrolling
-    const interactionEvents = [
-      { element: carousel.track, event: 'mousedown', type: 'start' },
-      { element: window, event: 'mousemove', type: 'during' },
-      { element: window, event: 'mouseup', type: 'end' },
-      { element: carousel.track, event: 'touchstart', type: 'start' },
-      { element: window, event: 'touchmove', type: 'during' },
-      { element: window, event: 'touchend', type: 'end' },
-      { element: container, event: 'wheel', type: 'wheel' }
-    ];
-
-    interactionEvents.forEach(({ element, event, type }) => {
-      element.addEventListener(event, (e) => {
-        if (type === 'start') {
-          isInteracting = true;
-          stopAutoScroll();
-        } else if (type === 'end') {
-          isInteracting = false;
-          // Resume scrolling if still visible
-          if (isVisible) {
-            startAutoScroll();
-          }
-        } else if (type === 'wheel') {
-          // For wheel events, pause briefly then resume
-          isInteracting = true;
-          stopAutoScroll();
-
-          clearTimeout(wheelTimeout);
-          const wheelTimeout = setTimeout(() => {
-            isInteracting = false;
-            if (isVisible) {
-              startAutoScroll();
-            }
-          }, 1000);
-        }
-      }, { passive: true });
+      isScrolling = false;
+    };
+    
+    // Listen for page visibility changes
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        stopAutoScroll();
+      } else if (isVisible && !isPaused) {
+        startAutoScroll();
+      }
     });
-
-    // Initial start if visible
-    if (isVisible) {
+    
+    // Start initial auto-scroll if visible
+    if (isVisible && !isPaused) {
       startAutoScroll();
     }
-  }
+  });
 });
