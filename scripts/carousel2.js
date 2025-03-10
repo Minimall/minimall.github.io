@@ -332,6 +332,9 @@ class TrulyInfiniteCarousel {
     this.isHorizontalDrag = null; // Reset drag direction detection
     this.track.style.cursor = 'grabbing';
 
+    // Dispatch a custom event for auto-scroll to detect interaction
+    this.container.dispatchEvent(new CustomEvent('carouselInteractionStart'));
+
     // Get starting position from mouse or touch
     const point = e.type.includes('mouse') ? e : e.touches[0];
     this.startX = point.clientX;
@@ -462,6 +465,9 @@ class TrulyInfiniteCarousel {
 
     this.isDragging = false;
     this.track.style.cursor = 'grab';
+
+    // Dispatch a custom event for auto-scroll to detect interaction end
+    this.container.dispatchEvent(new CustomEvent('carouselInteractionEnd'));
 
     // Calculate drag duration and distance
     const dragDuration = performance.now() - this.dragStartTime;
