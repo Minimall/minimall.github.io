@@ -66,18 +66,18 @@
   transform-style: preserve-3d;
   opacity: 1;
   padding: 0;
-  margin: 0;
+  margin: 0 40px; /* Add consistent horizontal spacing */
   /* Width will be determined by content */
   width: auto;
   /* Prevent content overflow */
-  overflow: hidden;
+  overflow: visible; /* Allow images to be visible outside container */
   /* Force item to fit content exactly */
   box-sizing: border-box;
 }
 
 .carousel-item img,
 .carousel-item video {
-  height: 100%; /* Fill 100% height of carousel track */
+  height: 90%; /* Slightly reduced height to prevent overlap */
   width: auto; /* Width adjusts based on image aspect ratio */
   object-fit: contain;
   pointer-events: none;
@@ -94,6 +94,7 @@
   transition: none;
   margin: 0; /* Explicitly remove margin */
   padding: 0; /* Explicitly remove padding */
+  max-height: 90vh; /* Prevent images from being too tall */
 }
 
 /* Navigation arrows (optional) */
@@ -217,10 +218,11 @@
     align-items: center;
     justify-content: center;
     padding: 0; /* Remove padding */
-    margin: 0; /* Remove margins */
+    margin: 0 30px; /* Add horizontal spacing between items for mobile */
     -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
     /* Ensure proper z-index stacking during drag */
     z-index: 1;
+    overflow: visible; /* Allow content to be visible */
   }
   
   /* Ensure active item being dragged is above others */
@@ -230,9 +232,9 @@
   
   .carousel-item img,
   .carousel-item video {
-    height: 80vh; /* Reduced height to prevent overlapping */
+    height: 75vh; /* Reduced height to prevent overlapping */
     width: auto; /* Auto width based on aspect ratio */
-    max-width: 85vw; /* Add max-width to prevent overflow */
+    max-width: 80vw; /* Add max-width to prevent overflow */
     border-radius: 8px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     pointer-events: none; /* Prevent unwanted touch events on images */

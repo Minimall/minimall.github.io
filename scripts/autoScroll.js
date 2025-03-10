@@ -30,19 +30,45 @@ document.addEventListener('DOMContentLoaded', () => {
     let isVisible = false;
     let animationId = null;
     let wheelTimeout = null;
+    
+    // Explicitly set the itemSpacing for more consistent layout
+    if (carousel.options) {
+      // Increase spacing to prevent overlapping (mobile vs desktop)
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      carousel.options.itemSpacing = isMobile ? 60 : 80;
+    }
 
     // Fix z-indexing for mobile items to prevent stacking issues
     function fixItemZindexing() {
       if (carousel.virtualItems) {
         // Sort items by their position to determine proper z-index
-        const sortedItems = [...carousel.virtualItems].sort((a, b) => 
-          a.wrappedPosition - b.wrappedPosition
-        );
+        const sortedItems = [...carousel.virtualItems].sort((a, b) => {
+          if (a.wrappedPosition && b.wrappedPosition) {
+            return a.wrappedPosition - b.wrappedPosition;
+          } else if (a.x && b.x) {
+            return a.x - b.x;
+          }
+          return a.index - b.index;
+        });
 
-        // Set z-index based on position (further left = lower z-index)
+        // Set z-index based on position - further left = lower z-index
         sortedItems.forEach((item, index) => {
           if (item.element) {
-            item.element.style.zIndex = index + 1;
+            // Make sure elements don't share the same z-index
+            const zIndex = 100 + index * 10;
+            item.element.style.zIndex = zIndex;
+            
+            // Clear any transform that might be causing issues
+            if (!item.onScreen) {
+              item.element.style.transform = 'none'; 
+              item.element.style.display = 'none';
+            }
+            
+            // Set explicit width based on content to avoid overlap
+            const imgElement = item.element.querySelector('img, video');
+            if (imgElement) {
+              item.element.style.width = `${imgElement.offsetWidth}px`;
+            }
           }
         });
       }
@@ -80,9 +106,20 @@ document.addEventListener('DOMContentLoaded', () => {
         carousel.offset += scrollSpeed;
         carousel.renderItems();
 
-        // Periodically fix z-indexing during auto-scroll
-        if (Math.random() < 0.05) { // 5% chance per frame to fix z-index
-          fixItemZindexing();
+        // Apply z-index fixing on each frame to ensure proper stacking
+        fixItemZindexing();
+        
+        // Re-measure and adjust item positions every few frames
+        if (Math.random() < 0.01) { // Occasionally remeasure
+          // Force a measurement update to ensure proper spacing
+          carousel.measureDimensions();
+          
+          // Update spacings between items
+          carousel.virtualItems.forEach(item => {
+            if (item.element && item.element.style) {
+              item.element.style.margin = '0 40px';
+            }
+          });
         }
       }
 
