@@ -1,0 +1,1363 @@
+/* =============================================================================
+   RESET AND BASE STYLES
+   ============================================================================= */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    font-feature-settings: "calt", "dlig", "case", "ss01", "ss02";
+    font-weight: 400;
+    font-size: 1.25em; /* 20px */
+    line-height: 1.56;
+    letter-spacing: -0.01em;
+    color: #08162F;
+    background-color: #fff;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+p {
+    color: #08162F;
+    max-width: 45em; /* 900px */
+}
+
+/* Remove native browser focus outline from all links */
+a:focus {
+    outline: none !important;
+}
+
+/* Remove focus outline from buttons as well */
+button:focus {
+    outline: none !important;
+}
+
+/* Remove focus outline from all interactive elements */
+*:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+/* Remove any focus-visible outlines too */
+*:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+/* =============================================================================
+   TEXT STYLES - MASTER CLASSES
+   ============================================================================= */
+
+.text-nav {
+    line-height: 1.56;
+    color: #162032;
+}
+
+.text-nav :hover {
+    color: #8f0051;
+}
+
+.text-bold {
+    font-weight: 600;
+}
+
+.text-heading {
+    font-family: 'Newsreader', serif;
+    line-height: 1.1em;
+    color: #08162F;
+}
+
+.text-heading-lg {
+    font-style: italic;
+    font-weight: 500;
+    font-size: 4em; /* 80px */
+    letter-spacing: -0.03125em;
+}
+
+.text-heading-md {
+    font-style: italic;
+    font-weight: 300;
+    font-size: 3.2em; /* 64px */
+    letter-spacing: -0.039em;
+}
+
+/* Default link styles */
+a {
+    color: inherit;
+}
+
+.subheadline {
+    color: rgba(8, 22, 47, 0.5);
+}
+
+h3 {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    font-weight: 400;
+    font-size: 1em; /* 20px */
+    line-height: 1.56;
+    color: #08162F;
+}
+
+ul {
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    line-height: inherit;
+    color: inherit;
+    padding-left: 1.5em; /* 30px */
+}
+
+/* =============================================================================
+   LAYOUT AND CONTAINER STYLES
+   ============================================================================= */
+
+.main-container {
+    max-width: 64em; /* 1280px */
+    margin: 0 auto;
+    padding: 3.2em; /* 64px */
+    display: flex;
+    flex-direction: column;
+    gap: 3.2em; /* 64px */
+}
+
+/* =============================================================================
+   HEADER COMPONENTS
+   ============================================================================= */
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 3.2em; /* 64px */
+    flex-wrap: wrap;
+}
+
+.title {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2em; /* 4px */
+    padding: 0.2em 0; /* 4px 0 */
+    color: rgba(8, 22, 47, 0.5);
+}
+
+.subtitle {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2em; /* 4px */
+    padding: 0.2em 0.4em; /* 4px 0 */
+    color: rgba(8, 22, 47, 0.5);
+}
+
+
+.nav {
+    display: flex;
+    gap: 0.8em; /* 16px */
+    flex-wrap: wrap;
+    position: relative;
+    right: 0.6em; /* 12px */
+}
+
+.nav-link {
+    text-decoration: none;
+    font-weight: 500;
+    padding: 0.2em 0.6em; /* 4px 12px */
+    border-radius: 0.4em; /* 8px */
+    position: relative;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    background: none;
+    border: none;
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    color: inherit;
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    left: 0.6em; /* 12px */
+    right: 0.6em; /* 12px */
+    bottom: 0.3em; /* 6px */
+    height: 0.05em; /* 1px */
+    background-color: currentColor;
+    opacity: 0.15;
+    transform: translateY(4%);
+}
+
+.nav-link:hover {
+    color: #08162F;
+}
+
+.nav-link:hover::after {
+    opacity: 0;
+}
+
+.nav-link.active {
+    color: #08162F;
+}
+
+/* Hide underline when email is copied */
+.nav-link.email-copied::after,
+.inline-link.email-copied::after {
+    opacity: 0 !important;
+}
+
+/* Email copied state styling */
+.email-copied {
+    opacity: 0.7;
+}
+
+/* Email fallback smaller text */
+.email-fallback {
+    font-size: 0.9em !important;
+}
+
+/* Button pressed state */
+.button-pressed {
+    transform: scale(0.98);
+}
+
+.nav-tab-indicator {
+    position: absolute;
+    background-color: rgb(244, 244, 250);
+    border-radius: 0.4em; /* 8px */
+    pointer-events: none;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+/* =============================================================================
+   SECTION COMPONENTS
+   ============================================================================= */
+
+.intro {
+    display: flex;
+    flex-direction: column;
+    gap: 3.2em; /* 64px */
+}
+
+.intro-text {
+    max-width: 44.4em; /* 888px */
+}
+
+.intro-text p {
+    margin-bottom: 1.2em; /* 24px */
+}
+
+.intro-text p:last-child {
+    margin-bottom: 0;
+}
+
+.inline-link {
+    text-decoration: none;
+    position: relative;
+    display: inline-block;
+    font-weight: 500;
+    padding: 0.2em 0.6em; /* 4px 12px */
+    margin: -0.2em -0.6em; /* -4px -12px */
+    border-radius: 0.4em; /* 8px */
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.inline-link::after {
+    content: '';
+    position: absolute;
+    left: 0.6em; /* 12px */
+    right: 0.6em; /* 12px */
+    bottom: 0.3em; /* 6px */
+    height: 0.05em; /* 1px */
+    background-color: currentColor;
+    opacity: 0.15;
+    transform: translateY(4%);
+}
+
+.inline-link:hover {
+    color: #08162F;
+}
+
+.inline-link:hover::after {
+    opacity: 0;
+}
+
+.inline-link.active {
+    color: #08162F;
+}
+
+.inline-link-indicator {
+    position: absolute;
+    background-color: rgb(244, 244, 250);
+    border-radius: inherit; /* Match parent border-radius */
+    pointer-events: none;
+    z-index: -1;
+    opacity: 0;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* Ensure indicator doesn't affect text layout */
+    font-size: 0;
+    line-height: 0;
+    contain: layout style;
+}
+
+.experience {
+    display: flex;
+    flex-direction: column;
+    gap: 3.2em; /* 64px */
+    padding-top: 6.4em; /* 128px */
+}
+
+/* Section heading styles */
+.section-heading {
+
+    text-align: left;
+    color: #08162F;
+    max-width: none;
+}
+
+.case-study-container {
+    padding: 3.2em 0; /* 64px 0 */
+    background-color: var(#fff);
+}
+
+.post {
+    display: flex;
+    flex-direction: column;
+    margin-top: 0.8em; /* 16px */
+    gap: 0.8em; /* 16px */
+}
+
+.post:not(:first-child) {
+    padding-top: 4.8em; /* 96px */
+}
+
+.post-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.post-description {
+    flex: 1;
+}
+
+.post-description p {
+    margin-bottom: 0.8em; /* 16px */
+}
+
+.post-date {
+    text-align: right;
+    margin-left: 1.6em; /* 32px */
+    min-width: 8em; /* 160px */
+    color: rgba(8, 22, 47, 0.5);
+}
+
+/* =============================================================================
+   IMAGE AND MEDIA COMPONENTS
+   ============================================================================= */
+
+.image-gallery {
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 3vw 6vw 2vw 6vw;
+    gap: 4vw;
+}
+
+.image-container {
+    width: 100%;
+    max-width: 84em; /* 1680px */
+    position: relative;
+    overflow: hidden;
+    background-color: rgba(8, 22, 47, 0.02);
+    border-radius: 0.8em; /* 16px */
+}
+
+.image-container img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.image-container video {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 0.4em; /* 8px */
+}
+
+.image-with-caption {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8em; /* 16px */
+    max-width: 84em; /* 1680px */
+    width: 100%;
+}
+
+.image-caption {
+    color: rgba(8, 22, 47, 0.5);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    font-weight: 400;
+    line-height: 1.56;
+    margin: 0;
+    text-align: left;
+    padding: 0;
+}
+
+/* Logo Carousel Layout - 60fps Optimized */
+.logo-carousel {
+    margin-bottom: 1.2em; /* 24px */
+    /* Force GPU acceleration for the entire carousel */
+    transform: translateZ(0);
+    will-change: auto;
+}
+
+.logo-carousel-container {
+    position: relative;
+    height: 2.8em; /* 56px */
+    width: 0%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* GPU acceleration and optimization */
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+}
+
+.logo-carousel-row {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 6em;
+    transform: translateZ(0);
+    /* Performance optimizations */
+    backface-visibility: hidden;
+    will-change: auto;
+}
+
+.logo-carousel-item {
+    height: 2em; /* 40px */
+    display: flex;
+    cursor: pointer;
+    /* GPU acceleration for smooth animations */
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    will-change: auto;
+    /* Optimize for 60fps transforms */
+    transition-property: transform, filter, opacity;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.logo-carousel-img {
+    height: 100%;
+    width: auto;
+    object-fit: contain;
+    filter: grayscale(1) brightness(0.9) contrast(1.4);
+    opacity: 0.75;
+    /* SVG-specific rendering optimizations for crisp scaling */
+    image-rendering: auto;
+    shape-rendering: geometricPrecision;
+    /* Optimize SVG vector rendering */
+    vector-effect: non-scaling-stroke;
+    /* Ensure crisp edges on scaling */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* GPU acceleration with pixel-perfect positioning */
+    transform: translate3d(0, 0, 0);
+    backface-visibility: hidden;
+    will-change: auto;
+}
+
+/* Logo Carousel Performance Optimizations */
+@media (prefers-reduced-motion: reduce) {
+    .logo-carousel-item,
+    .logo-carousel-img {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+    }
+}
+
+/* 60fps Animation Support */
+@supports (will-change: transform) {
+    .logo-carousel-item:hover {
+        will-change: transform, filter, opacity;
+    }
+    
+    .logo-carousel-img:hover {
+        will-change: filter, opacity;
+    }
+}
+
+/* =============================================================================
+   ABOUT SECTION COMPONENTS
+   ============================================================================= */
+
+.about {
+    display: flex;
+    flex-direction: column;
+    gap: 3.2em; /* 64px */
+    padding-top: 6.4em; /* 128px */
+}
+
+.about-image {
+    margin-bottom: 1.6em; /* 32px */
+    display: flex;
+    justify-content: flex-start;
+    max-width: 30em; /* 600px */
+}
+
+.about-image img {
+    width: 100%;
+    height: auto;
+}
+
+.two-col-section {
+    display: grid;
+    grid-template-columns: 12.8em 1fr; /* 256px 1fr */
+    gap: 3.2em; /* 64px */
+}
+
+.section-subtitle { 
+    margin-bottom: 1.6em; /* 32px */
+}
+
+.section-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6em; /* 12px */
+}
+
+.section-content p {
+    margin-bottom: 1.2em; /* 24px */
+}
+
+.section-content p:last-child {
+    margin-bottom: 0;
+}
+
+.section-content ul {
+    margin-bottom: 1.2em; /* 24px */
+}
+
+.section-content ul:last-child {
+    margin-bottom: 0;
+}
+
+.education-item {
+    margin-bottom: 1.2em; /* 24px */
+}
+
+.education-item:last-child {
+    margin-bottom: 0;
+}
+
+.skillset-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.6em; /* 32px */
+}
+
+.skillset {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6em; /* 12px */
+}
+
+/* =============================================================================
+   FOOTER COMPONENTS
+   ============================================================================= */
+
+.footer {
+    display: flex;
+    flex-direction: column;
+    gap: 3.2em; /* 64px */
+    padding-top: 6.4em; /* 128px */
+    padding-bottom: 3.2em; /* 64px */
+}
+
+.footer-heading {
+    margin-bottom: 1.6em; /* 32px */
+}
+
+.footer-nav {
+    display: flex;
+    gap: 3.2em; /* 64px */
+    flex-wrap: wrap;
+}
+
+/* =============================================================================
+   RESPONSIVE DESIGN - BREAKPOINTS
+   ============================================================================= */
+
+@media (max-width: 1365px) {
+
+    .main-container {
+        max-width: 51.2em; /* 1024px */
+        padding: 2.4em; /* 48px */
+    }
+    
+    .text-heading-lg,
+    .footer-heading {
+        font-size: 3.2em; /* 64px */
+    }
+    
+    .text-heading-md {
+        font-size: 2.4em; /* 48px */
+    }
+}
+
+@media (max-width: 1024px) {
+
+    body,
+    p,
+    a,
+    ul {
+        font-weight: 400;
+        line-height: 1.4;
+    }
+
+    .main-container {
+        padding: 1.6em; /* 32px */
+        gap: 2.4em; /* 48px */
+    }
+
+    h3,
+    .section-subtitle {
+        font-size: 1.2em; /* 24px */
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        margin-top: 1.2em; /* 24px */
+        margin-bottom: 0;
+    }
+        
+    .nav {
+        flex-direction: row;
+        gap: 0.2em; /* 4px */
+        width: 100%;
+    }
+    
+    .header {
+        gap: 1.6em; /* 32px */
+    }
+    
+    .intro {
+        gap: 2.4em; /* 48px */
+        padding-top: 3.2em; /* 64px */
+    }
+    
+    .text-heading-lg,
+    .footer-heading {
+        margin-top: 3em;
+        font-size: 2.8em; /* 56px */
+    }
+    
+    .text-heading-md {
+        font-size: 2em; /* 40px */
+    }
+    
+    .experience,
+    .about,
+    .footer {
+        padding-top: 2.4em; /* 48px */
+    }
+    
+    .post:not(:first-child) {
+        padding-top: 3.2em; /* 64px */
+    }
+    
+    .case-study-container {
+        padding: 2.4em 0; /* 48px 0 */
+    }
+    
+    .post-header {
+        flex-direction: column;
+        gap: 1.2em; /* 24px */
+    }
+    
+    .post-date {
+        text-align: left;
+        margin-left: 0;
+        order: -1;
+    }
+    
+    .two-col-section {
+        display: flex;
+        flex-direction: column;
+        gap: 1.2em; /* 24px */
+    }
+    
+    /* Better spacing for about section content */
+    .about {
+        gap: 2.8em; /* 56px */
+    }
+    
+    .section-content {
+        gap: 0.8em; /* 16px */
+    }
+    
+    .section-content p {
+        margin-bottom: 1em; /* 20px */
+    }
+    
+    /* Skillset grid becomes single column */
+    .skillset-grid {
+        grid-template-columns: 1fr;
+        gap: 1.2em; /* 24px */
+    }
+    
+    /* Logo carousel responsive design */
+    .logo-carousel {
+        margin: 2em 0; /* 40px 0 */
+    }
+    
+    .logo-carousel-container {
+        height: 2em; /* 40px */
+    }
+    
+    .logo-carousel-row {
+        gap: 0.8em; /* 16px */
+        padding: 0 0.8em; /* 0 16px */
+        /* Maintain GPU acceleration on mobile */
+        transform: translateZ(0);
+    }
+    
+    .logo-carousel-item {
+        height: 1.4em; /* 28px */
+        /* Ensure GPU acceleration is maintained on mobile */
+        transform: translateZ(0);
+    }
+    
+    .logo-carousel-img {
+        max-width: 4.5em; /* 90px */
+        /* Optimize SVG rendering on mobile for crisp scaling */
+        transform: translate3d(0, 0, 0);
+        image-rendering: auto;
+        shape-rendering: geometricPrecision;
+    }
+    
+    /* Image containers take 100% width of parent */
+    .image-gallery {
+        width: 100%;
+        position: static;
+        left: auto;
+        right: auto;
+        margin-left: 0;
+        margin-right: 0;
+        padding: 0.8em 0; /* 16px 0 */
+        gap: 0.8em; /* 16px */
+        flex-direction: column;
+    }
+    
+    .image-with-caption {
+        width: 100%;
+        max-width: 100%;
+    }
+    
+    .image-container {
+        width: 100%;
+        max-width: 100%;
+        border-radius: 0.2em; /* 4px */
+    }
+    
+    .image-container img,
+    .image-container video {
+        width: 100%;
+    }
+
+    .post {
+        gap: 0;
+    }
+
+    .section-heading {
+        margin-top: 3.2em; /* 64px */
+        margin-bottom: 0.1em; /* 2px */
+        text-align: left;
+        color: #08162F;
+        max-width: none;
+    }
+    
+    .title {
+        color: rgba(8, 22, 47, 0.5);
+        display: flex;
+        flex-direction: column;
+        gap: 0.2em; /* 4px */
+        padding: 0.4em 0.6em; /* 8px 12px */
+    }
+}
+
+@media (max-width: 768px) {
+
+    body,
+    p,
+    a,
+    ul {
+        font-weight: 400;
+        line-height: 1.4;
+    }
+    
+    .main-container {
+        padding: 1.2em; /* 24px */
+        gap: 1.6em; /* 32px */
+    }
+    
+    /* Consistent text sizing for mobile */
+    h3,
+    .section-subtitle {
+        font-size: 1.2em; /* 24px */
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        margin-top: 1.2em; /* 24px */
+        margin-bottom: 0;
+    }
+    
+    .header {
+        flex-direction: column;
+        gap: 1.2em; /* 24px */
+        align-items: flex-start;
+    }
+    
+    .text-heading-lg,
+    .footer-heading {
+        font-size: 2.1em; /* 42px */
+    }
+    
+    .text-heading-md {
+        font-size: 1.8em; /* 36px */
+    }
+    
+    .intro {
+        padding-top: 2.4em; /* 48px */
+        gap: 1.6em; /* 32px */
+    }
+    
+    .experience,
+    .about,
+    .footer {
+        padding-top: 1.6em; /* 32px */
+        gap: 2.4em; /* 48px */
+    }
+    
+    .post:not(:first-child) {
+        padding-top: 2.4em; /* 48px */
+    }
+    
+    .case-study-container {
+        padding: 1.6em 0; /* 32px 0 */
+    }
+
+    .nav-link {
+        padding: 0.4em 0.6em; /* 8px 12px */
+        width: fit-content;
+    }
+    
+    .nav-tab-indicator {
+        /* Ensure indicator works properly in mobile layout */
+        transition: opacity 0.2s ease, left 0.4s ease, top 0.4s ease, width 0.4s ease, height 0.4s ease;
+    }
+    
+    .inline-link {
+        /* Adjust padding for mobile to prevent layout issues */
+        padding: 0.1em 0.4em; /* 2px 8px */
+        margin: -0.1em -0.4em; /* -2px -8px */
+    }
+    
+    .footer-nav {
+        flex-direction: column;
+        gap: 0.2em; /* 4px */
+    }
+    
+    /* Logo carousel responsive design for mobile */
+    .logo-carousel {
+        margin: 1.6em 0; /* 32px 0 */
+    }
+    
+    .logo-carousel-container {
+        height: 1.8em; /* 36px */
+    }
+    
+    .logo-carousel-row {
+        gap: 0.6em; /* 12px */
+        padding: 0 0.6em; /* 0 12px */
+    }
+    
+    .logo-carousel-item {
+        height: 1.2em; /* 24px */
+    }
+    
+    .logo-carousel-img {
+        max-width: 3.5em; /* 70px */
+    }
+    
+    .image-gallery {
+        width: 100%;
+        position: static;
+        left: auto;
+        right: auto;
+        margin-left: 0;
+        margin-right: 0;
+        padding: 0.8em 0; /* 16px 0 */
+        gap: 0.8em; /* 16px */
+        flex-direction: column;
+    }
+    
+    .image-with-caption {
+        width: 100%;
+        max-width: 100%;
+    }
+    
+    .image-container {
+        width: 100%;
+        max-width: 100%;
+        border-radius: 0.2em; /* 4px */
+    }
+    
+    .image-container img,
+    .image-container video {
+        width: 100%;
+    }
+    
+    .image-caption {
+        padding: 0;
+    }
+    
+    /* About section mobile styling */
+    .about {
+        gap: 2em; /* 40px */
+    }
+    
+    .two-col-section {
+        gap: 1em; /* 20px */
+    }
+    
+    .section-content {
+        gap: 0.7em; /* 14px */
+    }
+    
+    .section-content p {
+        margin-bottom: 0.9em; /* 18px */
+    }
+    
+    .skillset-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 1.4em; /* 28px */
+    }
+    
+    .skillset {
+        padding: 1em 0; /* 20px 0 */
+    }
+    
+    .skillset:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+    
+    .skillset h4 {
+        margin-bottom: 0.6em; /* 12px */
+        font-weight: 600;
+    }
+}
+
+@media (max-width: 480px) {
+    body,
+    p,
+    a,
+    ul {
+        font-weight: 400;
+        font-size: 0.8em; /* 16px */
+        line-height: 1.4;
+    }
+
+    .main-container {
+        padding: 0.8em; /* 16px */
+        gap: 1.2em; /* 24px */
+    }
+    
+    h3,
+    .section-subtitle {
+        font-size: 1em; /* 20px */
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        margin-top: 1.2em; /* 24px */
+        margin-bottom: 0;
+    }
+    
+    .text-heading-lg,
+    .footer-heading {
+        font-size: 1.6em; /* 32px */
+    }
+    
+    .text-heading-md {
+        font-size: 1.4em; /* 28px */
+    }
+    
+    .intro {
+        padding-top: 1.6em; /* 32px */
+        gap: 1.2em; /* 24px */
+    }
+    
+    .experience,
+    .about,
+    .footer {
+        padding-top: 1.2em; /* 24px */
+        gap: 1.6em; /* 32px */
+    }
+    
+    .post:not(:first-child) {
+        padding-top: 1.6em; /* 32px */
+    }
+    
+    .case-study-container {
+        padding: 1.2em 0; /* 24px 0 */
+    }
+    
+    .two-col-section {
+        gap: 0.8em; /* 16px */
+    }
+    
+    .section-content {
+        gap: 0.8em; /* 16px */
+    }
+    
+    .skillset-grid {
+        gap: 1.2em; /* 24px */
+    }
+    
+    .image-gallery {
+        padding: 6vw 0 0 0;
+        gap: 6vw;
+        flex-direction: column;
+    }
+    
+    .image-container {
+        max-width: none;
+        border-radius: 0.2em; /* 4px */
+    }
+    
+    .image-caption {
+        padding: 0;
+    }
+    
+    .inline-link {
+        /* Further reduce padding on very small screens */
+        padding: 0.05em 0.3em; /* 1px 6px */
+        margin: -0.05em -0.3em; /* -1px -6px */
+    }
+    
+    /* Logo carousel small mobile */
+    .logo-carousel {
+        margin: 1.2em 0; /* 24px 0 */
+    }
+    
+    .logo-carousel-container {
+        height: 1.6em; /* 32px */
+    }
+    
+    .logo-carousel-row {
+        gap: 0.4em; /* 8px */
+        padding: 0 0.4em; /* 0 8px */
+    }
+    
+    .logo-carousel-item {
+        height: 1em; /* 20px */
+    }
+    
+    .logo-carousel-img {
+        max-width: 3em; /* 60px */
+    }
+    
+    /* Optimized small mobile about section */
+    .about {
+        gap: 1.6em; /* 32px */
+    }
+    
+    .two-col-section {
+        gap: 0.9em; /* 18px */
+    }
+    
+    .section-content {
+        gap: 0.6em; /* 12px */
+    }
+    
+    .section-content p {
+        margin-bottom: 0.8em; /* 16px */
+    }
+    
+    /* Compact skillset layout for small screens */
+    .skillset {
+        padding: 0.8em 0; /* 16px 0 */
+    }
+    
+    .skillset h4 {
+        margin-bottom: 0.5em; /* 10px */
+        font-weight: 600;
+    }
+    
+    /* Better education section layout */
+    .education-item {
+        margin-bottom: 1em; /* 20px */
+    }
+}
+
+@media (max-width: 479px) and (min-width: 360px) {
+    body,
+    p,
+    .post-date,
+    .nav-link,
+    .subheadline,
+    ul {
+        font-weight: 400;
+        font-size: 1.1em; /* 22px */
+        line-height: 1.5;
+    }
+    
+    .inline-link {
+        font-weight: 500; /* Keep inline-link bold but same size */
+        font-size: 19.36px !important; /* Exact pixel value to match paragraph size */
+        line-height: 1.5 !important; /* Ensure consistent line-height */
+    }
+
+    .inline-link::after {
+
+        bottom: 0.2em; /* 6px */
+
+    }
+
+    .main-container {
+        padding: 1.15em; /* 23px */
+        gap: 1.73em; /* 35px */
+    }
+    
+    h3,
+    .section-subtitle {
+        font-size: 1.44em; /* 29px */
+        font-weight: 600;
+        letter-spacing: -0.014em; /* Proportionally scaled */
+        margin-top: 1.73em; /* 35px */
+        margin-bottom: 0;
+    }
+    
+    .text-heading-lg,
+    .footer-heading {
+        margin-top: 0;
+        font-size: 2.1em; /* 46px */
+    }
+    
+    .text-heading-md {
+        font-size: 2.01em; /* 40px */
+    }
+    
+    .header {
+        flex-direction: column;
+        gap: 1.73em; /* 35px */
+        align-items: flex-start;
+    }
+    
+    .intro {
+        padding-top: 2.3em; /* 46px */
+        gap: 1.73em; /* 35px */
+    }
+    
+    .experience,
+    .about,
+    .footer {
+        padding-top: 1.73em; /* 35px */
+        gap: 2.3em; /* 46px */
+    }
+    
+    .post:not(:first-child) {
+        padding-top: 2.3em; /* 46px */
+    }
+    
+    .case-study-container {
+        padding: 1.73em 0; /* 35px 0 */
+    }
+    
+    .nav-link {
+        padding: 0.3em 0.6em; /* 12px 17px */
+        width: fit-content;
+    }
+    
+    .nav-tab-indicator {
+        transition: opacity 0.2s ease, left 0.4s ease, top 0.4s ease, width 0.4s ease, height 0.4s ease;
+    }
+    
+    .inline-link {
+        padding: 0.072em 0.43em; /* 1.44px 8.6px */
+        margin: -0.072em -0.43em; /* -1.44px -8.6px */
+    }
+    
+    .footer-nav {
+        flex-direction: column;
+        gap: 0.29em; /* 5.8px */
+    }
+    
+    .two-col-section {
+        gap: 1.15em; /* 23px */
+    }
+    
+    .section-content {
+        gap: 1.15em; /* 23px */
+    }
+    
+    .skillset-grid {
+        gap: 1.73em; /* 35px */
+    }
+    
+    .image-gallery {
+        width: 100%;
+        position: static;
+        left: auto;
+        right: auto;
+        margin-left: 0;
+        margin-right: 0;
+        padding: 8.6vw 0 4vw 0; /* Scaled viewport units */
+        gap: 8.6vw;
+        flex-direction: column;
+    }
+    
+    .image-with-caption {
+        width: 100%;
+        max-width: 100%;
+    }
+    
+    .image-container {
+        width: 100%;
+        max-width: 100%;
+        border-radius: 0.29em; /* 5.8px */
+    }
+    
+    .image-container img,
+    .image-container video {
+        width: 100%;
+    }
+    
+    .image-caption {
+        padding: 0;
+    }
+    
+    /* Logo carousel for 360-479px range */
+    .logo-carousel {
+        margin: 1em 0 2em 0; /* 35px 0 */
+    }
+    
+    .logo-carousel-container {
+        height: 2.3em; /* 46px */
+    }
+    
+    .logo-carousel-row {
+        gap: 2em; /* ~24px - increased gap for 3-item layout */
+        padding: 0 1em; /* 0 16px - increased padding for better balance */
+        justify-content: space-evenly; /* Better distribution for 3 items */
+    }
+    
+    .logo-carousel-item {
+        height: 3em; /* 29px */
+    }
+    
+    .logo-carousel-img {
+        max-width: 4.31em; /* 86px */
+    }
+
+    .subtitle {
+        padding: 0.3em 0.4em; /* 4px 0 */
+    }
+    
+    /* About section optimization for 360-479px */
+    .about {
+        gap: 2.3em; /* 46px */
+    }
+    
+    .two-col-section {
+        gap: 1.3em; /* 26px */
+    }
+    
+    .section-content {
+        gap: 0.86em; /* 17px */
+    }
+    
+    .section-content p {
+        margin-bottom: 1.15em; /* 23px */
+    }
+    
+    /* Skillset layout for 360-479px screens */
+    .skillset {
+        padding: 1.15em 0; /* 23px 0 */
+    }
+    
+    .skillset:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+    
+    .skillset h4 {
+        margin-bottom: 0.72em; /* 14px */
+        font-weight: 600;
+    }
+    
+    /* Education section for 360-479px */
+    .education-item {
+        margin-bottom: 1.44em; /* 29px */
+    }
+}
+
+@media (max-width: 360px) {
+    
+    body,
+    p,
+    a,
+    ul {
+        font-weight: 400;
+        font-size: 0.8em; /* 16px */
+        line-height: 1.4;
+    }
+    
+    .main-container {
+        padding: 0.6em; /* 12px */
+    }
+    
+    .text-heading-lg,
+    .footer-heading {
+        margin-top: 0;
+        font-size: 1.2em; /* 28px */
+    }
+    
+    .text-heading-md {
+        font-size: 1.2em; /* 24px */
+    }
+}
+
+/* =============================================================================
+   PERFORMANCE AND ACCESSIBILITY
+   ============================================================================= */
+
+@media (prefers-reduced-motion: no-preference) {
+    html {
+        scroll-behavior: smooth;
+    }
+}
+
+@media (prefers-contrast: high) {
+    .nav-link:hover {
+        background-color: rgba(8, 22, 47, 0.1);
+    }
+} 

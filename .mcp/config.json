@@ -1,0 +1,31 @@
+{
+  "browser": {
+    "browserName": "chromium",
+    "isolated": false,
+    "userDataDir": "/Users/dmytro/Library/Application Support/Chrome",
+    "launchOptions": {
+      "channel": "",
+      "headless": false,
+      "executablePath": "/Applications/Google Chrome.app"
+    },
+    "contextOptions": {
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      }
+    },
+    "cdpEndpoint": "http://localhost:8000"
+  },
+  "capabilities": [
+    "core",
+    "tabs",
+    "pdf",
+    "history",
+    "wait",
+    "files",
+    "install",
+    "testing"
+  ],
+  "vision": true,
+  "outputDir": "/Users/dmytro/Desktop/mcp"
+}
