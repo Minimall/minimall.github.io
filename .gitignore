@@ -9,6 +9,7 @@ package-lock.json
 .cursorrules
 readme.md
 .cursor/
+.mcp/
 
 # Reference folder (as per repo rules)
 previous-version/
