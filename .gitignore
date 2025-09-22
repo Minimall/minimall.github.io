@@ -2,6 +2,7 @@
 debug-positioning.js
 node_modules/
 package-lock.json
+index_old.html
 .DS_Store
 *.log
 .vscode/
