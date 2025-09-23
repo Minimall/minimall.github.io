@@ -426,6 +426,8 @@ ul {
 /* Logo Carousel Layout - 60fps Optimized */
 .logo-carousel {
     margin-bottom: 1.2em; /* 24px */
+    padding-top: 1.2em; /* 24px */
+    padding-bottom: 1.2em; /* 24px */
     /* Force GPU acceleration for the entire carousel */
     transform: translateZ(0);
     will-change: auto;
@@ -522,10 +524,10 @@ ul {
 }
 
 .about-image {
-    margin-bottom: 1.6em; /* 32px */
+    margin-bottom: 1em; /* 32px */
     display: flex;
     justify-content: flex-start;
-    max-width: 30em; /* 600px */
+    max-width: 15em; /* 600px */
 }
 
 .about-image img {
