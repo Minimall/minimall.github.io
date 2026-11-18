@@ -1365,4 +1365,23 @@ ul {
     .nav-link:hover {
         background-color: rgba(8, 22, 47, 0.1);
     }
-} 
+}
+
+/* =============================================================================
+   LINE WRAPPING
+   pretty: no lonely last word in body text. balance: even line lengths in headings.
+   Browsers without support ignore these and wrap as before.
+   ============================================================================= */
+p,
+li,
+.image-caption {
+    text-wrap: pretty;
+}
+
+h1,
+h2,
+h3,
+h4 {
+    text-wrap: balance;
+}
+

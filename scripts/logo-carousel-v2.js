@@ -1,82 +1,39 @@
-document.addEventListener('DOMContentLoaded', function() {
+// Logo carousel: shows client logos in rows and swaps the row every few seconds.
+// Works without the Motion library (logos stay visible, rows swap without animation).
+document.addEventListener('DOMContentLoaded', function () {
+    'use strict';
+
     // ===================================================================
-    // ⏱️ TIMING CONFIGURATION - Optimized for 60fps performance
+    // CONFIGURATION (visual values unchanged from the previous version)
     // ===================================================================
-    const TIMING_CONFIG = {
-        // 🎬 ANIMATION DURATIONS (in seconds) - Optimized for smooth 60fps
-        animations: {
-            entrance: {
-                movement: 0.4,      // Slightly longer for smoother motion
-                blur: 0.25,         // Optimized blur duration
-                stagger: 0.06       // Refined stagger timing
-            },
-            exit: {
-                movement: 0.35,     // Slightly faster exit
-                blur: 0.2,          // Quick blur transition
-                stagger: 0.04       // Tighter exit stagger
-            }
+    const CONFIG = {
+        entrance: { blur: 0.25, stagger: 0.06 },          // seconds
+        exit: { blur: 0.2, stagger: 0.04 },               // seconds
+        interval: 4000,             // ms between row swaps
+        initialDelay: 200,          // ms before the swap timer starts
+        firstAnimationDelay: 150,   // ms before the first row animates in
+        transitionOverlap: 100,     // ms between exit start and entrance start
+        exitSafetyTimeout: 1500,    // ms: remove the old row even if its animation never reports done
+        moveDistance: 40,           // px of vertical travel
+        blurAmount: 10,             // px of blur during transitions
+        hoverScale: 1.06,
+        hoverSpeed: 200,            // ms for the hover colour change
+        spring: {
+            entrance: { stiffness: 160, damping: 16, mass: 1 },
+            exit: { stiffness: 140, damping: 15, mass: 0.8 }
         },
-        
-        // 🔄 CAROUSEL BEHAVIOR (in milliseconds)
-        carousel: {
-            interval: 4000,         // Time between each logo set transition
-            initialDelay: 200,     // Delay before starting the carousel
-            firstAnimationDelay: 150, // Slightly longer for smooth start
-            transitionOverlap: 100  // Delay for entrance/exit overlap
-        },
-        
-        // ⚡ TECHNICAL TIMINGS (in milliseconds) - Performance optimized
-        technical: {
-            exitBuffer: 0.3,        // Reduced buffer for faster transitions
-            hoverAnimationSpeed: 200 // Faster hover for better responsiveness
-        },
-        
-        // 🎨 VISUAL CONFIGURATION - All visual parameters centralized
-        visual: {
-            layout: {
-                // Responsive logos per row based on viewport
-                getLogosPerRow: function() {
-                    const width = window.innerWidth;
-                    // Show 3 logos for 360-479px breakpoint
-                    if (width >= 360 && width <= 479) {
-                        return 3;
-                    }
-                    // Default to 4 logos for all other breakpoints
-                    return 4;
-                }
-            },
-            animation: {
-                moveDistance: 40,   // Pixels to move during entrance/exit (Y-axis)
-                blurAmount: 10,     // Blur amount in pixels for transitions
-                hoverScale: 1.06,     // Scale factor on hover (1.0 = normal size)
-                spring: {
-                    entrance: {
-                        stiffness: 160,    // How quickly it reaches target (50-200)
-                        damping: 16,       // How much bounce/overshoot (5-30)
-                        mass: 1           // How heavy it feels (0.5-3)
-                    },
-                    exit: {
-                        stiffness: 140,    // Slightly snappier exit
-                        damping: 15,       // More damped for smoother exit
-                        mass: 0.8         // Lighter feel for exit
-                    }
-                }
-            },
-            filters: {
-                hover: {
-                    grayscale: 0,   // Grayscale amount on hover (0-1)
-                    brightness: 1,  // Brightness on hover (0-2+)
-                    contrast: 1     // Contrast on hover (0-2+)
-                }
-            }
-        }
+        hoverFilter: 'grayscale(0) brightness(1) contrast(1)',
+        reducedMotionFade: 0.3      // seconds: plain fade used when the user asks for reduced motion
     };
-    
-    // Legacy support - map to old ANIMATION_CONFIG for compatibility
-    const ANIMATION_CONFIG = TIMING_CONFIG.animations;
-    
+
+    // 3 logos per row for the 360-479px layout, 4 everywhere else
+    function getLogosPerRow() {
+        const width = window.innerWidth;
+        return width >= 360 && width <= 479 ? 3 : 4;
+    }
+
     // ===================================================================
-    // LOGO CONFIGURATION - Add/remove logos here
+    // LOGOS - add/remove here
     // ===================================================================
     const availableLogos = [
         { src: 'images/logos/ryanair.svg', alt: 'Ryanair', url: 'https://www.ryanair.com' },
@@ -91,471 +48,332 @@ document.addEventListener('DOMContentLoaded', function() {
         { src: 'images/logos/karpatia.svg', alt: 'Karpatia', url: 'https://karpatia.insure' },
         { src: 'images/logos/cinderblock.svg', alt: 'Cinderblock', url: 'https://cinderblock.com' }
     ];
-    
+
     const carousel = document.querySelector('.logo-carousel-container');
-    if (!carousel) return;
-    
-    // Clear existing content
-    carousel.innerHTML = '';
-    
-    // ===================================================================
-    // LOGO RANDOMIZATION LOGIC
-    // ===================================================================
-    function generateLogoSets() {
-        const totalLogos = availableLogos.length;
-        const logosPerRow = TIMING_CONFIG.visual.layout.getLogosPerRow();
-        
-        if (totalLogos === 0 || logosPerRow <= 0) {
-            return [];
+    const wrapper = document.querySelector('.logo-carousel');
+    if (!carousel || availableLogos.length === 0) return;
+
+    const motionQuery = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
+    const hoverQuery = window.matchMedia ? window.matchMedia('(hover: hover) and (pointer: fine)') : null;
+    const prefersReducedMotion = () => !!(motionQuery && motionQuery.matches);
+    const canHover = () => !!(hoverQuery && hoverQuery.matches);
+
+    // Motion may load late or not at all (blocked CDN, offline). Check on every use.
+    function motionAnimate(el, keyframes, options) {
+        const M = window.Motion;
+        if (!M || typeof M.animate !== 'function') return null;
+        try {
+            return M.animate(el, keyframes, options);
+        } catch (err) {
+            return null;
         }
-        
-        const shuffled = [...availableLogos].sort(() => Math.random() - 0.5);
+    }
+
+    // Resolves when the animation ends, or at once when there is none.
+    function finished(controls) {
+        if (controls && typeof controls.then === 'function') {
+            return Promise.resolve(controls).catch(() => {});
+        }
+        return Promise.resolve();
+    }
+
+    // ===================================================================
+    // LOGO SETS
+    // ===================================================================
+    function shuffle(list) {
+        const result = list.slice();
+        for (let i = result.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [result[i], result[j]] = [result[j], result[i]];
+        }
+        return result;
+    }
+
+    // Splits all logos into rows. Logos in "avoid" (the row on screen) go last,
+    // so the next row never repeats what the visitor sees right now.
+    function generateLogoSets(avoid) {
+        const perRow = getLogosPerRow();
+        const avoidSrc = new Set((avoid || []).map(logo => logo.src));
+        const shuffled = shuffle(availableLogos);
+        const ordered = shuffled.filter(l => !avoidSrc.has(l.src))
+            .concat(shuffled.filter(l => avoidSrc.has(l.src)));
+
         const sets = [];
-        const allowDuplicateFills = totalLogos < logosPerRow;
-        
-        const getFillerLogo = (currentSet) => {
-            if (!shuffled.length) {
-                return null;
-            }
-            
-            if (allowDuplicateFills) {
-                return shuffled[Math.floor(Math.random() * shuffled.length)];
-            }
-            
-            const uniquePool = shuffled.filter(
-                logo => !currentSet.some(item => item.src === logo.src)
-            );
-            const pool = uniquePool.length ? uniquePool : shuffled;
-            return pool[Math.floor(Math.random() * pool.length)];
-        };
-        
-        // Create sets of logos, ensuring variety
-        for (let i = 0; i < shuffled.length; i += logosPerRow) {
-            const set = shuffled.slice(i, i + logosPerRow);
-            
-            // If last set has fewer than required, fill with random ones
-            if (set.length < logosPerRow) {
-                const safetyLimit = logosPerRow * 3;
-                let attempts = 0;
-                
-                while (set.length < logosPerRow && attempts < safetyLimit) {
-                    const fillerLogo = getFillerLogo(set);
-                    if (!fillerLogo) {
-                        break;
-                    }
-                    if (!allowDuplicateFills && set.some(logo => logo.src === fillerLogo.src)) {
-                        attempts++;
-                        continue;
-                    }
-                    set.push(fillerLogo);
-                    attempts++;
-                }
+        for (let i = 0; i < ordered.length; i += perRow) {
+            const set = ordered.slice(i, i + perRow);
+            if (set.length < perRow) {
+                // Fill the last row with logos that are not in it yet
+                const fillers = shuffle(availableLogos.filter(l => !set.some(s => s.src === l.src)));
+                while (set.length < perRow && fillers.length) set.push(fillers.pop());
+                // Fewer logos than slots: repeat to fill
+                let k = 0;
+                while (set.length < perRow) set.push(availableLogos[k++ % availableLogos.length]);
             }
             sets.push(set);
         }
-        
         return sets;
     }
-    
+
     // ===================================================================
-    // CAROUSEL STATE AND LOGIC
+    // DOM
     // ===================================================================
-    let activeIndex = 0;
-    let logoSets = generateLogoSets();
-    let intervalId = null;
-    let isPaused = false;
-    let currentLogosPerRow = TIMING_CONFIG.visual.layout.getLogosPerRow();
-    
-    // Regenerate logo sets when viewport changes the logos per row
-    function handleViewportChange() {
-        const newLogosPerRow = TIMING_CONFIG.visual.layout.getLogosPerRow();
-        if (newLogosPerRow !== currentLogosPerRow) {
-            currentLogosPerRow = newLogosPerRow;
-            logoSets = generateLogoSets();
-            activeIndex = 0; // Reset to first set
-            
-            // Clear current content and restart with new configuration
-            const currentRow = carousel.querySelector('.logo-carousel-row');
-            if (currentRow) {
-                currentRow.remove();
-            }
-            
-            // Create and show first row with new configuration
-            const firstRow = createLogoRow(logoSets[0], true);
-            carousel.appendChild(firstRow);
-            
-            // Animate in the new row
-            setTimeout(() => {
-                requestAnimationFrame(() => {
-                    animateLogosIn(firstRow);
-                });
-            }, 100);
-        }
+    function setOverlayPosition(row) {
+        row.style.position = 'absolute';
+        row.style.top = '50%';
+        row.style.left = '0';
+        row.style.right = '0';
+        row.style.transform = 'translate3d(0, -50%, 0)';
     }
-    
-    // Create single carousel row with performance optimizations
-    function createLogoRow(logoSet, isVisible = false) {
+
+    function addHoverEffects(item, img) {
+        item.addEventListener('mouseenter', () => {
+            if (!canHover()) return;
+            item.style.transition = 'none';
+            const controls = motionAnimate(item, { scale: CONFIG.hoverScale }, { type: 'spring', bounce: 0.3, duration: 0.5 });
+            if (!controls) item.style.transform = 'scale(' + CONFIG.hoverScale + ')';
+            img.style.transition = 'filter ' + CONFIG.hoverSpeed + 'ms cubic-bezier(0.4, 0, 0.2, 1), opacity ' + CONFIG.hoverSpeed + 'ms ease-out';
+            img.style.filter = CONFIG.hoverFilter;
+            img.style.opacity = '1';
+        });
+
+        item.addEventListener('mouseleave', () => {
+            if (!canHover()) return;
+            item.style.transition = 'none';
+            const controls = motionAnimate(item, { scale: 1 }, { type: 'spring', bounce: 0.3, duration: 0.25 });
+            if (!controls) item.style.transform = '';
+            img.style.transition = 'filter ' + CONFIG.hoverSpeed + 'ms ease-out, opacity ' + CONFIG.hoverSpeed + 'ms ease-out';
+            // Clearing the inline values hands control back to the stylesheet
+            img.style.filter = '';
+            img.style.opacity = '';
+        });
+    }
+
+    function createLogoRow(logoSet) {
         const row = document.createElement('div');
         row.className = 'logo-carousel-row';
-        row.style.opacity = isVisible ? '1' : '0';
-        
-        // GPU acceleration hints for the row with pixel-perfect positioning
-        row.style.willChange = 'transform, opacity';
-        row.style.transform = 'translate3d(0, 0, 0)'; // Force hardware acceleration with pixel precision
-        
-        logoSet.forEach((logo, index) => {
-            const logoContainer = document.createElement('div');
-            logoContainer.className = 'logo-carousel-item';
-            
-            // Performance optimizations for each logo container with SVG-optimized transforms
-            logoContainer.style.willChange = 'transform, filter, opacity';
-            logoContainer.style.transform = 'translate3d(0, 0, 0)'; // Pixel-perfect GPU layer
-            logoContainer.style.backfaceVisibility = 'hidden'; // Optimize for transforms
-            logoContainer.style.transformOrigin = '50% 50%'; // Ensure centered scaling
-            
-            const logoImg = document.createElement('img');
-            logoImg.src = logo.src;
-            logoImg.alt = logo.alt;
-            logoImg.className = 'logo-carousel-img';
-            
-            // Optimize SVG image rendering with pixel-perfect positioning
-            logoImg.style.willChange = 'filter, opacity';
-            logoImg.style.transform = 'translate3d(0, 0, 0)';
-            
-            // Add click functionality to open URL in new tab
-            logoContainer.addEventListener('click', (e) => {
-                e.preventDefault();
-                if (logo.url) {
-                    window.open(logo.url, '_blank', 'noopener,noreferrer');
-                }
-            });
-            
-            // Store initial computed styles for proper restoration (captured lazily when node is in DOM)
-            let initialFilter = '';
-            let initialOpacity = '';
-            let initialStylesCaptured = false;
-            const captureInitialStyles = () => {
-                if (initialStylesCaptured) return;
-                initialStylesCaptured = true;
-                const computed = window.getComputedStyle(logoImg);
-                initialFilter = computed.filter || 'none';
-                initialOpacity = computed.opacity || '1';
-            };
-            
-            // Optimized hover interactions using CSS transitions
-            logoContainer.addEventListener('mouseenter', () => {
-                captureInitialStyles();
-                // Clear any CSS transitions that might conflict
-                logoContainer.style.transition = 'none';
-                
-                // SVG-optimized scaling with pixel-perfect positioning
-                Motion.animate(
-                    logoContainer,
-                    { 
-                        scale: TIMING_CONFIG.visual.animation.hoverScale,
-                        // Ensure transform-origin is centered for crisp SVG scaling
-                        transformOrigin: "50% 50%"
-                    },
-                    { 
-                        type: "spring",
-                        bounce: 0.3,
-                        duration: 0.5
-                    }
-                );
-                
-                logoImg.style.transition = `filter ${TIMING_CONFIG.technical.hoverAnimationSpeed}ms cubic-bezier(0.4, 0, 0.2, 1), opacity ${TIMING_CONFIG.technical.hoverAnimationSpeed}ms ease-out`;
-                logoImg.style.filter = `grayscale(${TIMING_CONFIG.visual.filters.hover.grayscale}) brightness(${TIMING_CONFIG.visual.filters.hover.brightness}) contrast(${TIMING_CONFIG.visual.filters.hover.contrast})`;
-                logoImg.style.opacity = '1';
-                // SVG-specific rendering for crisp scaling
-                logoImg.style.imageRendering = 'auto';
-                logoImg.style.shapeRendering = 'geometricPrecision';
-            });
-            
-            logoContainer.addEventListener('mouseleave', () => {
-                captureInitialStyles();
-                // Clear any CSS transitions that might conflict
-                logoContainer.style.transition = 'none';
-                
-                // SVG-optimized scale down with pixel-perfect positioning
-                Motion.animate(
-                    logoContainer,
-                    { 
-                        scale: 1,
-                        transformOrigin: "50% 50%"
-                    },
-                    { 
-                        type: "spring",
-                        bounce: 0.3,
-                        duration: 0.25
-                    }
-                );
-                
-                logoImg.style.transition = `filter ${TIMING_CONFIG.technical.hoverAnimationSpeed}ms ease-out, opacity ${TIMING_CONFIG.technical.hoverAnimationSpeed}ms ease-out`;
-                logoImg.style.filter = initialFilter;
-                logoImg.style.opacity = initialOpacity;
-                // Reset SVG rendering properties
-                logoImg.style.imageRendering = '';
-                logoImg.style.shapeRendering = '';
-            });
-            
-            logoContainer.appendChild(logoImg);
-            row.appendChild(logoContainer);
+        row.dataset.logos = logoSet.map(l => l.src).join('|');
+
+        logoSet.forEach(logo => {
+            // A real link: keyboard, screen readers and middle-click all work
+            const item = document.createElement('a');
+            item.className = 'logo-carousel-item';
+            item.href = logo.url;
+            item.target = '_blank';
+            item.rel = 'noopener noreferrer';
+            item.setAttribute('aria-label', logo.alt + ' (opens in a new tab)');
+
+            const img = document.createElement('img');
+            img.src = logo.src;
+            img.alt = logo.alt;
+            img.className = 'logo-carousel-img';
+            img.decoding = 'async';
+            // A missing file hides its slot instead of showing a broken image
+            img.addEventListener('error', () => { item.style.visibility = 'hidden'; });
+
+            addHoverEffects(item, img);
+            item.appendChild(img);
+            row.appendChild(item);
         });
-        
+
         return row;
     }
-    
+
     // ===================================================================
-    // ANIMATION FUNCTIONS - 60fps Optimized with CSS Animations
+    // ANIMATIONS
     // ===================================================================
-    function animateLogosIn(row) {
-        const logos = row.querySelectorAll('.logo-carousel-item');
-        
-        logos.forEach((logo, index) => {
-            // Reset to initial state - clear any existing transforms first
-            logo.style.transform = 'translate3d(0, 0, 0)';
-            logo.style.opacity = '0';
-            logo.style.filter = `blur(${TIMING_CONFIG.visual.animation.blurAmount}px)`;
-            logo.style.willChange = 'transform, opacity, filter';
-            
-            // Force a reflow to ensure initial state is applied
-            logo.offsetHeight;
-            
-            // Apply spring animation with staggered delay
-            const delay = index * ANIMATION_CONFIG.entrance.stagger * 1000;
-            
-            setTimeout(() => {
-                // Handle blur separately with CSS transition to avoid negative values
-                logo.style.transition = `filter ${ANIMATION_CONFIG.entrance.blur}s ease-out`;
-                logo.style.filter = 'blur(0px)';
-                
-                // Use Motion.animate for spring physics on position and opacity only
-                Motion.animate(
-                    logo,
-                    {
-                        y: [TIMING_CONFIG.visual.animation.moveDistance, 0],  // FROM below TO final position
-                        opacity: [0, 1]  // FROM invisible TO visible
-                    },
-                    {
-                        type: "spring",
-                        stiffness: TIMING_CONFIG.visual.animation.spring.entrance.stiffness,
-                        damping: TIMING_CONFIG.visual.animation.spring.entrance.damping,
-                        mass: TIMING_CONFIG.visual.animation.spring.entrance.mass
-                    }
-                ).then(() => {
-                    // Clean up willChange and transition after animation completes
-                    logo.style.willChange = 'auto';
-                    logo.style.transition = '';
-                });
-            }, delay);
-        });
+    function showWithoutAnimation(item) {
+        item.style.opacity = '';
+        item.style.filter = '';
+        item.style.transition = '';
+        item.style.willChange = '';
     }
-    
-    function animateLogosOut(row) {
-        const logos = row.querySelectorAll('.logo-carousel-item');
-        
-        return new Promise((resolve) => {
-            const totalLogos = logos.length;
-            
-            if (totalLogos === 0) {
-                resolve(true);
-                return;
-            }
-            
-            let completedAnimations = 0;
-            
-            Array.from(logos).forEach((logo, index) => {
-                // Set willChange for optimal performance
-                logo.style.willChange = 'transform, opacity, filter';
-                
-                const delay = index * ANIMATION_CONFIG.exit.stagger * 1000;
-                
+
+    function animateLogosIn(row) {
+        const items = Array.from(row.querySelectorAll('.logo-carousel-item'));
+        const reduced = prefersReducedMotion();
+
+        return Promise.all(items.map((item, index) => {
+            item.style.opacity = '0';
+            item.style.willChange = 'transform, opacity, filter';
+            if (!reduced) item.style.filter = 'blur(' + CONFIG.blurAmount + 'px)';
+            item.offsetHeight; // apply the start state before animating
+
+            const delay = reduced ? 0 : index * CONFIG.entrance.stagger * 1000;
+            return new Promise(resolve => {
                 setTimeout(() => {
-                    // Handle blur separately with CSS transition to avoid negative values
-                    logo.style.transition = `filter ${ANIMATION_CONFIG.exit.blur}s ease-out`;
-                    logo.style.filter = `blur(${TIMING_CONFIG.visual.animation.blurAmount}px)`;
-                    
-                    // Use Motion.animate for spring physics on position and opacity only
-                    Motion.animate(
-                        logo,
-                        {
-                            y: -TIMING_CONFIG.visual.animation.moveDistance, // Move upward
-                            opacity: 0
-                        },
-                        {
-                            type: "spring",
-                            stiffness: TIMING_CONFIG.visual.animation.spring.exit.stiffness,
-                            damping: TIMING_CONFIG.visual.animation.spring.exit.damping,
-                            mass: TIMING_CONFIG.visual.animation.spring.exit.mass
-                        }
-                    ).then(() => {
-                        // Clean up willChange and transition properties
-                        logo.style.willChange = 'auto';
-                        logo.style.transition = '';
-                        
-                        completedAnimations++;
-                        if (completedAnimations === totalLogos) {
-                            resolve(true);
-                        }
+                    let controls;
+                    if (reduced) {
+                        controls = motionAnimate(item, { opacity: [0, 1] }, { duration: CONFIG.reducedMotionFade });
+                    } else {
+                        item.style.transition = 'filter ' + CONFIG.entrance.blur + 's ease-out';
+                        item.style.filter = 'blur(0px)';
+                        controls = motionAnimate(
+                            item,
+                            { y: [CONFIG.moveDistance, 0], opacity: [0, 1] },
+                            Object.assign({ type: 'spring' }, CONFIG.spring.entrance)
+                        );
+                    }
+                    if (!controls) {
+                        showWithoutAnimation(item);
+                        resolve();
+                        return;
+                    }
+                    finished(controls).then(() => {
+                        item.style.willChange = '';
+                        item.style.transition = '';
+                        resolve();
                     });
                 }, delay);
             });
-        });
+        }));
     }
-    
+
+    function animateLogosOut(row) {
+        const items = Array.from(row.querySelectorAll('.logo-carousel-item'));
+        const reduced = prefersReducedMotion();
+
+        const all = Promise.all(items.map((item, index) => {
+            item.style.willChange = 'transform, opacity, filter';
+            const delay = reduced ? 0 : index * CONFIG.exit.stagger * 1000;
+            return new Promise(resolve => {
+                setTimeout(() => {
+                    let controls;
+                    if (reduced) {
+                        controls = motionAnimate(item, { opacity: 0 }, { duration: CONFIG.reducedMotionFade });
+                    } else {
+                        item.style.transition = 'filter ' + CONFIG.exit.blur + 's ease-out';
+                        item.style.filter = 'blur(' + CONFIG.blurAmount + 'px)';
+                        controls = motionAnimate(
+                            item,
+                            { y: -CONFIG.moveDistance, opacity: 0 },
+                            Object.assign({ type: 'spring' }, CONFIG.spring.exit)
+                        );
+                    }
+                    finished(controls).then(resolve);
+                }, delay);
+            });
+        }));
+
+        // Never wait forever: a stuck animation must not leave the old row on screen
+        const safety = new Promise(resolve => setTimeout(resolve, CONFIG.exitSafetyTimeout));
+        return Promise.race([all, safety]);
+    }
+
+    // ===================================================================
+    // CAROUSEL STATE
+    // ===================================================================
+    let logoSets = generateLogoSets();
+    let activeIndex = 0;
+    let intervalId = null;
+    let isTransitioning = false;
+    let hoverPaused = false;
+    let focusPaused = false;
+    let currentLogosPerRow = getLogosPerRow();
+    let generation = 0; // bumps on every full reset, so stale callbacks do nothing
+
+    function getRows() {
+        return Array.from(carousel.querySelectorAll('.logo-carousel-row'));
+    }
+
+    function currentLogos() {
+        const set = logoSets[activeIndex];
+        return set || [];
+    }
+
+    // Removes every row and shows a fresh first row
+    function resetCarousel() {
+        generation++;
+        isTransitioning = false;
+        getRows().forEach(row => row.remove());
+        logoSets = generateLogoSets();
+        activeIndex = 0;
+        const firstRow = createLogoRow(logoSets[0]);
+        carousel.appendChild(firstRow);
+        return firstRow;
+    }
+
     async function switchToNextSet() {
-        // Avoid DOM churn when tab is hidden (animations are paused)
-        if (document.hidden) {
-            return;
+        if (document.hidden || isTransitioning) return;
+        isTransitioning = true;
+        const gen = generation;
+
+        let nextIndex = activeIndex + 1;
+        if (nextIndex >= logoSets.length) {
+            logoSets = generateLogoSets(currentLogos());
+            nextIndex = 0;
         }
-        // Get next logo set
-        const nextIndex = (activeIndex + 1) % logoSets.length;
-        
-        // If we've cycled through all sets, regenerate them
-        if (nextIndex === 0) {
-            logoSets = generateLogoSets();
-        }
-        
-        const currentRow = carousel.querySelector('.logo-carousel-row');
-        
-        // Create new row immediately
-        const nextRow = createLogoRow(logoSets[nextIndex], false);
+
+        // Keep only the newest row; anything older is a leftover
+        const rows = getRows();
+        const currentRow = rows.pop() || null;
+        rows.forEach(row => row.remove());
+
+        const nextRow = createLogoRow(logoSets[nextIndex]);
         nextRow.style.opacity = '0';
-        
-        if (currentRow) {
-            // Get current row position for perfect alignment
-            const containerRect = carousel.getBoundingClientRect();
-            const currentRowRect = currentRow.getBoundingClientRect();
-            
-            // Position both rows absolutely to overlay each other in exactly the same position
-            currentRow.style.position = 'absolute';
-            currentRow.style.top = '50%';
-            currentRow.style.left = '0';
-            currentRow.style.right = '0';
-            currentRow.style.transform = 'translate3d(0, -50%, 0)';
-            
-            nextRow.style.position = 'absolute';
-            nextRow.style.top = '50%';
-            nextRow.style.left = '0';
-            nextRow.style.right = '0';
-            nextRow.style.transform = 'translate3d(0, -50%, 0)';
-            
-            // Add new row to carousel (both rows exist temporarily and perfectly overlay)
-            carousel.appendChild(nextRow);
-            
-            // Start exit animation
-            animateLogosOut(currentRow).then(() => {
-                // Clean up old row
-                if (currentRow.parentNode) {
-                    currentRow.remove();
-                }
-                // Keep the row absolutely positioned to maintain exact position
-                // No position reset - this prevents any jump
-            }).catch(() => {
-                // Fallback cleanup
-                if (currentRow.parentNode) {
-                    currentRow.remove();
-                }
-            });
-            
-            // Start entrance animation after very short delay (overlap with exit)
-            setTimeout(() => {
-                nextRow.style.opacity = '1';
-                requestAnimationFrame(() => {
-                    animateLogosIn(nextRow);
-                });
-            }, TIMING_CONFIG.carousel.transitionOverlap); // Configurable delay for smooth overlap
-        } else {
-            // No current row, position new row absolutely for consistency
-            nextRow.style.position = 'absolute';
-            nextRow.style.top = '50%';
-            nextRow.style.left = '0';
-            nextRow.style.right = '0';
-            nextRow.style.transform = 'translate3d(0, -50%, 0)';
-            
-            carousel.appendChild(nextRow);
-            nextRow.style.opacity = '1';
-            requestAnimationFrame(() => {
-                animateLogosIn(nextRow);
-            });
-        }
-        
+        setOverlayPosition(nextRow);
+        if (currentRow) setOverlayPosition(currentRow);
+        carousel.appendChild(nextRow);
         activeIndex = nextIndex;
+
+        const exitDone = currentRow
+            ? animateLogosOut(currentRow).then(() => currentRow.remove())
+            : Promise.resolve();
+
+        await new Promise(resolve => setTimeout(resolve, currentRow ? CONFIG.transitionOverlap : 0));
+        if (gen !== generation) return; // a reset happened meanwhile
+        const entranceDone = animateLogosIn(nextRow); // hides each logo first, so showing the row is safe
+        nextRow.style.opacity = '1';
+        await Promise.all([entranceDone, exitDone]);
+
+        if (gen === generation) isTransitioning = false;
     }
-    
+
     // ===================================================================
-    // CAROUSEL CONTROLS
+    // CONTROLS
     // ===================================================================
-    function startCarousel() {
-        if (!isPaused && !intervalId) {
-            intervalId = setInterval(switchToNextSet, TIMING_CONFIG.carousel.interval);
-        }
+    function shouldRun() {
+        return !document.hidden && !hoverPaused && !focusPaused;
     }
-    
-    function pauseCarousel() {
-        if (intervalId) {
+
+    function updateTimer() {
+        if (shouldRun() && !intervalId) {
+            intervalId = setInterval(switchToNextSet, CONFIG.interval);
+        } else if (!shouldRun() && intervalId) {
             clearInterval(intervalId);
             intervalId = null;
         }
-        isPaused = true;
     }
-    
-    function resumeCarousel() {
-        isPaused = false;
-        startCarousel();
-    }
-    
-    // ===================================================================
-    // INITIALIZATION - Performance Optimized
-    // ===================================================================
-    // Create and show first row with immediate visibility
-    const firstRow = createLogoRow(logoSets[0], true);
-    carousel.appendChild(firstRow);
-    
-    // Optimize initial animation timing with requestAnimationFrame
-    setTimeout(() => {
-        requestAnimationFrame(() => {
-            animateLogosIn(firstRow);
+
+    if (wrapper) {
+        // Pause on mouse hover (mouse devices only, so a tap on a phone does not freeze it)
+        wrapper.addEventListener('mouseenter', () => { if (canHover()) { hoverPaused = true; updateTimer(); } });
+        wrapper.addEventListener('mouseleave', () => { hoverPaused = false; updateTimer(); });
+        // Pause while a logo link has keyboard focus
+        wrapper.addEventListener('focusin', () => { focusPaused = true; updateTimer(); });
+        wrapper.addEventListener('focusout', (e) => {
+            if (!wrapper.contains(e.relatedTarget)) { focusPaused = false; updateTimer(); }
         });
-    }, TIMING_CONFIG.carousel.firstAnimationDelay);
-    
-    // Start carousel with optimized timing
-    setTimeout(startCarousel, TIMING_CONFIG.carousel.initialDelay);
-    
-    // Enhanced hover controls with performance optimizations
-    const carouselWrapper = document.querySelector('.logo-carousel');
-    if (carouselWrapper) {
-        // Add passive event listeners for better scroll performance
-        carouselWrapper.addEventListener('mouseenter', pauseCarousel, { passive: true });
-        carouselWrapper.addEventListener('mouseleave', resumeCarousel, { passive: true });
-        
-        // Add reduced motion preference support
-        if (window.matchMedia) {
-            const reduceMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-            if (reduceMotionQuery.matches) {
-                // If user prefers reduced motion, extend intervals and reduce animation intensity
-                TIMING_CONFIG.carousel.interval *= 1.5; // Slower transitions
-                TIMING_CONFIG.visual.animation.moveDistance *= 0.7; // Shorter travel distance
-            }
-        }
     }
-    
-    // Pause carousel when page is hidden to prevent stacked rows
-    document.addEventListener('visibilitychange', () => {
-        if (document.hidden) {
-            pauseCarousel();
-        } else {
-            resumeCarousel();
-        }
-    });
-    
-    // Handle window resize to adapt logo count for different viewports
+
+    document.addEventListener('visibilitychange', updateTimer);
+
     let resizeTimeout;
     window.addEventListener('resize', () => {
-        // Debounce resize events for better performance
         clearTimeout(resizeTimeout);
         resizeTimeout = setTimeout(() => {
-            handleViewportChange();
+            const perRow = getLogosPerRow();
+            if (perRow === currentLogosPerRow) return;
+            currentLogosPerRow = perRow;
+            const row = resetCarousel();
+            animateLogosIn(row);
         }, 250);
     }, { passive: true });
-}); 
+
+    // ===================================================================
+    // START
+    // ===================================================================
+    carousel.innerHTML = '';
+    const firstRow = resetCarousel();
+    setTimeout(() => animateLogosIn(firstRow), CONFIG.firstAnimationDelay);
+    setTimeout(updateTimer, CONFIG.initialDelay);
+});
